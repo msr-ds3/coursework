@@ -29,3 +29,10 @@ Once that's done, edit the ``week1/students.txt`` file and add your first name. 
 See this [free online git course](https://try.github.io) and [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4) as well.
 More resources [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/).
 
+# Command line
+
+  * Download one month of the Citibike data: ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
+  * Unzip it: ``unzip 201402-citibike-tripdata.zip``
+  * Go through the ``explore_trips.sh`` file
+  * Fill in solutions for ``exercises.sh``
+  
