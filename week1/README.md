@@ -26,5 +26,6 @@ If you don't already have one, [sign up](https://github.com/join) for a free Git
 
 Once that's done, edit the ``week1/students.txt`` file and add your first name. Commit and push your changes to your copy of the repository through RStudio. Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original repository.
 
-See this [free online git course](https://www.codeschool.com/courses/try-git) as well.
+See this [free online git course](https://try.github.io) and [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4) as well.
+More resources [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/).
 
