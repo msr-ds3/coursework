@@ -33,7 +33,6 @@ More resources [here](https://help.github.com/articles/good-resources-for-learni
 
   * Download one month of the Citibike data: ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
   * Unzip it: ``unzip 201402-citibike-tripdata.zip``
-  * Rename the file to get rid of spaces: ``mv 201402*.csv 201402-citibike-tripdata.csv``
+  * Rename the file to get rid of spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
   * Go through the ``explore_trips.sh`` file
   * Fill in solutions for ``exercises.sh``
-
