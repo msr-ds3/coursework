@@ -40,9 +40,9 @@ Install git, R, and RStudio:
 
 # Command line
 
-  * Review [intro.sh](week1/shell/intro.sh) for an introduction to the command line
+  * Review [intro.sh](shell/intro.sh) for an introduction to the command line
   * Download one month of the Citibike data: ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
   * Decompress it: ``unzip 201402-citibike-tripdata.zip``
   * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
-  * Go through the one-liners in the [explore_trips.sh](week1/citibike/explore_trips.sh) file
-  * Fill in solutions of your own under each comment in [exercises.sh](week1/citibike/exercises.sh)
+  * Go through the one-liners in the [explore_trips.sh](citibike/explore_trips.sh) file
+  * Fill in solutions of your own under each comment in [exercises.sh](citibike/exercises.sh)
