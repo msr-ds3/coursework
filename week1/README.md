@@ -46,5 +46,13 @@ Install git, R, and RStudio:
   * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
   * Go through the one-liners in the [explore_trips.sh](citibike/explore_trips.sh) file
   * Fill in solutions of your own under each comment in [exercises.sh](citibike/exercises.sh)
+  * Additional command line references:
+    * [Lifehacker's primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything) and a [crash course](http://cli.learncodethehardway.org/book/) with an overview of commonly used commands
+
+    * Software Carpentry's [slides and videos](http://software-carpentry.org/v4/shell/) (updates [here](http://swcarpentry.github.io/shell-novice/))
+    * A wikibook on [data analysis on the command line](http://en.wikibooks.org/wiki/Ad_Hoc_Data_Analysis_From_The_Unix_Command_Line), covering ``cut``, ``grep``, ``wc``, ``uniq``, ``sort``, etc
+    * [introduction to awk](http://ferd.ca/awk-in-20-minutes.html)
+    * A comprehensive and freely available [command line book](http://softlayer-dal.dl.sourceforge.net/project/linuxcommand/TLCL/13.07/TLCL-13.07.pdf)
+	* A more advanced book on [Data Science at the Command Line](http://datascienceatthecommandline.com)
 
 <a name="improvement1">1</a>: In the future we'll change this to one file per student in a subdirectory to avoid merge conflicts
