@@ -27,7 +27,7 @@ Install git, R, and RStudio:
   * [Sign up](https://github.com/join) for a free GitHub account
   * Then [fork your own copy](https://guides.github.com/activities/forking/) of the course repository
   * See these [screenshots](http://www.princeton.edu/~mjs3/soc504_s2015/submitting_homework.shtml) for details, with one modification: use the *ssh clone URL* in the repository URL field, which should read ``git@github.com:yourusername/ds3-2015.git``
-  * Once that's done, edit the ``week1/students.txt`` file and add your first name
+  * Once that's done, edit the ``week1/students.txt`` file and add your first name<sup>[1](#improvement1)</sup>
   * Commit and push your changes to your copy of the repository through RStudio
   * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original repository
   * Finally, [configure a remote repository](https://help.github.com/articles/configuring-a-remote-for-a-fork/) called ``upstream`` to point here: ``git remote add upstream git@github.com:jhofman/ds3-2015``
@@ -46,3 +46,5 @@ Install git, R, and RStudio:
   * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
   * Go through the one-liners in the [explore_trips.sh](citibike/explore_trips.sh) file
   * Fill in solutions of your own under each comment in [exercises.sh](citibike/exercises.sh)
+
+<a name="improvement1">1</a>: In the future we'll change this to one file per student in a subdirectory to avoid merge conflicts
