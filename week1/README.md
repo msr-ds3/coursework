@@ -31,13 +31,14 @@ Install git, R, and RStudio:
   * Commit and push your changes to your copy of the repository through RStudio
   * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original repository
   * Finally, [configure a remote repository](https://help.github.com/articles/configuring-a-remote-for-a-fork/) called ``upstream`` to point here:
-
+```
     git remote add upstream git@github.com:jhofman/ds3-2015
-
+```
   * This will allow you to [sync future changes](https://help.github.com/articles/syncing-a-fork/) to your fork with:
-
+```
     git fetch upstream
 	git merge upstream/master
+```
 
 ## Learn more
   * Complete this [free online git course](https://try.github.io) and watch this [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
