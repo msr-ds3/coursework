@@ -58,10 +58,21 @@ Install git, R, and RStudio:
 
   * Review [intro.Rmd](r/intro.Rmd) for an introduction to R
   * Complete the [Code School](http://tryr.codeschool.com) and [DataCamp](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
-* References:
+  * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
 	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
+
+# Counting
+
+  * See [slides](http://www.slideshare.net/jakehofman/lecture-2-44332354)
+  * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
+  * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
+  * Complete the [DataCamp dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial)
+  * Review these [examples for ggplot2](http://had.co.nz/stat480/r/graphics.html)
+  * References
+    * The [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
+    * Rstudio's [dplyr cheetsheat](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 
 <!--
 # cheatsheets and reference cards:
