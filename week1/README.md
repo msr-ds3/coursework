@@ -82,4 +82,7 @@ Install git, R, and RStudio:
     http://www.rstudio.com/wp-content/uploads/2015/01/data-wrangling-cheatsheet.pdf
 -->
 
+# Guest lectures
+  * [Fernando](http://research.microsoft.com/jump/164338) spoke about [regular expressions](regular-expressions.pdf)
+
 <a name="improvement1">1</a>: In the future we'll change this to one file per student in a subdirectory to avoid merge conflicts

@@ -16,7 +16,7 @@ theme_set(theme_bw())
 system.time(
   ratings <- read.delim('ratings.csv',
                         sep=',',
-			header=F,
+			                  header=F,
                         col.names=c('user_id','movie_id','rating','timestamp'),
                         colClasses=c('integer','integer','numeric','integer'))
 )
