@@ -1,4 +1,4 @@
-'1;2c#!/bin/bash
+#!/bin/bash
 #
 # downloads movielens rating data
 #
