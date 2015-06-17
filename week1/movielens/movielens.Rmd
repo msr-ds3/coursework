@@ -12,12 +12,11 @@ library(scales)    # install.packages('scales')
 # set plot theme
 theme_set(theme_bw())
 
-data.dir <- '.'
-
 # read ratings from csv file
 system.time(
-  ratings <- read.delim(sprintf('%s/movielens/ratings.csv', data.dir),
-                        sep=',', header=F,
+  ratings <- read.delim('ratings.csv',
+                        sep=',',
+			header=F,
                         col.names=c('user_id','movie_id','rating','timestamp'),
                         colClasses=c('integer','integer','numeric','integer'))
 )
