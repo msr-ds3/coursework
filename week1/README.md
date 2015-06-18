@@ -78,10 +78,11 @@ Install git, R, and RStudio:
 <!--  * Complete the [DataCamp dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) -->
   * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
   * Review these [examples for ggplot2](http://had.co.nz/stat480/r/graphics.html)
+  * Run the [load_trips.R](citibike/load_trips.R) file with one month (201402) of data in your citibike folder to generate ``trips.RData``
   * References
     * Rstudio's [dplyr cheetsheat](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
-  * Run the [load_trips.R](citibike/load_trips.R) file with one month (201402) of data in your citibike folder to generate ``trips.RData``
-  * 
+	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides
+	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
 
 <!--
 # cheatsheets and reference cards:
