@@ -35,7 +35,7 @@ trips <- transform(trips,
                    ymd=parse_datetime(strftime(starttime, format="%Y-%m-%d"), "%Y-%m-%d"))
 
 # recode gender from (0,1,2) to (Unknown, Male, Female)
-trips <- transform(trips, gender=revalue(as.factor(gender), c("0"="Unknown", "1"="Male", "2"="Female")))
+#trips <- transform(trips, gender=revalue(as.factor(gender), c("0"="Unknown", "1"="Male", "2"="Female")))
 
 
 ########################################

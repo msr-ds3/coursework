@@ -75,11 +75,13 @@ Install git, R, and RStudio:
   * See [slides](http://www.slideshare.net/jakehofman/lecture-2-44332354)
   * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
   * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
-  * Complete the [DataCamp dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial)
+<!--  * Complete the [DataCamp dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) -->
+  * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
   * Review these [examples for ggplot2](http://had.co.nz/stat480/r/graphics.html)
   * References
-    * The [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
     * Rstudio's [dplyr cheetsheat](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+  * Run the [load_trips.R](citibike/load_trips.R) file with one month (201402) of data in your citibike folder to generate ``trips.RData``
+  * 
 
 <!--
 # cheatsheets and reference cards:
