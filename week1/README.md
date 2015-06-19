@@ -79,10 +79,10 @@ Install git, R, and RStudio:
   * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
   * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
   * Review [Sean Anderson's](http://github.com/seananderson/datawranglR) [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) and reproduce the ``diamonds`` plots
-  * Run the [load_trips.R](citibike/load_trips.R) file with one month (201402) of data in your citibike folder to generate ``trips.RData``
-  * Write code to create the missing plots in [plot_trips.R](citibike/plot_trips.R)
   * Review the [joins.R](r/joins.R) examples from class
   * Go through the join functions in the [dplyr two-table verb](http://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) vignette and this [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
+  * Run the [load_trips.R](citibike/load_trips.R) file with data in your citibike folder to generate ``trips.RData``
+  * Write code to create the missing plots in [plot_trips.R](citibike/plot_trips.R)
   * References
     * Rstudio's [cheatsheets](http://www.rstudio.com/resources/cheatsheets/) for dplyr and ggplot2
 	* The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)

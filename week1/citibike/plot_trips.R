@@ -40,8 +40,12 @@ load(sprintf('%s/trips.RData', data_dir))
 # plot trip and weather data
 ########################################
 
-# plot the number of trips as a function of the minimum temperature
+# plot the minimum temperature over each day
+
+# plot the number of trips as a function of the minimum temperature, where each point represents a day
+# you'll need to summarize the trips and join to the weather data to do this
 
 # repeat this, splitting results by whether there was substantial precipitation or not
+# you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
 
-# add a smoothed fit on top, using geom_smooth
+# add a smoothed fit on top of the previous plot, using geom_smooth
