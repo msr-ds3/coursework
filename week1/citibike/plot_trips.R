@@ -25,7 +25,7 @@ load(sprintf('%s/trips.RData', data_dir))
 
 
 ########################################
-# plot trip and weather data
+# plot trip data
 ########################################
 
 # plot the distribution of trip times across all rides
@@ -35,3 +35,13 @@ load(sprintf('%s/trips.RData', data_dir))
 # plot the number of trips over each day
 
 # plot the number of trips by gender and age
+
+########################################
+# plot trip and weather data
+########################################
+
+# plot the number of trips as a function of the minimum temperature
+
+# repeat this, splitting results by whether there was substantial precipitation or not
+
+# add a smoothed fit on top, using geom_smooth
