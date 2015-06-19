@@ -2,7 +2,7 @@ This week covers:
 
   * An intro to Git and Github for sharing code
   * Command line tools
-  * Exploratory data analysis with R
+  * Exploratory data analysis with R using ``dplyr`` and ``ggplot2``
 
 # Setup
 
@@ -39,6 +39,7 @@ Install git, R, and RStudio:
     git fetch upstream
 	git merge upstream/master
 ```
+  * Note: this is equivalent to ``git pull upstream master``
 
 ## Learn more
   * Complete this [free online git course](https://try.github.io) and watch this [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
@@ -69,21 +70,27 @@ Install git, R, and RStudio:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
 	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
+    * Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
 
-# Counting
+## Counting and Plotting
 
-  * See [slides](http://www.slideshare.net/jakehofman/lecture-2-44332354)
+  * See these [Introduction to Counting](http://www.slideshare.net/jakehofman/lecture-2-44332354) slides
   * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
   * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
   * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
-  * Review these [examples for ggplot2](http://had.co.nz/stat480/r/graphics.html)
+  * Review [Sean Anderson's](seananderson/datawranglR) [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) and reproduce the ``diamonds`` plots
   * Run the [load_trips.R](citibike/load_trips.R) file with one month (201402) of data in your citibike folder to generate ``trips.RData``
-  * Fill in details in [plot_trips.R](citibike/plot_trips.R)
+  * Write code to create the missing plots in [plot_trips.R](citibike/plot_trips.R)
   * References
-    * Rstudio's [dplyr cheetsheat](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
-	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides
+    * Rstudio's [cheatsheets](http://www.rstudio.com/resources/cheatsheets/) for dplyr and ggplot2
+	* The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
+	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
 	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-    * [DataCamp's dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) is good, but not free
+    * [DataCamp's dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) is good, but unfortunately not free
+
+## Sampling
+  * We wrote [musical pairs](r/musical_pairs.R) to randomly pair up people to work together each day
+  * Think about how you would verify if this code is working correctly, or if it's deviating from effectively "random" sampling
 
 <!--
 # cheatsheets and reference cards:
@@ -95,8 +102,10 @@ Install git, R, and RStudio:
 
 # Guest lectures
   * [Fernando](http://research.microsoft.com/jump/164338) spoke about [regular expressions](regular-expressions.pdf)
-  * See his last two slides for exercises, some of which involve the [20 newsgroups](http://qwone.com/~jason/20Newsgroups/) data
-  * Use ``wget`` to download the data and ``tar zxvf <filename>`` to decompress it
-
+    * See his last two slides for exercises, some of which involve the [20 newsgroups](http://qwone.com/~jason/20Newsgroups/) data
+    * Use ``wget`` to download the data and ``tar zxvf <filename>`` to decompress it
+  * [Amy](http://cs.brown.edu/people/faculty/amy/) gave an overview of [big-O notation](https://www.interviewcake.com/big-o-notation-time-and-space-complexity) for computational complexity
+    * The [bigocheatsheet](http://bigocheatsheet.com)
+	* A [beginner's guide](https://rob-bell.net/2009/06/a-beginners-guide-to-big-o-notation/)
 
 <a name="improvement1">1</a>: In the future we'll change this to one file per student in a subdirectory to avoid merge conflicts
