@@ -78,7 +78,7 @@ Install git, R, and RStudio:
   * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
   * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
   * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
-  * Review [Sean Anderson's](seananderson/datawranglR) [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) and reproduce the ``diamonds`` plots
+  * Review [Sean Anderson's](http://github.com/seananderson/datawranglR) [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) and reproduce the ``diamonds`` plots
   * Run the [load_trips.R](citibike/load_trips.R) file with one month (201402) of data in your citibike folder to generate ``trips.RData``
   * Write code to create the missing plots in [plot_trips.R](citibike/plot_trips.R)
   * References
