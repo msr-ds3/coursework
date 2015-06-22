@@ -88,6 +88,7 @@ Install git, R, and RStudio:
 	* The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
 	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
 	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * [DataCamp's dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) is good, but unfortunately not free
 
 ## Sampling
