@@ -9,6 +9,7 @@
 	* Create one plot of the ``p_hat`` distributions, faceted by different ``N`` values for ``p = 0.5`` using ``ggplot``
   * Inspect the Citibike trip duration data for outliers, comparing the mean and median trip length time
   * Review the first chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
+  * See a [recent op-ed](http://www.nytimes.com/2015/06/21/opinion/sunday/whats-the-matter-with-polling.html) on recent challenges in polling
 
 # Day 2
   * See Intro to Regression slides (to be posted shortly)
