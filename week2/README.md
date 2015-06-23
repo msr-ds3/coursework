@@ -11,7 +11,9 @@
   * Review the first chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
 
 # Day 2
+  * See Intro to Regression slides (to be posted shortly)
+  * Review these tutorials on [simple linear regression](http://www.r-tutor.com/elementary-statistics/simple-linear-regression) and [multiple linear regression](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression)
   * Coin-flipping simulations review. Check out the examples and code [here](http://rpubs.com/jhofman/statistical_inference). Get the code running in R.
-  * Modeling city bike trips. Complete the assignment in [trips_vs_weather.Rmd](citibike/trips_vs_weather.Rmd). Note that in this assigment we'll predict trips per day as a function of the weather. After doing this, please add additional features that you think will be useful to predict number of trips per day.
+  * Modeling city bike trips. Complete the assignment in [trips_vs_weather.Rmd](citibike/trips_vs_weather.Rmd). Note that in this assigment we'll predict trips per day as a function of the weather. After doing this, please add additional features that you think will be useful to predict number of trips per day. Inspect the fitted model to determine which features are significant.
   * Quantify how well we can predict trips per day.
   * Reading assignment: Section 2.1 of ISL.
