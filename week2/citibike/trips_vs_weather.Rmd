@@ -1,0 +1,43 @@
+---
+title: "Citibike trips vs. weather"
+author: "your name here"
+output: html_document
+---
+
+In this assignment we'll predict number of trips per day as a function of the weahter.
+
+First, create a ``trips_per_day`` data frame that holds the total number of trips taken on each day in the data set. Then split this into a training set (``trips_per_day_train``), composed of a random 80% subset of days in the data set, and test set (``trips_per_day_test``), of the remaining 20%. Use the ``lm()`` function to fit a model for the number of trips taken on a day from the minimum recorded temperature on that day. Finally, use the ``predict()`` function to generate predictions on the training and testing data frames, and use the ``cor()`` function to compare the predicted and actual values in each data set.
+
+Repeat this procedure adding a quadratic term (k=2) for the square of the minimum temperature, and then a cubic term (k=3), etc., up to whatever degree polynomial you feel is appropriate. Hint: the ``poly()`` function is probably useful here. When you’ve fit and evaluated each of these models, make a plot of the correlation between predicted and actual values as a function of the degree of the polynomial, with one curve for the training data and one for the test data. Use this plot to determine the polynomial degree that gives the best predictive performance on the test set.
+
+If you have time, you can repeat this exercise with additional input variables (e.g., max temperature, the amount of precipitation, etc.).
+
+```{r}
+library(dplyr)
+
+# load trips and weather
+# note: you may need to change the path the trips.RData file below
+load('../../week1/citibike/trips.RData')
+
+# count the number of trips per day
+
+# join trips per day and weather for each day
+
+# randomly select 80% of the data to train the model on
+# and 20% to test on
+set.seed(42)
+num_train <- round(nrow(trips_per_day) * 0.8)
+ndx <- sample(nrow(trips_per_day), num_train)
+trips_per_day_train <- trips_per_day[ndx, ]
+trips_per_day_test <- trips_per_day[-ndx, ]
+
+# use trips_per_day_train data frame to fit your model
+# (pretend trips_per_day_test doesn't exist for now!)
+
+# evaluate the fit on trips_per_day_train and trips_per_day_test
+
+# repeat this in a for loop over k, the degree to which minimum temperature is raised
+
+# plot the train and test performance as a function of k
+
+```
