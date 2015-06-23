@@ -1,4 +1,4 @@
-# Intro to Statistics
+# Intro to Statistic and Learning
 # Day 1
 
   * Review the first chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
