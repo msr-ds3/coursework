@@ -1,5 +1,5 @@
 # Intro to Statistics and Machine Learning
-# Day 1
+## Day 1
   * See Intro to Statistics slides (to be posted shortly)
   * Write code to simulate flipping a biased coin and estimating the bias on the coin:
     * Create a function ``flip_coin(N,p)`` that simulates flipping a coin with probability ``p`` of landing heads ``N`` times and returns an estimate of the bias using the sample mean ``p_hat``
@@ -11,7 +11,7 @@
   * Review the first chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
   * See a [recent op-ed](http://www.nytimes.com/2015/06/21/opinion/sunday/whats-the-matter-with-polling.html) on recent challenges in polling
 
-# Day 2
+## Day 2
   * See Intro to Regression slides (to be posted shortly)
   * Review these tutorials on [simple linear regression](http://www.r-tutor.com/elementary-statistics/simple-linear-regression) and [multiple linear regression](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression)
   * Coin-flipping simulations review. Check out the examples and code [here](http://rpubs.com/jhofman/statistical_inference). Get the code running in R.

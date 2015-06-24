@@ -104,7 +104,7 @@ Install git, R, and RStudio:
 -->
 
 # Guest lectures
-  * [Fernando](http://research.microsoft.com/jump/164338) spoke about [regular expressions](regular-expressions.pdf)
+  * [Fernando](http://research.microsoft.com/jump/164338) spoke about [regular expressions](slides/regular-expressions.pdf)
     * See his last two slides for exercises, some of which involve the [20 newsgroups](http://qwone.com/~jason/20Newsgroups/) data
     * Use ``wget`` to download the data and ``tar zxvf <filename>`` to decompress it
   * [Amy](http://cs.brown.edu/people/faculty/amy/) gave an overview of [big-O notation](https://www.interviewcake.com/big-o-notation-time-and-space-complexity) for computational complexity
