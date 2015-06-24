@@ -1,6 +1,6 @@
 # Intro to Statistics and Machine Learning
 ## Day 1
-  * See Intro to Statistics slides (to be posted shortly)
+  * See [Intro to Statistics](slides/estimators-and-sampling.pptx] slides
   * Write code to simulate flipping a biased coin and estimating the bias on the coin:
     * Create a function ``flip_coin(N,p)`` that simulates flipping a coin with probability ``p`` of landing heads ``N`` times and returns an estimate of the bias using the sample mean ``p_hat``
 	* Run this simulation 1000 times, for all combinations of ``N = {10,100,100}`` and ``p = {0.1, 0.5, 0.9}``
@@ -9,10 +9,11 @@
 	* Create one plot of the ``p_hat`` distributions, faceted by different ``N`` values for ``p = 0.5`` using ``ggplot``
   * Inspect the Citibike trip duration data for outliers, comparing the mean and median trip length time
   * Review the first chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
+  * Also check out Chapters 7, 8, and 9 of [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/)
   * See a [recent op-ed](http://www.nytimes.com/2015/06/21/opinion/sunday/whats-the-matter-with-polling.html) on recent challenges in polling
 
 ## Day 2
-  * See Intro to Regression slides (to be posted shortly)
+  * See [Intro to Regression](slides/intro-to-regression.pptx) slides
   * Review these tutorials on [simple linear regression](http://www.r-tutor.com/elementary-statistics/simple-linear-regression) and [multiple linear regression](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression)
   * Coin-flipping simulations review. Check out the examples and code [here](http://rpubs.com/jhofman/statistical_inference). Get the code running in R.
   * Modeling city bike trips. Complete the assignment in [trips_vs_weather.Rmd](citibike/trips_vs_weather.Rmd). Note that in this assigment we'll predict trips per day as a function of the weather. After doing this, please add additional features that you think will be useful to predict number of trips per day. Inspect the fitted model to determine which features are significant.
@@ -23,3 +24,8 @@
     * What is your overall best combined model? (what features) What is the adjusted R-squared of this model?
     * What model has the best overall performance on the test set?
   * Reading assignment: Section 2.1 of ISL.
+
+## Day 3
+  * [Fernando](http://research.microsoft.com/jump/164338) gave a guest lecture on [how to read research papers](slides/reading-papers.pptx)
+  * Read [Exposure to ideologically diverse news and opinion on Facebook](http://www.sciencemag.org/content/348/6239/1130.abstract). Also check out the [supplemental material](http://www.sciencemag.org/content/348/6239/1130/suppl/DC1) and open sourced [data and code](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LDJ7MS)
+
