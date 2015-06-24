@@ -28,4 +28,5 @@
 ## Day 3
   * [Fernando](http://research.microsoft.com/jump/164338) gave a guest lecture on [how to read research papers](slides/reading-papers.pptx)
   * Read [Exposure to ideologically diverse news and opinion on Facebook](http://www.sciencemag.org/content/348/6239/1130.abstract). Also check out the [supplemental material](http://www.sciencemag.org/content/348/6239/1130/suppl/DC1) and open sourced [data and code](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LDJ7MS)
+  * Read assignment: Chapter 3 of ISL.
 
