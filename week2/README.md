@@ -42,7 +42,9 @@
     * Specifically, explore how the fit changes with different parameter values for smoothing and polynomial degree
 	* Sweep over different values for the ``nn`` smoothing parameter and ``deg`` degree parameter and evaluate the train and test performance
 	* What values of nn and deg give the best performance in terms of R-squared and RMSE on the test set?
+	* How does this compare to fits you obtained earlier in the week?
 	* Tips for using ``locfit``:
+
 ````
 # to fit number of trips to tmin with smoothing at 0.5 and 2nd degree interpolation
 model <- locfit(num_trips ~ lp(tmin, nn=0.5, deg=2), data=trips_by_day)
