@@ -16,16 +16,39 @@
   * See [Intro to Regression](slides/intro-to-regression.pptx) slides
   * Review these tutorials on [simple linear regression](http://www.r-tutor.com/elementary-statistics/simple-linear-regression) and [multiple linear regression](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression)
   * Coin-flipping simulations review. Check out the examples and code [here](http://rpubs.com/jhofman/statistical_inference). Get the code running in R.
-  * Modeling city bike trips. Complete the assignment in [trips_vs_weather.Rmd](citibike/trips_vs_weather.Rmd). Note that in this assigment we'll predict trips per day as a function of the weather. After doing this, please add additional features that you think will be useful to predict number of trips per day. Inspect the fitted model to determine which features are significant.
-  * Quantify how well we can predict trips per day. Specifically:
+  * Modeling city bike trips
+    * Complete the portion of the assignment in [trips_vs_weather.Rmd](citibike/trips_vs_weather.Rmd) for modeling trips per day as a function of the minimum recorded temperature
+    * Quantify how well we can predict trips per day for various degree polynomial function, and generate the described plots
     * What order polynomial best fits the data in terms of adjusted R-squared (use ``summary(your_model)`` to see the regression results)?
-    * Add in rain and snow to the model. How much does fit improve? Try out polynomials for each feature. How much does fit improve? What if you create a new variable ``did_rain`` which is 1 if ``rain>0`` and 0 if ``rain=0``. Run a model with this variable. Does this model out-perform including rain as a continuous measure? Do the same thing for snow.
-    * Add a column to your data frame that gives day of the week (i.e. Sat, Sun...) as a factor. A quick web search will tell you how to do this if you don't know already. Add this new ``day_of_week`` variable to your model and report the results summary (e.g. ``summary(your_model)``). What happened? How did the model treat the day of week variable? How much did fit improve?
-    * What is your overall best combined model? (what features) What is the adjusted R-squared of this model?
-    * What model has the best overall performance on the test set?
   * Reading assignment: Section 2.1 of ISL.
 
 ## Day 3
   * [Fernando](http://research.microsoft.com/jump/164338) gave a guest lecture on [how to read research papers](slides/reading-papers.pptx)
   * Read [Exposure to ideologically diverse news and opinion on Facebook](http://www.sciencemag.org/content/348/6239/1130.abstract). Also check out the [supplemental material](http://www.sciencemag.org/content/348/6239/1130/suppl/DC1) and open sourced [data and code](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/LDJ7MS)
+  * Revisit modeling the citibike trips
+    * Add additional features that you think will be useful to predict number of trips per day, for instance, rain and snow.
+    * How much does fit improve? Try out polynomials for each feature and compare the fit
+	* What if you create a new variable ``did_rain`` which is 1 if ``rain>0`` and 0 if ``rain=0``. Run a model with this variable. Does this model out-perform including rain as a continuous measure? Do the same thing for snow.
+    * Add a column to your data frame that gives day of the week (i.e. Sat, Sun...) as a factor. A quick web search will tell you how to do this if you don't know already. Add this new ``day_of_week`` variable to your model and report the results summary (e.g. ``summary(your_model)``). What happened? How did the model treat the day of week variable? How much did fit improve?
+    * What is your overall best combined model? What is the adjusted R-squared of this model?
+    * What model has the best overall performance in terms of R-squared and RMSE on the test set?
+    * Inspect the fitted model to determine which features are significant
 
+## Day 4
+  * See [these slides](http://astrostatistics.psu.edu/samsi06/tutorials/tut2larryl_all.pdf) on nonparametric inference in R, specifically [locfit](http://cran.r-project.org/web/packages/locfit/index.html)
+  * Install and load the ``locfit`` package
+  * Revisit modeling the citibike trips again, this time with ``locfit``
+    * Specifically, explore how the fit changes with different parameter values for smoothing and polynomial degree
+	* Sweep over different values for the ``nn`` smoothing parameter and ``deg`` degree parameter and evaluate the train and test performance
+	* What values of nn and deg give the best performance in terms of R-squared and RMSE on the test set?
+	* Tips for using ``locfit``:
+````
+# to fit number of trips to tmin with smoothing at 0.5 and 2nd degree interpolation
+model <- locfit(num_trips ~ lp(tmin, nn=0.5, deg=2), data=trips_by_day)
+# then the usual fitted(), predict(), etc
+
+# to plot the same data with the fitted model overlayed
+ggplot(data=trips_by_day, aes(x=tmin, y=num_trips)) +
+  geom_point() +
+  geom_smooth(method=locfit, formula=y ~ lp(x, nn=0.5, deg=2))
+````
