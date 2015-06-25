@@ -33,6 +33,7 @@
     * What is your overall best combined model? What is the adjusted R-squared of this model?
     * What model has the best overall performance in terms of R-squared and RMSE on the test set?
     * Inspect the fitted model to determine which features are significant
+  * Read assignment: Chapter 3 of ISL.
 
 ## Day 4
   * See [these slides](http://astrostatistics.psu.edu/samsi06/tutorials/tut2larryl_all.pdf) on nonparametric inference in R, specifically [locfit](http://cran.r-project.org/web/packages/locfit/index.html)
@@ -45,6 +46,7 @@
 ````
 # to fit number of trips to tmin with smoothing at 0.5 and 2nd degree interpolation
 model <- locfit(num_trips ~ lp(tmin, nn=0.5, deg=2), data=trips_by_day)
+
 # then the usual fitted(), predict(), etc
 
 # to plot the same data with the fitted model overlayed
