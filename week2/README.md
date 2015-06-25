@@ -34,6 +34,7 @@
     * What model has the best overall performance in terms of R-squared and RMSE on the test set?
     * Inspect the fitted model to determine which features are significant
   * Read assignment: Chapter 3 of ISL.
+  * See [here](http://cran.r-project.org/doc/manuals/R-intro.html#Statistical-models-in-R) for detailed information abouut specifying formulas in R
 
 ## Day 4
   * See [these slides](http://astrostatistics.psu.edu/samsi06/tutorials/tut2larryl_all.pdf) on nonparametric inference in R, specifically [locfit](http://cran.r-project.org/web/packages/locfit/index.html)
