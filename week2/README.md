@@ -57,3 +57,4 @@ ggplot(data=trips_by_day, aes(x=tmin, y=num_trips)) +
   geom_point() +
   geom_smooth(method=locfit, formula=y ~ lp(x, nn=0.5, deg=2))
 ````
+  * Review the lecture slides from today
