@@ -37,7 +37,8 @@
   * See [here](http://cran.r-project.org/doc/manuals/R-intro.html#Statistical-models-in-R) for detailed information abouut specifying formulas in R
 
 ## Day 4
-  * See [these slides](http://astrostatistics.psu.edu/samsi06/tutorials/tut2larryl_all.pdf) on nonparametric inference in R, specifically [locfit](http://cran.r-project.org/web/packages/locfit/index.html)
+  * Review the [lecture slides](slides/regression-part-2.pptx) from today
+  * Also see [these slides](http://astrostatistics.psu.edu/samsi06/tutorials/tut2larryl_all.pdf) on nonparametric inference in R, specifically [locfit](http://cran.r-project.org/web/packages/locfit/index.html)
   * Here's a (hopefully) [intuitive explanation of overfitting](http://www.quora.com/What-is-an-intuitive-explanation-of-overfitting/answers/3863608?share=1)
   * Install and load the ``locfit`` package
   * Revisit modeling the citibike trips again, this time with ``locfit``
@@ -58,4 +59,3 @@ ggplot(data=trips_by_day, aes(x=tmin, y=num_trips)) +
   geom_point() +
   geom_smooth(method=locfit, formula=y ~ lp(x, nn=0.5, deg=2))
 ````
-  * Review the lecture slides from today
