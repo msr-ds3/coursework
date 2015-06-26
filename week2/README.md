@@ -63,6 +63,7 @@ ggplot(data=trips_by_day, aes(x=tmin, y=num_trips)) +
 ## Day 5
   * Read Hadley Wickham's [Tidy Data](http://vita.had.co.nz/papers/tidy-data.pdf) paper
   * [Install swirl](https://github.com/swirldev/swirl_courses#install-and-run-a-course-automatically-from-swirl), an interactive tutorial for R, that runs in R
+    * You may need to install [libcurl](https://github.com/swirldev/swirl/wiki/Installing-swirl-on-Linux#4-install-libcurl) first: ``sudo apt-get install libcurl4-openssl-dev`` in the terminal
   * Go through the "Getting and Cleaning Data" tutorial and the ggplot2 portions of the "Exploratory Data Analysis" tutorial
 
 ```
