@@ -38,6 +38,7 @@
 
 ## Day 4
   * See [these slides](http://astrostatistics.psu.edu/samsi06/tutorials/tut2larryl_all.pdf) on nonparametric inference in R, specifically [locfit](http://cran.r-project.org/web/packages/locfit/index.html)
+  * Here's a (hopefully) [intuitive explanation of overfitting](http://www.quora.com/What-is-an-intuitive-explanation-of-overfitting/answers/3863608?share=1)
   * Install and load the ``locfit`` package
   * Revisit modeling the citibike trips again, this time with ``locfit``
     * Specifically, explore how the fit changes with different parameter values for smoothing and polynomial degree
