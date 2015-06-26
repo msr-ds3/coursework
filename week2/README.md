@@ -59,3 +59,22 @@ ggplot(data=trips_by_day, aes(x=tmin, y=num_trips)) +
   geom_point() +
   geom_smooth(method=locfit, formula=y ~ lp(x, nn=0.5, deg=2))
 ````
+
+## Day 5
+  * Read Hadley Wickham's [Tidy Data](http://vita.had.co.nz/papers/tidy-data.pdf) paper
+  * [Install swirl](https://github.com/swirldev/swirl_courses#install-and-run-a-course-automatically-from-swirl), an interactive tutorial for R, that runs in R
+  * Go through the "Getting and Cleaning Data" tutorial and the ggplot2 portions of the "Exploratory Data Analysis" tutorial
+
+```
+# install and load the library
+install.packages('swirl')
+library(swirl)
+
+# install courses
+# be patient, these downloads takes a while
+install_from_swirl("Getting and Cleaning Data")
+install_from_swirl("Exploratory Data Analysis")
+
+# run the tutorial
+swirl()
+```
