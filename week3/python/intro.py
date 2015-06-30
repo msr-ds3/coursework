@@ -49,8 +49,8 @@ d['a']
 d[35]
 d = {'jake': 34, 'justin': 32}
 d['jake']
-d['mykids'] = l[0.3, 2]
-d['mykids'] = [0.3, 2]
+d['mykids'] = l[1.2, 3.4]
+d['mykids'] = [1.2, 3.4]
 d
 d = {'jake': 34, 'justin': 32}
 'jake' in d
@@ -118,6 +118,11 @@ d['spam']['enron'] = 0
 'this is a sentence'.split()
 'this_is_a_weird_sentence'.split('_')
 'this_is_a_weird_sentence'.split()
+words = 'this is a sentence'.split()
+words
+words[0]
+first, second, third, fourth = 'this is a sentence'.split()
+first
 article = 'this is the beginning of an article'
 for word in article.split():
     print word

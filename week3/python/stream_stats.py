@@ -11,8 +11,8 @@ if __name__ == '__main__':
 
     # read input one line at a time
     for line in fileinput.input():
-
         # split on tab to get the key and value for each line
+        fields = line.rstrip('\n').split('\t')
 
         # update statistics for the group correponding to this key
         # (minimum, median, mean, and maximum)
