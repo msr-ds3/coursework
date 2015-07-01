@@ -20,7 +20,13 @@
 ## Day 3
   * Read Section 6.2 of ISL
   * Do the "Ridge Regression and Lasso" lab in Section 6.6 of ISL
-  * Go through the first 5 sections of the [glmnet vignette](http://web.stanford.edu/~hastie/glmnet/glmnet_beta.html)
+  * Go through the first 5 sections (Introduction through Logistic Regression) of the [glmnet vignette](http://web.stanford.edu/~hastie/glmnet/glmnet_beta.html)
+  * [Enable diagnostics](https://support.rstudio.com/hc/en-us/articles/205753617-Code-Diagnostics) in Rstudio:
+    * Open preferences
+    * Navigate to Global Options -> Code -> Diagnostics
+    * Check "Provide R style diagnostics"
+    * With an R file open, use Code -> Show Diagnostics to check style
+  * See the [lintr](https://github.com/jimhester/lintr) library for more style-checking tools
 
 <!-- 
   gedit: http://learnpythonthehardway.org/book/ex0.html
