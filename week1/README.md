@@ -77,8 +77,8 @@ Install git, R, and RStudio:
   * See these [Introduction to Counting](http://www.slideshare.net/jakehofman/lecture-2-44332354) slides
   * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
   * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
-  * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
-  * Review [Sean Anderson's](http://github.com/seananderson/datawranglR) [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) and reproduce the ``diamonds`` plots
+  * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) 
+  * Review Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github) and see his [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))). Reproduce the ``diamonds`` plots in these slides.
   * Review the [joins.R](r/joins.R) examples from class
   * Go through the join functions in the [dplyr two-table verb](http://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) vignette and this [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
   * Run the [load_trips.R](citibike/load_trips.R) file with data in your citibike folder to generate ``trips.RData``
