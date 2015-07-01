@@ -18,7 +18,7 @@
     * [Sample input](python/sample_input.tsv) and [output](python/sample_output.tsv) are provided, where the output gives the key followed by all statistics (min, median, mean, and max).
 
 ## Day 3
-  * Read Section 6.2 of ISL
+  * Read Sections 5,1 and 6.2 of ISL
   * Do the "Ridge Regression and Lasso" lab in Section 6.6 of ISL
   * Go through the first 5 sections (Introduction through Logistic Regression) of the [glmnet vignette](http://web.stanford.edu/~hastie/glmnet/glmnet_beta.html)
   * [Enable diagnostics](https://support.rstudio.com/hc/en-us/articles/205753617-Code-Diagnostics) in Rstudio:
