@@ -1,5 +1,5 @@
 ## Day 1
-  * See today's lecture slides (to be posted)
+  * See slides for [classification part 2](slides/classification-part2.pptx)
   * Complete the Chapter 4 lab in ISL (pgs 154-168) and write up a full lab report in an [Rmarkdown](http://rmarkdown.rstudio.com) document
   * Go through [CodeAcademy's Python tutorial](http://www.codecademy.com/en/tracks/python)
   * References
@@ -18,6 +18,7 @@
     * [Sample input](python/sample_input.tsv) and [output](python/sample_output.tsv) are provided, where the output gives the key followed by all statistics (min, median, mean, and max).
 
 ## Day 3
+  * See slides for [regularization](slides/regularization.pptx)
   * Read Sections 5,1 and 6.2 of ISL
   * Do the "Ridge Regression and Lasso" lab in Section 6.6 of ISL
   * Go through the first 5 sections (Introduction through Logistic Regression) of the [glmnet vignette](http://web.stanford.edu/~hastie/glmnet/glmnet_beta.html)
