@@ -43,3 +43,8 @@
   options: https://wiki.python.org/moin/IntegratedDevelopmentEnvironments
 -->
 <!-- repeat chapter 4 lab w/ ggplot2, broom, etc -->
+
+## Day 4
+  * [Jenn](http://www.jennwv.com) gave a guest lecture on the [perceptron algorithm](https://en.wikipedia.org/wiki/Perceptron)
+    * See [her notes](perceptron/perceptron.pdf)
+	* Complete the assignment on digit classification with your own implementation of the perceptron algorith in Python using the sample [training](perceptron/35_TrainingData.txt) and [test](perceptron/35_TestData.txt) data
