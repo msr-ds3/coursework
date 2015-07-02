@@ -29,7 +29,12 @@
     * With an R file open, use Code -> Show Diagnostics to check style
   * See the [lintr](https://github.com/jimhester/lintr) library for more style-checking tools
   * [Amy](http://cs.brown.edu/people/faculty/amy/) gave a guest lecture on recursion and functional programming
-    * See [here](http://www.u.arizona.edu/~erdmann/mse350/topics/list_comprehensions.html) for an overview of ``map``, ``filter``, ``reduce``, and list comprehensions in Python
+    * See [her notes](notes/functional_programming.txt)
+	* Additional references:
+	  * http://www.u.arizona.edu/~erdmann/mse350/topics/list_comprehensions.html
+	  * https://docs.python.org/2/howto/functional.html
+	  * http://www.python-course.eu/lambda.php
+	  * http://www.ibm.com/developerworks/library/l-prog/
 
 <!-- 
   gedit: http://learnpythonthehardway.org/book/ex0.html
