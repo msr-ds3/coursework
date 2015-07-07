@@ -20,6 +20,9 @@
   * Read the first three sections of [Zapier's Introduction to APIs](https://zapier.com/learn/apis/)
   * Complete [CodeAcademy's Sunlight API tutorial](http://www.codecademy.com/en/tracks/sunlight_python)
   * Work through this [comparison of naive Bayes and logistic regression](http://rpubs.com/jhofman/nb_vs_lr) in R
+  * Download the [TripAdvisor](tripadvisor/) reviews Said worked with in class using [download_reviews.sh](tripadvisor/download_reviews.sh)
+  * Run through the [preprocess.r](tripadvisor/preprocess.r) script to generate a document-term matrix and labels, commenting the file to explain what it does
+  * Use glmnet to fit a model to the [sparse matrix](http://amunategui.github.io/sparse-matrix-glmnet/) ``x`` of words in each document to predict the sentiment ("P" for positive, "N" for negative) in the [classification.r](tripadvisor/classification.r) script
   * References:
     * Some notes on [naive Bayes for text classification](http://modelingsocialdata.org/lectures/2015/02/27/lecture-6-classification-naive-bayes.html) including a simple [script one-word spam classifier](https://github.com/jhofman/msd2015/blob/master/lectures/lecture_6/enron_naive_bayes.sh)
     * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf) and [interactive demo](http://www.navan.name/roc/) to understand ROC curves, precision, recall, etc.
