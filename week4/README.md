@@ -9,8 +9,6 @@
 	* [Demand forecasting](http://gallery.azureml.net/Experiment/d92ab449519a46be9b8f31776c1e638b)
 	* [News categorization](http://gallery.azureml.net/Experiment/fcb1bf27ee26443fb19bd07852a620c4)
 	* [Clustering for color quantization](http://gallery.azureml.net/Experiment/92bcba7c206649c2ab2152df916dd666)
-  * [Publish a web service](https://azure.microsoft.com/en-us/documentation/articles/machine-learning-walkthrough-5-publish-web-service/) for one of these experiments
-  * Adapt the [sample python code](https://azure.microsoft.com/en-us/documentation/articles/machine-learning-connect-to-azure-machine-learning-web-service/#python_sample) to connect to your web service, pass in data, and get back a prediction
   * References:
     * See [these slides](http://www.slideshare.net/jakehofman/datadriven-modeling-lecture-10) for an overview of k-means and color quantization
 	* See [here](http://modelingsocialdata.org/lectures/2015/03/27/clustering.html) for more clustering notes
@@ -23,6 +21,8 @@
   * Download the [TripAdvisor](tripadvisor/) reviews Said worked with in class using [download_reviews.sh](tripadvisor/download_reviews.sh)
   * Run through the [preprocess.r](tripadvisor/preprocess.r) script to generate a document-term matrix and labels, commenting the file to explain what it does
   * Use glmnet to fit a model to the [sparse matrix](http://amunategui.github.io/sparse-matrix-glmnet/) ``x`` of words in each document to predict the sentiment ("P" for positive, "N" for negative) in the [classification.r](tripadvisor/classification.r) script
+  * [Publish a web service](https://azure.microsoft.com/en-us/documentation/articles/machine-learning-walkthrough-5-publish-web-service/) for one of the AzureML experiments you created yesterday
+  * Adapt the [sample python code](https://azure.microsoft.com/en-us/documentation/articles/machine-learning-connect-to-azure-machine-learning-web-service/#python_sample) to connect to your web service, pass in data, and get back a prediction
   * References:
     * Some notes on [naive Bayes for text classification](http://modelingsocialdata.org/lectures/2015/02/27/lecture-6-classification-naive-bayes.html) including a simple [script one-word spam classifier](https://github.com/jhofman/msd2015/blob/master/lectures/lecture_6/enron_naive_bayes.sh)
     * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf) and [interactive demo](http://www.navan.name/roc/) to understand ROC curves, precision, recall, etc.

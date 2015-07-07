@@ -32,18 +32,18 @@ dim(dtm)
 
 write.csv(
   data.frame(i=dtm$i, j=dtm$j, v=dtm$v),
-             "c:\\temp\\ta_dtm_sparse.csv", row.names=F)
+             "ta_dtm_sparse.csv", row.names=F)
 
 write.csv(
-  data.frame(Vocab=Terms(dtm)),"c:\\temp\\vocab.csv", row.names=F)
+  data.frame(Vocab=Terms(dtm)),"vocab.csv", row.names=F)
 
 
 write.csv(
-  data.frame(Label=data$Label),"c:\\temp\\labels.csv", row.names=F)
+  data.frame(Label=data$Label),"labels.csv", row.names=F)
 
 
 # write dense document-term matrix
-#write.csv(  data.frame(data$Label, (as.matrix(dtm)), "c:\\temp\\ta_dtm.csv", row.names=F))
+#write.csv(  data.frame(data$Label, (as.matrix(dtm)), "ta_dtm.csv", row.names=F))
 
 # write sparse document-term matrix
 
