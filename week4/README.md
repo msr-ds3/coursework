@@ -20,7 +20,8 @@
   * Work through this [comparison of naive Bayes and logistic regression](http://rpubs.com/jhofman/nb_vs_lr) in R
   * Download the [TripAdvisor](tripadvisor/) reviews Said worked with in class using [download_reviews.sh](tripadvisor/download_reviews.sh)
   * Run through the [preprocess.r](tripadvisor/preprocess.r) script to generate a document-term matrix and labels, commenting the file to explain what it does
-  * Use glmnet to fit a model to the [sparse matrix](http://amunategui.github.io/sparse-matrix-glmnet/) ``x`` of words in each document to predict the sentiment ("P" for positive, "N" for negative) in the [classification.r](tripadvisor/classification.r) script
+  * Use glmnet to fit a model to the [sparse matrix](http://amunategui.github.io/sparse-matrix-glmnet/) ``x`` of words in each document to predict the sentiment in the ``y`` vector ("P" for positive, "N" for negative) in the [classification.r](tripadvisor/classification.r) script
+  * Compare this to naive Bayes, for which you'll need to use the dense matrix representation
   * [Publish a web service](https://azure.microsoft.com/en-us/documentation/articles/machine-learning-walkthrough-5-publish-web-service/) for one of the AzureML experiments you created yesterday
   * Adapt the [sample python code](https://azure.microsoft.com/en-us/documentation/articles/machine-learning-connect-to-azure-machine-learning-web-service/#python_sample) to connect to your web service, pass in data, and get back a prediction
   * References:
