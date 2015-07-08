@@ -72,7 +72,7 @@ data = data[!is.na(data$mavd), ]
 
 table(data$Country)
 
-write.csv(data, "c:\\temp\\namesdata.csv", row.names=F)
+write.csv(data, "namesdata.csv", row.names=F)
 
 # http://en.wikipedia.org/wiki/List_of_Unicode_characters
 # basic latin: 97-122

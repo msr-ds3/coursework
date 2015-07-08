@@ -29,4 +29,7 @@
     * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf) and [interactive demo](http://www.navan.name/roc/) to understand ROC curves, precision, recall, etc.
 
 ## Day 3
-  * New reading assignment: [A Few Useful Things to Know About Machine Learning](https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf)
+  * See Said's [name origin classifier](nameorigin/)
+  * Work through the [main.R](nameorigin/R/main.R) script to generate training data for name classification, commenting the file to explain what it does
+  * Use this to train a name classifier in AzureML and create a web service using the trained model
+  * New reading assignment, to be discussed next week: [A Few Useful Things to Know About Machine Learning](https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf)
