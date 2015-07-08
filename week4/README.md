@@ -27,3 +27,6 @@
   * References:
     * Some notes on [naive Bayes for text classification](http://modelingsocialdata.org/lectures/2015/02/27/lecture-6-classification-naive-bayes.html) including a simple [script one-word spam classifier](https://github.com/jhofman/msd2015/blob/master/lectures/lecture_6/enron_naive_bayes.sh)
     * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf) and [interactive demo](http://www.navan.name/roc/) to understand ROC curves, precision, recall, etc.
+
+## Day 3
+  * New reading assignment: [A Few Useful Things to Know About Machine Learning](https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf)
