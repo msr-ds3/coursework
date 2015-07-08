@@ -1,7 +1,8 @@
 # dataset: http://times.cs.uiuc.edu/~wang296/Data/
+#http://times.cs.uiuc.edu/~wang296/Data/LARA/TripAdvisor/Review_Texts.zip
 
-# set working directory to the path of this script
-dataFolder = "data"
+
+dataFolder = "c:/temp/tadata"
 filenames = list.files(dataFolder,full.names = T)
 text = sapply(filenames, GetText)
 text = unlist(text)
@@ -21,7 +22,15 @@ subset = c(
 data = data[subset, ]
 
 library(RWeka)
-tokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 2))
+tokenizer = function(x) NGramTokenizer(x, Weka_control(min = 1, max = 2))
+#OR:
+tokenizer = function(s) {  
+  w = unlist(strsplit(as.character(s) , " "))
+  l = length(w) - 1 
+  c(paste(w[1:l] , w[2:(l+1)], sep=" "), w)  
+}
+
+
 
 dtm = GetDTM(data$Text, tokenizer= tokenizer)
 
@@ -30,20 +39,24 @@ dtm = removeSparseTerms(dtm, 0.995)
 dim(dtm)
 
 
+
+# (optional) write files
 write.csv(
   data.frame(i=dtm$i, j=dtm$j, v=dtm$v),
-             "ta_dtm_sparse.csv", row.names=F)
+             "c:\\temp\\ta_dtm_sparse.csv", row.names=F)
 
 write.csv(
-  data.frame(Vocab=Terms(dtm)),"vocab.csv", row.names=F)
+  data.frame(Vocab=Terms(dtm)),"c:\\temp\\vocab.csv", row.names=F)
 
 
 write.csv(
-  data.frame(Label=data$Label),"labels.csv", row.names=F)
+  data.frame(Label=data$Label),"c:\\temp\\labels.csv", row.names=F)
 
 
-# write dense document-term matrix
-#write.csv(  data.frame(data$Label, (as.matrix(dtm)), "ta_dtm.csv", row.names=F))
 
-# write sparse document-term matrix
+
+
+
+
+
 

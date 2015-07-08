@@ -24,7 +24,7 @@ GetDTM = function(text, dictionary = NULL, tokenizer=NULL){
                                         removePunctuation = F,
                                         removeNumbers = T,
                                         weighting = weightBin,
-                                        Dictionary = dictionary))
+                                        dictionary = dictionary))
 }
 
 Evaluate = function(pred, actual){
@@ -43,3 +43,12 @@ Evaluate = function(pred, actual){
   print(paste("recall:", recall))
   print(paste("F1:", F1))
 }
+
+
+tokenize = function(s) {  
+  w = unlist(strsplit(as.character(s) , " "))
+  l = length(w) - 1 
+  c(paste(w[1:l] , w[2:(l+1)], sep=" "), w)  
+}
+
+
