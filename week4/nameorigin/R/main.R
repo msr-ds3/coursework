@@ -2,18 +2,22 @@
 data_url = "https://raw.githubusercontent.com/enorvelle/NameDatabases/master/NamesDatabases/surnames"
 country_codes = c("it", "pt", "pl", "cz", "fr", "de", "es")
 
+library(RCurl)
 GetSurnames = function(country_code, data_url){
   url = paste(data_url, country_code, sep ="/")
   url = paste(url, "txt", sep=".")
-  download.file(url = url, destfile = "C:/temp/tempnamesfile.txt")
-  surnames = readLines("C:/temp/tempnamesfile.txt")
+  surnames = getURL(url)
+  surnames = strsplit(names2, split = "\n")
+  surnames = unlist(names2)
   df = data.frame(Surname = surnames)
   df$Country = country_code
   return(df)
 }
 
 data = sapply(country_codes, GetSurnames, data_url = data_url, simplify = F)
+
 data = do.call(rbind, data)
+
 rownames(data) = NULL
 table(data$Country)
 data$Surname = as.character(data$Surname)
@@ -21,7 +25,7 @@ data = data[data$Surname != "", ]
 
 subset = c(
   which(data$Country=="it"),
-  which(data$Country=="fr"),
+  which(data$Country=="fr"),  
   which(data$Country=="pt"),
   sample(which(data$Country=="de"), size = 5500, replace = F),
   sample(which(data$Country=="es"), size = 5500, replace = F)
