@@ -45,7 +45,7 @@
 
 ## Day 4
   * [David Abel](http://cs.brown.edu/~dabel/) is guest lecturing on computer vision today.
-  * First we'll talk about (Change Blindness)[https://en.wikipedia.org/wiki/Change_blindness]
-  * If you'd like, take a look at these readings on (features)[http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_meaning/py_features_meaning.html#features-meaning]
-  * We'll talk histograms and go through this (Histogram Demo)[http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_histograms/py_histogram_begins/py_histogram_begins.html]
-  * Data-driven techniques in computer vision
+  * First we'll talk about [Change Blindness](https://en.wikipedia.org/wiki/Change_blindness)
+  * If you'd like, take a look at this reading on [features](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_meaning/py_features_meaning.html#features-meaning)
+  * We'll talk histograms and corner detection and go through this [Histogram Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_histograms/py_histogram_begins/py_histogram_begins.html) as well as this [Corner Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html#harris-corners) (feel free to ignore the math, we won't go into detail)
+  * Rest of class: Object recognition and Data-driven techniques in computer vision!
