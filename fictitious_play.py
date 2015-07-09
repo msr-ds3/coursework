@@ -1,3 +1,4 @@
+# Download and install numpy from http://docs.scipy.org/doc/numpy/index.html
 import numpy as np
 
 ### Matching pennies
