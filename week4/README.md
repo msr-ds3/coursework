@@ -49,3 +49,8 @@
   * If you'd like, take a look at this reading on [features](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_meaning/py_features_meaning.html#features-meaning)
   * We'll talk histograms and corner detection and go through this [Histogram Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_histograms/py_histogram_begins/py_histogram_begins.html) as well as this [Corner Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html#harris-corners) (feel free to ignore the math, we won't go into detail)
   * Rest of class: Object recognition and Data-driven techniques in computer vision!
+  * Useful Resources:
+    * Excellent Computer Vision textbook freely available online [here](http://szeliski.org/Book/)
+    * Python's SimpleCV library has some nice tutorials to get you started in python, available [here](http://tutorial.simplecv.org/en/latest/)
+    * James Hays' course on Computer Vision, assignments and slides available [here](http://cs.brown.edu/courses/cs143/)
+    * Alexei Efros' course on Learning-Based Methods in vision with slides and recent scientific papers available [here](https://docs.google.com/document/pub?id=1jGBn7zPDEaU33fJwi3YI_usWS-U6gpSSJotV_2gDrL0)
