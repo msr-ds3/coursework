@@ -33,3 +33,11 @@
   * Work through the [main.R](nameorigin/R/main.R) script to generate training data for name classification, commenting the file to explain what it does
   * Use this to train a name classifier in AzureML and create a web service using the trained model
   * New reading assignment, to be discussed next week: [A Few Useful Things to Know About Machine Learning](https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf)
+
+## Day 4
+  * Game theory, guest lecture by Vasilis (see [notes](nameorigin/Game_theory_notes.pdf))
+  * Dominant strategies, Nash equilibrium, Mixed Nash equilibrium, zero-sum games, fictitious play, no-regret learning
+  * Assignment: implement fictitious play for two player normal form games in python, using [numpy](http://www.numpy.org/)
+  * Resources:
+	* Chapter 1 of Algorithmic Game Theory book: [AGT book](http://www.cambridge.org/journals/nisan/downloads/Nisan_Non-printable.pdf)
+	* Lecture notes on zero-sum games and fictitious play by Daskalakis: [Lecture 1](http://people.csail.mit.edu/costis/6896sp10/lec2.pdf), [Lecture 2](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf), [Lecture 3](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf)
