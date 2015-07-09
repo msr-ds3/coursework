@@ -35,7 +35,7 @@
   * New reading assignment, to be discussed next week: [A Few Useful Things to Know About Machine Learning](https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf)
 
 ## Day 4
-  * Game theory, guest lecture by Vasilis (see [notes](nameorigin/Game_theory_notes.pdf))
+  * Game theory, guest lecture by Vasilis (see [notes](Game_theory_notes.pdf))
   * Dominant strategies, Nash equilibrium, Mixed Nash equilibrium, zero-sum games, fictitious play, no-regret learning
   * Assignment: implement fictitious play for two player normal form games in python, using [numpy](http://www.numpy.org/)
   * Resources:
