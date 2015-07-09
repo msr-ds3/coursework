@@ -43,9 +43,9 @@
 	* Lecture notes on zero-sum games and fictitious play by Daskalakis: [Lecture 1](http://people.csail.mit.edu/costis/6896sp10/lec2.pdf), [Lecture 2](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf), [Lecture 3](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf)
 	* Relevant courses in CS schools: [Cornell](http://www.cs.cornell.edu/Courses/CS6840/2014sp/), [Stanford](http://theory.stanford.edu/~tim/f13/f13.html), [MIT](https://stellar.mit.edu/S/course/6/sp15/6.891/materials.html)
 
-## Day 4
+## Day 5
   * [David Abel](http://cs.brown.edu/~dabel/) is guest lecturing on computer vision today.
-  * First we'll talk about [Change Blindness](https://en.wikipedia.org/wiki/Change_blindness)
+  * First we'll talk about [Change Blindness](https://en.wikipedia.org/wiki/Change_blindness) and talk a bit about [mammal vision](https://www.youtube.com/watch?v=KE952yueVLA)
   * If you'd like, take a look at this reading on [features](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_meaning/py_features_meaning.html#features-meaning)
   * We'll talk histograms and corner detection and go through this [Histogram Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_histograms/py_histogram_begins/py_histogram_begins.html) as well as this [Corner Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html#harris-corners) (feel free to ignore the math, we won't go into detail)
   * Rest of class: Object recognition and Data-driven techniques in computer vision!
