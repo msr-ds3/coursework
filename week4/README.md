@@ -41,3 +41,4 @@
   * Resources:
 	* Chapter 1 of Algorithmic Game Theory book: [AGT book](http://www.cambridge.org/journals/nisan/downloads/Nisan_Non-printable.pdf)
 	* Lecture notes on zero-sum games and fictitious play by Daskalakis: [Lecture 1](http://people.csail.mit.edu/costis/6896sp10/lec2.pdf), [Lecture 2](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf), [Lecture 3](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf)
+	* Relevant courses in CS schools: [Cornell](http://www.cs.cornell.edu/Courses/CS6840/2014sp/), [Stanford](http://theory.stanford.edu/~tim/f13/f13.html), [MIT](https://stellar.mit.edu/S/course/6/sp15/6.891/materials.html)
