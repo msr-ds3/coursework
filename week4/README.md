@@ -33,3 +33,24 @@
   * Work through the [main.R](nameorigin/R/main.R) script to generate training data for name classification, commenting the file to explain what it does
   * Use this to train a name classifier in AzureML and create a web service using the trained model
   * New reading assignment, to be discussed next week: [A Few Useful Things to Know About Machine Learning](https://homes.cs.washington.edu/~pedrod/papers/cacm12.pdf)
+
+## Day 4
+  * Game theory, guest lecture by Vasilis (see [notes](Game_theory_notes.pdf))
+  * Dominant strategies, Nash equilibrium, Mixed Nash equilibrium, zero-sum games, fictitious play, no-regret learning
+  * Assignment: implement fictitious play for two player normal form games in python, using [numpy](http://www.numpy.org/)
+  * Resources:
+	* Chapter 1 of Algorithmic Game Theory book: [AGT book](http://www.cambridge.org/journals/nisan/downloads/Nisan_Non-printable.pdf)
+	* Lecture notes on zero-sum games and fictitious play by Daskalakis: [Lecture 1](http://people.csail.mit.edu/costis/6896sp10/lec2.pdf), [Lecture 2](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf), [Lecture 3](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf)
+	* Relevant courses in CS schools: [Cornell](http://www.cs.cornell.edu/Courses/CS6840/2014sp/), [Stanford](http://theory.stanford.edu/~tim/f13/f13.html), [MIT](https://stellar.mit.edu/S/course/6/sp15/6.891/materials.html)
+
+## Day 5
+  * [David Abel](http://cs.brown.edu/~dabel/) is guest lecturing on computer vision today.
+  * First we'll talk about [Change Blindness](https://en.wikipedia.org/wiki/Change_blindness) and talk a bit about [mammal vision](https://www.youtube.com/watch?v=KE952yueVLA)
+  * If you'd like, take a look at this reading on [features](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_meaning/py_features_meaning.html#features-meaning)
+  * We'll talk histograms and corner detection and go through this [Histogram Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_imgproc/py_histograms/py_histogram_begins/py_histogram_begins.html) as well as this [Corner Demo](http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html#harris-corners) (feel free to ignore the math, we won't go into detail)
+  * Rest of class: Object recognition and Data-driven techniques in computer vision!
+  * Useful Resources:
+    * Excellent Computer Vision textbook freely available online [here](http://szeliski.org/Book/)
+    * Python's SimpleCV library has some nice tutorials to get you started in python, available [here](http://tutorial.simplecv.org/en/latest/)
+    * James Hays' course on Computer Vision, assignments and slides available [here](http://cs.brown.edu/courses/cs143/)
+    * Alexei Efros' course on Learning-Based Methods in vision with slides and recent scientific papers available [here](https://docs.google.com/document/pub?id=1jGBn7zPDEaU33fJwi3YI_usWS-U6gpSSJotV_2gDrL0)
