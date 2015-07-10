@@ -60,11 +60,6 @@
   * Resources:
     * Lecture slides are available [here](network_flows/network-flows.pptx).
     * We'll use the [NetworkX](https://networkx.github.io/) python package to demo the algorithms.
-    * The demo is available [here](network_flows/network-flows.ipynb) as an [IPython notebook](http://ipython.org/notebook.html).
-    * The python script is [here](network_flows/network-flows.py).
-    * Suggested steps to install and run an ipython notebook:
-      1. sudo apt-get install setuptools
-      2. pip install networkx
-      3. pip install "ipython[notebook]"
-      4. ipython notebook network-flows.ipynb
-    
+    * The demo is available [here](network_flows/network-flows.ipynb) as an [IPython notebook](http://ipython.org/notebook.html) and [here](network_flows/network-flows.py) as a Python script.
+    * A solution to Problem 1 has now been added to the notebook and script.
+    * A solution to Problem 2 will be added by the end of the weekend.
