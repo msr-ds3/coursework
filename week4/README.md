@@ -55,3 +55,10 @@
     * Python's SimpleCV library has some nice tutorials to get you started in python, available [here](http://tutorial.simplecv.org/en/latest/)
     * James Hays' course on Computer Vision, assignments and slides available [here](http://cs.brown.edu/courses/cs143/)
     * Alexei Efros' course on Learning-Based Methods in vision with slides and recent scientific papers available [here](https://docs.google.com/document/pub?id=1jGBn7zPDEaU33fJwi3YI_usWS-U6gpSSJotV_2gDrL0)
+
+  * [Sébastien Lahaie](http://slahaie.net/) is lecturing on network flows today in the afternoon.
+  * Resources:
+    * Lecture slides are available [here](network_flows/network-flows.pptx).
+    * We'll use the [NetworkX](https://networkx.github.io/) python package to demo the algorithms.
+    * The demo is available [here](network_flows/network-flows.ipynb) as an [IPython notebook](http://ipython.org/notebook.html).
+    
