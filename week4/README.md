@@ -38,6 +38,7 @@
   * Game theory, guest lecture by Vasilis (see [notes](Game_theory_notes.pdf))
   * Dominant strategies, Nash equilibrium, Mixed Nash equilibrium, zero-sum games, fictitious play, no-regret learning
   * Assignment: implement fictitious play for two player normal form games in python, using [numpy](http://www.numpy.org/)
+  * Solution to assigmnent: [here](fictitious.py)
   * Resources:
 	* Chapter 1 of Algorithmic Game Theory book: [AGT book](http://www.cambridge.org/journals/nisan/downloads/Nisan_Non-printable.pdf)
 	* Lecture notes on zero-sum games and fictitious play by Daskalakis: [Lecture 1](http://people.csail.mit.edu/costis/6896sp10/lec2.pdf), [Lecture 2](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf), [Lecture 3](http://people.csail.mit.edu/costis/6896sp10/lec3.pdf)
