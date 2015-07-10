@@ -23,14 +23,14 @@ def _setupClasses():
         # Get first class
         class_1 = raw_input("Enter first class name: ")
         while not os.path.isdir(namespaceCV.CALTECH + class_1):
-            print "Did not recognize class name:", class_1
-            class_1 = raw_input("Enter first class name: ")
+            print "Did not recognize class name:", class_1, "\n"
+            class_1 = raw_input("Re-enter first class name: ")
 
         # Get second class
         class_2 = raw_input("Enter second class name: ")
         while not os.path.isdir(namespaceCV.CALTECH + class_2):
-            print "Did not recognize class name:", class_1
-            class_2 = raw_input("Enter second class name: ")
+            print "Did not recognize class name:", class_2, "\n" 
+            class_2 = raw_input("Re-enter second class name: ")
     else:
         class_1 = "hedgehog"
         class_2 = "accordion"
@@ -53,7 +53,6 @@ def _featurizeDataForClass( class_data ):
     temp = []
 
     # Initiate SIFT detector
-    orb = cv2.ORB()
     for raw_image in class_data:
         # Apply favorite feature..
         result = np.array(_histograms(raw_image))
@@ -73,10 +72,11 @@ def _histograms( raw_image ):
     '''
     # Convert to numpy
     numpy_image = raw_image.getNumpyCv2()
-    color = ['b']
+    color = ['b','g','r']
     histograms = []
     for i,col in enumerate(color):
         histograms.append(cv2.calcHist([numpy_image],[i],None,[256],[0,256]))
+
         
     return histograms
 
@@ -89,7 +89,9 @@ def _sift(raw_image):
     Returns:
         (list): containing all sift keypoints
     '''
-    
+    orb = cv2.ORB()
+    numpy_image = raw_image.getNumpyCv2()
+
     # APPLY FEATURES HERE
     all_keypoints, des1 = orb.detectAndCompute(numpy_image,None) # Finds sift keypoints
     keypoints = [all_keypoints[i].pt for i in range(len(all_keypoints))]
@@ -102,27 +104,31 @@ def _split_into_labeled_unlabeled( img_class ):
         img_class (str): Specifies which class of images we're dealing with
 
     Summary:
-        Splits the data for the specified class into a training set and holds out a small set for evaluation.
+        Splits the data for the specified class into a training set ('labeled') and holds out a small set ('unlabeled') for evaluation.
     '''
     
+    # Grab all images in this class
     files = [ f for f in os.listdir(namespaceCV.CALTECH + img_class + "/") if os.path.isfile(os.path.join(namespaceCV.CALTECH + img_class + "/",f)) ]
+    
+    # First loop dump images into labeled, second loop dump some labels in unlabeled
+    dirs_to_make = ["/labeled", "/unlabeled"]
+    itr = 0
+    for directory in dirs_to_make:
+        if (not os.path.isdir(namespaceCV.CALTECH + img_class + directory)):
+            # If the directory didn't exist, make it
+            os.mkdir(namespaceCV.CALTECH + img_class + directory)
 
-    if not os.path.isdir(namespaceCV.CALTECH + img_class + "/labeled"):
-        # Grab all but the last namespaceCV.NUMTEST of images for training
-        os.mkdir(namespaceCV.CALTECH + img_class + "/labeled")
-
-        # Copy them over into the training directory
-        for i in range(len(files) - namespaceCV.NUMTEST):
-            shutil.copy(namespaceCV.CALTECH + img_class + "/" + files[i], namespaceCV.CALTECH + img_class + "/labeled")
-
-    if not os.path.isdir(namespaceCV.CALTECH + img_class + "/unlabeled"):
-        # Grab namespaceCV.NUMTEST of images for evaluating
-        os.mkdir(namespaceCV.CALTECH + img_class + "/unlabeled")
-
-        # Copy them over into the evaluation directory
-        for i in range(1,namespaceCV.NUMTEST + 1):
-            shutil.copy(namespaceCV.CALTECH + img_class + "/" + files[-i], namespaceCV.CALTECH + img_class + "/unlabeled")
-
+        if os.listdir(namespaceCV.CALTECH + img_class + directory) == []:
+            # If it's empty add stuff
+            if itr == 0:
+                # Copy files over into the training directory
+                for i in range(len(files) - namespaceCV.NUMTEST):
+                    shutil.copy(namespaceCV.CALTECH + img_class + "/" + files[i], namespaceCV.CALTECH + img_class + directory)
+            else:
+                # Copy them over into the evaluation directory
+                for i in range(1,namespaceCV.NUMTEST + 1):
+                    shutil.copy(namespaceCV.CALTECH + img_class + "/" + files[-i], namespaceCV.CALTECH + img_class + "/unlabeled")
+        itr += 1
 
 
 def main():
@@ -145,8 +151,6 @@ def main():
     class_1_features = _featurizeDataForClass(class_1_data)
     class_2_features = _featurizeDataForClass(class_2_data)
     
-    print len(class_1_features), len(class_2_features)
-
     # Create full data set and labels
     full_data = np.array(np.ndarray.tolist(class_1_features) + np.ndarray.tolist(class_2_features))
     labels = np.array([0 for i in range(len(class_1_features))] + [1 for i in range(len(class_2_features))])
@@ -159,8 +163,8 @@ def main():
     # ---- PREDICTION ----
 
     print 'Running prediction on class 1'
-    unlabaled_class_1 = ImageSet(data_path + class_1 + "/" + namespaceCV.UNLABELED)
-    featurized_class_1_predict = _featurizeDataForClass(unlabaled_class_1)
+    unlabeled_class_1 = ImageSet(data_path + class_1 + "/" + namespaceCV.UNLABELED)
+    featurized_class_1_predict = _featurizeDataForClass(unlabeled_class_1)
 
     predictions_1 = svc.predict(featurized_class_1_predict)
     probabilities_1 = log_reg.predict_proba(featurized_class_1_predict)
