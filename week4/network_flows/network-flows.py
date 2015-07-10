@@ -52,7 +52,7 @@ G.edge['v']['t']['capacity'] = 20
 
 # In[4]:
 
-flow_value, flow = nx.maximum_flow(G, 's', 't')
+flow_value, maximum_flow = nx.maximum_flow(G, 's', 't')
 
 # this gives a cleaner way to print out the flow
 def print_flow(flow):
@@ -63,7 +63,7 @@ def print_flow(flow):
 
 print 'Flow value =', flow_value
 print 'Flow ='
-print_flow(flow)
+print_flow(maximum_flow)
 
 
 # The maximum flow should equal the minimum cut.
@@ -93,7 +93,7 @@ G.node['v']['demand'] = 0
 
 # We'll create a copy of the graph to extend it and solve the flow-with-demands problem as a max-flow problem.
 
-# In[13]:
+# In[7]:
 
 # create deep copy of the graph
 GD = G.copy()
@@ -115,20 +115,20 @@ for node in G.nodes():
 
 # Let's draw this new graph to check that it's correct.
 
-# In[19]:
+# In[8]:
 
 nx.draw_circular(GD, with_labels=True, node_color='w', node_size=1000)
 
 
 # Now we compute the max flow to obtain the flow with demands.
 
-# In[20]:
+# In[9]:
 
-flow_value, flow = nx.maximum_flow(GD, 'source', 'terminal')
+flow_value, flow_with_demands = nx.maximum_flow(GD, 'source', 'terminal')
 
 print 'Flow value =', flow_value
 print 'Flow ='
-print_flow(flow)
+print_flow(flow_with_demands)
 
 
 # This is a valid solution, but it's not the same as the one we had in class!
@@ -137,7 +137,7 @@ print_flow(flow)
 # 
 # Let's now solve for the min-cost flow of the example we had in class. We have already added capacities and demands to our network. We finally need to introduce edge costs (weights).
 
-# In[21]:
+# In[10]:
 
 G.edge['s']['u']['weight'] = 1
 G.edge['s']['v']['weight'] = 1
@@ -148,10 +148,10 @@ G.edge['v']['t']['weight'] = 2
 
 # Now we can just call the min-cost flow function. Note that we could have used this to solve the flow-with-demands problem, just by setting all the costs (weights) to 0.
 
-# In[22]:
+# In[11]:
 
-flow = nx.min_cost_flow(G)
-print_flow(flow)
+minimum_cost_flow = nx.min_cost_flow(G)
+print_flow(minimum_cost_flow)
 
 
 # This is the same as the maximum flow found in class. For this example, the maximum flow is unique.
@@ -161,3 +161,68 @@ print_flow(flow)
 # 1. Construct the bipartite graph from the example application in the slides and find a matching using max flow.
 # 
 # 2. Write a function to compute a conformal decomposition of a flow with demands, and run it on the flows found in the Flows with Demands and Min-Cost Flow sections above.
+
+# ### Solution 1
+# 
+# For the first problem, we form the network by hand then solve max flow using new source and sink vertices, imposing a capacity of 1 on all edges.
+
+# In[12]:
+
+B = nx.Graph()
+# the nodes
+B.add_nodes_from([1,2,3,4], right=0)
+B.add_nodes_from('abcd', right=1)
+# the edges
+B.add_edges_from([(1, 'a'), (1, 'b'), (1,'c')])
+B.add_edges_from([(2,'b'), (2,'d')])
+B.add_edges_from([(3, 'b'), (3, 'c')])
+B.add_edges_from([(4, 'c')])
+
+
+# Let's first convert the graph to a directed graph. If we just use the digraph constructor, we get edges in both directions, so we need to remove edges from the right-hand side to left-hand side nodes.
+
+# In[13]:
+
+BD = nx.DiGraph(B)
+for (u,v) in BD.edges():
+    # check whether v is on the right-hand side
+    if not BD.node[v]['right']:
+        BD.remove_edge(u, v)
+
+
+# Now add the source and target nodes, and link them to the current nodes.
+
+# In[14]:
+
+BD.add_node('source')
+BD.add_node('terminal')
+# we have to be careful to interate over nodes in B, not BD (i.e., we want to exclude source and target)
+for n in B.nodes():
+    if B.node[n]['right']:
+        BD.add_edge(n, 'terminal')
+    else:
+        BD.add_edge('source', n)
+    
+
+
+# Finally, add a capacity of 1 to each edge, and solve the max flow problem.
+
+# In[15]:
+
+for (u,v) in BD.edges():
+    BD.edge[u][v]['capacity'] = 1
+flow_value, matching_flow = nx.maximum_flow(BD, 'source', 'terminal')
+
+
+# We can now remove the source and target we introduced, and print out the matching.
+
+# In[16]:
+
+BD.remove_node('source')
+BD.remove_node('terminal')
+
+print 'Matching size =', flow_value
+for (u,v) in BD.edges():
+    if matching_flow[u][v] == 1:
+        print (u,v) 
+
