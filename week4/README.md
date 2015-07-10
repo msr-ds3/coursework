@@ -65,5 +65,5 @@
       1. sudo apt-get install setuptools
       2. pip install networkx
       3. pip install "ipython[notebook]"
-      4. ipython notebook
+      4. ipython notebook network-flows.ipynb
     
