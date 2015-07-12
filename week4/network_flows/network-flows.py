@@ -160,7 +160,7 @@ print_flow(minimum_cost_flow)
 # 
 # 1. Construct the bipartite graph from the example application in the slides and find a matching using max flow.
 # 
-# 2. Write a function to compute a conformal decomposition of a flow with demands, and run it on the flows found in the Flows with Demands and Min-Cost Flow sections above.
+# 2. Write a function to compute a conformal decomposition of a flow with demands, and run it on the flows found in the "Min-Cost Flow" section above.
 
 # ### Solution 1
 # 
@@ -225,4 +225,129 @@ print 'Matching size =', flow_value
 for (u,v) in BD.edges():
     if matching_flow[u][v] == 1:
         print (u,v) 
+
+
+# ### Solution 2
+# 
+# The flow returned by the  <code>min_cost_flow</code>  function in NetworkX takes the form of a dict of dicts, yielding the flow over an edge (u,v) via <code>flow[u][v]</code>. We'll first introduce a function to re-create a network from the flow, omitting any edges with flow of 0.
+
+# In[27]:
+
+def create_network(flow):
+    """ Creates a network from the given flow dict, omitting edges with flow of 0.
+    
+    Parameters
+    ----------
+    flow : dict
+        the flows along each edge
+        
+    Returns
+    -------
+    network : DiGraph
+        the network re-created from the edge flows, with flows recorded on edges
+    """
+    network = nx.DiGraph()
+    edges = [(u,v) for u in flow.keys() for v in flow[u].keys()]
+    for (u,v) in edges:
+        if flow[u][v] > 0:
+            network.add_edge(u,v)
+            network.edge[u][v]['flow'] = flow[u][v]
+    return network
+
+
+# Next let's add a function that adds source and terminal nodes to the network, with the source connected to supply nodes, and the terminal connected to demand nodes. This is the standard transformation we used to go from a flow-with-demands problem to a max-flow problem. It is useful to define a helper function that identifies the supply and demand nodes from the flow.
+
+# In[47]:
+
+def divergence(network):
+    """ Computes the divergence vector of the flow, meaning the net flow into each node (which may be negative).
+    
+    Parameters
+    ----------
+    network : DiGraph
+        the network represented by the flow
+        
+    Returns
+    -------
+    div : dict
+        the total flow into each node
+    """
+    for n in network.nodes():
+        outflow = sum(network.edge[n][s]['flow'] for s in network.successors(n))
+        inflow = sum(network.edge[p][n]['flow'] for p in network.predecessors(n))
+        network.node[n]['demand'] = inflow - outflow
+    div = {n : network.node[n]['demand'] for n in network.nodes()}
+    return div
+
+def extend_network(network):
+    """ Adds a source node connected to all supply nodes, and a terminal node connected to all demand nodes.
+    
+    Parameters
+    ----------
+    network : DiGraph
+        the network represented by the flow    
+    """
+    # first compute the demands at each node
+    divergence(network)
+    # now add edges to new source and terminal
+    for n in network.nodes():
+        demand = network.node[n]['demand']
+        # check for supply node
+        if demand < 0:
+            network.add_edge('_source', n)
+            network.edge['_source'][n]['flow'] = -demand
+        # check for demand node
+        if demand > 0:
+            network.add_edge(n, '_terminal')
+            network.edge[n]['_terminal']['flow'] = demand
+
+
+# Now the process is to repeatedly find a path from the source to the terminal, find the minimum flow along the path, and remove that path flow. The decomposition continues until there is no longer a path from source to terminal, or in other words, from a supply node to a demand node. 
+
+# In[58]:
+
+def conformal_decomposition(flow):
+    """ Computes a conformal decomposition of the given flow.
+    
+    Parameters
+    ----------
+    flow : dict
+        the flows along each edge
+        
+    Returns
+    -------
+    decomposition : list
+        a list of pairs consisting of paths and flow amounts, where paths are lists of nodes
+    """
+    # first create the network from the flow, then add source and terminal
+    network = create_network(flow)
+    extend_network(network)
+    # repeat until there is no longer a path from source to terminal
+    decomposition = []
+    while True:
+        # an exception is thrown when there is no path
+        try:
+            path = nx.shortest_path(network, source='_source', target='_terminal')
+        except nx.NetworkXNoPath:
+            break
+        minflow = min(network.edge[path[i]][path[i+1]]['flow'] for i in range(len(path)-1))
+        # remove source and terminal from the path description
+        decomposition.append((path[1:-1], minflow))
+        # subtract away the flow
+        for i in range(len(path)-1):
+            u, v = path[i], path[i+1]
+            network.edge[u][v]['flow'] -= minflow
+            if network.edge[u][v]['flow'] == 0:
+                network.remove_edge(u, v)
+    return decomposition
+        
+
+
+# We now have everything in place to compute a decomposition.
+
+# In[62]:
+
+decomposition = conformal_decomposition(minimum_cost_flow)
+for (path, flow) in decomposition:
+    print path, flow
 
