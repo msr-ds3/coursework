@@ -10,29 +10,32 @@ Install git, R, and RStudio:
 
   * Install git: ``sudo apt-get install git``
   * In the terminal, type ``sudo gedit``
-  * Create a new document containing a [CRAN mirror](http://cran.r-project.org/mirrors.html): ``deb http://lib.stat.cmu.edu/R/CRAN/bin/linux/ubuntu trusty/``
+  * Create a new document containing a [CRAN mirror](http://cran.r-project.org/mirrors.html): ``deb http://cran.rstudio.com/bin/linux/ubuntu xenial/``
   * Save it as ``/etc/apt/sources.list.d/cran.list`` and close gedit
-  * In the terminal, type ``sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9`` to authorize a server with the latest R packages
+  * In the terminal, type ``gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9`` followed by ``gpg -a --export E084DAB9 | sudo apt-key add -`` to authorize a server with the latest R packages
   * Then ``sudo apt-get update`` to update the package list
-  * Install R with  ``sudo apt-get install r-base``
-  * Download the [latest RStudio .deb](http://www.rstudio.com/products/rstudio/download/) package: ``wget http://download1.rstudio.org/rstudio-0.99.442-amd64.deb``
-  * Install a dependency for RStudio: ``sudo apt-get install libjpeg62``
-  * Install the package: ``sudo dpkg -i rstudio-0.99.442-amd64.deb``
+  * Install R with ``sudo apt-get install r-base r-base-dev``
+  * Download the [latest RStudio .deb](http://www.rstudio.com/products/rstudio/download/) package: ``wget https://download1.rstudio.org/rstudio-0.99.902-amd64.deb``
+  * Install gdebi to help with package dependencies: ``sudo apt-get install gdebi-core``
+  * Use gdebi to install the RStudio package: ``sudo gdebi -n rstudio-0.99.902-amd64.deb``
   * Start RStudio, either with ``rstudio`` from the command line or through the Ubuntu launcher
   * Follow Rstudio's [initial set up](http://r-pkgs.had.co.nz/git.html#git-init) to create an RSA key and upload the public portion to Github
 
 # Intro to Git(Hub)
 
-## Your first pull request
+## Make your first commit and pull request
+  * Complete this [free online git course](https://try.github.io) and 
   * [Sign up](https://github.com/join) for a free GitHub account
-  * Then [fork your own copy](https://guides.github.com/activities/forking/) of the course repository
-  * See these [screenshots](http://www.princeton.edu/~mjs3/soc504_s2015/submitting_homework.shtml) for details, with one modification: use the *ssh clone URL* in the repository URL field, which should read ``git@github.com:yourusername/ds3-2015.git``
-  * Once that's done, edit the ``week1/students.txt`` file and add your first name<sup>[1](#improvement1)</sup>
-  * Commit and push your changes to your copy of the repository through RStudio
-  * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original repository
+<!--  * Follow [these instructions](https://help.github.com/articles/generating-an-ssh-key/) to generate a new SSH key and add it to your GitHub account -->
+  * Then follow this guide to [fork your own copy](https://guides.github.com/activities/forking/) of the course repository
+  * [Clone a copy of your forked repository](https://help.github.com/articles/cloning-a-repository/), which should have a url of ``https://github.com/<yourusername>/coursework.git`` to your local machine
+  * Once that's done, create a new file in the ``week1/students`` directory, ``<yourfirstname>.txt`` (e.g., ``jake.txt``)
+  * Use ``git add`` to add the file to your local repository
+  * Use ``git commit`` and ``git push`` to commit and push your changes to your copy of the repository
+  * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original course repository
   * Finally, [configure a remote repository](https://help.github.com/articles/configuring-a-remote-for-a-fork/) called ``upstream`` to point here:
 ```
-    git remote add upstream git@github.com:jhofman/ds3-2015
+    git remote add upstream https://github.com:msr-ds3/coursework
 ```
   * This will allow you to [sync future changes](https://help.github.com/articles/syncing-a-fork/) to your fork with:
 ```
@@ -42,73 +45,6 @@ Install git, R, and RStudio:
   * Note: this is equivalent to ``git pull upstream master``
 
 ## Learn more
-  * Complete this [free online git course](https://try.github.io) and watch this [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
+  * Watch this [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources are available [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://training.github.com/kit/downloads/github-git-cheat-sheet.pdf)
-
-# Intro to the Command line
-
-  * Review [intro.sh](shell/intro.sh) for an introduction to the command line
-  * Download one month of the Citibike data: ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
-  * Decompress it: ``unzip 201402-citibike-tripdata.zip``
-  * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
-  * Go through the one-liners in the [explore_trips.sh](citibike/explore_trips.sh) file
-  * Fill in solutions of your own under each comment in [exercises.sh](citibike/exercises.sh)
-  * Additional command line references:
-    * [Lifehacker's primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything) and a [crash course](http://cli.learncodethehardway.org/book/) with an overview of commonly used commands
-    * Software Carpentry's [slides and videos](http://software-carpentry.org/v4/shell/) (updates [here](http://swcarpentry.github.io/shell-novice/))
-    * A wikibook on [data analysis on the command line](http://en.wikibooks.org/wiki/Ad_Hoc_Data_Analysis_From_The_Unix_Command_Line), covering ``cut``, ``grep``, ``wc``, ``uniq``, ``sort``, etc
-    * [introduction to awk](http://ferd.ca/awk-in-20-minutes.html)
-    * A comprehensive and freely available [command line book](http://softlayer-dal.dl.sourceforge.net/project/linuxcommand/TLCL/13.07/TLCL-13.07.pdf)
-	* A more advanced book on [Data Science at the Command Line](http://datascienceatthecommandline.com)
-
-# Intro to R
-
-  * Review [intro.Rmd](r/intro.Rmd) for an introduction to R
-  * Complete the [Code School](http://tryr.codeschool.com) and [DataCamp](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
-  * References:
-    * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
-    * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
-	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
-    * Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
-
-## Counting and Plotting
-
-  * See these [Introduction to Counting](http://www.slideshare.net/jakehofman/lecture-2-44332354) slides
-  * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
-  * Review the [movielens.Rmd](movielens/movielens.Rmd) file we covered in class
-  * Go through the [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) 
-  * Review Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github) and see his [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))). Reproduce the ``diamonds`` plots in these slides.
-  * Review the [joins.R](r/joins.R) examples from class
-  * Go through the join functions in the [dplyr two-table verb](http://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) vignette and this [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
-  * Run the [load_trips.R](citibike/load_trips.R) file with data in your citibike folder to generate ``trips.RData``
-  * Write code to create the missing plots in [plot_trips.R](citibike/plot_trips.R)
-  * References
-    * Rstudio's [cheatsheets](http://www.rstudio.com/resources/cheatsheets/) for dplyr and ggplot2
-	* The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
-	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
-	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
-    * [DataCamp's dplyr tutorial](https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) is good, but unfortunately not free
-
-## Sampling
-  * We wrote [musical pairs](r/musical_pairs.R) to randomly pair up people to work together each day
-  * Think about how you would verify if this code is working correctly, or if it's deviating from effectively "random" sampling
-
-<!--
-# cheatsheets and reference cards:
-    http://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf
-    http://cran.r-project.org/doc/contrib/Torfs+Brauer-Short-R-Intro.pdf
-    http://had.co.nz/stat480/r/
-    http://www.rstudio.com/wp-content/uploads/2015/01/data-wrangling-cheatsheet.pdf
--->
-
-# Guest lectures
-  * [Fernando](http://research.microsoft.com/jump/164338) spoke about [regular expressions](slides/regular-expressions.pdf)
-    * See his last two slides for exercises, some of which involve the [20 newsgroups](http://qwone.com/~jason/20Newsgroups/) data
-    * Use ``wget`` to download the data and ``tar zxvf <filename>`` to decompress it
-  * [Amy](http://cs.brown.edu/people/faculty/amy/) gave an overview of [big-O notation](https://www.interviewcake.com/big-o-notation-time-and-space-complexity) for computational complexity
-    * The [bigocheatsheet](http://bigocheatsheet.com)
-	* A [beginner's guide](https://rob-bell.net/2009/06/a-beginners-guide-to-big-o-notation/)
-
-<a name="improvement1">1</a>: In the future we'll change this to one file per student in a subdirectory to avoid merge conflicts
