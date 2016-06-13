@@ -26,7 +26,6 @@ Install git, R, and RStudio:
 ## Make your first commit and pull request
   * Complete this [free online git course](https://try.github.io) and 
   * [Sign up](https://github.com/join) for a free GitHub account
-<!--  * Follow [these instructions](https://help.github.com/articles/generating-an-ssh-key/) to generate a new SSH key and add it to your GitHub account -->
   * Then follow this guide to [fork your own copy](https://guides.github.com/activities/forking/) of the course repository
   * [Clone a copy of your forked repository](https://help.github.com/articles/cloning-a-repository/), which should have a url of ``https://github.com/<yourusername>/coursework.git`` to your local machine
   * Once that's done, create a new file in the ``week1/students`` directory, ``<yourfirstname>.txt`` (e.g., ``jake.txt``)
@@ -48,3 +47,4 @@ Install git, R, and RStudio:
   * Watch this [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources are available [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://training.github.com/kit/downloads/github-git-cheat-sheet.pdf)
+  * You can use https authentication or follow [these instructions](https://help.github.com/articles/generating-an-ssh-key/) to generate a new SSH key and add it to your GitHub account
