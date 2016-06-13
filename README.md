@@ -1,4 +1,4 @@
-# MSR NYC Data Science Summer School 2015
+# MSR NYC Data Science Summer School 2016
 
 This is the shared repository for Microsoft Research NYC's 2016 Data Science Summer School (DS3).
 
