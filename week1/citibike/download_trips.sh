@@ -15,20 +15,19 @@
 # (use current directory by default)
 DATA_DIR=.
 
-# get a list of all trip data file urls
-# alternatively you can use wget instead if you don't have curl
-# urls=`wget -O - 'http://www.citibikenyc.com/system-data' | grep tripdata.zip | cut -d'"' -f2`
-urls=`curl 'http://www.citibikenyc.com/system-data' | grep tripdata.zip | cut -d'"' -f2`
-
 # change to the data directory
 cd $DATA_DIR
 
-# loop over each month
-for url in $urls
+# loop over each year/month
+for year in 2014 2015
 do
+    for month in 01 02 03 04 05 06 07 08 09 10 11 12
+    do
+
     # download the zip file
     # alternatively you can use wget if you don't have curl
     # wget $url
+    url=https://s3.amazonaws.com/tripdata/${year}${month}-citibike-tripdata.zip
     curl -O $url
 
     # define local file names
@@ -40,4 +39,5 @@ do
 
     # remove the zip file
     rm $file
+    done
 done
