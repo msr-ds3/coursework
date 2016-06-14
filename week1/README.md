@@ -4,7 +4,9 @@ This week covers:
   * Command line tools
   * Exploratory data analysis with R using ``dplyr`` and ``ggplot2``
 
-# Setup
+# Day 1
+
+## Setup
 
 Install git, R, and RStudio:
 
@@ -24,9 +26,9 @@ Install git, R, and RStudio:
   * Use gdebi to install the RStudio package: ``sudo gdebi -n rstudio-0.99.902-amd64.deb``
   * Start RStudio, either with ``rstudio`` from the command line or through the Ubuntu launcher (note: you can use ctrl-z followed by ``bg`` in the terminal to place the rstudio process in the background)
 
-# Intro to Git(Hub)
+## Intro to Git(Hub)
 
-## Make your first commit and pull request
+### Make your first commit and pull request
   * Complete this [free online git course](https://try.github.io) and 
   * [Sign up](https://github.com/join) for a free GitHub account
   * Follow Rstudio's [initial set up](http://r-pkgs.had.co.nz/git.html#git-init) to create an RSA key and upload the public portion to Github (steps 2-5 of "Initial set up" only)
@@ -47,14 +49,27 @@ Install git, R, and RStudio:
 ```
   * Note: this is equivalent to ``git pull upstream master``
 
-## Learn more (optional)
+### Learn more (optional)
   * Watch this [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources are available [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
-  * And here's a handy [cheatsheet](https://training.github.com/kit/downloads/github-git-cheat-sheet.pdf)
+  * And here's a handy [cheatsheet](https://services.github.com/kit/downloads/github-git-cheat-sheet.pdf)
   
-# Intro to the Command Line
+## Intro to the Command Line
   * Read through [Lifehacker's command line primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything)
   * See this [crash course](http://cli.learncodethehardway.org/book/) for more details on commonly used commands
   * Check out Software Carpentry's [guide to the Unix shell](http://swcarpentry.github.io/shell-novice/)
   * Review this wikibook on [data analysis on the command line](http://en.wikibooks.org/wiki/Ad_Hoc_Data_Analysis_From_The_Unix_Command_Line), covering ``cut``, ``grep``, ``wc``, ``uniq``, ``sort``, etc
   * Learn [awk in 20 minutes](http://ferd.ca/awk-in-20-minutes.html)
+  * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
+
+# Day 2
+
+## Command line exercises
+
+  * Review [intro.sh](shell/intro.sh) for an introduction to the command line
+  * Download one month of the [Citibike data](https://www.citibikenyc.com/system-data): ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
+  * Decompress it: ``unzip 201402-citibike-tripdata.zip``
+  * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
+  * Review the one-liners in the [explore_trips.sh](citibike/explore_trips.sh) file
+  * Fill in solutions of your own under each comment in [exercises.sh](citibike/exercises.sh)
+	
