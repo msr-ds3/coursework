@@ -75,12 +75,17 @@ Install git, R, and RStudio:
 
 ## Intro to R
 
-  * Complete the [Code School](http://tryr.codeschool.com) and [DataCamp](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
-  * Review [intro.Rmd](r/intro.Rmd) for an introduction to R
+  * Start the [Code School](http://tryr.codeschool.com) and [DataCamp](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
   * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
 	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
     * Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
 
-	
+# Day 3
+
+## Counting and Plotting
+  * See these [Introduction to Counting](http://www.slideshare.net/jakehofman/lecture-2-44332354) slides
+  * Install these [recommended packages](http://r4ds.had.co.nz/introduction.html#r-packages)
+  * Review [intro.Rmd](r/intro.Rmd) for an introduction to R
+  * Complete yesterday's Intro to R tutorials if you haven't already
