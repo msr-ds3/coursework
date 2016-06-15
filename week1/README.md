@@ -104,3 +104,5 @@ Install git, R, and RStudio:
 	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
 	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+  * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
+  * Fill in code in the [movielens.R](movielens/movielens.R) file to reproduce the plots from this morning's "Introduction to Counting" lecture
