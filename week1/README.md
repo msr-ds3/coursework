@@ -89,3 +89,18 @@ Install git, R, and RStudio:
   * Install these [recommended packages](http://r4ds.had.co.nz/introduction.html#r-packages)
   * Review [intro.Rmd](r/intro.Rmd) for an introduction to R
   * Complete yesterday's Intro to R tutorials if you haven't already
+  * Plotting with ``ggplot2``
+    * Read the [data visualization chapter](http://r4ds.had.co.nz/data-visualisation.html) of ["R for Data Science"](http://r4ds.had.co.nz) and go over the included exercises
+    * Review Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR)) and reproduce the ``diamonds`` plots in these slides.
+    * Optionally do the free portion of DataCamp's [Data Visualization with ggplot2](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial    
+  * Data manipulation with ``dplyr``
+    * Read the [Data Transformation](http://r4ds.had.co.nz/transform.html) chapter of "R for Data Science" and go over the included exercises
+    * Review Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
+    * Optionally do the free portion of DataCamp's [Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
+  * Additional references
+    * The [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html) 
+    * Rstudio's [cheatsheets](http://www.rstudio.com/resources/cheatsheets/) for dplyr and ggplot2
+	* The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
+	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
+	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
