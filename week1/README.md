@@ -87,6 +87,7 @@ Install git, R, and RStudio:
 ## Counting and Plotting
   * See these [Introduction to Counting](http://www.slideshare.net/jakehofman/lecture-2-44332354) slides
   * Install these [recommended packages](http://r4ds.had.co.nz/introduction.html#r-packages)
+    * Note: if ``readr`` fails to install, run the following in the terminal and try installing again: ``sudo apt-get install libcurl4-gnutls-dev``
   * Review [intro.Rmd](r/intro.Rmd) for an introduction to R
   * Complete yesterday's Intro to R tutorials if you haven't already
   * Plotting with ``ggplot2``
