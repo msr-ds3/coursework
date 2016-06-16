@@ -19,7 +19,7 @@ DATA_DIR=.
 cd $DATA_DIR
 
 # loop over each year/month
-for year in 2014 2015
+for year in 2014
 do
     for month in 01 02 03 04 05 06 07 08 09 10 11 12
     do

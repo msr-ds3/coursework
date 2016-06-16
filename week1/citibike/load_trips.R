@@ -38,7 +38,7 @@ names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
                   tmin = tmin / 10,
                   tmax = tmax / 10,
-                  ymd = parse_datetime(date, "%Y%m%d"))
+                  ymd = as.Date(parse_datetime(date, "%Y%m%d")))
 weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
