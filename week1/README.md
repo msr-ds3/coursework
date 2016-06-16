@@ -109,6 +109,7 @@ Install git, R, and RStudio:
 # Day 4
 
 ## Counting and Plotting (cont'd)
+  * Use the [download_trips.sh](citibike/download_trips.sh) script to download a year of the Citibike data
   * Run the [load_trips.R](citibike/load_trips.R) file with data in your citibike folder to generate ``trips.RData``
   * Fill in the missing code in [explore_trips.R](citibike/explore_trips.R) to redo the counts we did in the shell, this time in R
   * Write code in [plot_trips.R](citibike/plot_trips.R) to recreate the plots we made this morning 
