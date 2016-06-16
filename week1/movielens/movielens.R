@@ -25,13 +25,11 @@ print(object.size(ratings), units="Mb")
 head(ratings)
 nrow(ratings)
 str(ratings)
+summary(ratings)
 
 ####################
 # aggregate stats
 ####################
-
-# compute aggregate stats
-summary(ratings$rating)
 
 # plot distribution of rating values (slide 13)
 
