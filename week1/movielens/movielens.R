@@ -1,3 +1,6 @@
+# note: if working in RStudio, making sure to set working directory
+# with Session -> Set working directory -> To source file location
+
 library(dplyr)    # install.packages('dplyr')
 library(ggplot2)  # install.packages('ggplot2')
 library(scales)   # install.packages('scales')
