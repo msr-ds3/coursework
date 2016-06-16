@@ -18,11 +18,11 @@ for (csv in csvs) {
   trips <- rbind(trips, tmp)
 }
 
-# add a column for year/month/day (without time of day)
-trips <- transform(trips, ymd=as.Date(starttime))
+# replace spaces in column names with underscores
+names(trips) <- gsub(' ', '_', names(trips))
 
-# recode gender from (0,1,2) to (Unknown, Male, Female)
-#trips <- transform(trips, gender=revalue(as.factor(gender), c("0"="Unknown", "1"="Male", "2"="Female")))
+# add a column for year/month/day (without time of day)
+trips <- mutate(trips, ymd=as.Date(starttime))
 
 
 ########################################
@@ -35,7 +35,10 @@ weather <- read.table('weather.csv', header=T, sep=',')
 # extract just a few columns, lowercase column names, and parse dates
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
-weather <- transform(weather, ymd=parse_datetime(date, "%Y%m%d"))
+weather <- mutate(weather,
+                  tmin = tmin / 10,
+                  tmax = tmax / 10,
+                  ymd = parse_datetime(date, "%Y%m%d"))
 weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
