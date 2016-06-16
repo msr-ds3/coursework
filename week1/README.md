@@ -104,5 +104,13 @@ Install git, R, and RStudio:
 	* [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
 	* [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+
+
+# Day 4
+
+## Counting and Plotting (cont'd)
+  * Run the [load_trips.R](citibike/load_trips.R) file with data in your citibike folder to generate ``trips.RData``
+  * Fill in the missing code in [explore_trips.R](citibike/explore_trips.R) to redo the counts we did in the shell, this time in R
+  * Write code in [plot_trips.R](citibike/plot_trips.R) to recreate the plots we made this morning 
   * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
   * Fill in code in the [movielens.R](movielens/movielens.R) file to reproduce the plots from this morning's "Introduction to Counting" lecture
