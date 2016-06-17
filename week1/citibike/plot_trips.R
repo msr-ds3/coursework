@@ -1,29 +1,17 @@
 ########################################
-# load libraries
-########################################
-
-# load some packages that we'll need
-library(dplyr)
-library(ggplot2)
-library(reshape)
-library(scales)
-
-# be picky about white backgrounds on our plots
-theme_set(theme_bw())
-
-# load RData file output by load_trips.R
-load('trips.RData')
-
-
-########################################
 # plot trip data
 ########################################
 
 # plot the distribution of trip times across all rides
 
+ggplot(trips, ase(tripduration)) + geom_bar()
+
 # plot the distribution of trip times by rider type
+ggplot(trips, ase(tripduration, usertype)) + geom_bar()
 
 # plot the number of trips over each day
+ggplot(trips, ase(ymd)) + geom_bar()
+
 
 # plot the number of trips by gender and age
 
