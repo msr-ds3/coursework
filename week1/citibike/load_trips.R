@@ -14,7 +14,16 @@ parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
 csvs <- Sys.glob('*-tripdata.csv')
 trips <- data.frame()
 for (csv in csvs) {
+  print(csv)
   tmp <- read_csv(csv, na='\\N')
+
+  # the date format changed to something ugly in 2014-09 which read_csv doesn't recognize as a datetime,
+  # so manually convert the date from a string to a datetime
+  if (typeof(tmp$starttime) == "character")
+    tmp <- mutate(tmp,
+                  starttime=parse_datetime(starttime, "%m/%d/%Y %H:%M:%S"),
+                  stoptime=parse_datetime(stoptime, "%m/%d/%Y %H:%M:%S"))
+
   trips <- rbind(trips, tmp)
 }
 
@@ -24,6 +33,8 @@ names(trips) <- gsub(' ', '_', names(trips))
 # add a column for year/month/day (without time of day)
 trips <- mutate(trips, ymd=as.Date(starttime))
 
+# recode gender as a factor 0->"Unknown", 1->"Male", 2->"Female"
+trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown","Male","Female")))
 
 ########################################
 # load and clean weather data
