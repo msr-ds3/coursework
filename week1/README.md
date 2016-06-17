@@ -135,7 +135,7 @@ Install git, R, and RStudio:
   * Joining data
     * Review the [joins.R](r/joins.R) examples from class
     * Go through this [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/) and the join functions in the [dplyr two-table verb](http://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) vignette
-    * Read the [data transformation](http://r4ds.had.co.nz/transform.html) chapter of "R for Data Science" and go over the included exercises
+    * Read the [relational data](http://r4ds.had.co.nz/relational-data.html) chapter of "R for Data Science" and go over the included exercises
   * Reshaping data
     * Review the [tidy.R](r/tidy.R) example from class
     * Read the [tidy data](http://r4ds.had.co.nz/transform.html) chapter of "R for Data Science" and go over the included exercises
