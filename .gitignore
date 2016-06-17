@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 *.ipynb
+*.csv
+*.RData
+*.zip
+
