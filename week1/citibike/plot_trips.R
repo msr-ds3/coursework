@@ -61,3 +61,4 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 # plot the above
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
+# hint: use the wday() function from the lubridate package
