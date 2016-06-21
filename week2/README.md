@@ -21,8 +21,8 @@ This exercise looks at the relationship between price and sales for supermarket 
 2. Visualizing price.
     1. Make a plot of the distribution of prices.
     2. Change the x-axis on this plot to use a logarithmic scale using ``scale_x_log10()``.
-    3. Repeat a), faceted by brand.
-    4. Repeat b), faceted by brand.
+    3. Repeat i), faceted by brand.
+    4. Repeat ii), faceted by brand.
     5. What do these graphs tell you about the variation in price? Why do the log plots look different? Do you find them more/less informative?
 3. Visualizing the quantity/price relationship.
     1. Plot ``logmove`` (the log of quantity sold) vs. ``log price``. 
