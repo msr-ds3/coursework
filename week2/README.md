@@ -9,11 +9,14 @@
 	* Create one plot of the ``p_hat`` distributions, faceted by different ``N`` values for ``p = 0.5`` using ``ggplot``
   * Review the third chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html) and work on the associated lab
   * Also check out Chapters 7, 8, and 9 of [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/)
+
 ## Day 2
   * See [Regression, Prediction, and Classification](prediction.pptx) slides
   * Additional references: these tutorials on [simple linear regression](http://www.r-tutor.com/elementary-statistics/simple-linear-regression) and [multiple linear regression](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression) in R
+
 ### Sales data
 This exercise looks at the relationship between price and sales for supermarket sales of orange juice.
+
   1. Load the [orange juice data](oj.csv).
   2. Visualizing price.
     a. Make a plot of the distribution of prices.
