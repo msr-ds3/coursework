@@ -38,6 +38,11 @@ This exercise looks at the relationship between price and sales for supermarket 
     4. Now run a model where each brand can have a different impact of being featured and a different impact on price sensitivity. Produce a table of elasticties for each brand, one row for "featured" and one row for "not featured" (you need 6 estimates).
 
 ``` 
+	# create some fake data
+	x <- runif(300)
+	z <- sample(1:3, 300, replace=T)
+	df <- data.frame(x=x, z=as.factor(z), y=2*x - 3*z + x*z + rnorm(300))
+
 	# fit the model
     model <- lm(y ~ x + z, data=df)
     
@@ -46,6 +51,6 @@ This exercise looks at the relationship between price and sales for supermarket 
     
     # plot the observations as points and predictions as a line
     ggplot(df, aes(x=x, y=y, color=z)) +
-      geom_point(alpha=0.25) +
+      geom_point() +
       geom_line(aes(x=x, y=predicted, color=z))
 ```
