@@ -28,7 +28,19 @@ This exercise looks at the relationship between price and sales for supermarket 
     1. Plot ``logmove`` (the log of quantity sold) vs. ``log price``. 
     2. Color each point by ``brand``. What do insights can you derive that were not apparent before?
 4.  Estimating the relationship.
-    1. Do a regression of ``logmove`` on ``log price``. How well does the model fit? What is the elasticity (the coefficient on log price), and does it make sense? See [here](http://www.salemmarafi.com/business/price-elasticity/) for some background on elasticity.
+    1. Do a regression of ``logmove`` on ``log price``. How well does the model fit? What is the elasticity (the coefficient on log price), and does it make sense? See [here](http://www.salemmarafi.com/business/price-elasticity/) for some background on elasticity and below for a tip on plotting the fitted model.
+``` 
+	# fit the model
+    model <- lm(y ~ x + z, data=df)
+    
+	# add the predicted values to the data frame
+    df$predicted <- fitted(model)
+    
+    # plot the observations as points and predictions as a line
+    ggplot(df, aes(x=x, y=y, color=z)) +
+      geom_point(alpha=0.25) +
+      geom_line(aes(x=x, y=predicted, color=z))
+```
     2. Now add in an intercept term for each brand (by adding ``brand`` to the [regression formula](http://faculty.chicagobooth.edu/richard.hahn/teaching/formulanotation.pdf)). How do the results change? How should we interpret these coefficients?
     3. Now add interaction terms to allow the elasticities to differ by brand, by including a ``brand:log price`` term in the regression formula. Note the estimate coefficients will "offset" the base estimates. What is the insights we get from this regression? What is the elasticity for each firm? Do the elasticities make sense?
 5. Impact of "featuring in store".
