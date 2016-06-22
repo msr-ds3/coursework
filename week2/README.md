@@ -54,3 +54,34 @@ This exercise looks at the relationship between price and sales for supermarket 
       geom_point() +
       geom_line(aes(x=x, y=predicted, color=z))
 ```
+
+## Day 3
+
+### More sales data
+1. Let’s return to the orange juice assignment and investigate how store demographics are related to demand.
+    1. Let’s start with the following model: ``logmove ~ log(price)*brand*feat`` and add in the store demographics as linear features (e.g., ``+ AGE60 + EDUC + ETHNIC + INCOME``). Try them individually and then all together.
+    2. What demographics are significantly ``(t > 2 standard deviations)`` related to demand?
+    3. How much did the adjusted R-squared improve with the addition of these variables?
+2. Let’s focus on two variables ``HHLARGE`` ("fraction of households that are large") and ``EDUC`` ("fraction of shoppers with advanced education").
+    1. What are the means and percentiles of each of these variables?
+    2. Using your coefficient estimates from the regression in 1b:
+        1. If we move from the median value of ``HHLARGE`` to the 75th percentile (3rd quartile), how much does ``logmove`` change each week on average? You can estimate this visually if you plot the fitted model, or you can compare the predicted values for rows that have the median and 75th percentiles for ``HHLARGE``.
+        2. If we move from the median value of ``EDUC`` to the 75th percentile (3rd quartile), how much does ``logmove`` change each week on average?
+        3. Based on this analysis, which is the more important predictor of demand?
+    3. Now let’s see if these variables impact price sensitivity. Add two interaction terms (with logprice) to the model to test this.
+        1. What are the coefficients on the interaction terms?
+        2. Recall, positive values indicate lower price sensitivity and negative values indicate greater price sensitivity. Do your estimates make sense based on your intuition?
+        3. What are the coefficient estimates on the constants EDUC and HHLARGE? How do they compare to your regression from 1b?
+        4. Similar to 2b, if we move from the median value of each variable to the 3rd quartile, how much does elasticity change? Based on this, which is more important to price sensitivity?
+    4. You should notice that the coefficients on ``EDUC`` and ``HHLARGE`` have flipped sign once we include interaction terms with price. HHLARGE now appears to be a positive demand shifter and increases price sensitivity. Explain in words or pictures what is going on.
+3. Let’s split our data into a training set and a test set. An easy way to do this is with the sample command. The following will randomly select 20% of the rows in our data frame: ``indexes <- sample(1:nrow(oj), size=0.2*nrow(oj))``
+    1. Now let’s use this index to create a training and a test set, try:
+``OJtest=oj[index, ]`` and ``Ojtrain=oj[-index, ]``. What did this do? How many rows does the test set have? How many rows does the training set have?
+4. Now let’s run the very simple model ``logmove ~ log(price) + brand`` on the training data.
+    1. Use LM on this model and report the R-squared.
+    2. Use ``predict(model, Ojtest)`` to predict log sales for the test set.
+    3. Compute ``cor(predicted_sales,logmove)^2`` on the test set. This is our "honest R-squared". How does it compare to the value in (a)?
+5. Now let’s run better models.
+    1. Run our "previous favorite" ``logmove ~ brand*log(price)*feat`` on the training data. Use LM to get regular R-squared. Now, follow the procedure in (3) to compute "honest R-squared". What is it? How do they compare?
+    2. Now add in all the demographics. What is the regular R-squared on training data? What is the honest R-squared on the test set?
+
