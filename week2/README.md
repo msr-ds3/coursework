@@ -57,6 +57,8 @@ This exercise looks at the relationship between price and sales for supermarket 
 
 ## Day 3
 
+  * Review pages 15-33 of Chapter 2 in [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
+
 ### More sales data
 1. Let’s return to the orange juice assignment and investigate how store demographics are related to demand.
     1. Let’s start with the following model: ``logmove ~ log(price)*brand*feat`` and add in the store demographics as linear features (e.g., ``+ AGE60 + EDUC + ETHNIC + INCOME``). Try them individually and then all together.
