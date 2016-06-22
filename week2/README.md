@@ -56,7 +56,7 @@ This exercise looks at the relationship between price and sales for supermarket 
 ```
 
 ## Day 3
-
+  * See [example plots](oj.R) for some of yesterday's exercises
   * Review pages 15-33 of Chapter 2 in [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
 
 ### More sales data
