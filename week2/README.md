@@ -11,13 +11,13 @@
   * Also check out Chapters 7, 8, and 9 of [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/)
 
 ## Day 2
-  * See [Regression, Prediction, and Classification](prediction.pptx) slides
+  * See the [slides](prediction.pptx) on regression
   * Additional references: these tutorials on [simple linear regression](http://www.r-tutor.com/elementary-statistics/simple-linear-regression) and [multiple linear regression](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression) in R
 
 ### Sales data
 This exercise looks at the relationship between price and sales for supermarket sales of orange juice.
 
-1. Load the [orange juice data](oj.csv).
+1. Load the [orange juice data](oj.csv). See [here](http://www.inside-r.org/packages/cran/bayesm/docs/orangeJuice) for a description of the columns.
 2. Visualizing price.
     1. Make a plot of the distribution of prices.
     2. Change the x-axis on this plot to use a logarithmic scale using ``scale_x_log10()``.
@@ -56,8 +56,13 @@ This exercise looks at the relationship between price and sales for supermarket 
 ```
 
 ## Day 3
+  * See the [slides](prediction.pptx) on classification
   * See [example plots](oj.R) for some of yesterday's exercises
   * Review pages 15-33 of Chapter 2 in [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html)
+  * [Fernando](http://research.microsoft.com/jump/164338) spoke about [regular expressions](slides/regular-expressions.pptx)
+    * See this handy [regex cheatsheet](http://ryanstutorials.net/linuxtutorial/cheatsheetgrep.php)
+    * See his last two slides for exercises, some of which involve the [20 newsgroups](http://qwone.com/~jason/20Newsgroups/) data
+    * Use ``wget`` or ``curl`` to download the data and ``tar zxvf <filename>`` to decompress it
 
 ### More sales data
 1. Let’s return to the orange juice assignment and investigate how store demographics are related to demand.
@@ -87,3 +92,16 @@ This exercise looks at the relationship between price and sales for supermarket 
     1. Run our "previous favorite" ``logmove ~ brand*log(price)*feat`` on the training data. Use LM to get regular R-squared. Now, follow the procedure in (3) to compute "honest R-squared". What is it? How do they compare?
     2. Now add in all the demographics. What is the regular R-squared on training data? What is the honest R-squared on the test set?
 
+## Day 4
+  * See the [slides](prediction.pptx) on cross-validation and regularization
+  * Continue working on yesterday's sales data and regular expression exercises
+
+### Cross-validation for Citibike trips
+In this assignment we'll predict number of trips per day as a function of the weather on that day.
+
+1. Create a dataframe with one row for each day, the number of trips taken on that day, and the minimum temperature on that day.
+2. Split the data into a randomly selected training and test set, as in the above exercise, with 80% of the data for training the model and 20% for testing.
+3. Fit a model to predict the number of trips as a (linear) function of the minimum temperature, and evaluate the fit on the training and testing data sets. Do this first visually by plotting the predicted and actual values. Then do this with R^2, as above. You'll want to use the ``predict`` and ``cor`` functions for this.
+4. Repeat this procedure, but add a quadratic term to your model (e.g., ``+ tmin^2``, or equivalently `` + poly(k,2)``). How does the model change, and how do the fits between the linear and quadratic models compare?
+5. Now automate this, extending the model to higher-order polynomials with a ``for`` loop over the degree ``k``. For each value of ``k``, fit a model to the training data and save the R^2 on the training data to one vector and test vector to another. Then plot the training and test R^2 as a function of ``k``. What value of ``k`` has the best performance?
+6. Finally, fit one model for the value of ``k`` with the best performance in 6), and plot the actual and predicted values for this model.
