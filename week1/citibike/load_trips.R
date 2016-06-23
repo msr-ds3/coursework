@@ -40,7 +40,8 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 # load and clean weather data
 ########################################
 
-# load weather data
+# load weather data from belvedere tower in central park
+# http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
 weather <- read.table('weather.csv', header=T, sep=',')
 
 # extract just a few columns, lowercase column names, and parse dates
