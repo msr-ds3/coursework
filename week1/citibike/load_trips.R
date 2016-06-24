@@ -16,14 +16,14 @@ trips <- data.frame()
 for (csv in csvs) {
   print(csv)
   tmp <- read_csv(csv, na='\\N')
-
+  
   # the date format changed to something ugly in 2014-09 which read_csv doesn't recognize as a datetime,
   # so manually convert the date from a string to a datetime
   if (typeof(tmp$starttime) == "character")
     tmp <- mutate(tmp,
                   starttime=parse_datetime(starttime, "%m/%d/%Y %H:%M:%S"),
                   stoptime=parse_datetime(stoptime, "%m/%d/%Y %H:%M:%S"))
-
+  
   trips <- rbind(trips, tmp)
 }
 
@@ -40,7 +40,10 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 # load and clean weather data
 ########################################
 
-# load weather data
+# load weather data from belvedere tower in central park
+# https://www.ncei.noaa.gov/orders/cdo/762757.csv
+# ordered from
+# http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
 weather <- read.table('weather.csv', header=T, sep=',')
 
 # extract just a few columns, lowercase column names, and parse dates
