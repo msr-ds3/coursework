@@ -122,4 +122,5 @@ The point of this exercise is to get experience in an open-ended prediction exer
 2. As usual, split your data into training and testing subsets and evaluate performance on each.
 3. Quantify your performance in two ways: R^2 (or the square of the correlation coefficient), as we've been doing, and with [root mean-squared error](https://www.kaggle.com/wiki/RootMeanSquaredError).
 4. Report the model with the best performance on the test data. Watch out for overfitting.
+5. Plot your final best fit model in two different ways. First with the date on the x-axis and the number of trips on the y-axis, showing the actual values as points and predicted values as a line. Second as a plot where the x-axis is the predicted value and the y-axis is the actual value, with each point representing one day.
 5. Inspect the model when you're done to figure out what the highly predictive features are, and see if you can prune away any negligble features that don't matter much.
