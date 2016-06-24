@@ -29,11 +29,11 @@ ggplot(train, aes(x=tmin, y=count)) +  geom_point(alpha=0.1) + geom_line(aes(x=t
 
 #Then do this with R^2, as above. You'll want to use the predict and cor functions for this.
 
-#for the test   : Adjusted R-squared:    0.7198 
-#for the train    : Adjusted R-squared:  0.6654  
+#for the test   : Adjusted R-squared:     0.6681 
+#for the train    : Adjusted R-squared:   0.6792  
 
-cor(test$predicted,test$count)^2 ## 0.7290994
-cor(train$predicted,train$count)^2 ## 0.6679966
+cor(test$predicted,test$count)^2 ##   0.6726852
+cor(train$predicted,train$count)^2 ## 0.6803221
 
 
 ## 4....Repeat this procedure, but add a quadratic term to your model (e.g., + tmin^2, or equivalently + poly(k,2)). 
@@ -50,11 +50,11 @@ ggplot(train, aes(x=tmin, y=count)) +  geom_point(alpha=0.1) + geom_line(aes(x=t
   ylab('number of trips')
 
 
-#for the test     : Adjusted R-squared:  0.7231   
-#for the train    : Adjusted R-squared:  0.6738 
+#for the test     : Adjusted R-squared:  0.6664   
+#for the train    : Adjusted R-squared:  0.6782 
 
-cor(test$predicted,test$count)^2 ## 0.7415736
-cor(train$predicted,train$count)^2 ## 0.6789452
+cor(test$predicted,test$count)^2 ##   0.6756687
+cor(train$predicted,train$count)^2 ## 0.6804394
 
 
 ###How does the model change, and how do the fits between the linear and quadratic models compare?
@@ -65,29 +65,22 @@ cor(train$predicted,train$count)^2 ## 0.6789452
 
 ## 5...Now automate this, extending the model to higher-order polynomials with a for loop over the degree k. 
 ###For each value of k, fit a model to the training data and save the R^2 on the training data to one vector and test vector to another. 
-###Then plot the training and test R^2 as a function of k. What value of k has the best performance?
 
 tran_cor <- c()
 test_cor <- c()
 
 for (k in 1:20){
-  ml.fit <- lm(count ~ tmin + poly(tmin, k), data= train)
-  train$predicted = fitted(ml.fit)
-  test$predicted = fitted(ml.fit)
+  ml.fit5 <- lm(count ~ tmin + poly(tmin, k, raw=T), data= train)
+  train$predicted = predict(ml.fit5, train)
+  test$predicted = predict(ml.fit5, test)
   
-  var <- cor(train$predicted,train$count)^2
-  tran_cor[k] <- var
-  
-  
-  predict(ml.fit, OJtest) 
-  
-  
-  
-  var2 <- cor(test$predicted,test$count)^2
-  test_cor[k] <- var2
+  tran_cor[k] <- cor(train$predicted,train$count)^2
+  test_cor[k] <- cor(test$predicted,test$count)^2
 }
 
-#ggplot(, aes(x=, y=)) + 
+###Then plot the training and test R^2 as a function of k. What value of k has the best performance?
+
+#ggplot(, aes(x=train_cor, y=)) + 
 
 
 
