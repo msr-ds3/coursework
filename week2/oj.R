@@ -59,6 +59,13 @@ ggplot(oj, aes(x=price, y=exp(1)^logmove, color=brand, shape=as.factor(feat), li
   xlab('Price') +
   ylab('Sales')
 
+# view the fitted functions in linear space to see how dramatic the effect is
+ggplot(oj, aes(x=price, y=exp(1)^logmove, color=brand, shape=as.factor(feat))) +
+  geom_line(aes(x=price, y=exp(1)^predicted, color=brand, linetype=as.factor(feat))) +
+  facet_wrap(~ brand) +
+  scale_y_continuous(label=comma, lim=c(0,1e5)) +
+  xlab('Price') +
+  ylab('Sales')
 
 ### PLOTTING COEFFICIENTS FOR DEMOGRAPHICS ON OVERALL DEMAND ###
 
