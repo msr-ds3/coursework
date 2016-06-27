@@ -93,7 +93,7 @@ This exercise looks at the relationship between price and sales for supermarket 
     2. Now add in all the demographics. What is the regular R-squared on training data? What is the honest R-squared on the test set?
 
 ## Day 4
-  * See the [slides](prediction.pptx) on cross-validation and regularization
+  * See the [slides](regularization.pptx) on cross-validation and regularization
   * Continue working on yesterday's sales data and regular expression exercises
 
 ### Cross-validation for Citibike trips
