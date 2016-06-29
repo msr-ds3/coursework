@@ -80,18 +80,14 @@ for (k in 1:20){
 
 ###Then plot the training and test R^2 as a function of k. What value of k has the best performance?
 
-#ggplot(, aes(x=train_cor, y=)) + 
+x <- 1:20
+ggplot() + geom_line(aes(x=x, y=tran_cor), color= "red") + geom_line(aes(x=x, y=test_cor) , color= "blue")
+
+
+## 6....Finally, fit one model for the value of k with the best performance in 6), and plot the actual and predicted values for this model
 
 
 
 
 
 
-
-
-
-
-
-
-
-## 6....Finally, fit one model for the value of k with the best performance in 6), and plot the actual and predicted values for this model.
