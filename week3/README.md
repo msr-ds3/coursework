@@ -17,7 +17,7 @@
   * Implement 5-fold cross-validation for your Citibike model to get a better estimate of the error on the testing data.
     * Hint: you can use something like ``df$fold <- sample(1:5, nrow(df), replace=T)`` to randomly assign each row of a data frame to one of five folds, and then select the training and test data using this (e.g., to select fold f=1 ``train <- filter(df, fold != f)]`` and ``test <- filter(df, fold == f)``)
     * Do this within a for-loop over folds, and keep track of the mean-squared error on the test data in each iteration
-    * Then compute the average of the five mean-squared errors that you get for the test data in each fold, as well as the standard error on that average
+    * Then compute the average of the five mean-squared errors that you get for the test data in each fold, as well as the standard error (!= standard deviation!) on that average
   * When you're convinced that you have your best model, clean up all your code so that it saves your best model a ``.RData`` file
   * Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository
   * Finally, write a new file that loads in the [weather data for new days](weather_2015.csv) and your saved model, and predicts the number of trips each day (see [load_trips.R](../week1/citibike/load_trips.R) for code snippets to load in the weather data)
