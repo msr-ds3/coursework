@@ -11,5 +11,10 @@
   * After completing yesterday's Lab 2 from Chapter 6 in ISL, use ``cv.glmnet`` to potentially improve upon your best model for the Citibike data. What is your overall R^2 and mean-squared error?
     * See the [glmnet vignette](http://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html) for more information on the package
   * See the preview chapter on regression (on slack), the [derivation of the normal equations](https://en.wikipedia.org/wiki/Linear_least_squares_%28mathematics%29#Derivation_of_the_normal_equations), and this post on [gradient descent](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
+  * You can use broom to [tidy up your glmnet models](http://rpackages.ianhowson.com/cran/broom/man/cv.glmnet_tidiers.html)
   
 ## Day 3
+  * Implement 5-fold cross-validation for your Citibike model to get a better estimate of the error on the testing data.
+    * Hint: you can use something like ``df$fold <- sample(1:5, nrow(df), replace=T)`` to randomly assign each row of a data frame to one of five folds, and then select the training and test data using this (e.g., ``train <- filter(df, fold != 1)]`` and ``test <- filter(df, fold == 1)``)
+    * Do this within a for-loop over folds, and keep track of the mean-squared error on the test data in each iteration
+    * Then compute the average of the five mean-squared errors that you get and the standard error on that average
