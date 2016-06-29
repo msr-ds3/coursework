@@ -93,7 +93,7 @@ This exercise looks at the relationship between price and sales for supermarket 
     2. Now add in all the demographics. What is the regular R-squared on training data? What is the honest R-squared on the test set?
 
 ## Day 4
-  * See the [slides](prediction.pptx) on cross-validation and regularization
+  * See the [slides](regularization.pptx) on cross-validation and regularization
   * Continue working on yesterday's sales data and regular expression exercises
 
 ### Cross-validation for Citibike trips
@@ -102,7 +102,7 @@ In this assignment we'll predict number of trips per day as a function of the we
 1. Create a data frame with one row for each day, the number of trips taken on that day, and the minimum temperature on that day.
 2. Split the data into a randomly selected training and test set, as in the above exercise, with 80% of the data for training the model and 20% for testing.
 3. Fit a model to predict the number of trips as a (linear) function of the minimum temperature, and evaluate the fit on the training and testing data sets. Do this first visually by plotting the predicted and actual values as a function of the minimum temperature. Then do this with R^2, as above. You'll want to use the ``predict`` and ``cor`` functions for this.
-4. Repeat this procedure, but add a quadratic term to your model (e.g., ``+ tmin^2``, or equivalently `` + poly(k,2)``). How does the model change, and how do the fits between the linear and quadratic models compare?
+4. Repeat this procedure, but add a quadratic term to your model (e.g., ``+ tmin^2``, or (more or less) equivalently `` + poly(tmin,2)``). How does the model change, and how do the fits between the linear and quadratic models compare?
 5. Now automate this, extending the model to higher-order polynomials with a ``for`` loop over the degree ``k``. For each value of ``k``, fit a model to the training data and save the R^2 on the training data to one vector and test vector to another. Then plot the training and test R^2 as a function of ``k``. What value of ``k`` has the best performance?
 6. Finally, fit one model for the value of ``k`` with the best performance in 6), and plot the actual and predicted values for this model.
 

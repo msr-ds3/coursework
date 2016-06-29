@@ -139,3 +139,9 @@ Install git, R, and RStudio:
   * Reshaping data
     * Review the [tidy.R](r/tidy.R) example from class
     * Read the [tidy data](http://r4ds.had.co.nz/transform.html) chapter of "R for Data Science" and go over the included exercises
+
+## Save your work
+  * Make sure to save your work and push it to GitHub. Do this is three steps:
+  	1. ``git add`` and ``git commit`` and new files to your local repository. (Omit large data files.)
+  	2. ``git pull upstream master`` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
+  	3. ``git push origin master`` to push things back up to your GitHub fork of the course repository. 
