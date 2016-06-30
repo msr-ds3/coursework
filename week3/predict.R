@@ -29,9 +29,6 @@ weather_2015 <- tbl_df(weather_2015)
 # save data frame for easy loading in the future
 save(trips, weather_2015, file='trips.RData')
 
-
-
-
 ########################################
 ####Create another col for day_of_week
 weather_2015 <- weather_2015 %>% mutate(day_of_week = wday(ymd, label=T)) 
@@ -120,14 +117,12 @@ df$season = season(df$ymd)
 ######################################################################
 ###Predict num trips:
 ####predict for 2015
-
-model <- lm(numtrip ~ day_of_week + tmax +prcp + is_holiday, data= df)
+load("model.RData")
 weather_2015$predicted= predict(model,weather_2015)
 
 
 
-#rmse <- sqrt(mean((weather_2015$ - weather_2015$)^2))  ### 
-#cor(weather_2015$,weather_2015$)^2 #### 
+
 
 
 
