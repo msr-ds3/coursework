@@ -1,8 +1,6 @@
 ### Implement 5-fold cross-validation for your Citibike model to get a better estimate of the error on the testing data. 
 df$fold <- sample(1:5, nrow(df), replace=T)
 
-
-
 rmse_vector <- c()
 for (i in 1:5) {
   train <- filter(df, fold != i)
