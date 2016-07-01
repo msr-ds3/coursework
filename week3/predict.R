@@ -26,9 +26,6 @@ weather_2015 <- mutate(weather_2015,
                   ymd = as.Date(parse_datetime(date, "%Y%m%d")))
 weather_2015 <- tbl_df(weather_2015)
 
-# save data frame for easy loading in the future
-save(trips, weather_2015, file='trips.RData')
-
 ########################################
 ####Create another col for day_of_week
 weather_2015 <- weather_2015 %>% mutate(day_of_week = wday(ymd, label=T)) 
@@ -82,9 +79,20 @@ weather_2015$predicted= predict(model,weather_2015)
 
 ggplot(weather_2015, aes(x=ymd, y=predicted)) + geom_point()
 
+#####################################################################
+### Load 2015 trips:
 
 
 
+trips_with_weather <- inner_join(trips, weather_2015, by="ymd")
+df <- trips_with_weather %>% group_by(ymd, tmax, tmin,snow,prcp,snwd,predicted, day_of_week , is_holiday) %>% summarize(numtrip = n()) 
 
+
+
+ggplot(df) + geom_point(aes(x=ymd, y=numtrip, color= is_holiday)) + geom_line(aes(x= ymd , y= predicted))
+
+
+rmse <- sqrt(mean((df$numtrip - df$predicted)^2))  ### 3887.192
+cor(df$predicted,df$numtrip )^2 #### 0.8835649
 
 
