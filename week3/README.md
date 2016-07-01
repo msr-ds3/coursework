@@ -26,3 +26,9 @@
   * Finally, write a new file that loads in the [weather data for new days](weather_2015.csv) and your saved model, and predicts the number of trips each day (see [load_trips.R](../week1/citibike/load_trips.R) for code snippets to load in the weather data)
   * Compute the RMSE on this data set and compare the results to what you found with cross-validation
   * Pair up with a partner, run their model, and evaluate the predictions it makes for the 2015 data
+  
+## Day 5
+  * See the [slides](http://www.slideshare.net/jakehofman/modeling-social-data-lecture-6-classification-with-naive-bayes) we covered on Naive Bayes for classification, along with the [one-word spam classifier](enron_naive_bayes.sh) shell script
+  * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238) 
+  * Do the logistic regression lab (4.6.1 and 4.6.2) in Chapter 4 of ISL (sections 4-4.3 are useful background reading)
+  * Also go through this [logistic regression lab](https://rpubs.com/dvorakt/151334)
