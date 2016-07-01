@@ -4,13 +4,13 @@
 
 
 ## Day 2
+  * See the preview chapter on regression (on slack), the [derivation of the normal equations](https://en.wikipedia.org/wiki/Linear_least_squares_%28mathematics%29#Derivation_of_the_normal_equations), and this post on [gradient descent](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
   * Revise the Citibike model in a few ways:
     * Look at feature distributions to get a sense of what tranformations (e.g., ``log`` or manually created factors) might improve model performance
     * Add holiday effects and look at how much of the overall error is coming from holidays compared to regular days
     * Use the predicted vs. actual plots to diagnose which examples in the training set you're doing poorly on, and see if there's anything systematic that can be adjusted
   * After completing yesterday's Lab 2 from Chapter 6 in ISL, use ``cv.glmnet`` to potentially improve upon your best model for the Citibike data. What is your overall R^2 and mean-squared error?
     * See the [glmnet vignette](http://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html) for more information on the package
-  * See the preview chapter on regression (on slack), the [derivation of the normal equations](https://en.wikipedia.org/wiki/Linear_least_squares_%28mathematics%29#Derivation_of_the_normal_equations), and this post on [gradient descent](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
   * You can use broom to [tidy up your glmnet models](http://rpackages.ianhowson.com/cran/broom/man/cv.glmnet_tidiers.html)
   
 ## Day 3
@@ -28,7 +28,7 @@
   * Pair up with a partner, run their model, and evaluate the predictions it makes for the 2015 data
   
 ## Day 5
-  * See the [slides](http://www.slideshare.net/jakehofman/modeling-social-data-lecture-6-classification-with-naive-bayes) we covered on Naive Bayes for classification, along with the [one-word spam classifier](enron_naive_bayes.sh) shell script
+  * See the [slides](http://www.slideshare.net/jakehofman/modeling-social-data-lecture-6-classification-with-naive-bayes) we covered on Naive Bayes for classification, along with the [one-word spam classifier](enron_naive_bayes.sh) shell script (more references [here](http://jakehofman.com/ddm/2012/02/lecture-03-2/))
   * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238) 
   * Do the logistic regression lab (4.6.1 and 4.6.2) in Chapter 4 of ISL (sections 4-4.3 are useful background reading)
   * Also go through this [logistic regression lab](https://rpubs.com/dvorakt/151334)
