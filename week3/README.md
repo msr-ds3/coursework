@@ -32,3 +32,4 @@
   * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238) 
   * Do the logistic regression lab (4.6.1 and 4.6.2) in Chapter 4 of ISL (sections 4-4.3 are useful background reading)
   * Also go through this [logistic regression lab](https://rpubs.com/dvorakt/151334)
+  * Finally, make sure to [commit and push](https://github.com/msr-ds3/coursework/tree/master/week2#day-5) your code to GitHub
