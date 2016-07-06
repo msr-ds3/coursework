@@ -7,8 +7,8 @@
   * [David Robinson](http://varianceexplained.org/about/) gave a guest lecture on his work as a data scientist at [Stack Exchange](https://en.wikipedia.org/wiki/Stack_Exchange)
 
 ## Day 2
-  * Start the [CodeAcademy Python tutorial](https://www.codecademy.com/learn/python)
-  * See [intro.py](python/intro.py) for in-class python examples
+  * Start the [Codecademy Python tutorial](https://www.codecademy.com/learn/python)
+  * See [intro.py](intro.py) for in-class python examples
   * See [learnpython's advanced tutorials](http://www.learnpython.org) on generators and list comprehensions
   * Fill in the details of [stream_stats.py](stream_stats.py) to create a script that takes as input a text file with two tab-separated columns with one observation per line and outputs summary statistics for each group in the data. The first column in the input file is a "key" that represents the group and the second column is a numeric value for the observation within that group. You'll implement several versions of this script:
     * First, compute the minimum, mean, and maximum value within each group, assuming that the observations are ordered arbitrarily
