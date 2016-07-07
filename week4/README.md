@@ -24,3 +24,10 @@
   * Read this [overview of JSON](http://code.tutsplus.com/tutorials/understanding-json--active-8817) and review the first two sections of this overview of [Python's json module](http://pymotw.com/2/json/)
   * Complete [Codecademy's API tutorial](https://www.codecademy.com/courses/50e5bc94ce7f5e4945001d31/)
   * Read the draft of [Matt Salganik's](http://www.princeton.edu/~mjs3/) book chapter (on Slack)
+  * Write Python code to download the 1000 most recent articles from the NYTimes API by section of the newspaper:
+  	* [Register](https://developer.nytimes.com/signup) for an API key for the [Article Search API](https://developer.nytimes.com/article_search_v2.json)
+  	* Use the [API console](https://developer.nytimes.com/article_search_v2.json#/Console/GET/articlesearch.json) to figure out how to query the API by section (hint: set the ``fq`` parameter to ``section_name:business`` to get articles from the Business section, for instance), sorted from newest to oldest articles
+  	* Once you've figured out the query you want to run, translate this to working python code
+  	* Your code should take an API key, section name, and number of articles as command line arguments, and write out a tab-delimited file where each article is in a separate row, with ``section_name``, ``web_url``, ``pub_date``, and ``snippet`` as columns
+  	* You'll have to loop over pages of API results until you have enough articles, and you'll want to remove any newlines from article snippets to keep each article on one line
+  	* Finally, run your code to get articles from the Business and World sections of the newspaper
