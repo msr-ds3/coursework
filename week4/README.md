@@ -22,4 +22,4 @@
   * Read the first three sections of [Zapier's Introduction to APIs](https://zapier.com/learn/apis/)
   * Read this [overview of JSON](http://code.tutsplus.com/tutorials/understanding-json--active-8817) and review the first two sections of this overview of [Python's json module](http://pymotw.com/2/json/)
   * Complete [Codecademy's API tutorial](https://www.codecademy.com/courses/50e5bc94ce7f5e4945001d31/)
- * Read the draft of [Matt Salganik's](http://www.princeton.edu/~mjs3/) book chapter (on Slack)
+  * Read the draft of [Matt Salganik's](http://www.princeton.edu/~mjs3/) book chapter (on Slack)
