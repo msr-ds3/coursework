@@ -31,3 +31,19 @@
   	* Your code should take an API key, section name, and number of articles as command line arguments, and write out a tab-delimited file where each article is in a separate row, with ``section_name``, ``web_url``, ``pub_date``, and ``snippet`` as columns
   	* You'll have to loop over pages of API results until you have enough articles, and you'll want to remove any newlines from article snippets to keep each article on one line
   	* Finally, run your code to get articles from the Business and World sections of the newspaper
+  	
+## Day 4
+  * We had a guest lecture from [Matt Salganik's](http://www.princeton.edu/~mjs3/) on his forthcoming book, [Bit by Bit: Social Research in the Digital Age](http://bitbybitbook.com)
+  * Continue work on yesterday's assignment until you've downloaded 1000 articles from the Business and World sections of the NYTimes
+  * Then use the code in [classify_nyt_articles.R](classify_nyt_articles.R) to read the data into R and fit a logistic regression to prediction which section an article belongs to based on the words in its snippets
+    * The provided code reads in each file and uses tools from the ``tm`` package---specifically ``VectorSource``, ``Corpus``, and ``DocumentTermMatrix``---to parse the article collection into a ``sparseMatrix``, where each row corresponds to one article and each column to one word, and a non-zero entry indicates that an article contains that word
+    * Create an 80% train / 20% test split of the data and use ``cv.glmnet`` to find a best-fit logistic regression model to predict ``section_name`` from ``snippet``
+    * Plot of the cross-validation curve from ``cv.glmnet``
+    * Quote the accuracy and AUC on the test data and use the ``ROCR`` package to provide a plot of the ROC curve for the test data
+    * Look at the most informative words for each section by examining the words with the top 10 largest and smallest weights from the fitted model
+  * Think about the upcoming projects with the [taxi](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) and [Airbnb](http://insideairbnb.com/get-the-data.html) data
+    * Take a peak at a sample of the data by following the links above
+    * Think of a range of questions you would ask of each data set, from easier, more descriptive ones to more ambitious questions
+    * Think about other other information that might compliment or supplement these data sets, and see if there are any available datasets with that informaiton
+    * Find past work that has either used these data sets or worked on related problems, ranging from blog posts to academic papers, and keep a list of any relevant urls, etc.
+    * Think about which project you are most interested in working on
