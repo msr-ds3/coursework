@@ -41,7 +41,7 @@
     * Plot of the cross-validation curve from ``cv.glmnet``
     * Quote the accuracy and AUC on the test data and use the ``ROCR`` package to provide a plot of the ROC curve for the test data
     * Look at the most informative words for each section by examining the words with the top 10 largest and smallest weights from the fitted model
-  * Think about the upcoming projects with the [taxi](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) and [Airbnb](http://insideairbnb.com/get-the-data.html) data
+  * Think about the upcoming projects with the [NYC Taxi](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) and [Airbnb](http://insideairbnb.com/get-the-data.html) data
     * Take a peak at a sample of the data by following the links above
     * Think of a range of questions you would ask of each data set, from easier, more descriptive ones to more ambitious questions
     * Think about other other information that might compliment or supplement these data sets, and see if there are any available datasets with that informaiton
