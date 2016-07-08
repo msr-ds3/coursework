@@ -34,9 +34,9 @@
   	
 ## Day 4
   * We had a guest lecture from [Matt Salganik's](http://www.princeton.edu/~mjs3/) on his forthcoming book, [Bit by Bit: Social Research in the Digital Age](http://bitbybitbook.com)
-  * Continue work on yesterday's assignment until you've downloaded 1000 articles from the Business and World sections of the NYTimes
+  * Continue work on yesterday's assignment until you've downloaded 1000 articles from the Business and World sections of the NYTimes (hint: use the [codecs](https://pymotw.com/2/codecs/#working-with-files) package to deal with unicode issues if you run into them)
   * Then use the code in [classify_nyt_articles.R](classify_nyt_articles.R) to read the data into R and fit a logistic regression to prediction which section an article belongs to based on the words in its snippets
-    * The provided code reads in each file and uses tools from the ``tm`` package---specifically ``VectorSource``, ``Corpus``, and ``DocumentTermMatrix``---to parse the article collection into a ``sparseMatrix``, where each row corresponds to one article and each column to one word, and a non-zero entry indicates that an article contains that word
+    * The provided code reads in each file and uses tools from the ``tm`` package---specifically ``VectorSource``, ``Corpus``, and ``DocumentTermMatrix``---to parse the article collection into a ``sparseMatrix``, where each row corresponds to one article and each column to one word, and a non-zero entry indicates that an article contains that word (note: this assumes that there's a column named ``snippet`` in your tsv files!)
     * Create an 80% train / 20% test split of the data and use ``cv.glmnet`` to find a best-fit logistic regression model to predict ``section_name`` from ``snippet``
     * Plot of the cross-validation curve from ``cv.glmnet``
     * Quote the accuracy and AUC on the test data and use the ``ROCR`` package to provide a plot of the ROC curve for the test data
