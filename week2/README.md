@@ -17,7 +17,7 @@
 ### Sales data
 This exercise looks at the relationship between price and sales for supermarket sales of orange juice.
 
-1. Load the [orange juice data](oj.csv). See [here](http://www.inside-r.org/packages/cran/bayesm/docs/orangeJuice) for a description of the columns.
+1. Load the [orange juice data](oj.csv). See [here](https://github.com/cran/bayesm/blob/master/man/orangeJuice.Rd) for a description of the columns.
 2. Visualizing price.
     1. Make a plot of the distribution of prices.
     2. Change the x-axis on this plot to use a logarithmic scale using ``scale_x_log10()``.
