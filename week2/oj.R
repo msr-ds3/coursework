@@ -134,3 +134,5 @@ ggplot(plot_data, aes(x=price, y=exp(1)^predicted, color=as.factor(HHLARGE))) +
   xlab('Price') +
   ylab('Sales') +
   facet_wrap(~ EDUC)
+
+
