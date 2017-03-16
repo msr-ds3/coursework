@@ -1,6 +1,4 @@
-library(dplyr)
-library(ggplot2)
-library(tidyr)
+library(tidyverse)
 
 theme_set(theme_bw())
 
@@ -18,10 +16,14 @@ trips_per_day <- inner_join(trips_per_day, weather, by="ymd")
 set.seed(42)
 num_folds <- 5
 num_days <- nrow(trips_per_day)
-trips_per_day$fold <- sample(1:num_folds, num_days, replace=T)
+#trips_per_day$fold <- sample(1:num_folds, num_days, replace=T)
+ndx <- sample(1:num_days, num_train, replace=F)
+trips_per_day <- trips_per_day[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
 
 # fit a model for each polynomial degree
-K <- 1:12
+K <- 1:8
 avg_test_err <- c()
 se_test_err <- c()
 for (k in K) {
@@ -36,7 +38,7 @@ for (k in K) {
     trips_per_day_test <- filter(trips_per_day, fold == f)
     
     # fit on the training data
-    model <- lm(num_trips ~ poly(tmin, k), data=trips_per_day_train)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
     
     # evaluate on the test data
     test_err[f] <- sqrt(mean((predict(model, trips_per_day_test) - trips_per_day_test$num_trips)^2))
@@ -50,9 +52,11 @@ for (k in K) {
 
 # plot the test error, highlighting the value of k with the lowest average error
 plot_data <- data.frame(K, avg_test_err, se_test_err)
-ggplot(plot_data, aes(x=K, y=avg_test_err, color=avg_test_err == min(avg_test_err))) +
-  geom_pointrange(aes(ymin=avg_test_err - se_test_err, ymax=avg_test_err + se_test_err)) +
-  geom_line() +
+ggplot(plot_data, aes(x=K, y=avg_test_err)) +
+  geom_pointrange(aes(ymin=avg_test_err - se_test_err,
+                      ymax=avg_test_err + se_test_err,
+                      color=avg_test_err == min(avg_test_err))) +
+  geom_line(color = "red") +
   scale_x_continuous(breaks=1:12) +
   theme(legend.position="none") +
   xlab('Polynomial Degree') +
