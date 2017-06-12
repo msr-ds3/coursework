@@ -29,7 +29,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ### Text editor
 
   * You'll need a plain text editing program
-  * [Atom](https://atom.io) or [Sublime](http://www.sublimetext.com) should work well
+  * [Atom](https://atom.io), [Sublime](http://www.sublimetext.com), and [Visual Studio Code](https://code.visualstudio.com) are all good options
 
 ## Intro to Git(Hub)
 
