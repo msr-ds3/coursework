@@ -8,7 +8,7 @@ This week covers:
 
 ## Setup
 
-Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/about), GitHub for Windows, R, and RStudio:
+Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/about), GitHub for Windows, R, and RStudio
 
 ### Ubuntu on Windows
   * Type `bash` in the Start Menu, and `y` to install Ubuntu on Windows
