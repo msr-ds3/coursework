@@ -79,7 +79,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Decompress it: ``unzip 201402-citibike-tripdata.zip``
   * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
   * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
-  * Fill in solutions of your own under each comment in [exercises.sh](exercises.sh)
+  * Fill in solutions of your own under each comment in [citibike.sh](citibike.sh)
 
 ## Intro to R
 
