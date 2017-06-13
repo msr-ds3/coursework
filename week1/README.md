@@ -68,3 +68,24 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Review this wikibook on [data analysis on the command line](http://en.wikibooks.org/wiki/Ad_Hoc_Data_Analysis_From_The_Unix_Command_Line), covering ``cut``, ``grep``, ``wc``, ``uniq``, ``sort``, etc
   * Learn [awk in 20 minutes](http://ferd.ca/awk-in-20-minutes.html)
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
+
+
+# Day 2
+
+## Command line exercises
+
+  * Review [intro_command_line.ipynb](intro_command_line.ipynb) for an introduction to the command line
+  * Download one month of the [Citibike data](https://www.citibikenyc.com/system-data): ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
+  * Decompress it: ``unzip 201402-citibike-tripdata.zip``
+  * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
+  * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
+  * Fill in solutions of your own under each comment in [exercises.sh](exercises.sh)
+
+## Intro to R
+
+  * Start the [Code School](http://tryr.codeschool.com) and [DataCamp](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
+  * References:
+    * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
+    * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
+	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
+    * Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
