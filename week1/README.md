@@ -89,3 +89,38 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
 	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
     * Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
+
+# Day 3
+    
+## Counting
+
+  * See these [Introduction to Counting](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-2-introduction-to-counting) and [Data Wrangling in R](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-3-data-manipulation-in-r?ref=http://modelingsocialdata.org/lectures/2017/02/03/lecture-3-computational-complexity.html) slides
+  * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
+  * Do the free portion of DataCamp's [Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
+  * Go through chapters [1](http://r4ds.had.co.nz/introduction.html), [2](http://r4ds.had.co.nz/explore-intro.html), and [5](http://r4ds.had.co.nz/transform.html) of [R for Data Science](http://r4ds.had.co.nz)
+  * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
+  * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate figures 1 and 2
+
+  * Additional references
+	* The [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
+	* Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
+	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+
+<!--
+  * Plotting
+    * Read the [data visualization](http://r4ds.had.co.nz/data-visualisation.html) of ["R for Data Science"](http://r4ds.had.co.nz) chapter and go over the included exercises
+    * Review Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR)) and reproduce the ``diamonds`` plots in these slides.
+    * Bookmark Rstudio's [data visualization cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/12/ggplot2-cheatsheet-2.0.pdf)
+    * Optionally do the free portion of DataCamp's [Data Visualization with ggplot2](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial    
+
+  * Additional references
+    * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
+    * [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
+    * [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+-->
+
+
+
+
