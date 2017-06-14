@@ -6,13 +6,13 @@ library(lubridate)
 ########################################
 
 # read one month of data
-trips <- read_csv('201608-citibike-tripdata.csv')
+trips <- read_csv('201402-citibike-tripdata.csv')
 
 # replace spaces in column names with underscores
 names(trips) <- gsub(' ', '_', names(trips))
 
 # convert dates strings to dates
-trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
+# trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
 
 # recode gender as a factor 0->"Unknown", 1->"Male", 2->"Female"
 trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unknown","Male","Female")))
