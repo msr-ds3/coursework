@@ -107,7 +107,26 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 
 
+## Plotting
+ * Review [visualization_with_ggplot2.ipynb](visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
+
+
 <!--
+# Day 4
+
+## Plotting (cont'd)
+
+
+https://www.datacamp.com/courses/free-introduction-to-r
+https://www.datacamp.com/courses/intermediate-r
+https://www.datacamp.com/courses/data-visualization-with-ggplot2-1
+https://www.datacamp.com/courses/data-visualization-with-ggplot2-2
+https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial
+https://www.datacamp.com/courses/cleaning-data-in-r
+https://www.datacamp.com/courses/writing-functions-in-r
+https://www.datacamp.com/courses/reporting-with-r-markdown
+https://www.datacamp.com/courses/exploratory-data-analysis-in-r-case-study
+
   * Plotting
     * Read the [data visualization](http://r4ds.had.co.nz/data-visualisation.html) of ["R for Data Science"](http://r4ds.had.co.nz) chapter and go over the included exercises
     * Review Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR)) and reproduce the ``diamonds`` plots in these slides.
@@ -119,6 +138,14 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
     * [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+
+* Chapters [3](http://r4ds.had.co.nz/data-visualisation.html), [7](http://r4ds.had.co.nz/exploratory-data-analysis.html), and [28](http://r4ds.had.co.nz/graphics-for-communication.html) in [R for Data Science](http://r4ds.had.co.nz/)
+* RStudio's [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+* DataCamp's [Data Visualization with ggplot2](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial
+* Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+* Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))) for more examples
+* The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+
 -->
 
 
