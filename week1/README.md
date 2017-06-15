@@ -131,7 +131,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
 
 ## Combining and reshaping data
-  * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) for on joins with dplyr and reshaping with tidyr
+  * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) on joins with dplyr and reshaping with tidyr
 
 <!--
 
