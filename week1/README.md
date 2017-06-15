@@ -108,43 +108,60 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 
 
 ## Plotting
- * Review [visualization_with_ggplot2.ipynb](visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
+  * Review [visualization_with_ggplot2.ipynb](visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
 
-
-<!--
 # Day 4
 
 ## Plotting (cont'd)
 
+  * Do DataCamp's [Data Visualization with ggplot2 (part 1)](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial 
+  * Read chapter [3](http://r4ds.had.co.nz/data-visualisation.html) of [R for Data Science](http://r4ds.had.co.nz/)
+  * Modify and run the `download_trips.sh` script to grab all trip data from 2014
+  * Run the `load_trips.R` file to generate `trips.RData`
+  * Write code in [plot_trips.R](citibike/plot_trips.R) to reproduce and extend the visualizations we made this morning using `trips.RData`
+
+  * Additional references
+    * RStudio's [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+    * Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))) for more examples 
+    * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
+    * [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
+    * [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+    * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+
+## Combining and reshaping data
+  * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) for on joins with dplyr and reshaping with tidyr
+
+<!--
+
+https://www.datacamp.com/courses/data-visualization-with-ggplot2-2
+
+ * Read chapters [7](http://r4ds.had.co.nz/exploratory-data-analysis.html) and [28](http://r4ds.had.co.nz/graphics-for-communication.html) in [R for Data Science](http://r4ds.had.co.nz/)
+   
+  * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
+  * Fill in code in the [movielens.R](movielens/movielens.R) file to reproduce the plots from this morning's "Introduction to Counting" lecture
+
+
+## Combining and reshaping
+
+  * Continue working on yesterday's Citibike and Movielens exercises
+  * Joining data
+    * Review the [joins.R](r/joins.R) examples from class
+    * Go through this [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/) and the join functions in the [dplyr two-table verb](http://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) vignette
+    * Read the [relational data](http://r4ds.had.co.nz/relational-data.html) chapter of "R for Data Science" and go over the included exercises
+  * Reshaping data
+    * Review the [tidy.R](r/tidy.R) example from class
+    * Read the [tidy data](http://r4ds.had.co.nz/transform.html) chapter of "R for Data Science" and go over the included exercises
+
 
 https://www.datacamp.com/courses/free-introduction-to-r
 https://www.datacamp.com/courses/intermediate-r
-https://www.datacamp.com/courses/data-visualization-with-ggplot2-1
-https://www.datacamp.com/courses/data-visualization-with-ggplot2-2
 https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial
 https://www.datacamp.com/courses/cleaning-data-in-r
 https://www.datacamp.com/courses/writing-functions-in-r
 https://www.datacamp.com/courses/reporting-with-r-markdown
 https://www.datacamp.com/courses/exploratory-data-analysis-in-r-case-study
-
-  * Plotting
-    * Read the [data visualization](http://r4ds.had.co.nz/data-visualisation.html) of ["R for Data Science"](http://r4ds.had.co.nz) chapter and go over the included exercises
-    * Review Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR)) and reproduce the ``diamonds`` plots in these slides.
-    * Bookmark Rstudio's [data visualization cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/12/ggplot2-cheatsheet-2.0.pdf)
-    * Optionally do the free portion of DataCamp's [Data Visualization with ggplot2](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial    
-
-  * Additional references
-    * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
-    * [Intro to ggplot2](http://superbobry.github.io/slides/ggplot2/) slides, with somewhat tricky navigation
-    * [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
-
-* Chapters [3](http://r4ds.had.co.nz/data-visualisation.html), [7](http://r4ds.had.co.nz/exploratory-data-analysis.html), and [28](http://r4ds.had.co.nz/graphics-for-communication.html) in [R for Data Science](http://r4ds.had.co.nz/)
-* RStudio's [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
-* DataCamp's [Data Visualization with ggplot2](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial
-* Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-* Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))) for more examples
-* The [official ggplot2 docs](http://docs.ggplot2.org/current/)
 
 -->
 

@@ -1,7 +1,6 @@
 .Rproj.user
 .Rhistory
 *.RData
-*.csv
 *~
 *.zip
 .ipynb_checkpoints
