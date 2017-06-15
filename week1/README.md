@@ -117,8 +117,8 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Do DataCamp's [Data Visualization with ggplot2 (part 1)](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial 
   * Read chapter [3](http://r4ds.had.co.nz/data-visualisation.html) of [R for Data Science](http://r4ds.had.co.nz/)
   * Modify and run the `download_trips.sh` script to grab all trip data from 2014
-  * Run the `load_trips.R` file to generate `trips.RData`
-  * Write code in [plot_trips.R](citibike/plot_trips.R) to reproduce and extend the visualizations we made this morning using `trips.RData`
+  * Run the [load_trips.R](load_trips.R) file to generate `trips.RData`
+  * Write code in [plot_trips.R](plot_trips.R) to reproduce and extend the visualizations we made this morning using `trips.RData`
 
   * Additional references
     * RStudio's [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
