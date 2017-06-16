@@ -116,7 +116,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 
   * Do DataCamp's [Data Visualization with ggplot2 (part 1)](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial 
   * Read chapter [3](http://r4ds.had.co.nz/data-visualisation.html) of [R for Data Science](http://r4ds.had.co.nz/)
-  * Modify and run the `download_trips.sh` script to grab all trip data from 2014
+  * Modify and run the `download_trips.sh` script to grab all trip data from 2014 (use `dos2unix` to fix carriage return issues if they arise)
   * Run the [load_trips.R](load_trips.R) file to generate `trips.RData`
   * Write code in [plot_trips.R](plot_trips.R) to reproduce and extend the visualizations we made this morning using `trips.RData`
 
@@ -133,35 +133,57 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ## Combining and reshaping data
   * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) on joins with dplyr and reshaping with tidyr
 
+# Day 5
+
+## Guest lecture: Computational Complexity
+  * [Sid Sen](http://www.cs.princeton.edu/~sssix/) gave a guest lecture on computational complexity, data structures, and algorithms. Some references:
+    * [Typed notes](https://github.com/jhofman/msd2017-notes/blob/master/lecture_3/lecture_3.pdf) that cover Sid's lecture
+    * A [beginner's guide](https://rob-bell.net/2009/06/a-beginners-guide-to-big-o-notation/) to big-O notation
+    * Another [introduction to big-O](https://www.interviewcake.com/article/python/big-o-notation-time-and-space-complexity)
+    * The [big-O cheatsheet](http://bigocheatsheet.com/)
+    * A [table](http://modelingsocialdata.org/img/runtime_table.png) from [Kleinberg & Tardos](https://www.pearsonhighered.com/program/Kleinberg-Algorithm-Design/PGM319216.html) for translating asymptotic notation to typical runtimes on modern hardware
+    * Relevant Khan Academy videos:
+      * [Asymptotic notation](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/asymptotic-notation)
+      * [Big-O](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-o-notation) for upper bounds
+      * [Big-omega](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-big-omega-notation) for lower bounds
+      * [Big-theta](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-big-theta-notation) for tight bounds
+    * Hash tables on [Wikipedia](https://en.wikipedia.org/wiki/Hash_table) and [Spark Notes](http://www.sparknotes.com/cs/searching/hashtables/summary.html)
+    
+
+## More counting and plotting
+  * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
+  * Fill in code in the [movielens.R](movielens.R) file to reproduce the plots from Wednesday's slides
+  * Sketch out (on paper) how to generate figure 2 from [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf)
+  * Wrote code to do this in the last section of [movielens.R](movielens.R)
+
+## Combining and reshaping data (cont'd)
+  * Read chapters [12](http://r4ds.had.co.nz/tidy-data.html) and [13](http://r4ds.had.co.nz/relational-data.html)
+ of [R for Data Science](http://r4ds.had.co.nz) on tidyr and joins
+  * Do parts 1 and 2 of Datacamp's [Cleaning Data in R](https://www.datacamp.com/courses/cleaning-data-in-r) tutorial
+  * Additional references:
+    * The tidyr [vignette on tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
+    * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
+    * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
+
+
+## Save your work
+  * Make sure to save your work and push it to GitHub. Do this in three steps:
+  	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
+  	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
+  	3. `git push origin master` to push things back up to your GitHub fork of the course repository. 
+
+
 <!--
 
 https://www.datacamp.com/courses/data-visualization-with-ggplot2-2
 
+https://www.datacamp.com/courses/exploratory-data-analysis-in-r-case-study
+
  * Read chapters [7](http://r4ds.had.co.nz/exploratory-data-analysis.html) and [28](http://r4ds.had.co.nz/graphics-for-communication.html) in [R for Data Science](http://r4ds.had.co.nz/)
-   
-  * Use the [download_movielens.sh](movielens/download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
-  * Fill in code in the [movielens.R](movielens/movielens.R) file to reproduce the plots from this morning's "Introduction to Counting" lecture
 
-
-## Combining and reshaping
-
-  * Continue working on yesterday's Citibike and Movielens exercises
-  * Joining data
-    * Review the [joins.R](r/joins.R) examples from class
-    * Go through this [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/) and the join functions in the [dplyr two-table verb](http://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) vignette
-    * Read the [relational data](http://r4ds.had.co.nz/relational-data.html) chapter of "R for Data Science" and go over the included exercises
-  * Reshaping data
-    * Review the [tidy.R](r/tidy.R) example from class
-    * Read the [tidy data](http://r4ds.had.co.nz/transform.html) chapter of "R for Data Science" and go over the included exercises
-
-
-https://www.datacamp.com/courses/free-introduction-to-r
 https://www.datacamp.com/courses/intermediate-r
-https://www.datacamp.com/courses/dplyr-data-manipulation-r-tutorial
-https://www.datacamp.com/courses/cleaning-data-in-r
 https://www.datacamp.com/courses/writing-functions-in-r
 https://www.datacamp.com/courses/reporting-with-r-markdown
-https://www.datacamp.com/courses/exploratory-data-analysis-in-r-case-study
 
 -->
 
