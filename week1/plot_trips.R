@@ -21,19 +21,19 @@ load('trips.RData')
 
 # plot the distribution of trip times by rider type
 
-# plot the number of trips over each day
+# plot the total number of trips over each day
 
-# plot the number of trips by gender and age
+# plot the total number of trips (on the y axis) by age (on the x axis) and age (indicated with color)
 
-# plot the ratio of male to female trips by age
+# plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the spread() function to reshape things to make it easier to compute this ratio
 
 ########################################
 # plot weather data
 ########################################
-# plot the minimum temperature over each day
+# plot the minimum temperature (on the y axis) over each day (on the x axis)
 
-# plot the minimum temperature and maximum temperature over each day
+# plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the gather() function for this to reshape things before plotting
 
 ########################################
