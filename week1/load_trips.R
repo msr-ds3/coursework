@@ -50,8 +50,6 @@ weather <- read.table('weather.csv', header=T, sep=',')
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
-                  tmin = tmin / 10,
-                  tmax = tmax / 10,
                   ymd = as.Date(parse_datetime(date, "%Y%m%d")))
 weather <- tbl_df(weather)
 
