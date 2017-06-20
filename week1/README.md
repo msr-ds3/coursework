@@ -19,6 +19,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ### Git / GitHub for Windows
   * Check that you have git under bash by typing `git --version` in the terminal
   * Install [GitHub for Windows](https://desktop.github.com)
+  * Configure git to deal with line endings in a cross-platform friendly way: `git config --global core.autocrlf true`
 
 ### R and RStudio
   
