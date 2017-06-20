@@ -7,3 +7,7 @@
 <!--
   * Check out Chapters 7, 8, and 9 of [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/)
 -->
+
+## Day 2
+  * See the [Prediction and Regression](Prediction%20and%20Regression.pptx) slides
+  * HW2 within this week has a large set of problems where you're going to be able to learn all about Orange Juice!
