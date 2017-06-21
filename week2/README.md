@@ -13,12 +13,12 @@
   * See the [Prediction and Regression](Prediction%20and%20Regression.pptx) slides
   * HW2 within this week has a large set of problems where you're going to be able to learn all about Orange Juice!
   * See Chapter 3 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression
-  * Also covered in Chapter 14 of [Introduction to Statistical Thinking (With R, Without Calculus)]
+  * Also covered in Chapter 14 of [Introduction to Statistical Thinking](With R, Without Calculus)
   
 ## Day 3
   * See the [Interpretation t statistics model fit](Interpretation%20t%20statistics%20model%20fit.pptx) slides
   * HW3 within this week investigates interpreting coefficients and cross validation.
   * Have a look at the [cross_validation_hack](cross_validation_hack.Rmd) which goes through K folds cross validation step by step.
   * See [here](http://home.wlu.edu/~gusej/econ398/notes/logRegressions.pdf) for more on log-log transformations in regression.
-  * Chapter 12 of [Introduction to Statistical Thinking (With R, Without Calculus)] covers hypothesis testing
+  * Chapter 12 of [Introduction to Statistical Thinking](With R, Without Calculus) covers hypothesis testing
   * See Chapter 5 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation
