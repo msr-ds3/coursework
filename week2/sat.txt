@@ -1,0 +1,18 @@
+sat = combined SAT score if available (0 otherwise)
+rank = percentile rank in high school class
+satobs = 1 if the SAT score is observed (=0 otherwise)
+mlhs = 1 if the respondent's mother did not complete high school (=0 otherwise)
+mcol = 1 if the respondent's mother completed 1 or more years of college (=0 otherwise)
+flhs = 1 if the respondent's father did not complete high school (=0 otherwise)
+fcol = 1 if the responsent's father completed 1 or more years of college (=0 otherwise)
+black= 1 if the respondent is African-American (=0 otherwise)
+hisp = 1 if the respondent is Hispanic (=0 otherwise)
+asian = 1 if the respondent is Asian-American (=0 otherwise)
+female = 1 if the respondent is female (=0 otherwise)
+rdsc = scaled reading score (mean=50, std. dev=10)
+vocab = scaled vocabulary score 
+pict = scaled picture number score 
+lgsc = scaled letter groups score 
+matsc = scaled mathematics score 
+mosaic = scaled mosaic comparison score 
+nsib = number of siblings for the respondent
