@@ -22,3 +22,13 @@
   * See [here](http://home.wlu.edu/~gusej/econ398/notes/logRegressions.pdf) for more on log-log transformations in regression.
   * Chapter 12 of [Introduction to Statistical Thinking](http://pluto.huji.ac.il/~msby/StatThink/) covers hypothesis testing
   * See Chapter 5 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation
+
+## Day 5
+  * [Least squares](http://students.brown.edu/seeing-theory/regression/index.html#first) visualization
+  * [Manual model fitting](https://jmhmsr.shinyapps.io/modelfit/) shiny app
+  * [Gradient descent](http://htmlpreview.github.io/?https://github.com/jhofman/msd2017/blob/master/lectures/lecture_6/gradient_descent.html) animation
+  * See [here](http://modelingsocialdata.org/lectures/2017/02/24/lecture-6-regression-1.html) for a table of complexity for model fitting and [here](https://github.com/jhofman/msd2017-notes/blob/master/lecture_6/lecture_6.pdf) for the gory details behind solving the normal equations and gradient descent
+  * A notebook on [linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse
+  * [Slides](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-7-model-complexity-and-generalization), [notes](https://github.com/jhofman/msd2017-notes/blob/master/lecture_7/lecture_7.pdf) on evaluating models and overfitting
+  * A [notebook](model_evaluation.ipynb) on model evaluation
+  * A [notebook](complexity_control.ipynb) on overfitting and cross-validation
