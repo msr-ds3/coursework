@@ -14,7 +14,7 @@
   * HW2 within this week has a large set of problems where you're going to be able to learn all about Orange Juice!
   * See Chapter 3 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression
   * Also covered in Chapter 14 of [Introduction to Statistical Thinking](http://pluto.huji.ac.il/~msby/StatThink/)
-  
+
 ## Day 3
   * See the [Interpretation t statistics model fit](Interpretation%20t%20statistics%20model%20fit.pptx) slides
   * HW3 within this week investigates interpreting coefficients and cross validation.
@@ -22,6 +22,11 @@
   * See [here](http://home.wlu.edu/~gusej/econ398/notes/logRegressions.pdf) for more on log-log transformations in regression.
   * Chapter 12 of [Introduction to Statistical Thinking](http://pluto.huji.ac.il/~msby/StatThink/) covers hypothesis testing
   * See Chapter 5 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation
+
+## Day 4
+  * See the [logistic regression and regularization](logit.pptx)
+  * HW4 looks at logistic regression for predicting who will take the SAT and LASSO for prediction on the OJ data
+  * See Chapter 4 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on classification and Chapter 6 on regularization
 
 ## Day 5
   * [Least squares](http://students.brown.edu/seeing-theory/regression/index.html#first) visualization
