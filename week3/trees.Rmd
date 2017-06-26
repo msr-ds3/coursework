@@ -1,0 +1,33 @@
+---
+title: "Week3-Trees"
+author: "Brian Quistorff"
+date: "June 26, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Users/bquist/OneDrive - Microsoft/DS3")
+library(rpart)
+library(rpart.plot)
+```
+
+# Trees
+
+Let's look at whether family background is a good predictor of SAT scores. Will all the predictors be used?
+
+```{r sat_background}
+sat <- read.csv("sat.csv", header=TRUE)
+sat_taken = sat[sat$satobs==1,]
+tree1 = rpart(sat~mlhs+flhs, data=sat_taken)
+tree1
+rpart.plot(tree1)
+```
+
+Now let's add in other test scores. Does family background still matter?
+
+```{r sat_background_fam}
+tree2 = rpart(sat~mlhs+flhs+matsc, data=sat_taken)
+rpart.plot(tree2)
+```
+
