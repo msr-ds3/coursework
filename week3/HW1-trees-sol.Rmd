@@ -1,0 +1,51 @@
+---
+title: "Week3-HW-Trees"
+author: "Brian Quistorff"
+date: "June 26, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Users/bquist/OneDrive - Microsoft/DS3")
+library(rpart)
+library(rpart.plot)
+library(glmnet)
+```
+
+## R Markdown
+
+
+```{r part1}
+df = data.frame(x = 1:100)
+df$e = rnorm(100)
+df$y = df$x + df$e
+tree = rpart(y~x,data=df)
+rpart.plot(tree)
+```
+
+```{r part1a}
+df$x2 = df$x*df$x
+df$y2 = df$x2 + df$e
+tree2 = rpart(y2~x,data=df)
+rpart.plot(tree2)
+```
+
+```{r part2}
+df$xcut = ifelse(df$x>50, 1, 0)
+df$y3 = 2 * df$xcut + df$e
+
+tree3 = rpart(y3~x,data=df)
+rpart.plot(tree3)
+df$y3_tree_pred = predict(tree3, data=df)
+df$y3_tree_sqerr = (df$y3-df$y3_tree_pred)^2
+mean(df$y3_tree_sqerr)
+
+df$x3 = df$x^3
+x_lasso = as.matrix(df[,c("x", "x2", "x3")])
+y3 = as.vector(df$y3)
+lasso3 = cv.glmnet(x_lasso, y=y3, alpha=1)
+df$y3_lasso_pred = predict(lasso3, newx=x_lasso)
+df$y3_lasso_sqerr = (df$y3-df$y3_lasso_pred)^2
+mean(df$y3_lasso_sqerr)
+```
