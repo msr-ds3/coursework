@@ -1,0 +1,38 @@
+---
+title: "Writeup"
+author: "Brian Quistorff"
+date: "June 28, 2017"
+output: html_document
+---
+
+Contact info
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+load("outputs.RData")
+```
+
+## Introduction
+This is a template for a write-up. You can see more advanced ones [here](http://rmarkdown.rstudio.com/developer_document_templates.html) and [here](http://rmarkdown.rstudio.com/gallery.html).
+
+## Data
+We used data from ....
+
+## Anlyses
+We analyzed the data and made a figure
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+And including variables in text. The previous p-value was `r pval`.
+
+## Discussion
+We think we did a great job.
+
+## Appendix
+More details about the data.
+
+We registered the study at ....
