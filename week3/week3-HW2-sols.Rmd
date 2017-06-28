@@ -1,0 +1,62 @@
+---
+title: "Week3-Lecture2"
+author: "Brian Quistorff"
+date: "June 26, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Users/bquist/OneDrive - Microsoft/DS3")
+set.seed(20170627)
+```
+
+## R Markdown
+
+```{r gen}
+get_power <- function(N, d, M=100, alpha=0.05){
+  ps = c()
+  for(m in 1:M){
+    df = data.frame(i=1:N)
+    df$W = as.integer(df$i>(N/2))
+    df$e = rnorm(N)
+    df$y = d*df$W+df$e
+    reg = lm(y~W, data=df)
+    p = summary(reg)$coefficients[2,4]
+    ps= c(ps, p)
+  }
+  power = mean(ps<alpha)
+  return(power)
+}
+
+get_power(100, 0.5, M=100, alpha=0.05)
+get_power(100, 0.5, M=100, alpha=0.01)
+```
+
+## New functions
+
+```{r new_funcs}
+get_min_N <- function(d, power = 0.80){
+  N = 4
+  while(get_power(N, d) < power){
+    N = N+2
+  }
+  return(N)
+}
+get_min_N(0.5)
+
+
+
+get_min_d <- function(N, power = 0.80){
+  power_se <- function(d){
+    new_power = get_power(N,d)
+    return((new_power-power)^2)
+  }  
+  ret = optim(0.5, power_se, method="BFGS")
+  return(ret$par)
+}
+
+get_min_d(100)
+```
+
+
