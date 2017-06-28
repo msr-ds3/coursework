@@ -23,8 +23,8 @@ We used data from ....
 We analyzed the data and made a figure
 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r plot, echo=FALSE}
+plot(plt)
 ```
 
 And including variables in text. The previous p-value was `r pval`.
