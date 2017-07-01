@@ -1,0 +1,223 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+%Latex likes to make ligatures from ff, fi, fl which breaks text manipulation (searching and copying)
+\usepackage{microtype}
+\DisableLigatures[f]{encoding = *, family = * }
+
+%% Put visual box around \input's (e.g. snippets, tables) for easier checking. (LaTeX will already complain if file doesn't exist.) Won't work if \begin{centering}...\end{centering} in inputted file.
+%\let\oldinput\input
+%\renewcommand{\input}[1]{\fbox{\oldinput{#1}}} %uncomment this to turn on
+
+% link DOIs in references section
+\usepackage{doi}
+
+%to allow the \begin{adjustwidth}
+\usepackage[strict]{changepage}
+
+%Allows for Color bars along margins. Do \cbstart and \cbend.
+\usepackage{changebar}
+
+%allows a \FloatBarrier
+\usepackage{placeins}
+
+%allows you to use pbox in tables (to wrap cells with long text) (tables often via input)
+\usepackage{pbox}
+\usepackage{makecell}
+\usepackage{multirow}
+
+\usepackage{booktabs} %used for nicer tables
+% Easily make booktabs having double ruling
+%  (can also be used to make them look like other tables)
+%\renewcommand{\toprule}{\hline\hline}
+%\renewcommand{\bottomrule}{\hline\hline}
+
+%Put all floats at the end. Options:
+%\usepackage[nolists]{endfloat}
+%Allow multiple floats per page at the end
+%\renewcommand{\efloatseparator}{\vfill}
+
+%%% Normalize PDF
+\pdfsuppressptexinfo15 %Suppress info of imported PDFs
+\pdftrailerid{} %Remove ID (or insert # to try to deterministically seed the ID generation)
+
+%% Remove dates and production details
+\hypersetup{pdfinfo={ Creator={}, Producer={},ModDate={...},CreationDate={...} }}
+% hyperref usually also sets Author, Title, Subject(blank), Keywords(blank)
+%NB: Can't reproduce the completely empty dates with hyperref (could use subset of \pdfinfo)
+
+%If you don't use hyperref, use the following line instead. Hyperref "resets" them (duplicates in the output)
+%\pdfinfo{ /Creator ()  /Producer () /ModDate ()  /CreationDate () } 
+%Could also do (But MiKTeX doesn't set} Title, Author, Subject, and Keywords
+\end_preamble
+\options round
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3.5cm
+\topmargin 3cm
+\rightmargin 3.5cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+DS3: Week 3 - Homework 3
+\end_layout
+
+\begin_layout Author
+Brian Quistorff
+\end_layout
+
+\begin_layout Date
+2017-06-28
+\end_layout
+
+\begin_layout Enumerate
+Write a Pre-Analysis Plan for studying the SAT data.
+ We'll use 
+\begin_inset CommandInset href
+LatexCommand href
+target "https://aspredicted.org"
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Look at the questions asked AsPredicted.
+\end_layout
+
+\begin_layout Enumerate
+Discuss with your partner some scientific hypotheses (one to three) you
+ would like to investigate concerning SAT
+\end_layout
+
+\begin_layout Enumerate
+Detail the statistical tests you would do to investigate these scientific
+ hypothesis (don't do them yet).
+ 
+\end_layout
+
+\begin_layout Enumerate
+Write this up and post to AsPredicted.
+ You can keep this private forever you want (read the documentation).
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Write an analysis.Rmd that conducts the analysis and generates some figures.
+ Output the figures the statistical results to a RData file.
+\end_layout
+
+\begin_layout Enumerate
+Create a writeup.Rmd that summarizes the research (this can built off of
+ the PAP).
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+State the scientific hypotheses you are looking and why those interesting
+ or important.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Show the results from the statistical analyses and the figures from the
+ saved files.
+\end_layout
+
+\begin_layout Enumerate
+Discuss the conclusions.
+\end_layout
+
+\begin_layout Enumerate
+Add an appendix with all the details you can think of for the data.
+ Where did it come from? What was the situation like for students and teachers
+ then?
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Create a makefile with recipes for generating the files.
+ Write a readme.md to note dependencies and how to build.
+\end_layout
+
+\end_body
+\end_document
