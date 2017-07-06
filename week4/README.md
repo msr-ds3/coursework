@@ -5,3 +5,5 @@
   * The [(super) naive Bayes](enron_naive_bayes.sh) shell script from lecture
   * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238)
   * And this [logistic regression lab](https://rpubs.com/dvorakt/151334)
+  * Additional [notes](https://github.com/jhofman/msd2017-notes/blob/master/lecture_9/lecture_9.pdf) on naive Bayes, logistic regression, and classifier evaluation
+
