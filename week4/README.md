@@ -22,9 +22,9 @@
 
 ## Day 4
   * See the [example](nyt_api.py) we worked on in class for the [NYTimes API](https://developer.nytimes.com/), using the [requests](http://docs.python-requests.org/en/master/user/quickstart/) module for easy http functionality
-  * Read the first three sections of [Zapier's Introduction to APIs](https://zapier.com/learn/apis/)
+  <!-- * Read the first three sections of [Zapier's Introduction to APIs](https://zapier.com/learn/apis/) -->
   * Read this [overview of JSON](http://code.tutsplus.com/tutorials/understanding-json--active-8817) and review the first two sections of this overview of [Python's json module](http://pymotw.com/2/json/)
-  * Complete [Codecademy's API tutorial](https://www.codecademy.com/courses/50e5bc94ce7f5e4945001d31/)
+  <!-- * Complete [Codecademy's API tutorial](https://www.codecademy.com/courses/50e5bc94ce7f5e4945001d31/) -->
   * Write Python code to download the 1000 most recent articles from the New
   York Times (NYT) API by section of the newspaper:
       * [Register](https://developer.nytimes.com/signup) for an API key for the [Article Search API](https://developer.nytimes.com/article_search_v2.json)
