@@ -21,7 +21,7 @@
   * See [Learnpython's advanced tutorials](http://www.learnpython.org) on generators and list comprehensions
 
 ## Day 4
-  * See the [example](get_article_urls.py) we worked on in class for the [NYTimes API](https://developer.nytimes.com/), using the [requests](http://docs.python-requests.org/en/master/user/quickstart/) module for easy http functionality
+  * See the [example](nyt_api.py) we worked on in class for the [NYTimes API](https://developer.nytimes.com/), using the [requests](http://docs.python-requests.org/en/master/user/quickstart/) module for easy http functionality
   * Read the first three sections of [Zapier's Introduction to APIs](https://zapier.com/learn/apis/)
   * Read this [overview of JSON](http://code.tutsplus.com/tutorials/understanding-json--active-8817) and review the first two sections of this overview of [Python's json module](http://pymotw.com/2/json/)
   * Complete [Codecademy's API tutorial](https://www.codecademy.com/courses/50e5bc94ce7f5e4945001d31/)
