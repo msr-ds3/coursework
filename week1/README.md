@@ -35,7 +35,6 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ## Intro to Git(Hub)
 
 ### Make your first commit and pull request
-  * Complete this [free online git course](https://try.github.io) 
   * [Sign up](https://github.com/join) for a free GitHub account
   * Then follow this guide to [fork your own copy](https://guides.github.com/activities/forking/) of the course repository
   * [Clone a copy of your forked repository](https://help.github.com/articles/cloning-a-repository/), which should be located at ``git@github.com/<yourusername>/coursework.git``, to your local machine
@@ -55,6 +54,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Note: this is equivalent to ``git pull upstream master``
 
 ### Learn more (optional)
+  * Datacamp's [interactive online git course](https://www.datacamp.com/courses/introduction-to-git-for-data-science)
   * A full hour-long [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
