@@ -92,7 +92,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Have a look at [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
   * Do the free portion of DataCamp's [Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) and [Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorials
   * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
-  * Read chapters [1](http://r4ds.had.co.nz/introduction.html) and [2](http://r4ds.had.co.nz/explore-intro.html) of [R for Data Science](http://r4ds.had.co.nz)
+  * Read chapters 2 and 3 of [R for Data Science](http://r4ds.had.co.nz)
   * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2
 
   * References:
