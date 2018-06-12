@@ -60,7 +60,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
   
 ## Intro to the Command Line
-  * See the [intro to the command line](intro_command_line.ipynb) notebook and the [download trips script](download_trips.sh)
+  * See the [intro to the command line](intro_command_line.ipynb) notebook we discussed together
   * Read through [Lifehacker's command line primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything)
   * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/courses/learn-the-command-line/lessons/navigation/exercises/your-first-command?action=lesson_resume)
 
@@ -72,6 +72,20 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
 
 
+# Day 2
 
+## Counting and intro to R
+
+  * See these [Introduction to Counting](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-2-introduction-to-counting) and [Data Wrangling in R](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-3-data-manipulation-in-r?ref=http://modelingsocialdata.org/lectures/2017/02/03/lecture-3-computational-complexity.html) slides
+  * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
+
+## Command line exercises
+  * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
+  * Review [intro_command_line.ipynb](intro_command_line.ipynb) for an introduction to the command line
+  * Download one month of the [Citibike data](https://www.citibikenyc.com/system-data): ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
+  * Decompress it: ``unzip 201402-citibike-tripdata.zip``
+  * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
+  * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
+  * Fill in solutions of your own under each comment in [citibike.sh](citibike.sh)
 
 
