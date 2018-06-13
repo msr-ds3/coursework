@@ -32,12 +32,22 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * You'll need a plain text editing program
   * [Atom](https://atom.io), [Sublime](http://www.sublimetext.com), and [Visual Studio Code](https://code.visualstudio.com) are all good options
 
+### Filesystem setup
+  * Files that you create in Ubuntu on Windows get stored in a somewhat hidden location within the Windows filesystem
+  * To make it easier to find files you work on in Ubuntu, do the following:
+    * Open a bash shell
+    * Go to your home directory: `cd ~`
+    * Create a symbolic link to your Documents folder: `ln -s /mnt/c/Users/<your name>/Documents ~/Documents`
+    * Change to this directory: `cd ~/Documents`
+    * Do all of your work, including the following section, from within this folder, which you'll be able to see under "Documents" in the Windows Explorer
+
+
 ## Intro to Git(Hub)
 
 ### Make your first commit and pull request
   * [Sign up](https://github.com/join) for a free GitHub account
   * Then follow this guide to [fork your own copy](https://guides.github.com/activities/forking/) of the course repository
-  * [Clone a copy of your forked repository](https://help.github.com/articles/cloning-a-repository/), which should be located at ``git@github.com/<yourusername>/coursework.git``, to your local machine
+  * [Clone a copy of your forked repository](https://help.github.com/articles/cloning-a-repository/), which should be located at ``https://github.com/<yourusername>/coursework.git``, to your local machine
   * Once that's done, create a new file in the ``week1/students`` directory, ``<yourfirstname>.txt`` (e.g., ``jake.txt``)
   * Use ``git add`` to add the file to your local repository
   * Use ``git commit`` and ``git push`` to commit and push your changes to your copy of the repository
@@ -80,6 +90,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
 
 ## Command line exercises
+  * Pull changes from the msr-ds3/coursework repo: `git pull upstream master`
   * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
   * Review [intro_command_line.ipynb](intro_command_line.ipynb) for an introduction to the command line
   * Download one month of the [Citibike data](https://www.citibikenyc.com/system-data): ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
@@ -87,6 +98,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
   * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
   * Fill in solutions of your own under each comment in [citibike.sh](citibike.sh)
+  * Commit and push your work to your fork of the coursework repository: `git push origin master`
 
 ## Intro to R
   * Have a look at [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
