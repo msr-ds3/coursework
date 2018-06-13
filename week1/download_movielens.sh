@@ -18,3 +18,5 @@ fi
 
 # reformat to comma-separated file
 [ -f ratings.csv ] || cat ratings.dat | sed 's/::/,/g' > ratings.csv
+
+[ -f movies.tsv ] || cat movies.dat | sed 's/::/	/g' > movies.tsv
