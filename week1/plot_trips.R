@@ -23,7 +23,7 @@ load('trips.RData')
 
 # plot the total number of trips over each day
 
-# plot the total number of trips (on the y axis) by age (on the x axis) and age (indicated with color)
+# plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the spread() function to reshape things to make it easier to compute this ratio
