@@ -143,7 +143,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Complete yesterdyay's plotting assignment for the Citibike data in [plot_trips.R](plot_trips.R)
   * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) on joins with dplyr and reshaping with tidyr
   * Read chapters 9 and 10 of [R for Data Science](http://r4ds.had.co.nz) on tidyr and joins
-  * Do parts 1 and 2 of Datacamp's [Cleaning Data in R](https://www.datacamp.com/courses/cleaning-data-in-r) tutorial
+  * Do part 1 of Datacamp's [Cleaning Data in R](https://www.datacamp.com/courses/cleaning-data-in-r) tutorial
   * Do the following exercises from [R for Data Science](http://r4ds.had.co.nz):
     * Exercise 2 on page 151
     * Exercise 1 and 3 on page 156 
