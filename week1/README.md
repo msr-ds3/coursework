@@ -58,8 +58,8 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ```
   * This will allow you to [sync future changes](https://help.github.com/articles/syncing-a-fork/) to your fork with:
 ```
-    git fetch upstream
-	git merge upstream/master
+git fetch upstream
+git merge upstream/master
 ```
   * Note: this is equivalent to ``git pull upstream master``
 
@@ -151,6 +151,16 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * The tidyr [vignette on tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
     * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
     * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
+
+# Day 5
+
+# Reproducibility
+  * Read Chapter 21 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
+  * Do the following exercises:
+    * Exercises 1 and 2 on page 426 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
+    * Exercise 3 on page 428, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
+    * Exercise 1 on page 434
+  * Read this [Introduction to Make](https://bost.ocks.org/mike/make/) and [Make for Data Scientists](http://blog.kaggle.com/2012/10/15/make-for-data-scientists/)
 
 ## The Anatomy of the Long Tail
   * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
