@@ -154,7 +154,8 @@ git merge upstream/master
 
 # Day 5
 
-# Reproducibility
+## Reproducibility
+  * Review the slides for [reproducible code](reproducible_code.pptx)
   * Read Chapter 21 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
   * Do the following exercises:
     * Exercises 1 and 2 on page 426 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
@@ -164,6 +165,6 @@ git merge upstream/master
 
 ## The Anatomy of the Long Tail
   * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
-  * Fill in code in the [movielens.R](movielens.R) file to reproduce the plots from Wednesday's slides
+  * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce the plots from Wednesday's slides
   * Sketch out (on paper) how to generate figure 2 from [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf)
-  * Wrote code to do this in the last section of [movielens.R](movielens.R)
+  * Wrote code to do this in the last section of [movielens.Rmd](movielens.Rmd)
