@@ -1,0 +1,209 @@
+---
+title: "Statistical Inference"
+author: "Jake Hofman"
+date: "April 20, 2017"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r}
+library(tidyverse)
+#library(ggplot2)
+#library(reshape)
+#library(dplyr)
+
+theme_set(theme_bw())
+
+set.seed(42)
+```
+
+# Estimating a proportion
+## Point estimate and sampling distribution
+Repeatedly flip a biased coin 100 times and estimate its bias.
+Adapted from Yakir 11.2.3.
+```{r}
+estimate_coin_bias <- function(n, p) {
+  mean(rbinom(n,1,p))
+}
+
+n <- 100
+p <- 0.3
+p_hat <- replicate(1e5, estimate_coin_bias(n, p))
+
+# plot the sampling distribution
+qplot(x=p_hat, geom="histogram", binwidth=0.01) +
+  geom_vline(xintercept=p) +
+  geom_vline(xintercept=mean(p_hat), linetype=2, color="red")
+
+# repeat this for different sample sizes
+plot_data <- data.frame()
+for (n in c(100, 200, 400, 800)) {
+  tmp <- data.frame(n=n, p_hat=replicate(1e5, estimate_coin_bias(n, p)))
+  plot_data <- rbind(plot_data, tmp)
+}
+
+qplot(data=plot_data, x=p_hat, geom="histogram", binwidth=0.01, facets = . ~ n)
+
+se <- plot_data %>%
+  group_by(n) %>%
+  summarize(se=sd(p_hat))
+qplot(data=se, x=n, y=se) +
+  stat_function(fun=function(n) {sqrt(p * (1 - p) / n)}, linetype=2)
+
+```
+
+## Confidence intervals
+```{r}
+set.seed(42)
+n <- 100
+p <- 0.3
+p_hat <- replicate(1e5, estimate_coin_bias(n, p))
+
+# compute upper and lower confidence intervals
+LCL <- p_hat - 1.96*sqrt(p_hat*(1-p_hat)/n)
+UCL <- p_hat + 1.96*sqrt(p_hat*(1-p_hat)/n)
+
+# check how often the true proportion is contained in the estimated confidence interval
+mean(p >= LCL & p <= UCL)
+
+# plot 100 confidence intervals and the true value
+plot_data <- data.frame(p_hat, LCL, UCL)[1:100,]
+plot_data <- transform(plot_data, contains_p=(p >= LCL & p <= UCL))
+ggplot(data=plot_data, aes(x=1:nrow(plot_data), y=p_hat, color=contains_p)) +
+  geom_pointrange(aes(ymin=LCL, ymax=UCL)) +
+  geom_hline(yintercept=p, linetype=2) +
+  xlab('') +
+  scale_color_manual(values=c("red","darkgreen")) +
+  theme(legend.position="none")
+```
+
+
+## Hypothesis testing
+```{r}
+# construct a null distribution: what would happen if the coin were fair?
+set.seed(42)
+n <- 100
+p0_hat <- replicate(1e5, estimate_coin_bias(n, p=0.5))
+
+# now conduct one experiment with 100 rolls from a biased coin
+p_hat <- estimate_coin_bias(n, p=0.3)
+
+# plot the null distribution and see where the observed estimate lies in it
+qplot(x=p0_hat, geom="histogram", binwidth=0.01) +
+  geom_vline(xintercept=p_hat, linetype=2, color="red")
+
+# compare this to our experiment
+# how likely is it that we would see an estimate this extreme if the coin really were fair?
+num_as_extreme <- sum(p0_hat <= p_hat)
+p_value <- num_as_extreme / length(p0_hat)
+p_value
+```
+Only `r num_as_extreme` out of `r length(p0_hat)` estimates from a fair coin with p=0.5 would result in an estimate of p_hat=`r p_hat` or smaller, corresponding to a p-value of `r p_value`.
+
+
+# Comparing two proportions
+## Point estimates and sampling distributions
+Repeatedly flip two coins, each 500 times and estimate their bias.
+```{r}
+estimate_coin_bias <- function(n, p) {
+  mean(rbinom(n,1,p))
+}
+
+pa <- 0.12
+pb <- 0.08
+n <- 500
+pa_hat <- replicate(1e5, estimate_coin_bias(n, pa))
+pb_hat <- replicate(1e5, estimate_coin_bias(n, pb))
+
+# wrangle the results into one data frame
+plot_data <- rbind(data.frame(split='A', trial=1:length(pa_hat), p_hat=pa_hat),
+                   data.frame(split='B', trial=1:length(pb_hat), p_hat=pb_hat))
+
+# plot the sampling distributions for each split
+ggplot(data=plot_data, aes(x=p_hat, fill=split)) +
+  geom_histogram(position="identity", binwidth=0.002, alpha=0.5) +
+  scale_alpha(guide=F)
+
+# plot the sampling distribution of the difference
+qplot(x=pa_hat-pb_hat, geom="histogram", binwidth=0.002) +
+  geom_vline(xintercept=pa-pb) +
+  geom_vline(xintercept=mean(pa_hat-pb_hat), linetype=2, color="red")
+
+# note that variances add for independent random variables
+variance_of_difference <- var(pa_hat - pb_hat)
+sum_of_variances <- var(pa_hat) + var(pb_hat)
+```
+
+## Confidence intervals
+```{r}
+# plot 100 confidence intervals by split
+plot_data <- transform(plot_data, 
+                       LCL = p_hat - 1.96*sqrt(p_hat*(1-p_hat)/n),
+                       UCL = p_hat + 1.96*sqrt(p_hat*(1-p_hat)/n))
+plot_data <- subset(plot_data, trial <= 100)
+ggplot(data=plot_data, aes(x=trial, y=p_hat, linetype=split, position="dodge")) +
+  geom_pointrange(aes(ymin=LCL, ymax=UCL)) +
+  xlab('') +
+  theme(legend.title=element_blank())
+```
+
+## Hypothesis testing
+```{r}
+# construct a null distribution: what would happen if both coins had the same bias (e.g., A and B are the same)?
+p0a <- 0.08
+p0b <- 0.08
+n <- 500
+dp0_hat <- replicate(1e5, estimate_coin_bias(n, p0a)) -
+           replicate(1e5, estimate_coin_bias(n, p0b))
+
+# run one experiment where there is an underlying difference
+pa <- 0.12
+pb <- 0.08
+dp_hat <- estimate_coin_bias(n, pa) - estimate_coin_bias(n, pb)
+
+# plot the null distribution and see where the observed estimate lies in it
+qplot(x=dp0_hat, geom="histogram", binwidth=0.01) +
+  geom_vline(xintercept=dp_hat, linetype=2, color="red")
+
+# compare this to our experiment
+# how likely is it that we would see an estimate this extreme both coins were identical?
+num_as_extreme <- sum(dp0_hat >= dp_hat)
+p_value <- num_as_extreme / length(dp0_hat)
+p_value
+```
+Only `r num_as_extreme` out of `r length(dp0_hat)` estimates from two identical coins with p=0.08 would result in an estimate of dp_hat=`r dp_hat` or smaller, corresponding to a p-value of `r p_value`.
+
+# Power calculations
+## Computing sample size using built-in R functions
+```{r}
+# use power.prop.test to compute the sample size you need
+power.prop.test(p1=0.08, p2=0.12, sig.level=0.05, power=0.80, alternative="one.sided")
+```
+
+## Computing power by direct simulation
+```{r}
+run_experiment <- function(pa, pb, n, alpha) {
+  na <- sum(rbinom(n, 1, pa))
+  nb <- sum(rbinom(n, 1, pb))
+  test <- prop.test(x = c(na, nb), n = c(n, n), alternative="greater", conf.level = alpha)
+  test$p.value < alpha
+}
+
+compute_power <- function(pa, pb, n, alpha, r = 1000) {
+  mean(replicate(r, run_experiment(pa, pb, n, alpha)))
+}
+
+pa <- 0.12
+pb <- 0.08
+alpha <- 0.05
+
+N <- seq(100,1000, by = 100)
+pow <- c()
+for (n in N) {
+  pow <- c(pow, compute_power(pa, pb, n, alpha))
+}
+
+qplot(N, pow)
+```
