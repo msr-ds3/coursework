@@ -116,6 +116,11 @@ git merge upstream/master
 	* Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
 	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 
+## Save your work
+  * Make sure to save your work and push it to GitHub. Do this in three steps:
+  	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
+  	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
+  	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
 
 # Day 3
 
