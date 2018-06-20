@@ -28,3 +28,21 @@
 -->
 
 
+## Day 2
+
+  * Review the [Prediction and Regression](Lecture%20%2%20Prediction%20and%20Regression.pptx) slides
+  * Do [HW2](hw2%20DS3%202018.docx) where you'll learn all about regression and Orange Juice!
+  * See this notebook on [linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse and this one on [model evaluation](model_evaluation.ipynb) 
+  * Read Chapter 18 of [R for Data Science](http://r4ds.had.co.nz) on modeling in R
+  * Reference:
+    * [Formula syntax in R](https://cran.r-project.org/doc/manuals/R-intro.html#Formulae-for-statistical-models)
+    * Dan's interactive [Visual Least Squares](http://www.dangoldstein.com/dsn/archives/2006/03/every_wonder_ho.html) tool
+    * Some background on elasticity: [blog post](http://www.salemmarafi.com/business/price-elasticity/), [Khan Academy video](https://www.khanacademy.org/economics-finance-domain/microeconomics/elasticity-tutorial/price-elasticity-tutorial/v/price-elasticity-of-demand)
+    * A slide deck on [log transformations in regression](http://home.wlu.edu/%7Egusej/econ398/notes/logRegressions.pdf)
+    * Chapter 3 of [Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression
+    * Also covered in Chapter 14 of [Introduction to Statistical Thinking](http://pluto.huji.ac.il/~msby/StatThink/)
+
+
+
+
+
