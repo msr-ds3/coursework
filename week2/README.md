@@ -30,7 +30,7 @@
 
 ## Day 2
 
-  * Review the [Prediction and Regression](Lecture%20%2%20Prediction%20and%20Regression.pptx) slides
+  * Review the [Prediction and Regression](Lecture%202%20Prediction%20regression%202018.pptx) slides
   * Do [HW2](hw2%20DS3%202018.docx) where you'll learn all about regression and Orange Juice!
   * See this notebook on [linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse and this one on [model evaluation](model_evaluation.ipynb) 
   * Read Chapter 18 of [R for Data Science](http://r4ds.had.co.nz) on modeling in R
