@@ -51,6 +51,7 @@
 # Day 4
   * Investigate cross-price elasticity of oj sales together in class
   * Review the slides on [causality](Lecture%204%20Intro%20to%20causality%20non%20parametric.pptxLecture%204%20Intro%20to%20causality%20non%20parametric.pptx)
+  * Do the two assignments below
 
 ## Cross-validation for Citibike trips
 In this assignment we'll predict number of trips per day as a function of the weather on that day. Do all of your work in an RMarkdown file named `citibike_cv.Rmd`.
