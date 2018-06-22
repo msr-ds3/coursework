@@ -51,7 +51,7 @@
 # Day 4
   * Investigate cross-price elasticity of oj sales together in class
   * Review the slides on [causality](Lecture%204%20Intro%20to%20causality%20non%20parametric.pptxLecture%204%20Intro%20to%20causality%20non%20parametric.pptx)
-  * Do the two assignments below
+  * Do the assignment below
 
 ## Cross-validation for Citibike trips
 In this assignment we'll predict number of trips per day as a function of the weather on that day. Do all of your work in an RMarkdown file named `citibike_cv.Rmd`.
@@ -63,12 +63,24 @@ In this assignment we'll predict number of trips per day as a function of the we
 5. Now automate this, extending the model to higher-order polynomials with a ``for`` loop over the degree ``k``. For each value of ``k``, fit a model to the training data and save the R^2 on the training data to one vector and test vector to another. Then plot the training and test R^2 as a function of ``k``. What value of ``k`` has the best performance?
 6. Finally, fit one model for the value of ``k`` with the best performance in 6), and plot the actual and predicted values for this model.
 
+# Day 5
+
+* Review these notebooks on [linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse and this one on [model evaluation](model_evaluation.ipynb) 
+* See this [manual model fitting](https://jmhmsr.shinyapps.io/modelfit/) shiny app
+* Do the assignment below
+
 ### Predicting daily Citibike trips
 The point of this exercise is to get experience in an open-ended prediction exercise: predicting the total number of Citibike trips taken on a given day. Do all of your work in an RMarkdown file named `predict_citibike.Rmd`. Here are the rules of the game:
 
-1. You can use any features you like that are available prior to the day in question, ranging from the weather, to the time of year and day of week, to activity in previous days or weeks, but don't cheat and use features from the future (e.g., the next day's trips).
+1. You can use any features you like that are available prior to the day in question, ranging from the weather, to the time of year and day of week, to activity in previous days or weeks, but don't cheat and use features from the future (e.g., the next day's trips). You might even try finding a CSV of holidays online and adding a factor for "is_holiday" to your model to see if this improves the fit.
 2. As usual, split your data into training and testing subsets and evaluate performance on each.
 3. Quantify your performance in two ways: R^2 (or the square of the correlation coefficient), as we've been doing, and with [root mean-squared error](https://www.kaggle.com/wiki/RootMeanSquaredError).
 4. Report the model with the best performance on the test data. Watch out for overfitting.
 5. Plot your final best fit model in two different ways. First with the date on the x-axis and the number of trips on the y-axis, showing the actual values as points and predicted values as a line. Second as a plot where the x-axis is the predicted value and the y-axis is the actual value, with each point representing one day.
 5. Inspect the model when you're done to figure out what the highly predictive features are, and see if you can prune away any negligble features that don't matter much.
+6. When you're convinced that you have your best model, clean up all your code so that it saves your best model a ``.RData`` file.
+7. Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository.
+8. Write a new file that loads in the [weather data for new days](weather_2015.csv) and your saved model, and predicts the number of trips for each day (see [load_trips.R](../week1/citibike/load_trips.R) for code snippets to load in the weather data).
+9. Modify the [download_trips.R](../week1/citibike/download_trips.sh) script to download trips from 2015 (instead of 2014). 
+10. Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you found with cross-validation.
+11. Pair up with a partner, run their model, and evaluate the predictions it makes for the 2015 data.
