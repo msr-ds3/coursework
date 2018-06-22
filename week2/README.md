@@ -80,7 +80,7 @@ The point of this exercise is to get experience in an open-ended prediction exer
 5. Inspect the model when you're done to figure out what the highly predictive features are, and see if you can prune away any negligble features that don't matter much.
 6. When you're convinced that you have your best model, clean up all your code so that it saves your best model a ``.RData`` file.
 7. Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository.
-8. Write a new file that loads in the [weather data for new days](weather_2015.csv) and your saved model, and predicts the number of trips for each day (see [load_trips.R](../week1/citibike/load_trips.R) for code snippets to load in the weather data).
-9. Modify the [download_trips.R](../week1/citibike/download_trips.sh) script to download trips from 2015 (instead of 2014). 
+8. Write a new file that loads in the [weather data for new days](weather_2015.csv) and your saved model, and predicts the number of trips for each day (see [load_trips.R](../week1/load_trips.R) for code snippets to load in the weather data).
+9. Modify the [download_trips.R](../week1/download_trips.sh) script to download trips from 2015 (instead of 2014). 
 10. Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you found with cross-validation.
 11. Pair up with a partner, run their model, and evaluate the predictions it makes for the 2015 data.
