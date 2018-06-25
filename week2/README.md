@@ -50,7 +50,7 @@
 
 # Day 4
   * Investigate cross-price elasticity of oj sales together in class
-  * Review the slides on [causality](Lecture%204%20Intro%20to%20causality%20non%20parametric.pptxLecture%204%20Intro%20to%20causality%20non%20parametric.pptx)
+  * Review the slides on [causality](Lecture%204%20Intro%20to%20causality%20non%20parametric.pptx)
   * Do the assignment below
 
 ## Cross-validation for Citibike trips
