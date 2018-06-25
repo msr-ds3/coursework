@@ -7,6 +7,12 @@
   * Review the [slides](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-6-classification-with-naive-bayes) and [code](classification.ipynb) on classification
   * The [(super) naive Bayes](enron_naive_bayes.sh) shell script from lecture
   * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238)
+  * Think about the complexity of naive Bayes:
+    * Assume you're given D documents that contain words from a vocabulary of total size V, and that documents contain w words, on average. For instance, you might have D = 1,000 emails that are labeled spam or not spam, with a vocabulary of V = 100,000 possible words, where emails contains 100 words, on average.
+    * What is the running time for estimating the parameters for version of naive Bayes described in the slides?
+    * What are the space requirements?
+    * What is the cost of making a prediction on a new document once you've estimated the paramters?
+    * State all of your answers in terms of D, V, and w.
 
 ## Computational Complexity
   * [Sid Sen](http://www.cs.princeton.edu/~sssix/) gave a guest lecture on computational complexity, data structures, and algorithms. Some references:
