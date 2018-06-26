@@ -3,7 +3,7 @@
 
  * Make sure to finish and commit your solution to last week's Citibike modeling problem, with a new Rmd file that loads the 2015 weather and trip data, makes predictions using your model, and summarizes the model's performance
 
-## Classification
+## Classification: Naive Bayes
   * Review the [slides](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-6-classification-with-naive-bayes) on classification
   * The [(super) naive Bayes](enron_naive_bayes.sh) shell script from lecture
   * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238)
@@ -34,14 +34,21 @@
 
   * See [here](http://modelingsocialdata.org/lectures/2017/02/24/lecture-6-regression-1.html) for a table of complexity for model fitting and [here](https://github.com/jhofman/msd2017-notes/blob/master/lecture_6/lecture_6.pdf) for the gory details behind solving the normal equations and gradient descent
   * See this animation of [gradient descent](http://htmlpreview.github.io/?https://github.com/jhofman/msd2017/blob/master/lectures/lecture_6/gradient_descent.html)
+
+## Classification: evaluation, logistic regression
   * Review this [code](classification.ipynb) for classification
+  * See [here](https://github.com/jhofman/msd2017-notes/blob/master/lecture_9/lecture_9.pdf) for notes on logistic regression and classifier evaluation
+  * Do this [logistic regression lab](https://rpubs.com/dvorakt/255527) using copies of the `lending_club_cleaned.csv` ([source](https://www.lendingclub.com/info/download-data.action)) and `titanic_train.csv` ([source](https://www.kaggle.com/c/titanic/data)) datasets that are checked into this repo
+
+<!--
   * Complete the next [naive Bayes lab](https://rpubs.com/dvorakt/245720), see [here](https://en.wikipedia.org/wiki/Confusion_matrix) for terminology (sensitivity = recall, specificity = true negative rate)
+-->
 
 <!--
   * And this [logistic regression lab](https://rpubs.com/dvorakt/151334)
 
 # Day 2
-  * [Notes](https://github.com/jhofman/msd2017-notes/blob/master/lecture_9/lecture_9.pdf) on naive Bayes, logistic regression, and classifier evaluation
+  
   * A video explaining [ROC curves](http://www.dataschool.io/roc-curves-and-auc-explained/) with an accompanying [interactive demo](http://www.navan.name/roc/)
 -->
 
