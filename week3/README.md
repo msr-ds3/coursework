@@ -38,6 +38,7 @@
 ## Classification: evaluation, logistic regression
   * Review this [code](classification.ipynb) for classification
   * See [here](https://github.com/jhofman/msd2017-notes/blob/master/lecture_9/lecture_9.pdf) for notes on logistic regression and classifier evaluation
+  * For more on ROC curves, see [this video](http://www.dataschool.io/roc-curves-and-auc-explained/) and the accompanying [interactive demo](http://www.navan.name/roc/)
   * Do this [logistic regression lab](https://rpubs.com/dvorakt/255527) using copies of the `lending_club_cleaned.csv` ([source](https://www.lendingclub.com/info/download-data.action)) and `titanic_train.csv` ([source](https://www.kaggle.com/c/titanic/data)) datasets that are checked into this repo
 
 <!--
