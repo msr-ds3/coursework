@@ -28,7 +28,7 @@
 -->
 
 
-## Day 2
+# Day 2
 
   * Review the [Prediction and Regression](Lecture%202%20Prediction%20regression%202018.pptx) slides
   * Do [HW2](hw2%20DS3%202018.docx) where you'll learn all about regression and Orange Juice!
