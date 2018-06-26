@@ -1,6 +1,6 @@
 # Intro to Statistics and Machine Learning
 
-## Day 1
+# Day 1
   * See the [Statistical Inference & Hypothesis Testing](intro_to_stats.pptx) slides
   * Review the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
   * Interactive demos from the slides:
