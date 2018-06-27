@@ -45,12 +45,11 @@
   * Complete the next [naive Bayes lab](https://rpubs.com/dvorakt/245720), see [here](https://en.wikipedia.org/wiki/Confusion_matrix) for terminology (sensitivity = recall, specificity = true negative rate)
 -->
 
-<!--
-  * And this [logistic regression lab](https://rpubs.com/dvorakt/151334)
+# Day 3
 
-# Day 2
-  
-  * A video explaining [ROC curves](http://www.dataschool.io/roc-curves-and-auc-explained/) with an accompanying [interactive demo](http://www.navan.name/roc/)
--->
 
-<!-- https://github.com/msr-ds3/coursework/blob/2016/week4/README.md#day-3 -->
+## Causality and Experiments
+  * Review chapter 12 of Intro to Statistical Thinking (IST) and do question 12.1
+  * Review chapter 13 of IST and do question 13.1. Answer the following two additional questions for this problem:
+    * Make a plot of the distribution of outcomes (`score1`) split by the treatment (`active`), similar to [this plot](http://rpsychologist.com/d3/cohend/)
+    * Estimate the effect size by calculating [Cohen's d](https://en.wikiversity.org/wiki/Cohen%27s_d). Think about whether the effect seems practically meaningful.
