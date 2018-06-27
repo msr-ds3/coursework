@@ -51,5 +51,5 @@
 ## Causality and Experiments
   * Review chapter 12 of Intro to Statistical Thinking (IST) and do question 12.1
   * Review chapter 13 of IST and do question 13.1. Answer the following two additional questions for this problem:
-    * Make a plot of the distribution of outcomes (`score1`) split by the treatment (`active`), similar to [this plot](http://rpsychologist.com/d3/cohend/)
+    * Make a plot of the distribution of outcomes (`change`) split by the treatment (`active`), similar to [this plot](http://rpsychologist.com/d3/cohend/)
     * Estimate the effect size by calculating [Cohen's d](https://en.wikiversity.org/wiki/Cohen%27s_d). Think about whether the effect seems practically meaningful.
