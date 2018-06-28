@@ -35,7 +35,7 @@
   * See [here](http://modelingsocialdata.org/lectures/2017/02/24/lecture-6-regression-1.html) for a table of complexity for model fitting and [here](https://github.com/jhofman/msd2017-notes/blob/master/lecture_6/lecture_6.pdf) for the gory details behind solving the normal equations and gradient descent
   * See this animation of [gradient descent](http://htmlpreview.github.io/?https://github.com/jhofman/msd2017/blob/master/lectures/lecture_6/gradient_descent.html)
 
-## Classification: evaluation, logistic regression
+## Classification: Evaluation, logistic regression
   * Review this [code](classification.ipynb) for classification
   * See [here](https://github.com/jhofman/msd2017-notes/blob/master/lecture_9/lecture_9.pdf) for notes on logistic regression and classifier evaluation
   * For more on ROC curves, see [this video](http://www.dataschool.io/roc-curves-and-auc-explained/) and the accompanying [interactive demo](http://www.navan.name/roc/)
@@ -47,6 +47,9 @@
 
 # Day 3
 
+  * See [code](plotting_logit_models.R) from class for plotting logit models (preview output [here](http://htmlpreview.github.io/?https://raw.githubusercontent.com/msr-ds3/coursework/master/week3/plotting_logit_models.html))
+  * Review the [slides](experiments.pptx) on causality and randomized experiments
+  * See the [references](http://modelingsocialdata.org/lectures/2017/04/21/lecture-12-causality-and-experiments-2.html) in this post for more on the reproducibility crisis
 
 ## Causality and Experiments
   * Review chapter 12 of Intro to Statistical Thinking (IST) and do question 12.1
