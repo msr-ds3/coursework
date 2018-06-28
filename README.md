@@ -1,6 +1,6 @@
-# MSR NYC Data Science Summer School 2017
+# MSR NYC Data Science Summer School 2018
 
-This is the shared repository for Microsoft Research NYC's 2017 Data Science Summer School (DS3).
+This is the shared repository for Microsoft Research NYC's 2018 Data Science Summer School (DS3).
 
 * [Week 1](week1/): Git(hub), command line, exploratory data analysis in R
 * [Week 2](week2/): Statistics and machine learning
