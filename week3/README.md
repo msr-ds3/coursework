@@ -56,3 +56,11 @@
   * Review chapter 13 of IST and do question 13.1. Answer the following two additional questions for this problem:
     * Make a plot of the distribution of outcomes (`change`) split by the treatment (`active`), similar to [this plot](http://rpsychologist.com/d3/cohend/)
     * Estimate the effect size by calculating [Cohen's d](https://en.wikiversity.org/wiki/Cohen%27s_d). Think about whether the effect seems practically meaningful.
+
+# Day 4
+  * See the [slides](Day%204%20-%20Inferring%20Causality%20with%20Observational%20Settings.pptx) on causal inference from observational data and natural experiments
+  * Do the [homework](Homework%204.pdf) on difference-in-differences
+
+# Day 5
+  * See the [slides](Day%205%20-%20RD%20%26%20IV.pptx) on regression discontinuity designs and instrumental variables
+  * Do the [homework](Homework%205%20-%20RD.pdf) on regression discontinuity 
