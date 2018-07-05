@@ -47,6 +47,26 @@
     * Quote the accuracy and AUC on the test data and use the ``ROCR`` package to provide a plot of the ROC curve for the test data
     * Look at the most informative words for each section by examining the words with the top 10 largest and smallest weights from the fitted model
 
+# Day 3
+
+Fourth of July!
+
+# Day 4
+  * Finish up building the NYTimes article classifier
+  * See this [notebook](https://rpubs.com/jhofman/nycmaps) on maps, shapefiles, and spatial joins
+  * Use the 2014 Citibike data to make a few plots:
+    * Create a data frame that has the unique name, latitude, and longitude for each Citibike station that was present in the system in July 2014
+    * Make a map showing the location of each Citibike station using ggmap
+    * Do the same using leaflet, adding a popup that shows the name of the station when it's clicked on
+    * Then do a spatial join to combine this data frame with the Pediacities NYC neighborhood shapefile data
+    * Make a map showing the number of unique Citibike stations in each neighborhood
+    * First do this using ggmap where the fill color encodes the number of stations
+    * Then do the same using leaflet, adding a popup that shows the number of stations in a neighborhood when its shape is clicked on
+	* Now create a new data frame that has the total number of trips that depart from each station at each hour of the day on July 14th
+	* Do a spatial join to combine this data frame with the Pediacities NYC neighborhood shapefile data
+	* Make a ggmap plot showing the number of trips that leave from each neighborhood at 9am, 1pm, 5pm, and 10pm, faceted by hour, where each facet contains a map where the fill color encodes the number of departing trips in each neighborhood
+
+  
 <!--
 
   * We had a guest lecture from [Hal Daume]() on natural language processing
@@ -55,4 +75,3 @@
     * [A statistical approach to machine translation](http://dl.acm.org/citation.cfm?id=92860)
     * See these interactive demos on [k-means](https://www.naftaliharris.com/blog/visualizing-k-means-clustering/) and [mixture models](http://davpinto.com/ml-simulations/#gaussian-mixture-density)
 -->
-
