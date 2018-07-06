@@ -78,7 +78,7 @@ Fourth of July!
   * Create a function that computes historical trip times between any two stations:
     * Take the trips dataframe and two station names as inputs
     * Return a 168-by-6 dataframe with summary statistics of trip times for each hour of the week (e.g., Monday 9am, Monday 10am, etc.), where the summary statistics include:
-      * Number of trips in that hour
+      * Average number of trips in that hour
       * Average and median trip times for that hour
       * Standard deviation in trip time for that hour
       * Upper and lower quartiles of trip time for that hour
