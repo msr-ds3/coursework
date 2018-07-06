@@ -53,6 +53,8 @@ Fourth of July!
 
 # Day 4
   * Finish up building the NYTimes article classifier
+
+## Maps
   * See this [notebook](https://rpubs.com/jhofman/nycmaps) on maps, shapefiles, and spatial joins
   * Use the 2014 Citibike data to make a few plots:
     * Create a data frame that has the unique name, latitude, and longitude for each Citibike station that was present in the system in July 2014
@@ -65,7 +67,29 @@ Fourth of July!
 	* Now create a new data frame that has the total number of trips that depart from each station at each hour of the day on July 14th
 	* Do a spatial join to combine this data frame with the Pediacities NYC neighborhood shapefile data
 	* Make a ggmap plot showing the number of trips that leave from each neighborhood at 9am, 1pm, 5pm, and 10pm, faceted by hour, where each facet contains a map where the fill color encodes the number of departing trips in each neighborhood
+  * References:
+    * [Leaflet for R](https://rstudio.github.io/leaflet/)
+    * Datacamps [intro to leaflet in R](https://www.datacamp.com/courses/interactive-maps-with-leaflet-in-r)
+    * [Previews](https://leaflet-extras.github.io/leaflet-providers/preview/) of different leaflet tile providers
 
+# Day 5
+
+  * Complete yesterday's maps
+  * Create a function that computes historical trip times between any two stations:
+    * Take the trips dataframe and two station names as inputs
+    * Return a 168-by-6 dataframe with summary statistics of trip times for each hour of the week (e.g., Monday 9am, Monday 10am, etc.), where the summary statistics include:
+      * Number of trips in that hour
+      * Average and median trip times for that hour
+      * Standard deviation in trip time for that hour
+      * Upper and lower quartiles of trip time for that hour
+    * Use this function on trips between Penn Station and Grand Central (you can use the most popular station at each location)
+    * Make a plot of the results, where each facet is a day of the week, the x axis shows hour of the day, and the y axis shows average trip time, with transparent ribbons to show the standard deviation in trip time around the mean
+
+## Shiny apps
+  * Do RStudio's [written Shiny tutorial](https://shiny.rstudio.com/tutorial/) to get familiar with building shiny apps
+  * References:
+    * Datacamp's [Building Web Applications in R with Shiny](https://www.datacamp.com/courses/building-web-applications-in-r-with-shiny)
+    * Datacamp's [Case studies](https://www.datacamp.com/courses/building-web-applications-in-r-with-shiny-case-studies) for Shiny apps in R
   
 <!--
 
