@@ -112,7 +112,7 @@ git merge upstream/master
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
 	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
     * Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
-	* The [dplyr vignette](http://cran.rstudio.com/web/packages/dplyr/vignettes/introduction.html)
+	* The [dplyr vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html)
 	* Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
 	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 
@@ -139,7 +139,6 @@ git merge upstream/master
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
 
 
 # Day 4
