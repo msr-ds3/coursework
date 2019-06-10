@@ -11,7 +11,7 @@ This week covers:
 Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/about), GitHub for Windows, R, and RStudio
 
 ### Ubuntu on Windows
-  * Open [http://aka.ms/wslstore]() and select Ubuntu on Windows
+  * Open [http://aka.ms/wslstore](http://aka.ms/wslstore) and select Ubuntu on Windows
   * If this seems like it's hanging, hit enter
   * Create a username and password
   * Updates all packages with `sudo apt-get update` and `sudo apt-get upgrade`
