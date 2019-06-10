@@ -71,6 +71,7 @@ Fourth of July!
     * [Leaflet for R](https://rstudio.github.io/leaflet/)
     * Datacamps [intro to leaflet in R](https://www.datacamp.com/courses/interactive-maps-with-leaflet-in-r)
     * [Previews](https://leaflet-extras.github.io/leaflet-providers/preview/) of different leaflet tile providers
+    * The [sf package](http://strimas.com/r/tidy-sf/) for tidy spatial data
 
 # Day 5
 
