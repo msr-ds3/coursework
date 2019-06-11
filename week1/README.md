@@ -30,7 +30,9 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ### Text editor
 
   * You'll need a plain text editing program
-  * [Atom](https://atom.io), [Sublime](http://www.sublimetext.com), and [Visual Studio Code](https://code.visualstudio.com) are all good options
+  * If you are familiar with emacs or vim, you can install them in Ubuntu with `sudo apt-get install emacs` or `sudo apt-get install vim`
+  * Otherwise consider [Visual Studio Code](https://code.visualstudio.com), [Atom](https://atom.io), or [Sublime](http://www.sublimetext.com)
+  * Check your editor's settings for [unix-friendly line endings](https://askubuntu.com/a/1036364)
 
 ### Filesystem setup
   * Files that you create in Ubuntu on Windows get stored in a somewhat hidden location within the Windows filesystem
@@ -64,7 +66,8 @@ git merge upstream/master
   * Note: this is equivalent to ``git pull upstream master``
 
 ### Learn more (optional)
-  * Datacamp's [interactive online git course](https://www.datacamp.com/courses/introduction-to-git-for-data-science)
+  * Codecademy's [interactive introduction to git](https://www.codecademy.com/learn/learn-git)
+<!--  * Datacamp's [interactive online git course](https://www.datacamp.com/courses/introduction-to-git-for-data-science) -->
   * A full hour-long [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
@@ -72,7 +75,7 @@ git merge upstream/master
 ## Intro to the Command Line
   * See the [intro to the command line](intro_command_line.ipynb) notebook we discussed together
   * Read through [Lifehacker's command line primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything)
-  * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/courses/learn-the-command-line/lessons/navigation/exercises/your-first-command?action=lesson_resume)
+  * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/learn/learn-the-command-line)
 
 ### Learn more (optional)
   * See this [crash course](https://learnpythonthehardway.org/book/appendixa.html) for more details on commonly used commands
