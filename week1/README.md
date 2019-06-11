@@ -19,7 +19,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ### Git / GitHub for Windows
   * Check that you have git under bash by typing `git --version` in the terminal
   * Install [GitHub for Windows](https://desktop.github.com)
-  * Configure git to deal with line endings in a cross-platform friendly way: `git config --global core.autocrlf true`
+<!--  * Configure git to deal with line endings in a cross-platform friendly way: `git config --global core.autocrlf true` -->
 
 ### R and RStudio
   
@@ -85,6 +85,9 @@ git merge upstream/master
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
 
 <!--
+
+* sudo apt-get install dos2unix unzip
+* dos2unix for citibike script
 
 # Day 2
 
