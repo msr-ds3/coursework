@@ -81,6 +81,7 @@ git merge upstream/master
   * Learn [awk in 20 minutes](http://ferd.ca/awk-in-20-minutes.html)
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
 
+<!--
 
 # Day 2
 
@@ -172,3 +173,5 @@ git merge upstream/master
   * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce the plots from Wednesday's slides
   * Sketch out (on paper) how to generate figure 2 from [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf)
   * Wrote code to do this in the last section of [movielens.Rmd](movielens.Rmd)
+
+-->
