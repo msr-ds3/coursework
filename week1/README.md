@@ -34,6 +34,11 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Otherwise consider [Visual Studio Code](https://code.visualstudio.com), [Atom](https://atom.io), or [Sublime](http://www.sublimetext.com)
   * Check your editor's settings for [unix-friendly line endings](https://askubuntu.com/a/1036364)
 
+<!-- 
+* sudo apt-get install dos2unix unzip
+* dos2unix for citibike script
+-->
+
 ### Filesystem setup
   * Files that you create in Ubuntu on Windows get stored in a somewhat hidden location within the Windows filesystem
   * To make it easier to find files you work on in Ubuntu, do the following:
@@ -75,35 +80,38 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Learn [awk in 20 minutes](http://ferd.ca/awk-in-20-minutes.html)
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
 
-<!--
-
-* sudo apt-get install dos2unix unzip
-* dos2unix for citibike script
-
 # Day 2
 
 ## Counting
 
-  * See these [Introduction to Counting](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-2-introduction-to-counting) and [Data Wrangling in R](https://www.slideshare.net/jakehofman/modeling-social-data-lecture-3-data-manipulation-in-r?ref=http://modelingsocialdata.org/lectures/2017/02/03/lecture-3-computational-complexity.html) slides
-  * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
+  * See these [Introduction to Counting](https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting) and [Data Wrangling in R](https://speakerdeck.com/jhofman/modeling-social-data-lecture-3-data-manipulation-in-r) slides
 
 ## Command line exercises
   * Pull changes from the msr-ds3/coursework repo: `git pull upstream master`
-  * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
   * Review [intro_command_line.ipynb](intro_command_line.ipynb) for an introduction to the command line
+  * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
+  * Fill in solutions of your own under each comment in [citibike.sh](citibike.sh) using the `201402-citibike-tripdata.csv` file
+  * Commit and push your work to your fork of the coursework repository: `git push origin master`
+
+<!--
   * Download one month of the [Citibike data](https://www.citibikenyc.com/system-data): ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
   * Decompress it: ``unzip 201402-citibike-tripdata.zip``
   * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
-  * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
-  * Fill in solutions of your own under each comment in [citibike.sh](citibike.sh)
-  * Commit and push your work to your fork of the coursework repository: `git push origin master`
+
+  * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
+-->
 
 ## Intro to R
-  * Have a look at [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
-  * Do the free portion of DataCamp's [Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) and [Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorials
+  * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
+  * Have a look at [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r)
   * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
   * Read chapters 2 and 3 of [R for Data Science](http://r4ds.had.co.nz)
   * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2
+  * See also
+  	* [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
+  	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
+  	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
+
 
   * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
@@ -119,6 +127,9 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
   	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
+
+<!--
+
 
 # Day 3
 
