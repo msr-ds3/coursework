@@ -84,35 +84,39 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 
 ## Counting
 
-  * See these [Introduction to Counting](https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting) and [Data Wrangling in R](https://speakerdeck.com/jhofman/modeling-social-data-lecture-3-data-manipulation-in-r) slides
+  * See these [Introduction to Counting](https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting) slides
 
 ## Command line exercises
   * Pull changes from the msr-ds3/coursework repo: `git pull upstream master`
-  * Review [intro_command_line.ipynb](intro_command_line.ipynb) for an introduction to the command line
-  * See the [download_trips.sh](download_trips.sh) file which automates this, and can be run using `bash download_trips.sh` or `./download_trips.sh`
-  * Fill in solutions of your own under each comment in [citibike.sh](citibike.sh) using the `201402-citibike-tripdata.csv` file
-  * Commit and push your work to your fork of the coursework repository: `git push origin master`
+  * Use the [download_trips.sh](download_trips.sh) file to download Citibike trip data by running `bash download_trips.sh` or `./download_trips.sh`
+  * Fill in solutions under each comment in [citibike.sh](citibike.sh) using the `201402-citibike-tripdata.csv` file
 
-<!--
-  * Download one month of the [Citibike data](https://www.citibikenyc.com/system-data): ``wget https://s3.amazonaws.com/tripdata/201402-citibike-tripdata.zip``
-  * Decompress it: ``unzip 201402-citibike-tripdata.zip``
-  * Rename the resulting file to get rid of ugly spaces: ``mv 2014-02*.csv 201402-citibike-tripdata.csv``
 
-  * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
--->
+## Save your work
+  * Make sure to save your work and push it to GitHub. Do this in three steps:
+  	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
+  	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
+  	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
+
+## Extra
+  * Think about how to write a `musical_pairs.sh` script to determine your programming partner each day
+  * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2
+
+
+# Day 3
 
 ## Intro to R
+
+  * See the [Data Wrangling in R](https://speakerdeck.com/jhofman/modeling-social-data-lecture-3-data-manipulation-in-r) slides
   * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
   * Have a look at [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r)
+
+## R counting exercises
+  * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
   * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
   * Read chapters 2 and 3 of [R for Data Science](http://r4ds.had.co.nz)
-  * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2
-  * See also
-  	* [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
-  	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
-  	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
-
+## Learn more
   * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
@@ -122,11 +126,10 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 	* Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
 	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
 
-## Save your work
-  * Make sure to save your work and push it to GitHub. Do this in three steps:
-  	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
-  	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
-  	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
+  * Tutorials:
+  	* [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
+  	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
+  	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
 <!--
 
