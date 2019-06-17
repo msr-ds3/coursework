@@ -9,7 +9,7 @@ This week covers:
 
 ## Plotting (cont'd)
 
-  * Review [visualization_with_ggplot2.ipynb](../visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
+  * Review [visualization_with_ggplot2.ipynb](../week1/visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
 
 
 ## Combining and reshaping data
