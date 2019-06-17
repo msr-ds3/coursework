@@ -24,6 +24,14 @@ This week covers:
     * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
     * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
 
+## Rmarkdown
+
+  * Read Chapter 21 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
+  * Do the following exercises:
+    * Exercises 1 and 2 on page 426 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
+    * Exercise 3 on page 428, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
+    * Exercise 1 on page 434
+
 ## The Anatomy of the Long Tail
   * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
   * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce the plots from Wednesday's slides
@@ -36,11 +44,6 @@ This week covers:
 
 ## Reproducibility
   * Review the slides for [reproducible code](reproducible_code.pptx)
-  * Read Chapter 21 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
-  * Do the following exercises:
-    * Exercises 1 and 2 on page 426 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
-    * Exercise 3 on page 428, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
-    * Exercise 1 on page 434
   * Read this [Introduction to Make](https://bost.ocks.org/mike/make/) and [Make for Data Scientists](http://blog.kaggle.com/2012/10/15/make-for-data-scientists/)
 
 
