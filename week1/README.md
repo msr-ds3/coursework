@@ -155,39 +155,3 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-
-<!--
-
-
-
-## Combining and reshaping data
-  * Complete yesterdyay's plotting assignment for the Citibike data in [plot_trips.R](plot_trips.R)
-  * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) on joins with dplyr and reshaping with tidyr
-  * Read chapters 9 and 10 of [R for Data Science](http://r4ds.had.co.nz) on tidyr and joins
-  * Do part 1 of Datacamp's [Cleaning Data in R](https://www.datacamp.com/courses/cleaning-data-in-r) tutorial
-  * Do the following exercises from [R for Data Science](http://r4ds.had.co.nz):
-    * Exercise 2 on page 151
-    * Exercise 1 and 3 on page 156 
-  * Additional references:
-    * The tidyr [vignette on tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
-    * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
-    * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
-
-# Day 5
-
-## Reproducibility
-  * Review the slides for [reproducible code](reproducible_code.pptx)
-  * Read Chapter 21 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
-  * Do the following exercises:
-    * Exercises 1 and 2 on page 426 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
-    * Exercise 3 on page 428, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
-    * Exercise 1 on page 434
-  * Read this [Introduction to Make](https://bost.ocks.org/mike/make/) and [Make for Data Scientists](http://blog.kaggle.com/2012/10/15/make-for-data-scientists/)
-
-## The Anatomy of the Long Tail
-  * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
-  * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce the plots from Wednesday's slides
-  * Sketch out (on paper) how to generate figure 2 from [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf)
-  * Wrote code to do this in the last section of [movielens.Rmd](movielens.Rmd)
-
--->
