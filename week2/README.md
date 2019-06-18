@@ -55,7 +55,7 @@ This week covers:
 
 ## Intro to stats
   * See the [Statistical Inference & Hypothesis Testing](intro_to_stats.pptx) slides
-  * Review the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
+  * Review the "Estimating a proportion" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
   * Interactive demos from the slides:
     * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
     * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
