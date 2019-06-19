@@ -56,14 +56,6 @@ This week covers:
 ## Intro to stats
   * See the [Statistical Inference & Hypothesis Testing](intro_to_stats.pptx) slides
   * Review the "Estimating a proportion" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
-  * Interactive demos from the slides:
-    * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
-    * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
-      * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
-      * [Basic probability](http://students.brown.edu/seeing-theory/basic-probability/index.html)
-      * [Central limit theorem](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section3)
-      * [Confidence intervals](http://students.brown.edu/seeing-theory/frequentist-inference/index.html#section2)
-    * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
   * Read Chapter 7 of [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) (IST) for a recap of sampling distributions. Feel free to execute code in the book along the way.
   * Do question 7.1
   * Read Chapter 9 of of IST
@@ -76,6 +68,19 @@ This week covers:
 ## References
   * Chapters 1 and 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php)
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
+
+# Day 3
+
+## Intro to stats (cont'd)
+
+  * Interactive demos:
+    * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
+    * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
+      * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
+      * [Basic probability](http://students.brown.edu/seeing-theory/basic-probability/index.html)
+      * [Central limit theorem](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section3)
+      * [Confidence intervals](http://students.brown.edu/seeing-theory/frequentist-inference/index.html#section2)
+    * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
 
 <!--   * Read Chapters 10 and 11 of IST
 
