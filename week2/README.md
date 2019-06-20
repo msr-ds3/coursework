@@ -86,6 +86,8 @@ This week covers:
   
 # Day 4
 
+## Experiments
+
   * Dan gave a guest lecture on experiments 
 
 ## More stats!
