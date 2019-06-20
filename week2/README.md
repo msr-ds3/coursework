@@ -46,8 +46,6 @@ This week covers:
   * Review the slides for [reproducible code](reproducible_code.pptx)
   * Read this [Introduction to Make](https://bost.ocks.org/mike/make/) and [Make for Data Scientists](http://blog.kaggle.com/2012/10/15/make-for-data-scientists/)
 
-
-
 -->
 
 
@@ -74,15 +72,34 @@ This week covers:
 ## Intro to stats (cont'd)
 
   * Interactive demos:
-    * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
     * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
       * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
       * [Basic probability](http://students.brown.edu/seeing-theory/basic-probability/index.html)
       * [Central limit theorem](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section3)
       * [Confidence intervals](http://students.brown.edu/seeing-theory/frequentist-inference/index.html#section2)
     * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
+    * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
 
-<!--   * Read Chapters 10 and 11 of IST
+  * Read Chapters 9, 10, and 11 of IST
+  * Finish up yesterday's exercises from IST
+
+  
+# Day 4
+
+  * Dan gave a guest lecture on experiments 
+
+## More stats!
+
+  * Read Chapters 4 and 6 of IST
+  * Do the following exercises from IST:
+  	 * Questions 4.1 and 4.2
+  	 * Question 6.1
+  	 * Example 5 in Section 8.3.5
+  	 * Questions 10.1 and 10.2
+  	 * Questions 11.1 and 11.3
+  * Read Chapter 2 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php)
+
+<!--
 
   * Review the third chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html) and work on the associated lab
 
