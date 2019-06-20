@@ -71,6 +71,8 @@ This week covers:
 
 ## Intro to stats (cont'd)
 
+  * We talked about expected values, variance, standard deviation, and standard errors on the whiteboard
+ 
   * Interactive demos:
     * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
       * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
