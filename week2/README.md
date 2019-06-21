@@ -103,6 +103,23 @@ This week covers:
   	 * Questions 11.1 and 11.3
   * Read Chapter 2 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php)
 
+# Day 5
+
+## Hypothesis testing
+
+  * We talked about hypothesis testing via simulation on the whiteboard
+  * Review the "Hypothesis testing" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
+  * See notes [here](https://github.com/jhofman/msd2019-notes/blob/master/lecture_5/lecture_5.pdf)
+
+## Stats (again!)
+
+  * Read Chapter 2 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
+  * Do the following exercises in Section 2.9 of ISRS: 2.2, 2.21, 2.23
+  * Read Sections 3.1 and 3.2 of ISRS
+  * Do these two problems:
+    * [Power calculation for the link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
+    * [Is yawning contagious?](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_2)
+    
 <!--
 
   * Review the third chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html) and work on the associated lab
