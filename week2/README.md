@@ -114,7 +114,7 @@ This week covers:
 ## Stats (again!)
 
   * Read Chapter 2 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
-  * Do the following exercises in Section 2.9 of ISRS: 2.2, 2.21, 2.23
+  * Do the following exercises in Section 2.9 of ISRS: 2.2, 2.5, 2.21, 2.23
   * Read Sections 3.1 and 3.2 of ISRS
   * Do these two problems:
     * [Power calculation for the link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
