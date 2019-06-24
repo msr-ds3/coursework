@@ -110,11 +110,11 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * See the [Data Wrangling in R](https://speakerdeck.com/jhofman/modeling-social-data-lecture-3-data-manipulation-in-r) slides
   * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
   * Have a look at [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r)
+  * Read chapters 2 and 3 of [R for Data Science](http://r4ds.had.co.nz)
 
 ## R counting exercises
   * Use the [musical pairs script](students/musical_pairs.sh) we wrote together yesterday to determine your programming partner each day
   * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
-  * Read chapters 2 and 3 of [R for Data Science](http://r4ds.had.co.nz)
 
 ## Learn more
   * References:
@@ -125,64 +125,33 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 	* The [dplyr vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html)
 	* Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
 	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+	* The [tidyverse style guide]
 
   * Tutorials:
   	* [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
-<!--
 
-
-# Day 3
+# Day 4
 
 ## Plotting
-  * Complete yesterday's intro to R assignment and the counting exercises under each comment in [citibike.R](citibike.R)
+
+  * See the [Data visualization](https://speakerdeck.com/jhofman/modeling-social-data-lecture-4-data-visualization) slides
   * Review [visualization_with_ggplot2.ipynb](visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
-  * Do DataCamp's [Data Visualization with ggplot2 (part 1)](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial 
   * Read chapter 1 of [R for Data Science](http://r4ds.had.co.nz)
-  * Modify and run the `download_trips.sh` script to grab all trip data from 2014 (use `dos2unix` to fix carriage return issues if they arise)
+
+## Plotting exercises   
+  * Use the `download_trips.sh` script to grab all trip data from 2014
   * Run the [load_trips.R](load_trips.R) file to generate `trips.RData`
   * Write code in [plot_trips.R](plot_trips.R) to reproduce and extend the visualizations we made this morning using `trips.RData`
 
-  * Additional references
+## Learn more
+  * Tutorials:
+    * DataCamp's [Data Visualization with ggplot2 (part 1)](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial
+  * References:
     * RStudio's [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
     * Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))) for more examples 
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-
-
-# Day 4
-
-## Combining and reshaping data
-  * Complete yesterdyay's plotting assignment for the Citibike data in [plot_trips.R](plot_trips.R)
-  * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) on joins with dplyr and reshaping with tidyr
-  * Read chapters 9 and 10 of [R for Data Science](http://r4ds.had.co.nz) on tidyr and joins
-  * Do part 1 of Datacamp's [Cleaning Data in R](https://www.datacamp.com/courses/cleaning-data-in-r) tutorial
-  * Do the following exercises from [R for Data Science](http://r4ds.had.co.nz):
-    * Exercise 2 on page 151
-    * Exercise 1 and 3 on page 156 
-  * Additional references:
-    * The tidyr [vignette on tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
-    * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
-    * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
-
-# Day 5
-
-## Reproducibility
-  * Review the slides for [reproducible code](reproducible_code.pptx)
-  * Read Chapter 21 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
-  * Do the following exercises:
-    * Exercises 1 and 2 on page 426 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
-    * Exercise 3 on page 428, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
-    * Exercise 1 on page 434
-  * Read this [Introduction to Make](https://bost.ocks.org/mike/make/) and [Make for Data Scientists](http://blog.kaggle.com/2012/10/15/make-for-data-scientists/)
-
-## The Anatomy of the Long Tail
-  * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
-  * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce the plots from Wednesday's slides
-  * Sketch out (on paper) how to generate figure 2 from [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf)
-  * Wrote code to do this in the last section of [movielens.Rmd](movielens.Rmd)
-
--->
