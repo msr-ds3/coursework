@@ -16,6 +16,7 @@ This week covers:
   * [Understanding Statistical Power and Significance Testing](https://rpsychologist.com/d3/NHST/)
   * [Calculating the power of a test](http://www.cyclismo.org/tutorial/R/power.html)
   * The American Statistical Association's [statement on p-values](https://amstat.tandfonline.com/doi/abs/10.1080/00031305.2016.1154108#.XE8wl89KjRY) by Wasserstein & Lazar
+  * [Inference by eye](https://apastyle.apa.org/manual/related/cumming-and-finch.pdf) by Cumming and Finch
   * [Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations](https://link.springer.com/article/10.1007%2Fs10654-016-0149-3) by Greenland et al.
   * [The Insignificance of Significance Testing](https://www.jstor.org/stable/3802789?seq=1#metadata_info_tab_contents) by Johnson
   * [The Insignificance of Null Hypothesis Significance Testing](https://journals.sagepub.com/doi/abs/10.1177/106591299905200309) by Gill
