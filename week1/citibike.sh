@@ -19,4 +19,5 @@
 
 # count the number of trips that start on cross streets that both contain numbers (e.g., "1 Ave & E 15 St", "E 39 St & 2 Ave", ...)
 
+
 # compute the average trip duration
