@@ -3,3 +3,6 @@
 *~
 *.zip
 .ipynb_checkpoints
+*.gz
+*.csv
+*.tsv
