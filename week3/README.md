@@ -69,7 +69,8 @@ This week covers:
   * See this [notebook](linear_models.ipynb) on fitting and visualizing linear models and this [notebook](model_evaluation.ipynb) on model evaluation
   * Read Sections 6.1 through 6.3 of [Intro to Stats with Randomization and Simulation](https://drive.google.com/file/d/0B-DHaDEbiOGkRHNndUlBaHVmaGM/edit)
   * Do Exercises 6.1, 6.2, and 6.3, and use the original data set in [babyweights.txt](babyweights.txt), taken from [here](https://web.archive.org/web/20040906234424/http://www.ma.hw.ac.uk/~stan/aod/library/babies.dat.txt), to reproduce the results from the book
-  * Read Sections 3.2 and 3.3 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/), do Lab 3.6.3 through 3.6.6
+  * Read Sections 3.2 and 3.3 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/)
+  * Do Labs 3.6.3 through 3.6.6
 
   
 ## References
