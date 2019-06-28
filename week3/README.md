@@ -66,4 +66,4 @@ This week covers:
 
 ## Regression (cont'd)
 
-  * See this [notebook](linear_models.ipynb) on fitting and visualizing linear models
+  * See this [notebook](linear_models.ipynb) on fitting and visualizing linear models and this [notebook](model_evaluation.ipynb) on model evaluation
