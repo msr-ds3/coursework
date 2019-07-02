@@ -21,8 +21,8 @@ for (csv in csvs) {
   # so manually convert the date from a string to a datetime
   if (typeof(tmp$starttime) == "character")
     tmp <- mutate(tmp,
-                  starttime=parse_datetime(starttime, "%m/%d/%Y %H:%M:%S"),
-                  stoptime=parse_datetime(stoptime, "%m/%d/%Y %H:%M:%S"))
+                  starttime=parse_datetime(starttime, "%m/%d/%Y %H:%M"),
+                  stoptime=parse_datetime(stoptime, "%m/%d/%Y %H:%M"))
 
   trips <- rbind(trips, tmp)
 }
