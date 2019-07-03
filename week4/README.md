@@ -57,27 +57,7 @@ The point of this exercise is to get experience in an open-ended prediction exer
   * The [(super) naive Bayes](enron_naive_bayes.sh) shell script from lecture
   * Review this [code](classification.ipynb) for classification
   * Complete this [naive Bayes lab](https://rpubs.com/dvorakt/144238)
-  * Think about the complexity of naive Bayes:
-    * Assume you're given D documents that contain words from a vocabulary of total size V, and that documents contain w words, on average. For instance, you might have D = 1,000 emails that are labeled spam or not spam, with a vocabulary of V = 100,000 possible words, where emails contains 100 words, on average.
-    * What is the running time for estimating the parameters for version of naive Bayes described in the slides?
-    * What are the space requirements?
-    * What is the cost of making a prediction on a new document once you've estimated the paramters?
-    * State all of your answers in terms of D, V, and w.
 
-
-## References
-
-  * Sections 4.1 through 4.3 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/getbook.html)
-  * Chapter 12 of [Advanced Data Analysis from an Elementary Point of View](http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/) 
-  * [Naive Bayes at 40](http://www.cs.iastate.edu/~honavar/bayes-lewis.pdf) by Lewis (1998)
-  * [Idiots Bayes---Not So Stupid After All?](http://www.jstor.org/pss/1403452) by Hand and Yu (2001)
-  * [A Bayesian Approach to Filtering Junk E-mail](http://robotics.stanford.edu/users/sahami/papers-dir/spam.pdf) from Sahami, Dumais, Heckerman, and Horvitz (1998)
-  * [A Plan for Spam](http://www.paulgraham.com/spam.html) by Paul Graham (2002)
-  * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf)
-  * [Understanding ROC curves](http://www.navan.name/roc/)
-
-
-<!--
 
 ## Computational Complexity
   * [Sid Sen](http://www.cs.princeton.edu/~sssix/) gave a lecture on computational complexity, data structures, and algorithms. Some references:
@@ -93,16 +73,41 @@ The point of this exercise is to get experience in an open-ended prediction exer
       * [Big-theta](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-big-theta-notation) for tight bounds
     * Hash tables on [Wikipedia](https://en.wikipedia.org/wiki/Hash_table) and [Spark Notes](http://www.sparknotes.com/cs/searching/hashtables/summary.html)
 
--->
+### Computational complexity of naive Bayes
+  * Think about the complexity of naive Bayes:
+    * Assume you're given D documents that contain words from a vocabulary of total size V, and that documents contain w words, on average. For instance, you might have D = 1,000 emails that are labeled spam or not spam, with a vocabulary of V = 100,000 possible words, where emails contains 100 words, on average.
+    * What is the running time for estimating the parameters for the version of naive Bayes discussed?
+    * What are the space requirements?
+    * What is the cost of making a prediction on a new document once you've estimated the paramters?
+    * State all of your answers in terms of D, V, and w.
+
+## Normal equations and gradient descent
+  * See [here](http://modelingsocialdata.org/lectures/2019/03/08/lecture-7-regression-1.html) for a table of complexity for model fitting and [here](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) for the gory details behind solving the normal equations and gradient descent
+  * See this animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
+ 
+
+## Logistic Regression
+
+  * See [here](https://github.com/jhofman/msd2019-notes/blob/master/lecture_9/lecture_9.pdf) for notes on logistic regression and classifier evaluation
+  * Read Sections 4.1 through 4.3 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/getbook.html) and do the logistic regression lab (4.6.1 and 4.6.2)
+  * Do this [logistic regression lab](https://rpubs.com/dvorakt/255527) using copies of the `lending_club_cleaned.csv` ([source](https://www.lendingclub.com/info/download-data.action)) and `titanic_train.csv` ([source](https://www.kaggle.com/c/titanic/data)) datasets that are checked into this repo
+  * See [code](plotting_logit_models.R) for plotting logit models (preview output [here](http://htmlpreview.github.io/?https://raw.githubusercontent.com/msr-ds3/coursework/master/week3/plotting_logit_models.html))  
+
+## References
+
+  * Sections 4.1 through 4.3 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/getbook.html)
+  * Chapter 12 of [Advanced Data Analysis from an Elementary Point of View](http://www.stat.cmu.edu/~cshalizi/ADAfaEPoV/) 
+  * [Naive Bayes at 40](http://www.cs.iastate.edu/~honavar/bayes-lewis.pdf) by Lewis (1998)
+  * [Idiots Bayes---Not So Stupid After All?](http://www.jstor.org/pss/1403452) by Hand and Yu (2001)
+  * [A Bayesian Approach to Filtering Junk E-mail](http://robotics.stanford.edu/users/sahami/papers-dir/spam.pdf) from Sahami, Dumais, Heckerman, and Horvitz (1998)
+  * [A Plan for Spam](http://www.paulgraham.com/spam.html) by Paul Graham (2002)
+  * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf)
+  * [Understanding ROC curves](http://www.navan.name/roc/)
 
 <!--
 
-  * See [here](https://github.com/jhofman/msd2019-notes/blob/master/lecture_9/lecture_9.pdf) for notes on logistic regression and classifier evaluation
+  
   * For more on ROC curves, see [this video](http://www.dataschool.io/roc-curves-and-auc-explained/) and the accompanying [interactive demo](http://www.navan.name/roc/)
-  * Do this [logistic regression lab](https://rpubs.com/dvorakt/255527) using copies of the `lending_club_cleaned.csv` ([source](https://www.lendingclub.com/info/download-data.action)) and `titanic_train.csv` ([source](https://www.kaggle.com/c/titanic/data)) datasets that are checked into this repo
+  
 
   -->
-
-<!--  
-  * See [code](plotting_logit_models.R) from class for plotting logit models (preview output [here](http://htmlpreview.github.io/?https://raw.githubusercontent.com/msr-ds3/coursework/master/week3/plotting_logit_models.html))
--->
