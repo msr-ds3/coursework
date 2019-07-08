@@ -29,7 +29,7 @@ Read business and world articles into a single data frame.
 
 ```
 
-Create a Corpus from the article snippets using the `VectorSource()` and `Corpus()` functions from the `tm` package. Then create a DocumentTermMatrix from the snippet Corpus, removing punctuation and numbers and convert the DocumentTermMatrix to a sparseMatrix, required by cv.glmnet using the provided funciton. See the `DocumentTermMatrix()` documentation for more details.
+Create a Corpus from the article snippets using the `VectorSource()` and `Corpus()` functions from the `tm` package. Then create a DocumentTermMatrix from the snippet Corpus, removing punctuation and numbers and convert the DocumentTermMatrix to a sparseMatrix, required by cv.glmnet using the provided funciton. See the `DocumentTermMatrix()` documentation for more details, which has parameters for all of the punctuation and number parsing.
 
 ```{r create-sparse-dtm}
 
