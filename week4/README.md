@@ -104,6 +104,10 @@ The point of this exercise is to get experience in an open-ended prediction exer
   * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf)
   * [Understanding ROC curves](http://www.navan.name/roc/)
 
+# Day 4
+
+  * Do the [NYTimes article classification problem](nyt_article_classification.Rmd) using the provided [world](world.tsv) and [business](business.tsv) articles.
+
 <!--
 
   
