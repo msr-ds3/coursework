@@ -101,17 +101,41 @@ The point of this exercise is to get experience in an open-ended prediction exer
   * [Idiots Bayes---Not So Stupid After All?](http://www.jstor.org/pss/1403452) by Hand and Yu (2001)
   * [A Bayesian Approach to Filtering Junk E-mail](http://robotics.stanford.edu/users/sahami/papers-dir/spam.pdf) from Sahami, Dumais, Heckerman, and Horvitz (1998)
   * [A Plan for Spam](http://www.paulgraham.com/spam.html) by Paul Graham (2002)
-  * [An introduction to ROC analysis](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf)
-  * [Understanding ROC curves](http://www.navan.name/roc/)
 
 # Day 4
 
+## Evaluating and interpreting classifiers
+
+  * We discussed various metrics for evaluating classifiers (accuracy, precision, recall, false positive rates, ROC curves, AUC, etc.)
+  * See [related code](classification.ipynb) for metrics
+  * And an example of [interpreting and plotting logistic regressions](http://htmlpreview.github.io/?https://github.com/jhofman/msd2019/blob/master/lectures/lecture_10/interpreting_logistic_regression.html) using the Titanic data
   * Do the [NYTimes article classification problem](nyt_article_classification.Rmd) using the provided [world](world.tsv) and [business](business.tsv) articles.
 
-<!--
+## References
 
-  
   * For more on ROC curves, see [this video](http://www.dataschool.io/roc-curves-and-auc-explained/) and the accompanying [interactive demo](http://www.navan.name/roc/)
-  
+  * [An introduction to ROC analysis ](https://ccrma.stanford.edu/workshops/mir2009/references/ROCintro.pdf)
+  * [Vowpal Wabbit](https://github.com/VowpalWabbit/vowpal_wabbit/wiki) for scalable classification
 
-  -->
+  
+# Day 5
+
+## Reproducibility, replication, and robustness
+
+  * See slides from these lectures for background on [computational reproducibility](http://modelingsocialdata.org/lectures/2019/02/22/lecture-5-reproducibility-1.html) and [the replication crisis](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html)
+  * See slides/video on [Prediction and explanation in social systems](https://videocast.nih.gov/summary.asp?live=27987&bhcp=1)
+
+  * Read [Predicting the Present with Google Trends](http://people.ischool.berkeley.edu/~hal/Papers/2011/ptp.pdf) and think critically about how you would a) replicate and b) extend the results in the paper
+  * Compare this to what's done in [this replication attempt](http://www.economics-ejournal.org/economics/journalarticles/2018-34)
+  * See also: [Detecting influenza epidemics using search engine query data](https://www.nature.com/articles/nature07634) and [The Parable of Google Flu: Traps in Big Data Analysis](https://gking.harvard.edu/files/gking/files/0314policyforumff.pdf)
+  * Read [The Perils of Policy by p-value](https://journals.sagepub.com/doi/abs/10.1177/0022343309356491) for ideas about how to think critically about explaination / prediction
+
+## References
+
+  * [Why Most Published Research Findings Are False](http://journals.plos.org/plosmedicine/article/file?id=10.1371/journal.pmed.0020124&type=printable)
+  * [False-Positive Psychology](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1850704) by Simmons, Nelson & Simonsohn
+  * [The garden of forking paths](http://www.stat.columbia.edu/~gelman/research/unpublished/p_hacking.pdf) by Gelman & Loken
+  * [The cumulative effect of reporting and citation biases on the apparent efficacy of treatments](https://www.cambridge.org/core/journals/psychological-medicine/article/cumulative-effect-of-reporting-and-citation-biases-on-the-apparent-efficacy-of-treatments-the-case-of-depression/71D73CADE32C0D3D996DABEA3FCDBF57/core-reader) by de Vries et al. ([popular coverage](https://www.nytimes.com/2018/09/24/upshot/publication-bias-threat-to-science.html?em_pos=small&emc=edit_up_20180924&nl=upshot&nl_art=0&nlid=57978065emc%3Dedit_up_20180924&ref=headline&te=1))
+  * Pre-registration portals from the [Open Science Framework](https://osf.io/registries/), [Center for Open Science](https://cos.io/prereg/), and [AsPredicted.org](https://aspredicted.org/index.php)
+  * Science magazine's announcement of [registered reports](http://www.sciencemag.org/careers/2015/12/register-your-study-new-publication-option)
+  * [Prediction and explanation in social systems](https://science.sciencemag.org/content/355/6324/486.abstract)
