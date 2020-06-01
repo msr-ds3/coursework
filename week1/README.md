@@ -73,22 +73,15 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 ## Intro to the Command Line
   * See this [intro to the command line](intro_command_line.ipynb) notebook 
   * Read through [Lifehacker's command line primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything)
-  * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/learn/learn-the-command-line)
+  * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/learn/learn-the-command-line) (the free portion)
 
 ### Learn more (optional)
+  * See these [Introduction to Counting](https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting) slides
   * See this [crash course](https://learnpythonthehardway.org/book/appendixa.html) for more details on commonly used commands
   * Check out Software Carpentry's [guide to the Unix shell](http://swcarpentry.github.io/shell-novice/)
   * Review this wikibook on [data analysis on the command line](http://en.wikibooks.org/wiki/Ad_Hoc_Data_Analysis_From_The_Unix_Command_Line), covering ``cut``, ``grep``, ``wc``, ``uniq``, ``sort``, etc
   * Learn [awk in 20 minutes](http://ferd.ca/awk-in-20-minutes.html)
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
-
-<!--
-
-
-
-## Counting
-
-  * See these [Introduction to Counting](https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting) slides
 
 ## Command line exercises
   * Pull changes from the msr-ds3/coursework repo: `git pull upstream master`
@@ -102,8 +95,14 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
 
+
 ## Extra
   * Think about how to write a `musical_pairs.sh` script to determine your programming partner each day
+ 
+<!--
+
+## Counting
+
   * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2
 
 
