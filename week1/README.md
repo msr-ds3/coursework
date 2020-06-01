@@ -2,7 +2,7 @@ This week covers:
 
   * An intro to Git and Github for sharing code
   * Command line tools
-  * Exploratory data analysis with R
+  * Base R and the Tidyverse
 
 # Day 1
 
@@ -67,9 +67,11 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * A full hour-long [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
+
+# Day 2
   
 ## Intro to the Command Line
-  * See the [intro to the command line](intro_command_line.ipynb) notebook we discussed together
+  * See this [intro to the command line](intro_command_line.ipynb) notebook 
   * Read through [Lifehacker's command line primer](http://lifehacker.com/5633909/who-needs-a-mouse-learn-to-use-the-command-line-for-almost-anything)
   * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/learn/learn-the-command-line)
 
@@ -80,7 +82,9 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Learn [awk in 20 minutes](http://ferd.ca/awk-in-20-minutes.html)
   * Check out some more advanced tools for [Data Science at the Command Line](http://datascienceatthecommandline.com)
 
-# Day 2
+<!--
+
+
 
 ## Counting
 
@@ -155,3 +159,5 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+
+-->
