@@ -22,7 +22,7 @@ cd $DATA_DIR
 for year in 2014
 do
     # note: remove '#' in line below to download all months
-    for month in 02 01 03 04 05 06 07 08 09 10 11 12
+    for month in 02 #01 03 04 05 06 07 08 09 10 11 12
     do
 
     # download the zip file
