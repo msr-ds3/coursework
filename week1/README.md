@@ -2,7 +2,7 @@ This week covers:
 
   * An intro to Git and Github for sharing code
   * Command line tools
-  * Base R and the Tidyverse
+  * R and the Tidyverse
 
 # Day 1
 
