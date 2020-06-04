@@ -143,7 +143,6 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
-<!--
 
 # Day 4
 
@@ -151,12 +150,17 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 
   * See the [Data visualization](https://speakerdeck.com/jhofman/modeling-social-data-lecture-4-data-visualization) slides
   * Review [visualization_with_ggplot2.ipynb](visualization_with_ggplot2.ipynb) for an introduction to data visualization with ggplot2
-  * Read chapter 1 of [R for Data Science](http://r4ds.had.co.nz)
 
 ## Plotting exercises   
-  * Use the `download_trips.sh` script to grab all trip data from 2014
-  * Run the [load_trips.R](load_trips.R) file to generate `trips.RData`
-  * Write code in [plot_trips.R](plot_trips.R) to reproduce and extend the visualizations we made this morning using `trips.RData`
+  * Read chapter 3 of the online edition of [R for Data Science](http://r4ds.had.co.nz) and do the following exercises:
+    * Section [3.3.1](https://r4ds.had.co.nz/data-visualisation.html#exercises-1), exercises 1, 2, and 3
+    * Section [3.5.1](https://r4ds.had.co.nz/data-visualisation.html#exercises-2), exercises 1 and 4
+    * Section [3.6.1](https://r4ds.had.co.nz/data-visualisation.html#exercises-3), exercises 5 and 6
+    * Section [3.8.1](https://r4ds.had.co.nz/data-visualisation.html#exercises-5), exercises 1 and 2
+  * Citibike plots
+    * Modify and use the `download_trips.sh` script to grab all months of trip data from 2014
+    * Run the [load_trips.R](load_trips.R) file to generate `trips.RData`
+    * Write code in [plot_trips.R](plot_trips.R) to create visualizations using `trips.RData`
 
 ## Learn more
   * Tutorials:
@@ -167,5 +171,3 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-
--->
