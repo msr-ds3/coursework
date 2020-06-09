@@ -41,13 +41,11 @@ This week covers:
   * Review the "Estimating a proportion" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
   * Read Chapter 4 of an [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) IST and do questions 4.1 and 4.2. Feel free to execute code in the book along the way.
   * Read Chapter 6 of IST on the normal distribution and do question 6.1
-  * Read Chapter 7 of IST on sampling distributions and do exercise 7.1
-  * Read Chapter 9 of of IST and do exercise 9.1
 
 <!--
   	 * Example 5 in Section 8.3.5
     * Do question 9.2
-  	 * Questions 10.1 and 10.2
+
   	 * Questions 11.1 and 11.3
 
     * Do the following exercises in Section 2.9 of ISRS: 2.2, 2.5, 2.21, 2.23
@@ -67,9 +65,16 @@ This week covers:
     * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
     * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
 
-<!--
-
 # Day 2
+
+# Intro to stats, continued
+
+  * Read Chapter 7 of IST on sampling distributions and do exercise 7.1
+  * Read Chapter 9 of IST and do exercise 9.1
+  * Read Chapter 10 of IST and do exercises 10.1 and 10.2
+  * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
+
+<!--
 
 # Day 3
   
