@@ -72,7 +72,7 @@ This week covers:
   * Read Chapter 7 of IST on sampling distributions and do exercise 7.1
   * Read Chapter 9 of IST and do exercise 9.1
   * Read Chapter 10 of IST and do exercises 10.1 and 10.2
-  * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
+  * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS)
 
 <!--
 
