@@ -42,20 +42,8 @@ This week covers:
   * Read Chapter 4 of an [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) IST and do questions 4.1 and 4.2. Feel free to execute code in the book along the way.
   * Read Chapter 6 of IST on the normal distribution and do question 6.1
 
-<!--
-  	 * Example 5 in Section 8.3.5
-    * Do question 9.2
-
-  	 * Questions 11.1 and 11.3
-
-    * Do the following exercises in Section 2.9 of ISRS: 2.2, 2.5, 2.21, 2.23
-    * Read Sections 3.1 and 3.2 of ISRS
--->
-
-
 ## References
-* Chapters 1 and 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
-* Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
+* Chapter 1 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
 * Interactive demos:
     * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
       * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
@@ -67,16 +55,36 @@ This week covers:
 
 # Day 2
 
-# Intro to stats, continued
+## Intro to stats, continued
 
   * Read Chapter 7 of IST on sampling distributions and do exercise 7.1
   * Read Chapter 9 of IST and do exercise 9.1
   * Read Chapter 10 of IST and do exercises 10.1 and 10.2
-  * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS)
+
+## References
+  * See the relevant part of these [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_5/lecture_5.pdf) on statistics by simulation
+  * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
+  * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
+
+# Day 3
+  * See this [post](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html) and the related [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) on effect sizes and the replication crisis
+  * See this notebook on [statistical vs. practical significance](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistically_significant_splits.html)
+  * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS) and do exercises 2.2 and 2.5
+  * Read Sections 3.1 and 3.2 of ISRS
+  * Do exercise 9.2 in IST
+
+
+<!--
+  	 * Example 5 in Section 8.3.5
+
+  	 * Questions 11.1 and 11.3
+
+    * ISRS 2.21, 2.23
+-->
+
 
 <!--
 
-# Day 3
   
 # Day 4
 
@@ -99,7 +107,7 @@ This week covers:
 
   * Review the third chapter of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/index.html) and work on the associated lab
 
-  * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
+
 
 -->
 
