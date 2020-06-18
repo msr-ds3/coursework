@@ -37,7 +37,7 @@ The point of this exercise is to get experience in an open-ended prediction exer
 
 ## Testing your Citibike models
 
-Now you're going to test the model you developed on trips from 2014 with data from 2015.
+Now you're going to test the model you developed yesterday using trips from 2014 with data from 2015.
 
 1. First you'll need to get data for 2015. Make a copy of the the [download_trips.sh](../week1/download_trips.sh) script from week 1 here and modify it to download all trips from 2015. You can call it `download_trips_2015.sh`.
 2. Then make a copy of the [load_trips.R](../week1/load_trips.R) script from week 1 here and modify it to load the 2015 trip data along with weather data for 2015 contained in [weather_2015.csv](weather_2015.csv). You can call it `load_trips_2015.R`. If you used any other data for your model, make sure to include code that downloads and incorporates that data as well. The result should be a `trips_2015.Rdata` file similar to what you used to develop your model, but containing data from 2015 (instead of 2014).
