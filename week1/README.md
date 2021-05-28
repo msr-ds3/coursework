@@ -68,6 +68,8 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
 
+<!--
+
 # Day 2
   
 ## Intro to the Command Line
@@ -99,14 +101,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 
 ## Extra
   * Think about how to write a `musical_pairs.sh` script to determine your programming partner each day
- 
-<!--
 
-## Counting
-
-  * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2
-
--->
 
 
 # Day 3
@@ -117,7 +112,6 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
   * Do the free portion of [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r), chapters 1, 2, and 3
   * See chapters 1, 2, and 4 of [R for Data Science](http://r4ds.had.co.nz) for background on using R and Rstudio (chapter numbers correspond to the online edition)
-<!--   * Read chapters 2 and 3 of [R for Data Science](http://r4ds.had.co.nz) -->
 
 ## R counting exercises
   * Use the [musical pairs script](students/musical_pairs.sh) to determine your programming partner each day
@@ -198,3 +192,5 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
     * Section [27.2.1](https://r4ds.had.co.nz/r-markdown.html#exercises-71), exercises 1 and 2 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
     * Section [27.3.1](https://r4ds.had.co.nz/r-markdown.html#exercises-72) exercise 3, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
     * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
+
+-->
