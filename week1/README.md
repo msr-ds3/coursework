@@ -59,7 +59,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Use ``git add`` to add the file to your local repository
   * Use ``git commit`` and ``git push`` to commit and push your changes to your copy of the repository
   * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original course repository
-  * Finally, [sync changes from the main repo](https://help.github.com/articles/syncing-a-fork/) to your fork with ``git pull upstream master``
+  * Finally, [sync changes from the main repo](https://help.github.com/articles/syncing-a-fork/) to your fork with ``git pull upstream main``
 
 ### Learn more (optional)
   * Codecademy's [interactive introduction to git](https://www.codecademy.com/learn/learn-git)
