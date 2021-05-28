@@ -1,6 +1,6 @@
-# MSR NYC *Virtual* Data Science Summer School 2020
+# MSR NYC *Virtual* Data Science Summer School 2021
 
-This is the shared repository for Microsoft Research NYC's 2020 *Virtual* Data Science Summer School (DS3). More information on the program is available [here](http://ds3.research.microsoft.com).
+This is the shared repository for Microsoft Research NYC's 2021 *Virtual* Data Science Summer School (DS3). More information on the program is available [here](http://ds3.research.microsoft.com).
 
 * [Week 1](week1/): Pre-requisites and background
 * [Week 2](week2/): Core curriculum
