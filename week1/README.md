@@ -68,7 +68,13 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
 
-<!--
+## Extra
+
+Think about how to write a `musical_pairs.sh` script to determine your programming partner each day. We want the script to do the following:
+
+* Produce a (pseudo)random pairing of 6 groups of 2 people who get to work together each day on pair programming assignments
+* Any one of us should be able to run the script and get the same pairing on a given day (i.e., as long as our computers agree on the year/month/day)
+* It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
 
 # Day 2
   
@@ -99,9 +105,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
 
 
-## Extra
-  * Think about how to write a `musical_pairs.sh` script to determine your programming partner each day
-
+<!--
 
 
 # Day 3
