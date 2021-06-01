@@ -44,7 +44,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * To make it easier to find files you work on in Ubuntu, do the following:
     * Open a bash shell
     * Go to your home directory: `cd ~`
-    * Create a symbolic link to your Documents folder: `ln -s /mnt/c/Users/<your name>/Documents ~/Documents` (if there's a space in your name you'll need to backslash escape it)
+    * Create a symbolic link to your Documents folder: `ln -s /mnt/c/Users/<your name>/Documents ~/Documents` (if there's a space in your name you'll need to backslash escape it, a good tip here is to type just the first couple of letters of, say, your name, and [use tab to autocomplete it](https://tldp.org/LDP/abs/html/tabexpansion.html))
     * Change to this directory: `cd ~/Documents`
     * Do all of your work, including the following section, from within this folder, which you'll be able to see under "Documents" in the Windows Explorer
 
