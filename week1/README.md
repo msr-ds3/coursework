@@ -44,7 +44,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * To make it easier to find files you work on in Ubuntu, do the following:
     * Open a bash shell
     * Go to your home directory: `cd ~`
-    * Create a symbolic link to your Documents folder: `ln -s /mnt/c/Users/<your name>/Documents ~/Documents`
+    * Create a symbolic link to your Documents folder: `ln -s /mnt/c/Users/<your name>/Documents ~/Documents` (if there's a space in your name you'll need to backslash escape it)
     * Change to this directory: `cd ~/Documents`
     * Do all of your work, including the following section, from within this folder, which you'll be able to see under "Documents" in the Windows Explorer
 
@@ -59,7 +59,7 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Use ``git add`` to add the file to your local repository
   * Use ``git commit`` and ``git push`` to commit and push your changes to your copy of the repository
   * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original course repository
-  * Finally, [sync changes from the main repo](https://help.github.com/articles/syncing-a-fork/) to your fork with ``git pull upstream main``
+  * Finally, [sync changes from the main repo](https://help.github.com/articles/syncing-a-fork/) to your fork with ``git pull upstream master`` (if your machine doesn't recognize `upstream`, do the following to create the `upstream` shortcut: `git remote add upstream https://github.com/msr-ds3/coursework.git`)
 
 ### Learn more (optional)
   * Codecademy's [interactive introduction to git](https://www.codecademy.com/learn/learn-git)
