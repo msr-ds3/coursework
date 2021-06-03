@@ -6,7 +6,7 @@ library(lubridate)
 ########################################
 
 # read one month of data
-trips <- read_csv("201402-citibike-tripdata.csv")
+trips <- read_csv('201402-citibike-tripdata.csv')
 
 # replace spaces in column names with underscores
 # names(trips) <- gsub(' ', '_', names(trips))
@@ -25,31 +25,20 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 # nrow(trips)
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
-# max(trips$`birth year`)
-# min(trips$`birth year`)
+
 
 # use filter and grepl to find all trips that either start or end on broadway
-# View(filter(trips, grepl("Broadway", `start station name`)))
-# View(filter(trips, grepl("Broadway",`end station name`)))
 
 # do the same, but find all trips that both start and end on broadway
-# View(filter(trips, grepl("Broadway", `start station name`), grepl("Broadway",`end station name`)))
 
 # find all unique station names
-# View(unique(trips[c(`start station name`)]))
-# View(unique(trips[c(`end station name`)]))
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
-# group_by(trips, gender) %>%
-# summarize(num_of_trips = n(), mean_of_trips = mean(tripduration/60), sd(trips$gender))
 
 # find the 10 most frequent station-to-station trips
-# sort & use head()
-
 
 # find the top 3 end stations for trips starting from each start station
-# trip$`end station name` %>%
 
 # find the top 3 most common station-to-station trips by gender
 
@@ -58,5 +47,3 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
-
-#head() works in here, slice(1) too gives 1st row
