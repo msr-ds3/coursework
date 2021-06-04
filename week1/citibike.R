@@ -12,7 +12,7 @@ trips <- read_csv('201402-citibike-tripdata.csv')
 names(trips) <- gsub(' ', '_', names(trips))
 
 # convert dates strings to dates
-# trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
+#trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
 
 # recode gender as a factor 0->"Unknown", 1->"Male", 2->"Female"
 trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unknown","Male","Female")))
@@ -23,14 +23,31 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 ########################################
 
 # count the number of trips (= rows in the data frame)
+count(trips)
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
+# earliest birth years
+max(trips$birth_year)
+
+# latest birth years
+min(trips$birth_year[trips$birth_year != "\\N"])
 
 # use filter and grepl to find all trips that either start or end on broadway
+trips %>%
+  filter(grepl('broadway', trips$start_station_name, ignore.case = TRUE) |
+      grepl('broadway', trips$end_station_name, ignore.case = TRUE))
 
 # do the same, but find all trips that both start and end on broadway
+trips %>%
+  filter(grepl('broadway', trips$start_station_name, ignore.case = TRUE) &
+           grepl('broadway', trips$end_station_name, ignore.case = TRUE))
 
 # find all unique station names
+unique(trips[,trips$start_station_name])
+
+
+
+
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
