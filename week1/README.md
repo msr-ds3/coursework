@@ -105,8 +105,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
 
 
-<!--
-
 
 # Day 3
 
@@ -169,6 +167,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+
+<!--
 
 # Day 5
 
