@@ -52,6 +52,11 @@ trips %>%
   distinct(start_station_name) %>%
   View
 
+trips %>%
+  distinct(start_station_name) %>%
+  arrange(start_station_name) %>%
+  View
+
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
 
