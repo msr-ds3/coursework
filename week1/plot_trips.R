@@ -26,8 +26,8 @@ load('trips.RData')
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
-# hint: use the spread() function to reshape things to make it easier to compute this ratio
-# (you can skip this and come back to it tomorrow if we haven't covered spread() yet)
+# hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
+# (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
 ########################################
 # plot weather data
@@ -35,7 +35,7 @@ load('trips.RData')
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
-# hint: try using the gather() function for this to reshape things before plotting
+# hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 
 ########################################
