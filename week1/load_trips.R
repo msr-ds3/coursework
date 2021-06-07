@@ -50,8 +50,8 @@ weather <- read.table('weather.csv', header=T, sep=',')
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
-                  ymd = as.Date(parse_datetime(date, "%Y%m%d")))
-weather <- tbl_df(weather)
+                  ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
+weather <- as_tibble(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
