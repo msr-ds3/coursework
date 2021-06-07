@@ -6,3 +6,6 @@
 *.gz
 *.csv
 *.tsv
+*.RData
+*.Rdata
+*.rdata
