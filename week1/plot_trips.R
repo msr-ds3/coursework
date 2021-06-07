@@ -74,7 +74,10 @@ trips %>%
   summarize(count = n()) %>%
   pivot_wider(names_from = gender, values_from = count) %>%
   ggplot(aes(x = age, y = Male/Female)) +
-  geom_point()
+  geom_point(aes(size = Male + Female)) +
+  geom_smooth(method = "lm") +
+  xlim(c(18, 65)) +
+  ylim(c(0, 10))
 
 ########################################
 # plot weather data
