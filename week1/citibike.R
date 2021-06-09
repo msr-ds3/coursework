@@ -70,5 +70,16 @@ summarize(group_by( trips, start_station_name, end_station_name),
 # find the day with the most trips
 # tip: first add a column for year/month/day without time of day (use as.Date or floor_date from the lubridate package)
 
+mutate(trips, day = substr(starttime, start=1, stop=10)) %>% 
+  group_by(day) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count)) %>%
+  head(n=10)
+
+
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
+
+summarize(group_by(trips,ymd), count = n() ) %>%
+  arrange(desc(count))%>% 
+  head(3)

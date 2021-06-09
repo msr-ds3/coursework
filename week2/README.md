@@ -33,7 +33,6 @@ This week covers:
     * Section [27.3.1](https://r4ds.had.co.nz/r-markdown.html#exercises-72) exercise 3, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
     * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
 
-<!--
 
 # Day 2
 
@@ -45,7 +44,7 @@ This week covers:
   * Read Chapter 6 of IST on the normal distribution and do question 6.1
 
 ## References
-* Chapter 1 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/stat/textbook.php) (ISRS)
+* Chapter 1 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS)
 * Interactive demos:
     * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
       * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
@@ -54,6 +53,7 @@ This week covers:
       * [Confidence intervals](http://students.brown.edu/seeing-theory/frequentist-inference/index.html#section2)
     * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
     * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
+
 
 # Day 3
 
@@ -68,6 +68,8 @@ This week covers:
   * See the relevant part of these [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_5/lecture_5.pdf) on statistics by simulation
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
   * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
+
+<!--
 
 # Day 4
 
