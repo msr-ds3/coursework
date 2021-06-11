@@ -101,9 +101,9 @@ This week covers:
 
   * Review the [slides](regression.pdf) we covered in class
   * See this [shiny app on model fitting](https://jmhmsr.shinyapps.io/modelfit/) and this [tool for visualing least squares](https://seeing-theory.brown.edu/regression-analysis/index.html) (Dan's version [here](http://www.dangoldstein.com/dsn/archives/2006/03/every_wonder_ho.html) is similar, but requires Flash)
-  * See the [notebook on linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse and this one on [model evaluation](model_evaluation.ipynb) 
   * Read Chapter 5 of [Intro to Stats with Randomization and Simulation](https://drive.google.com/file/d/0B-DHaDEbiOGkRHNndUlBaHVmaGM/edit), do exercises 5.20 and 5.29
   * Read Section 3.1 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/), do Lab 3.6.2
+  * See the [notebook on linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse and this one on [model evaluation](model_evaluation.ipynb) 
 
 
 ## References
