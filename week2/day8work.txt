@@ -1,0 +1,66 @@
+5.20 Body measurements, Part III. Exercise 5.13 introduces data on shoulder girth and
+height of a group of individuals. The mean shoulder girth is 108.20 cm with a standard deviation
+of 10.37 cm. The mean height is 171.14 cm with a standard deviation of 9.41 cm. The correlation
+between height and shoulder girth is 0.67.
+
+(a) Write the equation of the regression line for predicting height.
+height_bar = 105.36 + 0.607 * shoulder_girth
+
+(b) Interpret the slope and the intercept in this context.
+slope = For one cm increase in shoulder girth, the model represents an increase in height of 0.607.
+intercept = someone with a shoulder girth of 0 is predicted to have a height of 105.36. 
+
+(c) Calculate R^2 of the regression line for predicting height from shoulder girth, 
+and interpret it in the context of the application.
+R^2 = 0.4489
+Approximately 45% of variation in height is accounted for by the model. 
+
+(d) A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height
+of this student using the model.
+height = 166.06
+
+(e) The student from part (d) is 160 cm tall. Calculate the residual, 
+and explain what this residual means.
+residual = 160 - 166.06 = -6.06
+The model overestimated the student's height by 6.06 cm. 
+
+(f) A one year old has a shoulder girth of 56 cm. 
+Would it be appropriate to use this linear model to predict the height of this child?
+
+No, this would require extrapolation and is therefore not appropriate. 
+
+
+5.29 Body measurements, Part IV. The scatterplot and least squares summary below show
+the relationship between weight measured in kilograms and height measured in centimeters of 507
+physically active individuals.
+
+(a) Describe the relationship between height and weight.
+The relationship is positive and strong.
+
+(b) Write the equation of the regression line. Interpret the slope and intercept in context.
+weight_bar = -105.0113 + 1.0176 * height
+slope = for one cm increase in height, the model represents a 1.0176 kg increase in weight.
+intercept = Someone with a height of 0 is predicted to have a weight of -105.0113
+
+(c) Do the data provide strong evidence that an increase in height is associated with an increase
+in weight? State the null and alternative hypotheses, report the p-value, and state your conclusion.
+Null hypothesis: There is no correlation between height and weight.
+Alternative hypothesis: An increase in height is associated with an increase in weight.
+p is small so reject the null.
+
+(d) The correlation coefficient for height and weight is 0.72. 
+Calculate R^2 and interpret it in context.
+R^2 = 0.5184
+Approximately 52% of variation in weight is accounted for by the model. 
+
+
+
+
+
+
+
+
+
+
+
+
