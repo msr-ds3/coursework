@@ -19,13 +19,50 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
-# 
+ggplot(trips, aes(x = tripduration)) +
+  geom_histogram(bins = 30) + scale_x_log10(label = comma)
+ggplot(trips, aes(x = tripduration)) +
+  geom_density(fill = "grey") +
+  scale_x_log10(label = comma) +
+  xlab('Trip Duration') +
+  ylab('Count')
+
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+ggplot(trips, aes(x = tripduration, fill = tripduration)) +
+  geom_histogram(bins = 30, fill = "blue")
+  + scale_x_log10(label = comma)
+ggplot(trips, aes(x = tripduration)) +
+  geom_density(fill = "grey", colour = "blue") +
+  scale_x_log10(label = comma) +
+  xlab('Trip Duration') +
+  ylab('Count')
+# each bar diff color?
 
 # plot the total number of trips on each day in the dataset
+trips %>%
+  group_by(ymd) %>%
+  summarize(total_trips = n()) %>%
+  ggplot(aes(x = ymd, y = total_trips)) +
+    geom_line() +
+    scale_y_log10(label = comma) +
+    xlab('Date') +
+    ylab('Total_trips')
+
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
+trips %>%
+  group_by(gender) %>%
+  summarize(total_trips = n()) %>%
+  ggplot(aes(x = gender, y = total_trips)) +
+    geom_point() +
+    xlab('Gender') +
+    ylab('Total_trips')
+  group_by
+  #ggplot(aes(x = ymd, y = total_trips)) +
+   # geom_line() +
+    #xlab('Date') +
+  #  ylab('Total_trips')
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the spread() function to reshape things to make it easier to compute this ratio
