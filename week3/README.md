@@ -5,7 +5,7 @@ This week starts with a discussion of modeling and machine learning, and then in
 
 ## Overfitting, generalization, and model complexity
 
-  * See the notebook on [model evaluation](model_evaluation.ipynb)
+  * See the notebook on [model evaluation](../week2/model_evaluation.ipynb)
   * See the [slides](https://speakerdeck.com/jhofman/modeling-social-data-lecture-8-regression-part-2) and [notebook](complexity_control.ipynb) on overfitting and cross-validation
   * See if you can reproduce the table in ISRS 5.29 using the original dataset in [body.dat.txt](body.dat.txt), taken from [here](http://jse.amstat.org/v11n2/datasets.heinz.html)
   * Do Labs 3.6.3 through 3.6.6 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) to get practice with linear models in R
