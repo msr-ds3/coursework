@@ -5,6 +5,7 @@
 # load some packages that we'll need
 library(tidyverse)
 library(scales)
+library(ggplot2)
 
 # be picky about white backgrounds on our plots
 theme_set(theme_bw())
@@ -18,6 +19,7 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+# 
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
 
