@@ -1,0 +1,75 @@
+6.1 Baby weights, Part I.
+
+(a) Write the equation of the regression line.
+
+bwt_hat = 123.05 - 8.94 * smoke
+
+(b) Interpret the slope in this context,  and calculate the predicted birth weight of babies born to smoker and non-smoker mothers.
+
+In this context, the slope indicates that a baby born to a mother who smokes weights approximately 8.94 oz less than a baby born to a mother who does not smoke.
+The predicted birth weight of babies born to smoker mothers is 114.11.
+The predicted birth weight of babies born to non-smoker mothers is 123.05.
+
+(c) Is there a statistically significant relationship between the average birth weight and smoking?
+
+There is a statistically significant relationship between the average birth weight and smoking since the p-value is small.
+
+
+6.2 Baby weights, Part II.
+
+(a) Write the equation of the regression line.
+
+bwt_hat = 120.07 - 1.93 * parity
+
+(b) Interpret the slope in this context, and calculate the predicted birth weight of first borns and others.
+
+In this context, the slope indicates that a first born baby weighs approximately 1.93 oz less than others.
+The predicted birth weight of first borns is 118.14.
+The predicted birth weight of others is 120.07.
+
+(c) Is there a statistically significant relationship between the average birth weight and parity?
+
+There is not a statistically significant relationship between the average birth weight and whether the baby was a first born since the p-value is large. 
+
+
+6.3 Baby weights, Part III.
+
+(a) Write the equation of the regression line that includes all of the variables.
+
+bwt_hat = -80.41 + 0.44 * gestation - 3.33 * parity - 0.01 * age + 1.15 * height + 0.05 * weight - 8.40 * smoke
+
+(b) Interpret the slopes of gestation and age in this context.
+
+In this context, the slope of gestation indicates that as gestation increases, the baby weight increases,
+and the slope of age indicates that as age increases, baby weight decreases.
+
+(c) The coefficient for parity is different than in the linear model shown in Exercise 6.2. 
+Why might there be a difference?
+
+There might be a difference if parity is associated with another variable that is present here but not in the linear model in Exercise 6.2.
+
+(d) Calculate the residual for the first observation in the data set.
+
+bwt_hat = -80.41 + 0.44 * 284 - 3.33 * 0 - 0.01 * 27 + 1.15 * 62 + 0.05 * 100 - 8.40 * 0 = 120.58
+residual = 120 - 120.58 = -0.58
+
+(e) The variance of the residuals is 249.28, and the variance of the birth weights of all babies in the data set is 332.57. 
+Calculate the R^2 and the adjusted R^2. 
+Note that there are 1,236 observations in the data set.
+R^2 = 0.258
+R^2^adj = 0.2541
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
