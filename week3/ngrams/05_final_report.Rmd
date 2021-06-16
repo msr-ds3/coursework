@@ -3,6 +3,9 @@ title: "MSD Homework 2, Problem 3"
 author: "Your Name (your uni)"
 date: '`r Sys.time()`'
 output:
+  html_document:
+    toc: yes
+    toc_depth: 3
   pdf_document:
     toc: yes
     toc_depth: 3
