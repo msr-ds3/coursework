@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ########################################
 # load libraries
 ########################################
@@ -101,6 +102,8 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 =======
+=======
+>>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 ########################################
 # load libraries
 ########################################
@@ -163,4 +166,7 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+<<<<<<< HEAD
 >>>>>>> 70c35eb146f8c1b03e0fe7266a79a4947866b4b5
+=======
+>>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb

@@ -14,9 +14,15 @@ This week starts with a discussion of modeling and machine learning, and then in
   * Read section 5.1 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
 
 
+<<<<<<< HEAD
 <!--
 
 # Day 1
+=======
+
+
+# Day 2
+>>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## The long tail
 
@@ -24,7 +30,13 @@ This week starts with a discussion of modeling and machine learning, and then in
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
+<<<<<<< HEAD
 # Day 2
+=======
+<!--
+
+# Day 3
+>>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## N-gram data and "Culturonomics"
 
@@ -33,7 +45,11 @@ This week starts with a discussion of modeling and machine learning, and then in
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
+<<<<<<< HEAD
 # Day 3
+=======
+# Day 4
+>>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## Predicting daily Citibike trips (open-ended)
 
@@ -49,7 +65,11 @@ The point of this exercise is to get experience in an open-ended prediction exer
 8. Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository.
 9. Finally, use the model you just developed and pushed to Github to make predictions on the 10% of data you kept aside as a test set. Do this only once, and record the performance in your Rmarkdown file. Use this number to make a guess as to how your model will perform on future data (which we'll test it on!). Do you think it will do better, worse, or the same as it did on the 10% test set you used here? Write your answer in your Rmarkdown notebook. Render the notebook and push the final result to Github.
 
+<<<<<<< HEAD
 # Day 4
+=======
+# Day 5
+>>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## Testing your Citibike models
 
