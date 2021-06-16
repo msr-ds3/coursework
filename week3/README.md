@@ -14,15 +14,9 @@ This week starts with a discussion of modeling and machine learning, and then in
   * Read section 5.1 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
 
 
-<<<<<<< HEAD
 <!--
 
 # Day 1
-=======
-
-
-# Day 2
->>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## The long tail
 
@@ -31,23 +25,32 @@ This week starts with a discussion of modeling and machine learning, and then in
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Day 2
 =======
 <!--
+=======
+
+>>>>>>> e489bf70d6fcc8fc321ffbbe2a5de6a5f6925428
 
 # Day 3
 >>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## N-gram data and "Culturonomics"
 
-* Replicate and extend the results of the [Google n-grams "culturomics" paper](https://science.sciencemag.org/content/331/6014/176) using the template [here](ngrams/)
+* Replicate and extend the results of the [Google n-grams "culturomics" paper](https://science.sciencemag.org/content/331/6014/176) ([pdf](https://scholar.stanford.edu/mse231/papers/michel_et_al_books.pdf)) using the template [here](ngrams/)
 * Consider the last bit of this exercise on creating a Makefile "extra credit", here are some references for using GNU Make / Makefiles:
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Day 3
 =======
+=======
+<!--
+
+>>>>>>> e489bf70d6fcc8fc321ffbbe2a5de6a5f6925428
 # Day 4
 >>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
