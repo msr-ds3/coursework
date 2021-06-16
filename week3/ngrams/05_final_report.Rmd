@@ -50,12 +50,27 @@ Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` fun
 
 ```{r load-counts}
 
+# load in year_counts.tsv and store data in dataframe named year_counts
+
+year_counts <- read_tsv(here('week3/ngrams/year_counts.tsv'), 
+                        col_names = c('term', 'year', 'volume', 'book_count'))
+
+View(year_counts)
+
+# load in total_counts.csv and store data in dataframe named total_counts
+
+total_counts <- read_csv(here('week3/ngrams/total_counts.csv'), 
+                              col_names = c('year', 'total_volume', 'page_count', 'book_count'))
+
+View(total_counts)
 
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+The year_counts dataframe has `nrow(year_counts)` and the total_counts dataframe has `nrow(total_counts)`.
 
 # Part B
 
@@ -67,6 +82,12 @@ Join the raw year term counts with the total counts and divide to get a proporti
 
 ```{r join-years-and-totals}
 
+term_counts_with_total_counts <- year_counts %>% 
+  left_join(total_counts, by="year") %>%
+  mutate(proportion_of_mentions = volume / total_volume) %>%
+  mutate(term = factor(term)) # force the term to be a factor
+
+View(term_counts_with_total_counts)
 
 ```
 
@@ -76,11 +97,23 @@ Plot the proportion of mentions for the terms "1883", "1910", and "1950" over ti
 
 ```{r plot-proportion-over-time}
 
-```
+term_counts_with_total_counts %>%
+  filter(term == 1883 | term == 1910 | term == 1950) %>%
+  ggplot(aes(x=year, y=proportion_of_mentions, color=term)) +
+  geom_line() +
+  scale_color_manual(values=c('blue', 'green', 'red')) +
+  scale_x_continuous("Year", limits = c(1800, 2000)) +
+  scale_y_continuous("Frequency", labels=percent)
+  
+ ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+ 
+Yes, version 2 of the NGram data produces similar results to those presented in Miches et al. (2011), which are 
+based on version 1 data. Based on both version 1 data and version 2 data, the graph for each year peaks at that
+year, then levels off in the following years. 
 
 # Part C
 
@@ -92,8 +125,12 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 ## Your written answer
 
+The graph produced by the ngram viewer is consistent with the graphs from the version 1 data and the version 2 data.
+
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
+# inline code with a link to the screenshot
+`![screenshot] (years_screenshot.PNG)`
 
 # Part D
 
@@ -101,11 +138,20 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 
 ## Plot the main figure 3a with raw counts
 
+term_counts_with_total_counts %>%
+  filter(term == 1883 | term == 1910 | term == 1950) %>%
+  ggplot(aes(x=year, y=volume, color=term)) +
+  geom_line() +
+  scale_color_manual(values=c('blue', 'green', 'red')) +
+  scale_x_continuous("Year", limits = c(1800, 2000)) +
+  scale_y_continuous("Raw Counts", label=comma)
+
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
 
 ```
+# up to here
 
 # Part E
 
