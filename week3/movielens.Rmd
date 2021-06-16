@@ -215,39 +215,13 @@ ninety_satisfaction %>%
   ggplot(aes(x=ninety_rank, y=cum_ranks)) +
   geom_line()
 
+# graph for 100% satisfaction and 90% satisfaction
 
-
-
-
-
-
-
-
-
-
-
-
-cumsum_df <- ratings %>%
-  group_by(movie_id) %>%
-  summarize(num_ratings = n()) %>%
-  mutate(rank = rank(desc(num_ratings))) %>%
-  arrange(rank) %>%
-  mutate(cum_pop = cumsum(num_ratings) / sum(num_ratings))
-
-
-
-View(cumsum_df)
-
-# plot the CDF of movie popularity
-
-cumsum_df %>%
-  ggplot(aes(x = rank, y = cum_pop)) +
-  geom_line() +
-  scale_x_continuous("Movie Rank", label=comma) +
-  scale_y_continuous("CDF", label=percent)
-
-
-  
+ggplot() +
+  geom_line(data=one_hundred_satisfaction, aes(x=max_rank, y=cum_ranks)) +
+  geom_line(data=ninety_satisfaction, aes(x=ninety_rank, y=cum_ranks)) +
+  scale_x_continuous("Inventory Size") +
+  scale_y_continuous("Percent of Users Satisfied")
 
 ```
 
