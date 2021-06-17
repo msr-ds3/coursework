@@ -154,7 +154,6 @@ Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850
 ```{r plot-raw-mentions-over-time}
 
 ```
-# up to here
 
 # Part E
 
