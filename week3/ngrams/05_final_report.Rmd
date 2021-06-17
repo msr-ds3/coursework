@@ -55,14 +55,14 @@ Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` fun
 
 # load in year_counts.tsv and store data in dataframe named year_counts
 
-year_counts <- read_tsv(here('week3/ngrams/year_counts.tsv'), 
+year_counts <- read_tsv(here('year_counts.tsv'), 
                         col_names = c('term', 'year', 'volume', 'book_count'))
 
 View(year_counts)
 
 # load in total_counts.csv and store data in dataframe named total_counts
 
-total_counts <- read_csv(here('week3/ngrams/total_counts.csv'), 
+total_counts <- read_csv(here('total_counts.csv'), 
                               col_names = c('year', 'total_volume', 'page_count', 'book_count'))
 
 View(total_counts)
@@ -168,11 +168,27 @@ Plot the total counts for each year over time, from 1850 to 2012. Use the `comma
 
 ```{r plot-totals}
 
+total_counts %>% 
+  ggplot(aes(x=year, y=total_volume)) +
+  geom_line() +
+  scale_x_continuous("Year") +
+  scale_y_continuous("Total  Count", label=comma)
+
 ```
 
 ## Your written answer
 
 Write up your answer to Part E here.
+
+Yes, the difference between (b) and (d) leads me to reevaluate the results of Michel et al.
+(b) shows an increase in frequency for each word, then a gradual decrease. 
+(d) shows an increase in the raw count for each word, then a decrease then an increase. 
+As demonstrated in (e), the total count has been increasing sharply, 
+so even though the raw count for specific words has been increasing, as shown in (d),
+the proportion of the total words that each individual word comprises, is decreasing.
+Michel et al. claim that the frequency is decreasing, but their results do not 
+take into account the fact that this trend may be attributed, at least in part, to
+the fact that the total count is increasing so dramatically. 
 
 # Part F
 
@@ -184,6 +200,27 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 
 ```{r compute-peaks}
 
+# dataframe of peak count for each term
+
+peak_prop_per_term <- term_counts_with_total_counts %>%
+  select(term, year, volume, total_volume, proportion_of_mentions) %>%
+  filter(year >= 1800) %>%
+  group_by(term) %>% 
+  filter(proportion_of_mentions == max(proportion_of_mentions)) %>%
+  select(term, year, proportion_of_mentions) %>% 
+  rename(peak_prop = proportion_of_mentions, peak_year = year)
+
+View(peak_prop_per_term)
+  
+# combine term_counts_with_total_counts dataframe with peak_prop_per_term dataframe
+
+peak_with_term_and_year <- term_counts_with_total_counts %>%
+  filter(year >=1800) %>%
+  left_join(peak_prop_per_term, by="term") %>% 
+  select(term, year, proportion_of_mentions, peak_year, peak_prop)
+
+View(peak_with_term_and_year)
+
 ```
 
 ## Compute half-lifes
@@ -191,6 +228,15 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+
+half_life_df <- peak_with_term_and_year %>%
+  group_by(term) %>%
+  filter(year > peak_year) %>%
+  filter(proportion_of_mentions <= peak_prop / 2) %>%
+  mutate(half_life = min(year) - peak_year)
+
+View(half_life_df)
+  
 
 ```
 
@@ -201,11 +247,23 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 ```{r plot-half-lifes}
 
+half_life_df %>%
+  filter(year >= 1850 & year <= 2012 & year > as.numeric(term)) %>%
+  ggplot(aes(x=as.numeric(as.character(term)), y=half_life)) +
+  geom_point() + 
+  scale_x_continuous("Year") +
+  scale_y_continuous("Half-life (yrs)") +
+  geom_smooth()
+
+
 ```
 
 ## Your written answer
 
 Write up your answer to Part F here.
+
+Version 2 of the NGram data does not produce similar results to those presented in 
+Michel et al. (2011) which are based on version 1 data. 
 
 # Part G
 
@@ -214,6 +272,19 @@ Write up your answer to Part F here.
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+The years 1803 and 1810 had the shortest half-lifes of 1 year.
+The year 1800 had the longest half-life of 23 years.
+
+Reasons?
+
+```{r code for years with smallest and largest half-lifes}
+half_life_df %>%
+  ungroup() %>%
+  filter(half_life == min(half_life) | half_life == max(half_life)) %>%
+  View
+```
+
 
 # Makefile
 
