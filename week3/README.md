@@ -45,10 +45,13 @@ This week starts with a discussion of modeling and machine learning, and then in
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Day 3
 =======
 =======
 <!--
+=======
+>>>>>>> 5832b1bf9e5959e274734fa643cc166ee7edc29a
 
 >>>>>>> e489bf70d6fcc8fc321ffbbe2a5de6a5f6925428
 # Day 4
@@ -69,8 +72,13 @@ The point of this exercise is to get experience in an open-ended prediction exer
 9. Finally, use the model you just developed and pushed to Github to make predictions on the 10% of data you kept aside as a test set. Do this only once, and record the performance in your Rmarkdown file. Use this number to make a guess as to how your model will perform on future data (which we'll test it on!). Do you think it will do better, worse, or the same as it did on the 10% test set you used here? Write your answer in your Rmarkdown notebook. Render the notebook and push the final result to Github.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Day 4
 =======
+=======
+<!--
+
+>>>>>>> 5832b1bf9e5959e274734fa643cc166ee7edc29a
 # Day 5
 >>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
