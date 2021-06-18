@@ -57,37 +57,6 @@ trips_per_day_test <- trips_per_day_validate_and_test[-validation_data, ]
 
 Start out with the model in that notebook, which uses only the minimum temperature on each day to predict the number of trips taken that day. Try different polynomial degrees in the minimum temperature and check that you get results similar to what's in that notebook, although they likely won't be identical due to shuffling of which days end up in the train, validation, and test splits. Quantify your performance using root mean-squared error.
 
-```{r model for a degree 5 polynomial}
-
-# model for degree 5 polynomial
-model5 <- lm(num_trips ~ poly(tmin, 5, raw=T), data=trips_per_day_train)
-
-# train model
-trips_per_day_train <- trips_per_day_train %>%
-  add_predictions(model5) %>%
-  mutate(split="train")
-
-# validate model
-trips_per_day_validate <- trips_per_day_validate %>%
-  add_predictions(model5) %>%
-  mutate(split="validate")
-
-# plot the training data and validation data with the model
-plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
-
-ggplot(plot_data, aes(x=tmin, y=num_trips)) +
-  geom_point(aes(color=split)) +
-  geom_line(aes(y=pred)) +
-  xlab("Minimum temperature") +
-  ylab('Daily trips') +
-  scale_y_continuous()
-
-# test the model
-test_err <- sqrt(mean((predict(model5, trips_per_day_test) - trips_per_day_test$num_trips)^2))
-test_err
-
-```
-
 ```{r model for each polynomial degree with min temp}
 
 K <- 1:8
@@ -98,13 +67,13 @@ validate_err <- c()
 for (k in K) {
   
   # fit on the training data
-  model <- lm(num_trips ~ poly(tmin, k, raw=T), data=trips_per_day_train)
+  model_tmin <- lm(num_trips ~ poly(tmin, k, raw=T), data=trips_per_day_train)
   
   # evaluate on the training data
-  train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  train_err[k] <- sqrt(mean((predict(model_tmin, trips_per_day_train) - trips_per_day_train$num_trips)^2))
   
   # evaluate on the validate data
-  validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  validate_err[k] <- sqrt(mean((predict(model_tmin, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
 }
 
 train_err
@@ -123,6 +92,42 @@ ggplot(plot_data, aes(x=K, y=error, color=split)) +
 
 ```
 
+```{r model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_tmin5 <- lm(num_trips ~ poly(tmin, 5, raw=T), data=trips_per_day_train)
+
+# train model
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model_tmin5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model_tmin5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x=tmin, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("Minimum temperature") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# test the model
+test_err <- sqrt(mean((predict(model_tmin5, trips_per_day_test) - trips_per_day_test$num_trips)^2))
+test_err
+
+rsquare(model_tmin, trips_per_day_train)
+rsquare(model_tmin, trips_per_day_validate)
+
+```
+
+
+
 RMSE with min temp:
 
           RMSE for training error       RMSE for validation error
@@ -134,6 +139,8 @@ degree 5:         5311.401                        6218.859
 degree 6:         5307.016                        6241.981
 degree 7:         5306.796                        6236.515
 degree 8:         5303.677                        6248.001
+
+R^2               0.7093196                       0.7229095
 
 ---------------------------------------------------
 
@@ -201,13 +208,13 @@ validate_err <- c()
 for (k in K) {
   
   # fit on the training data
-  model <- lm(num_trips ~ poly(tmin, k, raw=T) + too_rainy, data=trips_per_day_with_rain_train)
+  model_prcp <- lm(num_trips ~ poly(tmin, k, raw=T) + too_rainy, data=trips_per_day_with_rain_train)
   
   # evaluate on the training data
-  train_err[k] <- sqrt(mean((predict(model, trips_per_day_with_rain_train) - trips_per_day_with_rain_train$num_trips)^2))
+  train_err[k] <- sqrt(mean((predict(model_prcp, trips_per_day_with_rain_train) - trips_per_day_with_rain_train$num_trips)^2))
   
   # evaluate on the validate data
-  validate_err[k] <- sqrt(mean((predict(model, trips_per_day_with_rain_validate) - trips_per_day_with_rain_validate$num_trips)^2))
+  validate_err[k] <- sqrt(mean((predict(model_prcp, trips_per_day_with_rain_validate) - trips_per_day_with_rain_validate$num_trips)^2))
 }
 
 train_err
@@ -224,6 +231,10 @@ ggplot(plot_data, aes(x=K, y=error, color=split)) +
   xlab('Polynomial Degree') +
   ylab('RMSE')
 
+rsquare(model_prcp, trips_per_day_with_rain_train)
+rsquare(model_prcp, trips_per_day_with_rain_validate)
+
+
 ```
 
 RMSE with min temp and rain:
@@ -237,6 +248,8 @@ degree 5:         4632.417                        5574.024
 degree 6:         4632.408                        5574.608
 degree 7:         4630.670                        5609.968
 degree 8:         4623.799                        5554.882
+
+R^2               0.7946171                       0.7128268
 
 --------------------------------------------------
 
@@ -298,13 +311,13 @@ validate_err <- c()
 for (k in K) {
   
   # fit on the training data
-  model <- lm(num_trips ~ poly(tmin, k, raw=T) + is_weekend, data=trips_per_day_with_weekends_train)
+  model_wknd <- lm(num_trips ~ poly(tmin, k, raw=T) + is_weekend, data=trips_per_day_with_weekends_train)
   
   # evaluate on the training data
-  train_err[k] <- sqrt(mean((predict(model, trips_per_day_with_weekends_train) - trips_per_day_with_weekends_train$num_trips)^2))
+  train_err[k] <- sqrt(mean((predict(model_wknd, trips_per_day_with_weekends_train) - trips_per_day_with_weekends_train$num_trips)^2))
   
   # evaluate on the validate data
-  validate_err[k] <- sqrt(mean((predict(model, trips_per_day_with_weekends_validate) - trips_per_day_with_weekends_validate$num_trips)^2))
+  validate_err[k] <- sqrt(mean((predict(model_wknd, trips_per_day_with_weekends_validate) - trips_per_day_with_weekends_validate$num_trips)^2))
 }
 
 train_err
@@ -321,6 +334,10 @@ ggplot(plot_data, aes(x=K, y=error, color=split)) +
   xlab('Polynomial Degree') +
   ylab('RMSE')
 
+rsquare(model_wknd, trips_per_day_with_weekends_train)
+rsquare(model_wknd, trips_per_day_with_weekends_validate)
+
+
 ```
 
 RMSE with min temp and weekends:
@@ -334,6 +351,8 @@ degree 5:         5073.031                        5642.933
 degree 6:         5070.532                        5627.316
 degree 7:         5056.178                        5707.573
 degree 8:         5036.064                        5815.554
+
+R^2               0.7575771                       0.7568155
 
 --------------------------------------------------
 
@@ -390,13 +409,13 @@ validate_err <- c()
 for (k in K) {
   
   # fit on the training data
-  model <- lm(num_trips ~ poly(tmax, k, raw=T), data=trips_per_day_train)
+  model_tmax <- lm(num_trips ~ poly(tmax, k, raw=T), data=trips_per_day_train)
   
   # evaluate on the training data
-  train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  train_err[k] <- sqrt(mean((predict(model_tmax, trips_per_day_train) - trips_per_day_train$num_trips)^2))
   
   # evaluate on the validate data
-  validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  validate_err[k] <- sqrt(mean((predict(model_tmax, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
 }
 
 train_err
@@ -413,6 +432,10 @@ ggplot(plot_data, aes(x=K, y=error, color=split)) +
   xlab('Polynomial Degree') +
   ylab('RMSE')
 
+rsquare(model_tmax, trips_per_day_train)
+rsquare(model_tmax, trips_per_day_validate)
+
+
 ```
 
 RMSE with max temp:
@@ -426,6 +449,8 @@ degree 5:         5138.393                        5466.077
 degree 6:         5115.379                        5404.544
 degree 7:         5109.276                        5424.168
 degree 8:         5052.908                        5325.056
+
+R^2               0.7687446                       0.7047443
 
 --------------------------------------------------
 
@@ -482,14 +507,14 @@ validate_err <- c()
 
 for (k in K) {
   
-  # fit on the training data
-  model <- lm(num_trips ~ poly(tmin, k, raw=T) + too_rainy + is_weekend + poly(tmax, k, raw=T), data=trips_per_day_with_all_info_train)
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + too_rainy + is_weekend + poly(tmax, k, raw=T), data=trips_per_day_with_all_info_train)
   
-  # evaluate on the training data
-  train_err[k] <- sqrt(mean((predict(model, trips_per_day_with_all_info_train) - trips_per_day_with_all_info_train$num_trips)^2))
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_train) - trips_per_day_with_all_info_train$num_trips)^2))
   
   # evaluate on the validate data
-  validate_err[k] <- sqrt(mean((predict(model, trips_per_day_with_all_info_validate) - trips_per_day_with_all_info_validate$num_trips)^2))
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_validate) - trips_per_day_with_all_info_validate$num_trips)^2))
 }
 
 train_err
@@ -522,16 +547,16 @@ degree 8:         3448.889                        3779.106
 ```{r model for a degree 3 polynomial}
 
 # model for degree 3 polynomial
-model3 <- lm(num_trips ~ poly(tmin, 3, raw=T) + too_rainy + is_weekend + tmax, data=trips_per_day_with_all_info_train)
+model_all3 <- lm(num_trips ~ poly(tmin, 3, raw=T) + too_rainy + is_weekend + tmax, data=trips_per_day_with_all_info_train)
 
 # train model
 trips_per_day_with_all_info_train <- trips_per_day_with_all_info_train %>%
-  add_predictions(model3) %>%
+  add_predictions(model_all3) %>%
   mutate(split="train")
 
 # validate model
 trips_per_day_with_all_info_validate <- trips_per_day_with_all_info_validate %>%
-  add_predictions(model3) %>%
+  add_predictions(model_all3) %>%
   mutate(split="validate")
 
 # plot the training data and validation data with the model
@@ -546,8 +571,8 @@ ggplot(plot_data, aes(x=ymd, y=num_trips)) +
 
 # find R^2 values
 
-rsquare(model3, trips_per_day_with_all_info_train)
-rsquare(model3, trips_per_day_with_all_info_validate)
+rsquare(model_all3, trips_per_day_with_all_info_train)
+rsquare(model_all3, trips_per_day_with_all_info_validate)
 
 
 ```
@@ -556,16 +581,16 @@ rsquare(model3, trips_per_day_with_all_info_validate)
 ```{r model for a degree 4 polynomial}
 
 # model for degree 3 polynomial
-model4 <- lm(num_trips ~ poly(tmin, 4, raw=T) + too_rainy + is_weekend + tmax, data=trips_per_day_with_all_info_train)
+model_all4 <- lm(num_trips ~ poly(tmin, 4, raw=T) + too_rainy + is_weekend + tmax, data=trips_per_day_with_all_info_train)
 
 # train model
 trips_per_day_with_all_info_train <- trips_per_day_with_all_info_train %>%
-  add_predictions(model4) %>%
+  add_predictions(model_all4) %>%
   mutate(split="train")
 
 # validate model
 trips_per_day_with_all_info_validate <- trips_per_day_with_all_info_validate %>%
-  add_predictions(model4) %>%
+  add_predictions(model_all4) %>%
   mutate(split="validate")
 
 # plot the training data and validation data with the model
@@ -580,8 +605,8 @@ ggplot(plot_data, aes(x=ymd, y=num_trips)) +
 
 # find R^2 values
 
-rsquare(model4, trips_per_day_with_all_info_train)
-rsquare(model4, trips_per_day_with_all_info_validate)
+rsquare(model_all4, trips_per_day_with_all_info_train)
+rsquare(model_all4, trips_per_day_with_all_info_validate)
 
 
 ```
