@@ -23,7 +23,9 @@ trips <- read_tsv('trips_per_day.tsv')
 ```{r}
 # visualize the graph between each independent variable with num_trips to analyze the data
 trips %>%
-  ggplot(aes(x = tmin, y = num_trips)) +
+  mutate(holiday = isHoliday(ymd, "USFed")) %>%
+  mutate(wday = wday(ymd), month = month(ymd, label = T)) %>%
+  ggplot(aes(x = tmax, y = num_trips, color = factor(month))) +
   geom_point()
 
 ```
@@ -31,7 +33,7 @@ trips %>%
 ## Splitting the data (Train and Test split)
 
 ```{r}
-set.seed(50)
+set.seed(5)
 
 num_days <- nrow(trips)
 train_frac <- 0.9
@@ -85,7 +87,7 @@ for (n in N) {
     
     # fit on training data
     train_data <- filter(train, fold != f)
-    model <- lm(num_trips ~ poly(tmin, n, raw = T), data = train_data)
+    model <- lm(num_trips ~ poly(tmin, n, raw = T) * poly(tmax, n), data = train_data)
     
     # evaluate the training data
     train_err[f] = sqrt(mean((predict(model, train_data) - train_data$num_trips)^2))
@@ -130,6 +132,7 @@ plot_data %>%
 
 ```{r}
 
+
 # do 10 fold cross validation within each 
 validation_err = c()
 train_err = c()
@@ -138,7 +141,7 @@ for (f in 1:num_folds) {
   
   # fit on training data
   train_data <- filter(train, fold != f)
-  model <- lm(num_trips ~  isHoliday(dates = ymd, type = "USFed") + factor(months(ymd)) + factor(weekdays(ymd)) + snwd + prcp + poly(tmin, 2, raw = T) + poly(tmax, 2, raw = T), data = train_data)
+  model <- lm(num_trips ~  isHoliday(dates = ymd, type = "USFed") + factor(wday(ymd)) + factor(months(ymd)) + snwd + I(snow > 0) + prcp + poly(tmin, 2, raw = T) * poly(tmax, 2, raw = T), data = train_data)
   
   # evaluate the training data
   train_err[f] = sqrt(mean((predict(model, train_data) - train_data$num_trips)^2))
@@ -174,10 +177,10 @@ validation_data %>%
 # plot the actual vs predicted plot
 validation_data %>%
   mutate(pred = pred) %>%
-  ggplot(aes(x = ymd)) +
-  geom_point(aes(y = pred, color = "prediction"), size = 3) +
-  geom_point(aes(y = num_trips, color = "actual"), size = 3) +
-  labs(x = "Date", y = "No. of trips", title = "Actual vs Predicted Plot")
+  ggplot(aes(x = pred, y = num_trips)) +
+  geom_point() +
+  geom_abline() + 
+  labs(x = "predictions", y = "No. of trips", title = "Actual vs Predicted Plot")
 
 ```
 ## Saving the model
@@ -212,12 +215,13 @@ test %>%
 
 
 # plot the actual vs predicted plot
+# plot the actual vs predicted plot
 test %>%
   mutate(pred = test_pred) %>%
-  ggplot(aes(x = ymd)) +
-  geom_point(aes(y = pred, color = "prediction"), size = 3) +
-  geom_point(aes(y = num_trips, color = "actual"), size = 3) +
-  labs(x = "Date", y = "No. of trips", title = "Actual vs Predicted Plot")
+  ggplot(aes(x = pred, y = num_trips)) +
+  geom_point() +
+  geom_abline() + 
+  labs(x = "predictions", y = "No. of trips", title = "Actual vs Predicted Plot")
 
 
 ```
