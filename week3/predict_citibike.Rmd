@@ -17,12 +17,14 @@ options(repr.plot.width=4, repr.plot.height=3)
 
 trips_per_day <- read_tsv('trips_per_day.tsv')
 
-# View(trips_per_day)
+View(trips_per_day)
 
 ```
 
 
-Split the data into randomly selected training, validation, and test sets, with 80% of the data for training the model, 10% for validation, and 10% for a final test set (to be used once and only once towards the end of this exercise). You can adapt the code from last week's complexity control notebook to do this. You can use a single validation fold, don't worry about k-fold cross-validation here.
+---
+
+## Uses: tmin
 
 ```{r model with tmin}
 
@@ -125,13 +127,14 @@ RMSE-validation data: 6390.711 6410.629 6026.563 5797.689 5891.060 5866.693 5973
 R^2-training: 0.7023504
 R^2-validation 0.7119241
 
----------------------------------------------------
+---
 
----------------------------------------------------
 
-## Model with precipitation
+---
 
-```{r model with precipitation data}
+## Uses: tmin, too_rainy
+
+```{r model with tmin and too_rainy}
 
 # look at precipitation data
 
@@ -241,7 +244,7 @@ ggplot(plot_data, aes(x=ymd, y=num_trips, color=too_rainy)) +
   scale_y_continuous()
 
 # plot with actual vs. predicted
-ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+ggplot(plot_data, aes(x=pred, y=num_trips, color=too_rainy)) +
   geom_point() +
   geom_abline() +
   scale_x_continuous("Predicted Number of Trips", label=comma) +
@@ -266,9 +269,9 @@ R^2-validation 0.6568683
 
 
 --------------------------------------------------
-## model with weekend
+## Uses: tmin, is_weekend
 
-```{r model with tmin and weekend}
+```{r model with tmin and is_weekend}
 
 # look at whether a day is a weekend
 
@@ -397,9 +400,9 @@ R^2-validation 0.7545026
 
 
 --------------------------------------------------
-## Max temp
+## Uses: tmax
 
-```{r model with max temp}
+```{r model with tmax}
 
 # view distribution of max temp
 
@@ -522,9 +525,9 @@ R^2-validation 0.6091895
 
 
 --------------------------------------------------
-# min temp and precipitation and weekends and max temp
+# Uses: tmin, too_rainy, is_weekend, tmax
 
-```{r model with tmin, prcp, weekends, and tmax}
+```{r model with tmin, too_rainy, is_weekend, and tmax}
 
 # create dataframe with all necessary info 
 
@@ -646,9 +649,9 @@ R^2-validation 0.8115003
 
 
 --------------------------------------------------
-# min temp and precipitation and weekends and max temp, prcp*weekends
+# Uses: tmin, tmax, (too_rainy * is_weekend)
 
-```{r model with tmin, prcp, weekends, tmax and prcp*weekends}
+```{r model with tmin, tmax, and (too_rainy * is_weekend)}
 
 # create dataframe with all necessary info
 
@@ -759,14 +762,13 @@ RMSE-validation data: 3549.328 3501.741 3538.147 3575.141 3593.700 3543.751 3540
 R^2-training: 0.8576892
 R^2-validation 0.8789034
 
-
 --------------------------------------------------
 
 
 --------------------------------------------------
-# min temp and precipitation and weekends and max temp, prcp*tmin
+# Uses: tmax, is_weekend, (too_rainy * tmin)
 
-```{r model with tmin, prcp, weekends, tmax and prcp*tmin}
+```{r model with tmax, is_weekend, and (too_rainy * tmin)}
 
 # create dataframe with all necessary info
 
@@ -877,14 +879,945 @@ RMSE-validation data: 3549.328 3501.741 3538.147 3575.141 3593.700 3543.751 3540
 R^2-training: 0.8576892
 R^2-validation 0.8789034
 
-
 --------------------------------------------------
 
 
+--------------------------------------------------
+
+## Uses tmin, tmax, too_rainy, is_weekend, is_holiday
+
+```{r model with tmin, tmax, too_rainy, is_weekend, and is_holiday}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
 
 
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
 
 
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + too_rainy + is_weekend + poly(tmax, k, raw=T) + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_all5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + too_rainy + is_weekend + tmax + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(model_all5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(model_all5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3784.673 3749.215 3537.594 3481.565 3476.052 3431.611 3430.712 3378.070
+RMSE-validation data: 3803.170 3671.559 3726.839 3572.385 3602.205 3768.977 3814.995 5152.072
+R^2-training: 0.8792362
+R^2-validation 0.8800654
+
+-------------------------------------------------
+
+
+--------------------------------------------------
+
+## Uses tmin, tmax, is_holiday, (too_rainy * is_weekend) duplicate
+
+```{r model with tmin, tmax, is_holiday, (too_rainy * is_weekend) duplicate}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
+
+
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
+
+
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + (too_rainy * is_weekend) + poly(tmax, k, raw=T) + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_all5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + (too_rainy * is_weekend) + tmax + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(model_all5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(model_all5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3804.925 3750.448 3494.155 3424.734 3423.072 3383.482 3381.620 3364.489
+RMSE-validation data: 3339.360 3241.006 2922.803 3045.268 3043.108 3061.744 3085.516 3112.569
+R^2-training: 0.8776939
+R^2-validation 0.9253191
+
+-------------------------------------------------
+
+
+--------------------------------------------------
+
+## Uses tmin, tmax, is_weekend, (too_rainy * is_holiday)
+
+```{r model with tmin, tmax, is_weekend, (too_rainy * is_holiday)}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
+
+
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
+
+
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + is_weekend + poly(tmax, k, raw=T) + (too_rainy * is_holiday), data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_all5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + is_weekend + tmax + (too_rainy * is_holiday), data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(model_all5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(model_all5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3755.117 3720.175 3487.001 3421.821 3414.605 3372.721 3369.654 3339.024
+RMSE-validation data: 3696.049 3651.904 3755.974 3581.442 3618.071 3780.168 3862.291 3629.705
+R^2-training: 0.8864092
+R^2-validation 0.8933994
+
+-------------------------------------------------
+
+
+--------------------------------------------------
+
+## Uses tmin, tmax, (too_rainy * is_weekend), (too_rainy * is_holiday)
+
+```{r model with tmin, tmax, (too_rainy * is_weekend), (too_rainy * is_holiday)}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
+
+
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
+
+
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + (too_rainy * is_weekend) + poly(tmax, k, raw=T) + (too_rainy * is_holiday), data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_all5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + (too_rainy * is_weekend) + tmax + (too_rainy * is_holiday), data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(model_all5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(model_all5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3702.393 3648.454 3449.120 3390.327 3384.632 3326.915 3322.878 3273.360
+RMSE-validation data: 4609.239 4645.789 4447.704 4361.282 4388.688 4543.247 4564.056 4559.495
+R^2-training: 0.8850524
+R^2-validation 0.8420684
+
+-------------------------------------------------
+
+
+--------------------------------------------------
+
+## Uses tmin, tmax, is_holiday, (too_rainy * is_weekend)
+
+```{r model with tmin, tmax, is_holiday, (too_rainy * is_weekend)}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
+
+
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
+
+
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + (too_rainy * is_weekend) + poly(tmax, k, raw=T) + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_all5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + (too_rainy * is_weekend) + tmax + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(model_all5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(model_all5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3804.925 3750.448 3494.155 3424.734 3423.072 3383.482 3381.620 3364.489
+RMSE-validation data: 3339.360 3241.006 2922.803 3045.268 3043.108 3061.744 3085.516 3112.569
+R^2-training: 0.8776939
+R^2-validation 0.9253191
+
+-------------------------------------------------
+
+
+--------------------------------------------------
+
+## Uses tmin, tmax, is_weekend, too_rainy, (too_rainy * is_holiday)
+
+```{r model with tmin, tmax, is_weekend, too_rainy, (too_rainy * is_holiday)}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
+
+
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
+
+
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+model_all <- lm(num_trips ~ poly(tmin, k, raw=T) + is_weekend + poly(tmax, k, raw=T) + too_rainy + (too_rainy * is_holiday), data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(model_all, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+model_all5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + is_weekend + tmax + too_rainy + (too_rainy * is_holiday), data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(model_all5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(model_all5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(model_all5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3732.388 3652.815 3489.255 3438.562 3422.553 3399.908 3396.579 3355.628
+RMSE-validation data: 4369.512 4589.837 4089.246 3883.693 4009.928 3949.853 3945.395 4094.982
+R^2-training: 0.8805983
+R^2-validation 0.8678042
+
+-------------------------------------------------
+
+
+--------------------------------------------------
+
+## Uses tmin, tmax, is_holiday, (too_rainy * is_weekend) **best model**
+
+```{r best model with tmin, tmax, is_holiday, (too_rainy * is_weekend)}
+
+# read in holiday file
+us_bank_holidays <- read_csv('US_Bank_holidays.csv', col_names = c("number", "ymd", "name"))
+#View(us_bank_holidays)
+
+
+# create dataframe with all necessary info and join trips data with holiday data
+
+trips_per_day_with_all_info_and_holidays <- trips_per_day %>% 
+  mutate(too_rainy = prcp > mean(prcp)) %>% 
+  mutate(is_weekend = wday(ymd) %in% c(1,7)) %>%
+  left_join(us_bank_holidays, by = "ymd") %>%
+  rename(holiday_name = name) %>%
+  mutate(is_holiday = !is.na(holiday_name)) %>%
+  select(ymd, num_trips, tmax, tmin, too_rainy, is_weekend, is_holiday)
+
+View(trips_per_day_with_all_info_and_holidays)
+
+
+# split data with all info 80-10-10}
+
+num_days <- nrow(trips_per_day_with_all_info_and_holidays)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set
+training_data <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays[training_data, ]
+
+# used to evaluate the fit and test
+trips_per_day_with_all_info_and_holidays_validate_and_test <- trips_per_day_with_all_info_and_holidays[-training_data, ]
+
+num_days_in_validate_and_test <-nrow(trips_per_day_with_all_info_and_holidays_validate_and_test)
+frac_validate <- 0.5
+num_validate <- floor(num_days_in_validate_and_test * frac_validate)
+
+# randomly sample rows for the validation set
+validation_data <- sample(1:num_days_in_validate_and_test, num_validate, replace=F) 
+
+# used to validate the model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate_and_test[validation_data, ]
+
+# used to test the model
+trips_per_day_with_all_info_and_holidays_test <- trips_per_day_with_all_info_and_holidays_validate_and_test[-validation_data, ]
+
+
+# model for each polynomial degree with all info}
+
+K <- 1:8
+
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+# fit on the training data
+best_model <- lm(num_trips ~ poly(tmin, k, raw=T) + (too_rainy * is_weekend) + poly(tmax, k, raw=T) + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+  
+# evaluate on the training data
+train_err[k] <- sqrt(mean((predict(best_model, trips_per_day_with_all_info_and_holidays_train) - trips_per_day_with_all_info_and_holidays_train$num_trips)^2))
+  
+  # evaluate on the validate data
+  validate_err[k] <- sqrt(mean((predict(best_model, trips_per_day_with_all_info_and_holidays_validate) - trips_per_day_with_all_info_and_holidays_validate$num_trips)^2))
+}
+
+train_err
+validate_err
+
+# plot the training and validation error as a function of polynomial degree
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+# model for a degree 5 polynomial}
+
+# model for degree 5 polynomial
+best_model5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + (too_rainy * is_weekend) + tmax + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+
+# train model
+trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
+  add_predictions(best_model5) %>%
+  mutate(split="train")
+
+# validate model
+trips_per_day_with_all_info_and_holidays_validate <- trips_per_day_with_all_info_and_holidays_validate %>%
+  add_predictions(best_model5) %>%
+  mutate(split="validate")
+
+# plot the training data and validation data with the model
+plot_data <- bind_rows(trips_per_day_with_all_info_and_holidays_train, trips_per_day_with_all_info_and_holidays_validate)
+
+ggplot(plot_data, aes(x=ymd, y=num_trips)) +
+  geom_point(aes(color=split)) +
+  geom_line(aes(y=pred)) +
+  xlab("YMD") +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+# plot with actual vs. predicted
+ggplot(plot_data, aes(x=pred, y=num_trips, color=split)) +
+  geom_point() +
+  geom_abline() +
+  scale_x_continuous("Predicted Number of Trips", label=comma) +
+  scale_y_continuous("Actual Number of Trips", label=comma)
+
+# find R^2 values
+
+rsquare(best_model5, trips_per_day_with_all_info_and_holidays_train)
+rsquare(best_model5, trips_per_day_with_all_info_and_holidays_validate)
+
+```
+
+RMSE-training data: 3778.722 3721.948 3515.101 3432.310 3430.596 3396.907 3393.529 3349.031
+RMSE-validation data: 4466.539 4374.817 3937.105 3905.444 3884.323 3986.518 4097.692 4305.481
+R^2-training: 0.8834531
+R^2-validation 0.877956
+
+-------------------------------------------------
 
 
 
