@@ -1,4 +1,9 @@
-# Importing the libraries
+# Citibike Data Prediction
+
+Author: Sambhav Shrestha
+
+
+## Importing the libraries
 
 ```{r}
 library(tidyverse)
@@ -9,12 +14,12 @@ library(Holidays)
 ```
 
 
-# Load the dataset
+## Load the dataset
 ```{r}
 trips <- read_tsv('trips_per_day.tsv')
 ```
 
-# Data visualization
+## Data visualization
 ```{r}
 # visualize the graph between each independent variable with num_trips to analyze the data
 trips %>%
@@ -23,7 +28,8 @@ trips %>%
 
 ```
 
-# Splitting the data (Train and Test split)
+## Splitting the data (Train and Test split)
+
 ```{r}
 set.seed(50)
 
@@ -42,11 +48,12 @@ test <- trips[-sample_data, ]
 
 ```
 
+
 ## Cross Validataion
 
 ```{r}
 # no of k folds
-num_folds = 5
+num_folds = 10
 
 # mutate the training dataset to include fold numbers
 train <- train %>%
@@ -56,7 +63,7 @@ train <- train %>%
 head(train)
 ```
 
-# Model Testing for different degrees for each independent variable
+## Model Testing for different degrees for each independent variable
 
 ```{r}
 # testing the model for 8 polynomial degrees 
@@ -101,7 +108,7 @@ for (n in N) {
 
 ```
 
-# plot the errors 
+## plot the errors 
 
 ```{r}
 plot_data <- data.frame(N, avg_training_err, avg_validation_err, se_validation_err)
@@ -119,7 +126,7 @@ plot_data %>%
 ```
 
 
-# Linear Regression Model
+## Linear Regression Model
 
 ```{r}
 
@@ -149,7 +156,7 @@ summary(model)
 
 ```
 
-# Data Plotting
+## Data Plotting
 ```{r}
 # select a random validation data from the training set
 validation_data <- filter(train, fold == 2)
@@ -173,13 +180,65 @@ validation_data %>%
   labs(x = "Date", y = "No. of trips", title = "Actual vs Predicted Plot")
 
 ```
-# Saving the model
+## Saving the model
 
 ```{r}
 
-save.image(file = "Sambhav.RData")
+save.image(file = "Sambhav_workspace.RData")
+
+save(model, file = "sambhav_model.RData")
 
 ```
+
+
+## Predicting the Test Set
+```{r}
+# Predict the test set
+test_pred <- predict(model, test)
+
+# find the rmse
+test_error <- sqrt(mean((predict(model, test) - test$num_trips)^2))
+print(test_error)
+
+#plot the test set
+
+# plot the regression plot 
+test %>%
+  mutate(pred = test_pred) %>%
+  ggplot(aes(x = ymd)) +
+  geom_point(aes(y = num_trips)) +
+  geom_line(aes(y = pred, color = "prediction_line")) +
+  labs(x = "Date", y = "No. of trips", title = "Linear Regression Plot")
+
+
+# plot the actual vs predicted plot
+test %>%
+  mutate(pred = test_pred) %>%
+  ggplot(aes(x = ymd)) +
+  geom_point(aes(y = pred, color = "prediction"), size = 3) +
+  geom_point(aes(y = num_trips, color = "actual"), size = 3) +
+  labs(x = "Date", y = "No. of trips", title = "Actual vs Predicted Plot")
+
+
+```
+
+## Conclusion
+
+#### Validation Error
+
+When I used linear regression on only one feature, say tmin, I was getting the average validation error of about 5000-6000. 
+
+After playing around quite a bit with different features and adding special cases like holidays, days of week, and months, I was able to obtain a consistent validation error of around 3000-4000, dropping the error rate by nearly half. In order to reduce the error, I was doing trial and error with different features based on the summary of the model (looking at Adjusted R squared, Pr(>|t|), and coefficients.)
+
+
+#### Test Error
+
+When I was finally satisfied with my model, I tested my model on the test set, and the model actually performed better than I thought it would. It also gave me a consistent error size of 3000-4000 just like the validation data. The plot actually made a reasonable regression line that captured most of the data.
+
+
+#### Thoughts
+
+When I viewed the plot of validation data, I wondered if my model has overfitted. After testing on different seed and different no. of folds, I got same error and same plot which increased my confidence in my model. Surprisingly, my model also performed really good on test set. Given how people bike around different times in a year and on different weather condition, this model might actually be able to predict no. of trips people take to a certain extent unless there is any extreme deviation from the training data.
 
 
 
