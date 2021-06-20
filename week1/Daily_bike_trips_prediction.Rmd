@@ -1,0 +1,162 @@
+---
+title: "predict_citibike.Rmd"
+author: "Ahuva Bechhofer"
+date: "6/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# load some packages that we'll need
+
+library(tidyverse)
+library(scales)
+library(modelr)
+library(stats)
+
+
+#  white backgrounds on our plots
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+
+
+# load the Data file 
+trips_per_day <- read_tsv('trips_per_day.tsv')
+holidays <- read.delim("holidays_2014.txt",header = FALSE, sep = ",", dec = ".")
+
+keeps <- c("V2","V3")
+holidays = holidays[keeps]
+
+colnames(holidays)[1] <- "date"
+colnames(holidays)[2] <- "holiday_name"
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+what affects riding bikes?
+day of the week, holidays, temprature, weather conditions
+
+```{r single cross validation}
+# K cross validation with 80% data for training,10% for validation, and 10% for a final test set
+
+
+holidays <- holidays%>%
+  mutate(ymd = lubridate:: ymd(date))
+
+keeps <- c("holiday_name","ymd")
+holidays = holidays[keeps]
+
+trips_per_day<-left_join(trips_per_day, holidays, by="ymd")
+
+trips_per_day<- trips_per_day%>%
+     mutate(day = lubridate:: wday(ymd), is_weekend = day %in% c(1,7), did_rain = prcp > .2)
+
+trips_per_day[is.na(trips_per_day)] = '0'
+
+
+    
+set.seed(42)
+
+num_days <- nrow(trips_per_day)
+frac_train <- 0.8
+frac_validate <- .1
+num_train <- floor(num_days * frac_train)
+num_validate <- floor(num_days * frac_validate)
+
+indx <- sample(1:num_days, num_train, replace = F)
+
+train_trips_data <- trips_per_day[indx, ]
+
+trips_validate_test_data <- trips_per_day[-indx, ]
+
+#dividing the last 20% into 10% validation data, 10% testing data
+
+num_days2 <- nrow(trips_validate_test_data)
+indx_two <- sample(1:num_days2, num_validate, replace = F)
+
+trips_validate_data <- trips_validate_test_data[indx_two, ]
+
+test_data <- trips_validate_test_data[-indx_two, ]
+
+  
+K <- 1:8 
+train_err = c()
+validation_err = c()
+
+#for loop to test each polynomial degree from 1-8 in our model
+for(k in K){
+  
+  model <- lm(num_trips ~ poly(tmax,k,raw = T)+I(did_rain)+I(is_weekend), data = train_trips_data)
+  
+    #now evaluate on the training data 
+    train_err[k] <- sqrt(mean((predict(model, train_trips_data) - train_trips_data$num_trips)^2))
+    
+    #now evaluate on the validation data 
+    validation_err[k] <- sqrt(mean((predict(model, trips_validate_data) - trips_validate_data$num_trips)^2))
+    
+}
+
+plot_data <- data.frame(K , train_err , validation_err)%>%
+  gather("split","error", -K)
+
+#plotting the polynomial degree vs. error 
+ggplot(plot_data, aes(x = K, y = error, color = split))+
+  geom_line()+
+  scale_x_continuous(breaks = K)+
+  xlab('polynomial degree')+
+  ylab('RMSE')
+
+
+model <- lm(num_trips ~ poly(tmax,4, raw = T), data = train_trips_data)
+
+train_trips_data <- train_trips_data %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+
+trips_validate_data <- trips_validate_data %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(train_trips_data, trips_validate_data)
+
+#plotting the training and validation data with our model
+ggplot(plot_data, aes(x = tmax, y = num_trips)) +
+  geom_point(aes(color = did_rain)) +
+  geom_line(aes(y = pred)) +
+  xlab('Maximum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()+
+  facet_wrap(~is_weekend)
+
+
+
+
+
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+#Plotting predicted vs. actual values
+
+ggplot(plot_data, aes(x = pred, y = num_trips)) +
+  geom_point() +
+  geom_abline(linetype = "dashed") +
+  xlab('Predicted') +
+  ylab('Actual')
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+
+
+
+```
+
