@@ -1,0 +1,212 @@
+---
+title: "predict_citibike"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(modelr)
+library(lubridate)
+
+theme_set(theme_bw())
+```
+
+
+```{r create a data frame for training data}
+trips_per_day <- read_tsv('trips_per_day.tsv')
+# Debugger: head(trips_per_day)
+
+```
+
+```{r randomized, 80 percent training data}
+# Randomization Seed
+set.seed(42)
+
+# Creating the training data at 80%
+num_days <- nrow(trips_per_day)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set 
+randsamp <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_train <- trips_per_day[randsamp, ]
+
+# used to evaluate the fit
+trips_per_day_validate <- trips_per_day[-randsamp, ]
+```
+
+
+```{r Fitting a model for a polynomial degree, default}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+}
+```
+
+
+```{r plotting 80% data, default model}
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+```
+
+```{r modeling of default}
+model <- lm(num_trips ~ poly(tmin, 5, raw = T), data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+
+
+```{r refitting the model, default}
+
+model <- lm(num_trips ~ poly(tmin, 5, raw = T), data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+```
+
+
+```{r, drafting work}
+#tripz = trips_per_day$num_trips
+#tmin = trips_per_day$tmin
+#temp_change <- (trips_per_day$tmax - trips_per_day$tmin)
+
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(prcp, k, raw = T) + I(prcp > 0), data=trips_per_day_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+}
+
+#K <- 1:8
+#train_err <- c()
+#validate_err <- c()
+#temp_change <- (trips_per_day$tmax - trips_per_day$tmin)
+
+#ggplot(plot_data, aes(x=K, y=temp_change, color=split)) +
+ # geom_line() +
+ # scale_x_continuous(breaks=K) +
+#  xlab('Polynomial Degree') +
+ # ylab('RMSE')
+
+
+#ggplot(plot_data, aes(x=temp_change, y=tripz, color=split)) +
+  #geom_line() +
+  #scale_x_continuous(breaks=temp_change) +
+  #xlab('tempchange') +
+  #ylab('RMSE')
+
+# PREDICTED VALUE TABLE
+#model <- lm(num_trips ~ poly(tmin, 3, raw = T), data = trips_per_day_train)
+#pred_actual <- data.frame(pred = predict(model, trips_per_day_validate), actual = trips_per_day_validate$num_trips)
+#pred_actual
+
+# REGULAR PLOT
+#ggplot(trips_per_day_validate, aes(x=tmin, y=num_trips)) + geom_point() + geom_line(aes(y = pred))
+#model <- lm(num_trips ~ poly(tmin, 3, raw = T) + I(prcp > 0), data = trips_per_day_train)
+
+# ADDED PRED COLUMN
+#trips_per_day_validate$pred <- predict(model, trips_per_day_validate)
+#trips_per_day_validate
+
+# PLOT OF PRECIP
+#ggplot(trips_per_day_validate, aes(x = tmin, y = num_trips, color = prcp > 0)) + geom_point() + geom_line(aes(y=pred))
+
+
+
+```
+
+```{r PLOT PRECP ERROR}
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+```
+
+```{r PLOT PRECP GENERAL}
+model <- lm(num_trips ~ poly(tmin, 3, raw = T) + I(prcp > 0.1) + I(wday(ymd) == 1 | wday(ymd) == 7), data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred, linetype = wday(ymd) == 1 | wday(ymd) == 7)) +
+  xlab('Rain') +
+  ylab('Daily trips') +
+  scale_y_continuous() +
+  facet_wrap(~I(prcp > 0.1))
+
+
+```
+```{r}
+
+save(model, file = "citibike_model.RData")
+
+```
+
+
