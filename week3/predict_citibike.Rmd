@@ -152,6 +152,8 @@ trips_per_day %>%
 trips_per_day_with_rain <- trips_per_day %>% 
   mutate(too_rainy = prcp > mean(prcp))
 
+mean(trips_per_day$prcp)
+
 # View(trips_per_day_with_rain)
 
 
@@ -1776,9 +1778,9 @@ ggplot(plot_data, aes(x=K, y=error, color=split)) +
 # model for a degree 5 polynomial}
 
 # model for degree 5 polynomial
-# best_model5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + (too_rainy * is_weekend) + tmax + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
+best_model5 <- lm(num_trips ~ poly(tmin, 5, raw=T) + (too_rainy * is_weekend) + tmax + is_holiday, data=trips_per_day_with_all_info_and_holidays_train)
 
-best_model5 <- lm(num_trips ~ poly(tmin, 1, raw=T), data=trips_per_day_with_all_info_and_holidays_train)
+# best_model5 <- lm(num_trips ~ poly(tmin, 1, raw=T), data=trips_per_day_with_all_info_and_holidays_train)
 
 # train model
 trips_per_day_with_all_info_and_holidays_train <- trips_per_day_with_all_info_and_holidays_train %>%
@@ -1829,6 +1831,12 @@ test_err
 
 # find R^2 value
 rsquare(best_model5, trips_per_day_with_all_info_and_holidays_test)
+
+```
+
+```{r save the model}
+
+save(best_model5, file='citibike_model.Rdata')
 
 ```
 
