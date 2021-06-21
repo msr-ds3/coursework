@@ -1820,7 +1820,7 @@ R^2-validation 0.877956
 ```{r}
 
 # evaluate on the test data
-test_err <- sqrt(mean((predict(best_model, trips_per_day_with_all_info_and_holidays_test) - trips_per_day_with_all_info_and_holidays_test$num_trips)^2))
+test_err <- sqrt(mean((predict(best_model5, trips_per_day_with_all_info_and_holidays_test) - trips_per_day_with_all_info_and_holidays_test$num_trips)^2))
 
 test_err
 
@@ -1832,8 +1832,8 @@ rsquare(best_model5, trips_per_day_with_all_info_and_holidays_test)
 
 ### Outcome when using the test data:
 
-RMSE: 2792.312
-R^2: 0.9102012
+RMSE: 3458.284
+R^2: 0.9033909
 
 Based on these numbers, I think my model will perform well on future data.
 I think it will do slightly worse than it did on the 10% test that I used here, because the future data will be
