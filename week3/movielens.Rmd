@@ -32,7 +32,6 @@ head(ratings) %>% kable()
 ```
 
 # Summary statistics
-
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
 ggplot(ratings, (aes(x = user_id, y=rating))) + geom_point()
