@@ -14,9 +14,9 @@ This week starts with a discussion of modeling and machine learning, and then in
   * Read section 5.1 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
 
 
-<!--
 
-# Day 1
+
+# Day 2
 
 ## The long tail
 
@@ -24,17 +24,9 @@ This week starts with a discussion of modeling and machine learning, and then in
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Day 2
-=======
-<!--
-=======
 
->>>>>>> e489bf70d6fcc8fc321ffbbe2a5de6a5f6925428
 
 # Day 3
->>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## N-gram data and "Culturonomics"
 
@@ -43,26 +35,15 @@ This week starts with a discussion of modeling and machine learning, and then in
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Day 3
-=======
-=======
-<!--
-=======
->>>>>>> 5832b1bf9e5959e274734fa643cc166ee7edc29a
 
->>>>>>> e489bf70d6fcc8fc321ffbbe2a5de6a5f6925428
 # Day 4
->>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## Predicting daily Citibike trips (open-ended)
 
 The point of this exercise is to get experience in an open-ended prediction exercise: predicting the total number of Citibike trips taken on a given day. Do all of your work in an RMarkdown file named `predict_citibike.Rmd`. Here are the rules of the game:
 
 1. Use the `trips_per_day.tsv` file that has one row for each day, the number of trips taken on that day, and the minimum temperature on that day.
-2. Split the data into randomly selected training, validation, and test sets, with 80% of the data for training the model, 10% for validation, and 10% for a final test set (to be used once and only once towards the end of this exercise). You can adapt the code from last week's [complexity control notebook](../week2/complexity_control.ipynb) to do this. You can use a single validation fold, don't worry about k-fold cross-validation here.
+2. Split the data into randomly selected training, validation, and test sets, with 80% of the data for training the model, 10% for validation, and 10% for a final test set (to be used once and only once towards the end of this exercise). You can adapt the code from last week's [complexity control notebook](complexity_control.ipynb) to do this. You can use a single validation fold, don't worry about k-fold cross-validation here.
 3. Start out with the model in that notebook, which uses only the minimum temperature on each day to predict the number of trips taken that day. Try different polynomial degrees in the minimum temperature and check that you get results similar to what's in that notebook, although they likely won't be identical due to shuffling of which days end up in the train, validation, and test splits. Quantify your performance using [root mean-squared error](https://www.kaggle.com/wiki/RootMeanSquaredError).
 4. Now get creative and extend the model to improve it. You can use any features you like that are available prior to the day in question, ranging from the weather, to the time of year and day of week, to activity in previous days or weeks, but don't cheat and use features from the future (e.g., the next day's trips). You can even try adding [holiday](https://gist.github.com/shivaas/4758439) effects. You might want to look at feature distributions to get a sense of what tranformations (e.g., ``log`` or manually created factors such as weekday vs. weekend) might improve model performance. You can also interact features with each other. This [formula syntax in R](https://cran.r-project.org/doc/manuals/R-intro.html#Formulae-for-statistical-models) reference might be useful.
 5. Try a bunch of different models and ideas, documenting them in your Rmarkdown file. Inspect the models to figure out what the highly predictive features are, and see if you can prune away any negligble features that don't matter much. Report the model with the best performance on the validation data. Watch out for overfitting.
@@ -71,16 +52,9 @@ The point of this exercise is to get experience in an open-ended prediction exer
 8. Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository.
 9. Finally, use the model you just developed and pushed to Github to make predictions on the 10% of data you kept aside as a test set. Do this only once, and record the performance in your Rmarkdown file. Use this number to make a guess as to how your model will perform on future data (which we'll test it on!). Do you think it will do better, worse, or the same as it did on the 10% test set you used here? Write your answer in your Rmarkdown notebook. Render the notebook and push the final result to Github.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Day 4
-=======
-=======
-<!--
 
->>>>>>> 5832b1bf9e5959e274734fa643cc166ee7edc29a
+
 # Day 5
->>>>>>> 7c1913c4c801fc90d9838fbb889ee76dec5ae0bb
 
 ## Testing your Citibike models
 
@@ -99,5 +73,3 @@ These two exercises take a look at two questions and how they might be answered 
 
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
 * [Is yawning contagious?](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_2)
-
--->
