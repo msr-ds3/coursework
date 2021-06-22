@@ -1,6 +1,6 @@
 This week covers replications and extensions of [this article](https://github.com/msr-ds3/coursework/blob/master/week4/ft_police_complaints.pdf) on complaints filed against police officers in NYC, Chicago, and Philadelphia. You'll work in groups of 2 for this.
 
-1. Start by reading the paper. Focus on the first figure, the three panels showing how complaints are disproportionately concentrated among the top decilce of officers who draw the most complaints. This will be the main result to replicate in the paper.
+1. Start by reading the paper. Focus on the first figure, the three panels showing how complaints are disproportionately concentrated among the top decile of officers who draw the most complaints. This will be the main result to replicate in the paper.
 
 2. Then read the methodology details at the end of the article, and follow the links to the datasets that were used. Take a look at the NYC data set and read the specific steps that were done to filter the data and deal with complaints containing more than one allegation. Sketch out a plan for how you can use this data to get the results in the main figure.
 
