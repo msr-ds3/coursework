@@ -6,12 +6,12 @@ This week covers replications and extensions of [this article](https://github.co
 
 3. Write reproducible code to create the middle panel of the figure for officers in NYC. Follow the template for the [ngrams assignment](../week3/ngrams) in organizing your code. For instance, you might want a file called `01_download_nyc_complaints.sh` to download the data for NYC complaints to a `data/` subdirectory in your repository, and maybe an `02_clean_nyc_complaints.R` script to prepare the data for analysis, and so on. Do all of your work in your group's project repository, which you have direct read/write access to (no need to fork and issue pull requests, etc.):
 
-  * https://github.com/msr-ds3/officer-complaints-2021-group-1
-  * https://github.com/msr-ds3/officer-complaints-2021-group-2
-  * https://github.com/msr-ds3/officer-complaints-2021-group-3
-  * https://github.com/msr-ds3/officer-complaints-2021-group-4
-  * https://github.com/msr-ds3/officer-complaints-2021-group-5
-  * https://github.com/msr-ds3/officer-complaints-2021-group-6
+    * https://github.com/msr-ds3/officer-complaints-2021-group-1
+    * https://github.com/msr-ds3/officer-complaints-2021-group-2
+    * https://github.com/msr-ds3/officer-complaints-2021-group-3
+    * https://github.com/msr-ds3/officer-complaints-2021-group-4
+    * https://github.com/msr-ds3/officer-complaints-2021-group-5
+    * https://github.com/msr-ds3/officer-complaints-2021-group-6
 
 4. Do the same as steps 2 and 3, but for Chicago and Philadelphia, looking at the data and noting differences in how they were cleaned or handled based on the methodology writeup at the end of the article.
 
