@@ -34,11 +34,6 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
   * Otherwise consider [Visual Studio Code](https://code.visualstudio.com), [Atom](https://atom.io), or [Sublime](http://www.sublimetext.com)
   * Check your editor's settings for [unix-friendly line endings](https://askubuntu.com/a/1036364)
 
-<!-- 
-* sudo apt-get install dos2unix unzip
-* dos2unix for citibike script
--->
-
 ### Filesystem setup
   * Files that you create in Ubuntu on Windows get stored in a somewhat hidden location within the Windows filesystem
   * To make it easier to find files you work on in Ubuntu, do the following:
@@ -63,7 +58,6 @@ Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/
 
 ### Learn more (optional)
   * Codecademy's [interactive introduction to git](https://www.codecademy.com/learn/learn-git)
-<!--  * Datacamp's [interactive online git course](https://www.datacamp.com/courses/introduction-to-git-for-data-science) -->
   * A full hour-long [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
   * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
   * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
@@ -75,6 +69,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 * Produce a (pseudo)random pairing of 6 groups of 2 people who get to work together each day on pair programming assignments
 * Any one of us should be able to run the script and get the same pairing on a given day (i.e., as long as our computers agree on the year/month/day)
 * It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
+
+<!--
 
 # Day 2
   
@@ -167,6 +163,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+
+-->
 
 <!--
 
