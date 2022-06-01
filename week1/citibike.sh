@@ -1,10 +1,11 @@
+case 
 #!/bin/bash
 #
 # add your solution after each of the 10 comments below
 # 1
 
 # count the number of unique stations
-cut -d, -f5 201402-citibike-tripdata.csv | sort | uniq -c | wc -l
+cut -d, -f4 201402-citibike-tripdata.csv | grep '[0-9]' | sort | uniq -c | wc -l
 
 # count the number of unique bikes
 cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq -c | wc -l
