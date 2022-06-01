@@ -31,7 +31,3 @@ cut -d, -f5 201402-citibike-tripdata.csv | grep '[0-9].*&.*[0-9]' | sort | uniq 
 echo "average trip duration"
 cut -d, -f1 201402-citibike-tripdata.csv | tr -d '"' | grep '[0-9]' | awk -F, '{sum += $1} END {print sum/NR}'
 
-
-
-
-strings as numbers
