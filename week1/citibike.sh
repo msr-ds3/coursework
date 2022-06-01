@@ -10,7 +10,7 @@ cut -d, -f4 201402-citibike-tripdata.csv | grep '[0-9]' | sort | uniq -c | wc -l
 cut -d, -f12 201402-citibike-tripdata.csv |tr -d '"' | grep '[0-9]' | sort | uniq -c | wc -l
 
 # count the number of trips per day
-cut -d, -f2 201402-citibike-tripdata.csv | tr -d '"' | sort | cut -d' ' -f1 | grep '[0-9-]' |sort | uniq -citibike
+cut -d, -f2 201402-citibike-tripdata.csv | tr -d '"' | sort | cut -d' ' -f1 | grep '[0-9-]' |sort | uniq -c
 
 # find the day with the most rides
 cut -d, -f2 201402-citibike-tripdata.csv | sort | cut -d' ' -f1 | sort | uniq -c | sort | tail -1
