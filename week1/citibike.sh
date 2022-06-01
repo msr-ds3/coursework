@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # add your solution after each of the 10 comments below
-# l
+# 
 
 # count the number of unique stations
 cut -d, -f5 201402-citibike-tripdata.csv | sort | uniq -c | wc -l
