@@ -11,7 +11,7 @@
   
 # count the number of trips per day
     cut -d, -f2 201402-citibike-tripdata.csv | cut -c2-11 | sort -n | uniq -c
-
+awk -F\" 'NR!=1 {sum+=$2} END {print sum/NR}' 201402-citibike-tripdata.csv
 # find the day with the most rides
     cut -d, -f2 201402-citibike-tripdata.csv | cut -d ' ' -f1 | sort | uniq -c | sort -nr | head -n1
 
@@ -28,4 +28,5 @@
     cut -d, -f5 201402-citibike-tripdata.csv | grep '[0-9].*&.*[0-9]' | wc -l
 
 # compute the average trip duration
-    awk '{sum+=$2; count++} END {print sum/count}' 201402-citibike-tripdata.csv
+    awk -F\" 'NR!=1 {sum+=$2} END {print sum/NR}' 201402-citibike-tripdata.csv
+
