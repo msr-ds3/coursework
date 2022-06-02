@@ -98,8 +98,9 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
   	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
+  * Finish by submitting a pull request with your solutions so we can review them!
 
-<!--
+
 
 
 # Day 3
@@ -135,6 +136,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
+
+<!--
 
 # Day 4
 
