@@ -71,4 +71,4 @@ mutate(trips, starttime = as.Date(starttime)) %>% group_by(starttime) %>% summar
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
-mutate(trips, starttime = substr(starttime, 11, 13)) %>% group_by(starttime) %>% summarize(count = mean(n()))
+mutate(trips, starttime = substr(starttime, 11, 13)) %>% group_by(starttime) %>% summarize(count = mean(n())) %>% arrange(desc(count))
