@@ -21,3 +21,8 @@ cut -d, -f14-15 201402-citibike-tripdata.csv | sort | grep '[0-9]' | uniq -c | s
 cut -d, -f5,9 201402-citibike-tripdata.csv | grep '[0-9]' | cut -d, -f1 | grep "&" | wc -l
 
 # compute the average trip duration
+cut -d, -f1 201402-citibike-tripdata.csv | grep '[0-9]' | cut -c2-5 | tr '\"' ',' | sort -n > durations.txt
+awk -F',' '{sum+=$1}END{print sum}' durations.txt
+wc -l 201402-citibike-tripdata.csv
+expr 158639948 / 224736
+705
