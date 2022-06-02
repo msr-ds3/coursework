@@ -97,6 +97,6 @@ trips$hour <- hour(trips$starttime)
 
 hours_summary <- trips %>%
   group_by(hour) %>%
-  summarize(count = n()) %>%
+  summarize(count = n()/28) %>%
   arrange(desc(count))
 head(hours_summary,10)
