@@ -137,7 +137,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
 
-<!--
+
 
 # Day 4
 
@@ -167,7 +167,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
 
--->
+
 
 <!--
 
