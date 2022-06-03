@@ -5,6 +5,7 @@
 # load some packages that we'll need
 library(tidyverse)
 library(scales)
+library(lubridate)
 
 # be picky about white backgrounds on our plots
 theme_set(theme_bw())
@@ -18,8 +19,21 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+trips %>%
+  ggplot() + 
+  geom_histogram(mapping = aes(x = hour(starttime)), binwidth = .9)
+
+
+trips %>%
+  mutate(hour = hour(starttime)) %>%
+  group_by(hour) %>% 
+  summarize(count1 = n()) %>%
+  ggplot() + 
+  geom_point(mapping = aes(x = hour, y = count1))
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+
+
 
 # plot the total number of trips on each day in the dataset
 
