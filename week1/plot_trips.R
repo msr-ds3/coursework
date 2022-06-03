@@ -18,21 +18,28 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
-
+ggplot(trips, aes(x = tripduration)) + geom_histogram(bins = 100) + scale_x_log10(label = comma) 
+ggplot(trips, aes(x=tripduration)) + geom_density(fill = "grey") + scale_x_log10(label = comma)
+       
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+ggplot(trips, aes(x = tripduration, color = usertype)) + geom_histogram(bins=100) + scale_x_log10(label = comma) + scale_y_log10(label = comma) 
+ggplot(trips, aes(x = tripduration, color = usertype, fill = usertype)) + geom_density() +scale_x_log10(label = comma) 
 
-# plot the total number of trips on each day in the dataset
+# plot the total number of trips on each day in the data set
+trips %>% group_by(ymd) %>% summarize (num_trips =n()) %>% ggplot(aes(x = ymd, y = num_trips)) + geom_point() + xlab('Number of Trips') + ylab('Day')
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
-
+trips %>% mutate(age = 2022-birth_year) %>% group_by(age, gender) %>% summarize (num_trips =n()) %>% ggplot(aes(x = age, y = num_trips, color = gender)) + geom_point() + xlab('Age') + ylab('Number of Trips')  + scale_y_log10(label = comma)
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
 ########################################
 # plot weather data
+
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
+ ggplot(weather, aes(x=date,  y=tmin)) + geom_point()
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
