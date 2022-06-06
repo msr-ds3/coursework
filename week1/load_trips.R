@@ -13,6 +13,7 @@ parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
 # load each month of the trip data into one big data frame
 csvs <- Sys.glob('*-tripdata.csv')
 trips <- data.frame()
+
 for (csv in csvs) {
   print(csv)
   tmp <- read_csv(csv, na='\\N')
@@ -28,6 +29,7 @@ for (csv in csvs) {
 }
 
 # replace spaces in column names with underscores
+
 names(trips) <- gsub(' ', '_', names(trips))
 
 # add a column for year/month/day (without time of day)
@@ -50,7 +52,7 @@ weather <- read.table('weather.csv', header=T, sep=',')
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
-                  ymd = as.Date(parse_datetime(date, "%Y%m%d")))
+                  ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
 weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
