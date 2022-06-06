@@ -172,7 +172,7 @@ ave_plot_2 <- trips_with_weather %>%
   group_by(day) %>%
   count(ymd) %>%
   summarize(average = mean(n), std = sd(n)) %>%
-  ggplot(aes(day, average, level = 1:7, label = c('mon','tue','wed','thu','fri','sat','sun'))) +
+  ggplot(aes(day, average, label = c('mon','tue','wed','thu','fri','sat','sun'))) +
   geom_point(color = 'blue') +
   geom_text(hjust = -0.3) 
 std_plot_2 <- trips_with_weather %>%
@@ -180,7 +180,7 @@ std_plot_2 <- trips_with_weather %>%
   group_by(day) %>%
   count(ymd) %>%
   summarize(average = mean(n), std = sd(n)) %>%
-  ggplot(aes(day, std, level = 1:7, label = c('mon','tue','wed','thu','fri','sat','sun'))) +
+  ggplot(aes(day, std, label = c('mon','tue','wed','thu','fri','sat','sun'))) +
   geom_point(color = 'red') +
   geom_text(hjust = -0.3)
 grid.arrange(ave_plot_2, std_plot_2, ncol = 1)
