@@ -18,18 +18,23 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+library(patchwork)
 plot1 <- ggplot(data = trips, mapping = aes(x = tripduration)) + 
-  geom_histogram(bins = 50) + 
+  geom_histogram() + 
   scale_x_log10(label = comma) + 
   scale_y_log10(label = comma)
+
 plot2 <- ggplot(data = trips, mapping = aes(x = tripduration)) + 
   geom_density() + 
   scale_x_log10(label = comma) + 
   scale_y_log10(label = comma)
+
 plot1+plot2
 
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+#library(patchwork)
+
 plot1 <- ggplot(data = trips, mapping = aes(x = tripduration)) + 
   geom_histogram(mapping = aes(color = usertype, fill = usertype)) +
   scale_x_log10(label = comma) + 
@@ -52,14 +57,20 @@ ggplot(data = age, mapping = aes(x = age)) + geom_histogram(mapping = aes(color 
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
-trips %>% pivot_wider(names_from = gender, values_from = count)
-  mutate(age = 2022 - birth_year) %>% summarize (trips, age) %>% View
 
-pivot_wider(trips, names_from = gender, values_from = birth_year)
+trips <- mutate (trips, age = 2022 - birth_year)
 
-trips %>% View
+trips_by_gender_age <- trips %>% 
+  group_by(age, gender) %>% 
+  summarize(count =n()) 
+  
 
-# (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips_by_gender_age <- pivot_wider(trips_by_gender_age, names_from = gender, values_from = count) 
+trips_by_gender_age <- select(trips_by_gender_age, age, Male, Female)
+trips_by_gender_age <- mutate(trips_by_gender_age, ratio =Male/Female)
+
+ggplot(data = trips_by_gender_age, mapping = aes(x= age, y=ratio)) + geom_point()
+
 
 ########################################
 # plot weather data
@@ -69,6 +80,16 @@ day <- mutate(weather, day = substr(weather$date, 9, 10))
 ggplot(data = day, mapping = aes(x = day, y = tmin)) + geom_point()
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
+
+min_max_day <- weather %>% 
+  group_by(ymd, tmin, tmax) %>% 
+  summarize()
+
+ggplot(data = min_max_day) + 
+  geom_point(mapping = aes(x = ymd, y = tmin, color = 'tmin'))  + 
+  geom_point(mapping = aes(x = ymd, y = tmax, color = 'tmax')) + 
+  ylab('Temperature') +
+  xlab('Day')
 
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
@@ -114,26 +135,40 @@ ggplot(data = new_x, mapping = aes(x = tmin, y = ymd...1)) +
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
-trips_hour <- mutate(trips, hour_self = substr(trips$starttime, 12, 13))
 
-a <- trips_hour %>% 
-  group_by(hour_self) %>% 
-  summarize(count = n()) 
-col_trips_hour <- select(a, count)
-trips_hour %>% 
-  group_by(hour_self) %>% 
-  summarize(col_trips_hour, 
-            avg = mean(count), 
-            std_dev = sd(count))%>% View
+trips_hour <- mutate(trips, hour = hour(starttime))
+
+trips_by_hour <- trips_hour %>% 
+  group_by(ymd, hour) %>% 
+  summarize(count = n())
+
+hour_total <- group_by(trips_by_hour, hour) %>% 
+  summarize(avg = mean(count), std_dev = sd(count))
 
 
-#SD is wrong
 # plot the above
-ggplot(data = x, mapping = aes(x = hour_self, y = avg)) + geom_point()
-ggplot(data = x, mapping = aes(x = hour_self, y = std_dev)) + geom_point()
+ggplot(data = hour_total) + 
+  geom_line(mapping = aes(x = hour, y = avg)) + 
+  geom_ribbon(mapping = aes(x = hour, ymin = avg - std_dev, ymax = avg + std_dev), 
+              alpha = 0.2)
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 trips_hour <- mutate(trips_hour, day = wday(ymd))
-trips_hour <- mutate(trips_hour, day=factor(day, levels=c(1,2,3,4,5,6,7), labels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")))
-trips_week_day <- group_by(trips_hour, day) %>% summarize(count = n())
-ggplot(data = trips_week_day, mapping = aes(x = count, y = day)) + geom_point()
+
+trips_hour <- mutate(trips_hour, 
+                     day=factor(day, levels=c(1,2,3,4,5,6,7), 
+                                            labels=c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")))
+
+trips_by_day <- trips_hour %>%
+  group_by(ymd, day) %>% 
+  summarize(count = n())
+
+day_total <- group_by(trips_by_day, day) %>% 
+  summarize(avg = mean(count), std_dev = sd(count))
+
+ggplot(data = day_total) + 
+  geom_point(mapping = aes(x = day, y = avg))
+
+ggplot(data = day_total) + 
+  geom_point(mapping = aes(x = day, y = std_dev))
+
