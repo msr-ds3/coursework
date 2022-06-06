@@ -29,7 +29,7 @@ histogram_1 <- trips %>%
        title = 'Trip times across all rides')
 density_plot_1 <- trips %>% 
   ggplot(aes(x = tripduration/60)) + 
-  geom_density(color = 'blue') + 
+  geom_density(color = 'blue', fill = 'blue') + 
   scale_x_continuous(limits = c(0, 100)) + 
   labs(x = 'Trip duratation (in minutes)',
        title = 'Trip times across all rides')
@@ -42,7 +42,7 @@ histogram_2 <- trips %>%
   geom_histogram(bins = 60) +
   scale_x_continuous(limits = c(0, 100))+
   scale_y_continuous(label = comma) +
-  facet_wrap(~ usertype)
+  facet_wrap(~ usertype) +
   labs(x = 'Trip duration', 
        title = 'Trip times by rider type')
 
@@ -50,7 +50,7 @@ density_plot__2 <- trips %>%
   ggplot(aes(x = tripduration/60, color = usertype, fill = usertype))+
   geom_density() +
   scale_x_continuous(limits = c(0, 100))+
-  facet_wrap(~ usertype)
+  facet_wrap(~ usertype) +
   labs(x = 'Trip duration', 
        title = 'Trip times by rider type')
 
@@ -84,6 +84,18 @@ trips %>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>% 
+  mutate(age = 2014 - birth_year) %>%
+  group_by(gender, age) %>%
+  summarize(count = n()) %>%
+  pivot_wider(names_from = gender, values_from = count) %>%
+  ggplot(aes(x = age, y = Male/Female)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  xlim(c(18, 90)) +
+  labs(x = 'Age',
+       title = 'Male to female ratio for an age group')
+  
 
 ########################################
 # plot weather data
@@ -98,7 +110,13 @@ weather %>%
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
-
+weather %>%
+  group_by(tmin, tmax, ymd) %>%
+  pivot_longer(c('tmin', 'tmax'), names_to = 'temperature_type', values_to = 'temperature') %>%
+  ggplot(aes(x = ymd, y = temperature, color = temperature_type)) +
+  geom_point()+
+  labs(x = 'Day',
+       title = 'minimum and maiximum temperature')
 
 ########################################
 # plot trip and weather data
@@ -156,14 +174,14 @@ summary_by_hour <- trips_with_weather %>%
 
 # plot the above
 ave_plot_1 <- summary_by_hour %>%
-  ggplot(aes(hour, average, label = hour.name)) +
+  ggplot(aes(hour, average, label = 0:23)) +
   geom_point(color = 'blue') +
   geom_text(hjust = -0.3) 
 std_plot_1 <- summary_by_hour %>%
-  ggplot(aes(hour, std, label = hour.name)) +
+  ggplot(aes(hour, std, label = 0:23)) +
   geom_point(color = 'red') +
   geom_text(hjust = -0.3)
-grid.arrange(ave_plot, std_plot, ncol = 1)
+grid.arrange(ave_plot_1, std_plot_1, ncol = 1)
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
