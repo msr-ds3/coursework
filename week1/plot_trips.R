@@ -120,13 +120,68 @@ trips_with_weather %>%
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
+trips_with_weather %>%
+  mutate(substantial_prcp = prcp > 0.1) %>%
+  group_by(ymd, tmin, substantial_prcp) %>%
+  summarize(count = n(), .groups = 'drop') %>%
+  ggplot(aes(x = tmin, y = count, label = 1:28)) +
+  labs(x = 'Minimum temperature',
+       y = 'No. of trips',
+       title = 'Trips tend to be low when there is substantial precipitation.') +
+  geom_point() +
+  geom_text(hjust=-0.3) +
+  facet_wrap(~substantial_prcp, ncol = 1)
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
+trips_with_weather %>%
+  mutate(substantial_prcp = prcp > 0.1) %>%
+  group_by(ymd, tmin, substantial_prcp) %>%
+  summarize(count = n(), .groups = 'drop') %>%
+  ggplot(aes(x = tmin, y = count, label = 1:28)) +
+  labs(x = 'Minimn))um temperature',
+       y = 'No. of trips',
+       title = 'Trips tend to be low when there is substantial precipitation.') +
+  geom_point() +
+  geom_smooth() +
+  geom_text(hjust = -0.3) +
+  facet_wrap(~substantial_prcp, ncol = 1)
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
+summary_by_hour <- trips_with_weather %>%
+  mutate(hour = hour(starttime)) %>%
+  group_by(hour) %>%
+  count(ymd) %>%
+  summarize(average = mean(n), std = sd(n))
 
 # plot the above
+ave_plot_1 <- summary_by_hour %>%
+  ggplot(aes(hour, average, label = hour.name)) +
+  geom_point(color = 'blue') +
+  geom_text(hjust = -0.3) 
+std_plot_1 <- summary_by_hour %>%
+  ggplot(aes(hour, std, label = hour.name)) +
+  geom_point(color = 'red') +
+  geom_text(hjust = -0.3)
+grid.arrange(ave_plot, std_plot, ncol = 1)
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+ave_plot_2 <- trips_with_weather %>%
+  mutate(day = wday(starttime)) %>%
+  group_by(day) %>%
+  count(ymd) %>%
+  summarize(average = mean(n), std = sd(n)) %>%
+  ggplot(aes(day, average, level = 1:7, label = c('mon','tue','wed','thu','fri','sat','sun'))) +
+  geom_point(color = 'blue') +
+  geom_text(hjust = -0.3) 
+std_plot_2 <- trips_with_weather %>%
+  mutate(day = wday(starttime)) %>%
+  group_by(day) %>%
+  count(ymd) %>%
+  summarize(average = mean(n), std = sd(n)) %>%
+  ggplot(aes(day, std, level = 1:7, label = c('mon','tue','wed','thu','fri','sat','sun'))) +
+  geom_point(color = 'red') +
+  geom_text(hjust = -0.3)
+grid.arrange(ave_plot_2, std_plot_2, ncol = 1)
+
