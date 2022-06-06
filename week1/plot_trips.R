@@ -65,6 +65,13 @@ ggplot(trips, aes(x = 2022-birth_year, color = gender, fill = gender)) +
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+gender_age_totals <- trips %>% group_by(birth_year,gender) %>%
+  summarize(count = n()) %>% spread(gender, count) %>% mutate(ratio = Male/Female)
+
+ggplot(gender_age_totals, aes(x = 2022-birth_year, y = ratio)) + 
+         geom_point() + 
+  xlab("Age") + 
+  ylab("Male to Female Trips Ratio")
 
 ########################################
 # plot weather data
@@ -73,13 +80,17 @@ ggplot(trips, aes(x = 2022-birth_year, color = gender, fill = gender)) +
 ggplot(weather, aes(x = date, y = tmin)) + 
   geom_point() + 
   xlab('Days') + 
-  ylab('Minimum Temperature') + 
-  coord_flip()
+  ylab('Minimum Temperature')
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
-# (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+# (you can skip this and come back to it tomorrow if we haven'tempt covered reshaping data yet)
+min_and_max <- gather(weather, "temp_type", "temp_val", 5:6)
 
+ggplot(min_and_max, aes(x = date, y = temp_val, color = temp_type)) + 
+  geom_point() + 
+  xlab("Date") + 
+  ylab("Temperature")
 ########################################
 # plot trip and weather data
 ########################################
@@ -89,10 +100,7 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
-num_trips <- trips %>%
-  filter(grepl('2014-02',starttime))
-
-summary <- num_trips %>%
+summary <- trips_with_weather %>%
   group_by(ymd) %>%
   summarize(count = n())
 
@@ -133,20 +141,22 @@ summ_by_hour <- trips_with_weather %>%
   group_by(ymd,hour) %>% 
   summarize(count = n())
 
-hours_summary <- summarize(group_by(summ_by_hour,hour),
-                           average_num_trips = mean(count),
-                           sd_num_trips = sd(count))
+hours_summary <- group_by(summ_by_hour,hour) %>% 
+  summarize(average_num_trips = mean(count),
+            sd_num_trips = sd(count))
 head(hours_summary)
   
 # plot the above
 ggplot(hours_summary) +
-  geom_point(aes(x = hour,  y = average_num_trips, color = "average num. of trips")) + 
-  geom_point(aes(x = hour, y = sd_num_trips, color = "standard deviation")) + 
+ # geom_point(aes(x = hour,  y = average_num_trips, color = "average num. of trips")) + 
+  #geom_point(aes(x = hour, y = sd_num_trips, color = "standard deviation")) + 
+  geom_line(aes(x = hour, y = average_num_trips)) +
+  geom_ribbon(aes(x = hour, ymin = average_num_trips - sd_num_trips, ymax = average_num_trips + sd_num_trips), alpha = 0.2) + 
   xlab("Hour of Day") + 
   ylab("Num of Trips") + 
-  scale_color_manual("",
-                     breaks = c("average num. of trips", "standard deviation"),
-                     values = c("red", "blue"))
+ # scale_color_manual("",
+  #                   breaks = c("average num. of trips", "standard deviation"),
+   #                  values = c("red", "blue"))
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
@@ -161,10 +171,12 @@ day_summary <- summarize(group_by(summ_by_day,day_of_week),
             sd_num_trips = sd(count))
 
 ggplot(day_summary) + 
-  geom_point(aes(x = day_of_week, y = average_num_trips, color = "average num. of trips")) + 
-  geom_point(aes(x = day_of_week, y = sd_num_trips, color = "standard deviation")) + 
+  geom_line(aes(x = day_of_week, y = average_num_trips)) + 
+  geom_ribbon(aes(x = day_of_week, ymin = average_num_trips - sd_num_trips, ymax = average_num_trips + sd_num_trips), alpha = 0.2) +
+ # geom_point(aes(x = day_of_week, y = average_num_trips, color = "average num. of trips")) + 
+  #geom_point(aes(x = day_of_week, y = sd_num_trips, color = "standard deviation")) + 
   xlab("Day of the Week") + 
-  ylab("Num of Trips") +
-  scale_color_manual("", 
-                     breaks = c("average num. of trips", "standard deviation"),
-                     values = c("red", "blue"))
+  ylab("Num of Trips") 
+ # scale_color_manual("", 
+  #                   breaks = c("average num. of trips", "standard deviation"),
+   #                  values = c("red", "blue"))
