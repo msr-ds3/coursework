@@ -18,10 +18,15 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+trips %>% ggplot() + geom_histogram(mapping = aes(x = tripduration)) + scale_x_log10(label = comma)
+trips %>% ggplot() + geom_density(mapping = aes(x = tripduration)) + scale_x_log10(label = comma)
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+trips %>% ggplot() + geom_histogram(mapping = aes(x = tripduration, color = usertype)) + scale_x_log10(label = comma)
+trips %>% ggplot() + geom_density(mapping = aes(x = tripduration, color = usertype, fill = usertype)) + scale_x_log10(label = comma)
 
 # plot the total number of trips on each day in the dataset
+trips %>% mutate(ymd = as.Date(starttime)) %>% group_by(ymd) %>% summarize(total_trips=n()) %>% ggplot() + geom_point(aes(x = ymd, y = total_trips))
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 
