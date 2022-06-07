@@ -41,7 +41,7 @@ load('trips.RData')
   trips %>% 
     mutate(age = 2014 - birth_year) %>%
     ggplot(mapping = aes(x = age, color = gender, fill = gender)) +
-      geom_bar(alpha = 1/5) +
+      geom_bar() +
       ylab('total number of trips') +
       xlab('age') +
       scale_y_continuous(label = comma)
@@ -73,32 +73,35 @@ load('trips.RData')
 # join trips and weather
   trips_with_weather <- inner_join(trips, weather, by="ymd")
   
+  #(
+  # was able to fix in the .Rdata
   # needed to modify weather to get ymd as a date (for some reason this did not work from the load_trips.R)
-  weather_ymd <- weather %>% mutate(ymd = as.Date(date, '%Y-%m-%d'))
+  #weather_ymd <- weather %>% mutate(ymd = as.Date(date, '%Y-%m-%d'))
   
-  trips_with_weather <- inner_join(trips, weather_ymd, by="ymd")
-  weather <- weather_ymd
+  #trips_with_weather <- inner_join(trips, weather_ymd, by="ymd")
+  #weather <- weather_ymd
+  #)
 
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
   num_trips <- trips %>% group_by(ymd) %>% summarize(num_trips = n())
-  num_trips_tmin <- inner_join(num_trips, weather, by="ymd")
+  num_trips_weather <- inner_join(num_trips, weather, by="ymd")
   
-  num_trips_tmin %>% 
+  num_trips_weather %>% 
     ggplot(mapping = aes(x = tmin, y = num_trips)) +
       geom_point() +
       scale_y_continuous(label = comma)
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
-  num_trips_tmin %>% 
+  num_trips_weather %>% 
     mutate(sub_precip = prcp >= 0.3) %>%
     ggplot(mapping = aes(x = tmin, y = num_trips, color = sub_precip)) +
       geom_point() +
       scale_y_continuous(label = comma)
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
-  num_trips_tmin %>% 
+  num_trips_weather %>% 
     mutate(sub_precip = prcp >= 0.3) %>%
     ggplot(mapping = aes(x = tmin, y = num_trips, color = sub_precip)) +
     geom_point() +
