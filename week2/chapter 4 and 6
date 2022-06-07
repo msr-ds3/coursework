@@ -1,0 +1,53 @@
+4.1
+1)
+every probability equals 1, so add up everything to equal 1 to solve for p
+p(1 + 2 + 3 + 4 + 5 + 6) = 1 -> 21p = 1 -> p = 1/21
+
+2) every p that's less than 3 is 0,1, and 2, so just add those
+1/21 + 2/21 + 3/21 = 6/21
+
+3) that's 1, 3, and 5. so same deal
+2/21 + 4/21 + 6/21 = 12/21
+
+4) so same deal with 1,2,3
+9/21
+
+5) values are 2, 3, 4
+12/21
+
+6) the E(Y) is each value times its probability all added
+0*1/21 + 1*2/21 + 2*3/21 + 3*4/21 + 4*5/21 + 5*6/21 = 3.333
+
+7) this one is (0 - 3.333)^2 * 1/21 + (1 - 3.333)^2 * 2/21 + (2 - 3.333)^2 * 3/21 + (3 - 3.333)^2 * 4/21 + (4 - 3.333)^2 * 5/21 + (5 - 3.333)^2 * 6/21
+which is 2.222
+
+8) this is just square root of variance
+sqrt(2.2222) = 1.4907
+
+q4.2
+1) odds of winning are 1/8. since 2^3 = 8 and only one of those patterns is heads heads heads (assuming 0 is heads and 1 is tails)
+
+2) 7/8 for the same reason
+
+3) expectation is sum of each value times probability
+so 8 is gained money, since you pay 2 and receive 10, -2 is loss, since you paid 2 and got nothing
+
+8 * 1/8 + -2 * 7/8 = -0.75
+
+
+6.1 
+1) we need pnorm for this, since it'll give the probability for everything to the left of the normal distribution when given a value, mean and standard deviation. we also need to subtract by 1 since we want the probability that it's above 650
+
+1 - pnorm(650,560,57) = 0.05717406
+
+2) same thing but with different mean and sd
+ 1 - pnorm(650,630,61) =  0.3715054
+ 
+ 3) for this, we need qnorm, since it takes percentiles and returns the value with the mean and sd
+ we take .1 and .9 since in between those percentages lies 80% of the area
+ qnorm(0.1,560,57) = 486.9516
+ qnorm(0.9,560,57) = 633.0484
+ 
+4) same as bove but with different values
+qnorm(0.1,630,61) = 551.8254
+qnorm(0.9,630,61) = 708.1746
