@@ -1,0 +1,99 @@
+#Week 2 _ Day 2 Exercises
+```{r}
+library(tidyverse)
+
+theme_set(theme_bw())
+
+set.seed(42)
+```
+
+#code in book
+```{r}
+library(readr)
+
+ex.1 <- read.csv("ex1.csv")
+summary(ex.1)
+
+pop.1 <- read.csv(file = "pop1.csv")
+summary(pop.1)
+
+sample(pop.1$height,1)
+sample(pop.1$height,1)
+sample(pop.1$height,1)
+
+X <- pop.1$height
+mean(abs(X - 170) <= 10)
+
+Y <- c(6.3, 6.9, 6.6, 3.4, 5.5, 4.3, 6.5, 4.7, 6.1, 5.3)
+abs(Y - 5)
+abs(Y - 5) <= 1
+mean(abs(Y - 5) <= 1)
+```
+
+#Question 4.1.1 - What is the value of p?
+Answer - The probabilities of the random variables of Y should add up to 1, so:
+p + 2p + 3p + 4p + 5p + 6p = 21p 
+21p = 1
+p = 1/21
+
+#Question 4.1.2 - P(Y < 3) = ?
+Answer - P(Y < 3) = P(Y = 0) + P(Y = 1) + y(Y = 2)
+                  = 1(1/21) + 2(1/21) + 3(1/21)
+                  = 6/21
+
+#Question 4.1.3 - P(Y = odd) = ?
+Answer - P(Y = odd) = P(Y = 1) + P(Y = 3) + P(Y = 5)
+                    = 2/21 + 4/21 + 6/21
+                    = 12/21
+                    
+#Question 4.1.4 - P(1 <= Y < 4) = ?
+Answer - P(1 <= Y < 4) = P(Y = 1) + P(Y = 2) + P(Y = 3)
+                       = 2/21 + 3/21 + 4/21
+                       = 9/21
+                       
+#Question 4.1.5 - P(|Y - 3| < 1.5) = ?
+Answer - P(|Y - 3| < 1.5) = P(Y = 2) + P(Y = 3) + P(Y = 4)
+                          = 3/21 + 4/21 + 5/21
+                          = 12/21
+                          
+#Question 4.1.6 - E(Y) = ?
+Answer - E(Y) = 0 * 1/21 + 1 * 2/21 + 2 * 3/21 + 3 * 4/21 + 4 * 5/21 + 5 * 6/21
+              = 0 + 2/21 + 6/21 + 12/21 + 20/21 + 30/21
+              = 70/21
+```{r}
+Y_values <- c(0,1,2,3,4,5)
+P_values <- c(1/21, 2/21, 3/21, 4/21, 5/21, 6/21)
+E_Y <- sum(Y_values * P_values)
+E_Y
+```
+
+#Question 4.1.7 - Var(Y) = ?
+Answer - Var(Y) = 
+```{r}
+Var_Y = sum((Y_values - E_Y)^2 * P_values)
+Var_Y
+```
+
+#Question 4.1.8 - What is the standard deviation of Y.
+```{r}
+SD_X = sqrt(Var_Y)
+SD_X
+```
+
+#Question 4.2 - One invests $2 to participate in a game of chance. In this game a 
+#coin is tossed three times. If all tosses end up "Head" then the player wins $10.
+#Otherwise, the player loses the investment. 
+
+#Question 4.2.1 - What is the probability of winning the game?
+Answer - (1/2)^3 = 1/8
+
+#Question 4.2.2 - What is the probability of losing the game?
+Answer - 1 - 1/8 = 7/8
+
+#Question 4.2.3 - What is the expected gain for the player that plays this game?
+#(Expectation can obtain a negative value.)
+Answer - X (= gain) = {8,-2}
+        P(X) = {1/8, 7/8}
+        E(X) = 8 * (1/8) + (-2) * (7/8) 
+             = 1 + -14/8
+             = -6/8 = -3/4
