@@ -5,6 +5,7 @@
 # load some packages that we'll need
 library(tidyverse)
 library(scales)
+library(lubridate)
 
 # be picky about white backgrounds on our plots
 theme_set(theme_bw())
@@ -110,8 +111,25 @@ load('trips.RData')
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
-
+  hour_summ_by_day <- trips %>%
+    mutate(hour = hour(starttime)) %>%
+    group_by(hour, ymd) %>%
+    summarize(num_trips = n()) 
+  
+  hours_sum <- hour_summ_by_day %>%
+    group_by(hour) %>%
+    summarize(average = mean(num_trips), sd = sd(num_trips))
+  
 # plot the above
+  hours_summ %>%
+    ggplot(mapping = aes(x = hour, y = average)) +
+    geom_point()
+  
+  hours_summ %>%
+    ggplot(mapping = aes(x = hour, y = sd)) +
+    geom_point()
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+  
+  

@@ -1,0 +1,122 @@
+```{r}
+library(tidyverse)
+library(dplyr)
+library(readr)
+
+ex.1 <- read.csv("ex1.csv")
+summary(ex.1)
+
+pop.1 <- read.csv("pop1.csv")
+summary(pop.1)
+plot(table(pop.1$height))
+
+sample(pop.1$height, 1) # returns a singular random value of height 
+
+X <- pop.1$height
+mean(abs(X-170) <= 10)
+
+Y <- c(6.3, 6.9, 6.6, 3.4, 5.5, 4.3, 6.5, 4.7, 6.1, 5.3)
+abs(Y-5)
+abs(Y-5) <= 1
+mean(abs(Y-5) <= 1)
+```
+
+Question 4.1
+
+1. what is the value of p?
+  p + 2p + 3p + 4p + 5p + 6p = 1 
+  21p = 1
+  p = 1/21
+
+2. P(Y < 3) = ?
+  P(Y < 3) = P(Y = 0) + P(Y = 1) + P(Y = 2)
+  (1/21) + (2/21) + (3/21) = 0.2857
+
+3. P(Y = odd) = ?
+  P(Y = odd) = P(Y = 1) + P(Y = 3) + P(Y = 5)
+  (2/21) + (4/21) + (6/21) = 0.5714
+
+4. P(1 <= Y <= 4) = ?
+  P(1 <= Y <= 4) = P(Y = 1) + P(Y = 2) + P(Y = 3) + P(Y = 4)
+  (2/21) + (3/21) + (4/21) + (5/21) = 0.6667
+
+```{r}
+Y_val = c(0,1,2,3,4,5)
+P_val = c(1,2,3,4,5,6)/21
+```
+
+5.  P(|Y - 3| < 1.5) = ?
+```{r}
+abs(Y_val - 3)
+```
+  P(|Y - 3| < 1.5) = P(Y = 2) + P(Y = 3) + P(Y = 4)
+  (3/21) + (4/21) + (5/21) = 0.5714
+
+```{r}
+Y_val = c(0,1,2,3,4,5)
+P_val = c(1,2,3,4,5,6)/21
+
+# 6. E(Y) = ?
+  (E <- sum(Y_val * P_val))
+  # 3.333
+
+# 7. Var(Y) = ?
+  (Var <- sum(((Y_val - E)^2) * P_val))
+  # 2.222
+
+# 8. what is SD of Y?
+  (sd <- sqrt(Var))
+  # 1.491
+```
+
+Question 4.2
+
+1. What is the prob of winning the game?
+P{H} = (1/2)
+P{win} = P{H,H,H} = (1/2)(1/2)(1/2) = (1/8)
+
+2. What is the prob of losing the game?
+P{lose} = 1 - P{win} = 1 - (1/8) = (7/8)
+
+3. What is the expected gain for the player that plays?
+```{r}
+gain <- c(8, -2)
+prob <- c(1,7)/8
+(E <- sum(gain * prob))
+```
+Expected gain = -0.75
+
+Question 6.1
+
+mu = 560
+sigma = 57
+n = 9
+sample mean = 630
+sample SD = 61
+
+1. What is the prob that the total weight of 8 people exceeds 650?
+```{r}
+1 - pnorm(650, 560, 57)
+```
+0.05717
+
+2. What is the prob that the total weight of 9 people exceeds 650?
+```{r}
+1 - pnorm(650,630,61)
+```
+0.3715
+
+3. What is the central region that contains 80% of the distribution of the total weight of 8 people?
+80% = 10% - 90%
+```{r}
+qnorm(0.1, 560, 57)
+qnorm(0.9, 560, 57)
+```
+[486.95, 633.05]
+
+4. What is the central region that contains 80% of the distribution of the total weight of 9 people?
+```{r}
+qnorm(0.1, 630, 61)
+qnorm(0.9, 630, 61)
+```
+[551.83, 708.175]
