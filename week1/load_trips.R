@@ -41,7 +41,7 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 ########################################
 
 # load weather data from belvedere tower in central park
-# https://www.ncei.noaa.gov/orders/cdo/762757.csv
+# https://www.ncei.noaa.gov/orders/cdo/2992179.csv
 # ordered from
 # http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
 weather <- read.table('weather.csv', header=T, sep=',')
@@ -50,7 +50,7 @@ weather <- read.table('weather.csv', header=T, sep=',')
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
-                  ymd = as.Date(parse_datetime(date, "%Y%m%d")))
+                  ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
 weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
