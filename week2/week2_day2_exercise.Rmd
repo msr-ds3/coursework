@@ -6,7 +6,7 @@ theme_set(theme_bw())
 
 set.seed(42)
 ```
-
+#CHAPTER 4
 #code in book
 ```{r}
 library(readr)
@@ -92,8 +92,114 @@ Answer - 1 - 1/8 = 7/8
 
 #Question 4.2.3 - What is the expected gain for the player that plays this game?
 #(Expectation can obtain a negative value.)
-Answer - X (= gain) = {8,-2}
+Answer - X (= gain) = {8 (win),-2 (loss)}
         P(X) = {1/8, 7/8}
         E(X) = 8 * (1/8) + (-2) * (7/8) 
              = 1 + -14/8
              = -6/8 = -3/4
+```{r}
+X_values <- c(8,-2)
+P_values <- c(1/8, 7/8)
+E_X <- sum(X_values * P_values)
+E_X
+```
+             
+#CHAPTER 6 
+#code in book
+```{r}
+pnorm(5,2,3) - pnorm(0,2,3)
+
+pnorm((5 - 2)/3) - pnorm((0 - 2)/3)
+
+qnorm(0.975)
+qnorm(0.025)
+
+qnorm(0.975,2,3)
+qnorm(0.025,2,3)
+
+2 + qnorm(0.975)*3
+2 + qnorm(0.025)*3
+
+#third and first quartiles
+qnorm(0.75)
+qnorm(0.25)
+
+#upper and lower thresholds
+qnorm(0.75) + 1.5*(qnorm(0.75)-qnorm(0.25))
+qnorm(0.25) - 1.5*(qnorm(0.75)-qnorm(0.25))
+
+2*(1-pnorm(2.697959))
+
+#binomial probability
+pbinom(2060,4000,0.5) - pbinom(1939,4000,0.5)
+
+mu <- 4000*0.5
+sig <- sqrt(4000*0.5*0.5)
+pnorm(2060,mu,sig) - pnorm(1939,mu,sig)
+
+qnorm(0.975,mu,sig)
+qnorm(0.025,mu,sig)
+
+qbinom(0.975,4000,0.5)
+qbinom(0.025,4000,0.5)
+
+pbinom(6,30,0.3)
+pnorm(6,30*0.3,sqrt(30*0.3*0.7))
+
+pnorm(6.5,30*0.3,sqrt(30*0.30*0.7))
+
+ppois(3,2)
+
+pbinom(3,20,0.1)
+pnorm(3.5,2,sqrt(20*0.1*0.9))
+
+pbinom(3,200,0.01)
+pnorm(3.5,2,sqrt(200*0.01*0.99))
+
+pbinom(3,2000,0.001)
+pnorm(3.5,2,sqrt(2000*0.001*0.999))
+```
+
+#Question 6.1 - Consider the problem of establishing regulations concerning
+#the maximum number of people who can occupy a lift. In particular, we would like
+#to assess the probability of exceeding maximal weight when 8 people are allowed
+#to use the lift simultaneously and compare that to the probability of allowing
+#9 people into the lift.
+#Assume that the total weight of 8 people chosen at random follows a normal
+#distribution with a mean of 560 kg and a standard deviation of 57 kg. Assume that 
+#the total weight of 9 people chosen at random follows a normal distribution with
+#a mean of 630 kg and a standard deviation of 61 kg.
+
+#Question 6.1.1 - What is the probability that the total weight of 8 people exceeds
+#650 kg?
+Answer - P(X > 650) = 1 - P(X <= 650)
+X ~ N(560,57^2)
+```{r}
+1 - pnorm(650,560,57)
+```
+
+#Question 6.1.2 - What is the probability thaTthe total weight of 9 people exceeds
+#650 kg?
+Answer - P(X > 650) = 1 - P(X <= 650)
+X ~ N(630,61^2)
+```{r}
+1 - pnorm(650,630,61)
+```
+
+#Question 6.1.3 - What is the central region that contains 80% of distribution of 
+#total weight of 8 people?
+Answer - P(a <= X <= b) = 0.80
+X ~ N(560,57^2) want to find a and b
+```{r}
+qnorm(0.1,560,57)
+qnorm(0.9,560,57)
+```
+
+#Question 6.1.4 - What is the central region that contains 80% of distribution of 
+#total weight of 9 people?
+Answer - P(a <= X <= b) = 0.80
+X ~ N(630,61^2) want to find a and b
+```{r}
+qnorm(0.1,630,61)
+qnorm(0.9,630,61)
+```
