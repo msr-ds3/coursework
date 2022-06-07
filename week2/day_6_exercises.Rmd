@@ -98,13 +98,13 @@ sample SD = 61
 ```{r}
 1 - pnorm(650, 560, 57)
 ```
-0.05717
+p = 0.05717
 
 2. What is the prob that the total weight of 9 people exceeds 650?
 ```{r}
 1 - pnorm(650,630,61)
 ```
-0.3715
+p = 0.3715
 
 3. What is the central region that contains 80% of the distribution of the total weight of 8 people?
 80% = 10% - 90%
