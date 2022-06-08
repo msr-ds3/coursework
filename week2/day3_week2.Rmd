@@ -1,0 +1,181 @@
+---
+title: "Day 3 Week 2 assignment"
+author: "Alexandra Roffe"
+date: 2022-02-08
+output: html_document
+---
+
+day 3, week 2
+chapter 7, exercise 7.1:
+
+1: find the population average of the variable "bmi"
+```{r}
+pop.2 <- read.csv("pop2.csv", stringsAsFactors = TRUE)
+mean(pop.2$bmi) # answer: 24.98446
+```
+
+2:
+```{r}
+sd(pop.2$bmi)
+```
+
+3: expectation of the sampling distribution for sample average n = 150
+```{r}
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp <- sample(pop.2$bmi, 150)
+  X.bar[i] <- mean(X.samp)
+}
+
+mean(X.bar)
+```
+4: stand deviation
+```{r}
+sd(X.bar)
+```
+5: identify the central region contains 80%
+```{r}
+quantile(X.bar,c(0.1,0.9))
+```
+
+6: using Central Limit Theorem
+```{r}
+qnorm(c(0.1,0.9),mean(X.bar),sd(X.bar))
+```
+
+Chapter 9, exercise 9.1:
+1. average is 3.5
+```{r }
+magnets <- read.csv("magnets.csv", stringsAsFactor = TRUE)
+summary(magnets)
+```
+
+
+2. Is the variable “active” a factor or a numeric variable?
+a factor
+
+3. 
+```{r}
+mean(magnets$change[1:29])
+mean(magnets$change[30:50])
+```
+
+4. 
+```{r}
+sd(magnets$change[1:29])
+sd(magnets$change[30:50])
+```
+
+5:
+
+```{r}
+boxplot(magnets$change[1:29])
+boxplot(magnets$change[30:50]) # There are 3 outliers
+
+```
+
+
+Chapter 10, exercises 10.1 and 10.2:
+10.1:
+1. Simulate the sampling distribution of average and the median of a sample
+of size n = 100 from the Normal(3, 2) distribution. Compute the expectation and the variance of the sample average and of the sample median.
+Which of the two estimators has a smaller mean square error?
+
+```{r}
+mu <- 3
+sig <- sqrt(2)
+n <- 100
+
+X.bar <- rep(0,10^5)
+X.median <- rep(0,10^5)
+
+for(i in 1:10^5)
+{
+  X <- rnorm(n, mu, sig) # rnorm does random deviates
+  X.bar[i] <- mean(X)
+  X.median[i] <- median(X)
+}
+# variance:
+var(X.bar) # sample average
+var(X.median) # sample median. 
+
+# expectation: 
+mean(X.bar)
+mean(X.median)
+
+
+
+```
+The variance of the sample average of the mean is 0.020 roughly. 
+The variance of the sample median is .03 roughly. 
+The mean error of the sample average is less than the mean square error of the
+sample median.
+
+2: Simulate the sampling distribution of average and the median of a sample
+of size n = 100 from the Uniform(0.5, 5.5) distribution. Compute the
+expectation and the variance of the sample average and of the sample
+median. Which of the two estimators has a smaller mean square error?
+```{r}
+# need for the uniform distribution, alpha = 0.5, b = 5.5. 
+a <- 0.5
+b <- 5.5
+X.bar <- rep(0, 10^5)
+X.median <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  x <- runif(100, a, b)
+  X.bar[i] <- mean(x)
+  X.median[i] <- median(x)
+}
+
+mean(X.bar)
+mean(X.median)
+
+var(X.bar)
+var(X.median)
+
+```
+In this case, the estimators are unbiased. 
+The variance of each of the estimators is equal to it's mean square error. 
+Like in the problem right above, the square error of the sample average is less than that of its sample median. 
+
+
+**Exercise 10.2**
+1:
+```{r}
+ex2.csv <- read.csv("ex2.csv", stringsAsFactors = TRUE) # this is a sample of 150
+mean(ex2.csv$group == "HIGH")
+
+```
+
+
+2:
+```{r}
+
+mean(pop.2$group == "HIGH")
+
+```
+
+3:
+```{r}
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp <- sample(pop.2$group, 150)
+  X.bar[i] <- mean(X.samp == "HIGH")
+}
+
+mean(X.bar)
+```
+4:
+```{r}
+var(X.bar)
+```
+
+```{r}
+p <- mean(pop.2$group == "HIGH")
+p*(1-p)/150
+
+
+```
