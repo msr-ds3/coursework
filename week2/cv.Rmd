@@ -1,0 +1,14 @@
+---
+title: "CV of Alexandra Roffe"
+author: "Alexandra Roffe"
+date: 2016-08-25
+output: html_document
+---
+
+## Education 
+- Bachelors of Computer Science from Yeshiva University ('23) **2019 - current **
+
+## Employment 
+- Research Assistance in a computational chemistry lab **2021**
+- TA data structures **2021**
+- lifeguard **2021**
