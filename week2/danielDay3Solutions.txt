@@ -1,0 +1,84 @@
+7.1 (page 120)
+-----
+1-   pop.2 <- read.csv(file="pop2.csv") mean(pop.2$bmi)=24.98
+2-   sd(pop.2$bmi)= 4.19
+3-    X.bar <- rep(0,10^5)   
+         for(i in 1:10^5) 
+           {X.samp <- sample(pop.2$bmi,150)
+           X.bar[i] <- mean(X.samp)
+           }
+      mean(X.bar)= 24.99
+4-	sd(X.bar)= 0.34
+5-	quantile(X.bar, c(01., 0.9))= 24.55, 25.43
+6-	qnorm(c(0.1,0.9), mean(X.bar), sd(X.bar))= 24.55, 25.43
+
+
+9.1 (page 152)
+-----
+1- 	magnets <- read.csv("magnets.csv") 	summary(magnets)  == 3.5
+2- 	Factor; because it's just telling you if they got the drug or placebo. There's no real numeruic value. edit; use summary(as.factor(magnets$active))  to see results in recent R version.
+3- 	mean(magnets$change[1:29])= 5.24, mean(magnets$change[30:50])= 1.10
+4-	sd(magnets$change[1:29])= 3.24, sd(magnets$change[30:50])= 1.58
+5-	boxplot(magnets$change[1:29])= 5.24, boxplot(magnets$change[30:50])= 1.10
+	table(magnets$change[30:50]), there is one outlier in the 3 posiotion, 2 in the 4 position and one in the 5 position. There's no need to check the first half of the values because it's clear from the boxplot that their are no outliers. 
+
+10.1 (page 173)
+-----
+1- n=100, Normal(3,2) Expectation/Variance of sample avg & sample median? Which of the 2 has the smaller mean error?
+
+	mu <-  3
+	sig <- sqrt(2)
+	X.bar <- rep(0, 10^5)
+	X.med <- rep(0, 10^5)
+		for(i in 1:10^5)
+			{ X <- rnorm(100,mu,sig)
+			  X.bar[i] <- mean(X)
+           	  X.med[i] <- median(X)
+	    		}
+	mean(X.bar) = 3.000
+	mean(X.med) = 3.000
+	var(X.bar) = 0.020	MSE of the sample average is less than MSE of sample median.
+	var(X.med) = 0.031
+
+2- n=100, Uniform(0.5, 5.5) Expectation/Variance of sample avg & sample median? Which of the 2 has the smaller mean error?
+	
+	X.bar <- rep(0,10^5)
+	X.med <- rep(0,10^5)
+		for(i in 1:10^5)
+			{ X <- runif(100,a,b)
+			  X.bar[i] <- mean(X)
+   	  		  X.med[i] <- median(X)
+			}
+	mean(X.bar) = 3.001
+	mean(X.med) = 3.001
+	var(X.bar) = 0.021	MSE of the sample average is less than MSE of sample median.
+	var(X.med) = 0.061	
+	
+10.2 (page 176)
+-----
+n=150
+1-	ex2 <- read.csv("ex2.csv", stringsAsFactors = True) 
+	summary(ex2)
+	#add the three groups, (37+3+110=150) ==> 37/150 = 0.247
+
+2-	pop2 <- read.csv("pop2.csv", stringsAsFactors = True) 
+	summary(pop2)
+	#add the three groups, (28126+4215+67659=100000) ==> 28126/100000 = 0.281
+
+3-	Simulate sampling distribution of the sample proportion and compute
+	its expectation?
+ 
+	P.hat <- rep(0,10^5)
+		for(i in 1:10^5)
+			{X <- sample(pop2$group,150)
+			 P.hat[i] <- mean(X == "HIGH")
+			}
+	mean(P.hat) = 0.281
+
+4-	Variance of sample proportion?
+	var(P.hat) = 0.001
+
+5-	Var(P) = p(1 − p)/n. Examine this proposal in the current setting?
+
+	 p  <-  mean(pop2$group  ==  "HIGH")
+	 p * (1-p)/150 =  0.001
