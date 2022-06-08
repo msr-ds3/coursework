@@ -1,0 +1,223 @@
+---
+title: "Stat_day_two"
+output: html_document
+date: '2022-06-08'
+---
+
+Chapter 7
+7.1 
+1. Compute the population average of the variable “bmi”.
+
+
+```{r}
+pop.2 <- read.csv("pop2.csv")
+
+mean(pop.2$bmi)
+
+```
+2. Compute the population standard deviation of the variable “bmi”.
+
+
+```{r}
+sd(pop.2$bmi)
+
+```
+3. Compute the expectation of the sampling distribution for the sample average of the variable.
+
+```{r}
+X.bar <- rep(0,10^5)
+for (i in 1:10^5){
+  X.sample <- sample(pop.2$bmi, 150)
+  X.bar [i] <- mean(X.sample)
+}
+mean(X.bar)
+
+```
+
+4.  Compute the standard deviation of the sampling distribution for the sample average of the variable.
+
+```{r}
+sd(X.bar)
+```
+5. Identify, using simulations, the central region that contains 80% of the sampling distribution of the sample average.
+
+Since it is simulated distribution, we use quantile function. 
+
+```{r}
+quantile(X.bar, c(0.1, 0.9))
+```
+
+6.  Identify, using the Central Limit Theorem, an approximation of the central region that contains 80% of the sampling distribution of the sample
+average.
+
+Since it is normal distribution we use qnorm function. 
+
+```{r}
+qnorm(c(0.1,0.9), mean(X.bar), sd(X.bar))
+```
+
+Chapter 9 
+
+9.1
+
+```{r}
+magnets <- read.csv("magnets.csv")
+summary(magnets)
+
+```
+
+1. What is the sample average of the change in score between the patient’s
+rating before the application of the device and the rating after the application?
+
+The sample average is 3.5.
+
+2.Is the variable “active” a factor or a numeric variable?
+```{r}
+view(magnets)
+```
+
+Active has number values but in double quotes. So, the vairable 'active' is a factor. 
+
+3. Compute the average value of the variable “change” for the patients that received and active magnet and average value for those that received an inactive placebo. 
+
+```{r}
+Mean_active <- mean(magnets$change[1:29])
+print(Mean_active)
+mean_inactive <- mean(magnets$change[30:50])
+print(mean_inactive)
+```
+4. Compute the sample standard deviation of the variable “change” for the
+patients that received and active magnet and the sample standard deviation for those that received an inactive placebo.
+
+```{r}
+sd_active <-sd(magnets$change[1:29])
+print(sd_active)
+sd_inactive <- sd(magnets$change[30:50])
+print(sd_inactive)
+```
+
+5. Produce a boxplot of the variable “change” for the patients that received and active magnet and for patients that received an inactive placebo. What is the number of outliers in each subsequence?
+
+```{r}
+boxplot(magnets$change[1:29])
+
+```
+
+There are no outliers in this plot. 
+
+```{r}
+boxplot(magnets$change[30:50])
+```
+
+3,4 and 5 are corresponding with outliers. 
+```{r}
+table(magnets$change[30:50])
+```
+
+Total number of outliers -> 1+2+1 = 4 
+
+Chapter 10 
+
+10.1 
+
+1.  Simulate the sampling distribution of average and the median of a sample of size n = 100 from the Normal(3, 2) distribution. Compute the expectation and the variance of the sample average and of the sample median. Which of the two estimators has a smaller mean square error?
+
+Given,    
+      n=100
+      Normal(3,2) distribution
+      
+```{r}
+mu <- 3
+sigma <- sqrt(2)
+X.bar <- rep(0, 10^5)
+X.med <- rep(0,10^5)
+for (i in 1:10^5){
+  X <- rnorm(100, mu, sigma)
+  X.bar[i] <- mean(X)
+  X.med[i] <- median(X)
+}
+mean(X.bar)
+mean(X.med)
+var(X.bar)
+var(X.med)
+```
+      
+Mean square error of sample average is smaller than sample median.
+
+2. Simulate the sampling distribution of average and the median of a sample of size n = 100 from the Uniform(0.5, 5.5) distribution. Compute the expectation and the variance of the sample average and of the sample
+median. Which of the two estimators has a smaller mean square error?
+
+Givern, 
+      n =100
+      Uniform(0.5, 5.5) distribution
+      
+```{r}
+a <- 0.5
+b <- 5.5
+X.bar <- rep(0,10^5)
+X.med <- rep(0, 10^5)
+for(i in 1:10^5) {
+  X <- runif(100, a, b)
+  X.bar[i] <- mean(X)
+  X.med[i] <- median(X)
+}
+mean(X.bar)
+mean(X.med)
+var(X.bar)
+var(X.med)
+```
+      
+Mean square error for sample average is smaller than sample median. 
+
+10.2 
+
+1.  Compute the proportion in the sample of those with a high level of blood pressure16.
+
+```{r}
+ex2 <- read_csv("ex2.csv")
+summary(ex2)
+arrange(ex2, group)%>% View
+```
+From the table we can see that 37 out of 150 people have high blood pressure. 
+
+Hence, proportion is 
+```{r}
+37/150
+```
+2.  Compute the proportion in the population of those with a high level of blood pressure.
+
+```{r}
+pop2 <- read.csv("pop2.csv", stringsAsFactors = TRUE)
+summary(pop2)
+
+```
+From the table we can see that 28126 out of 100,000 people have high blood pressure.
+Hence, proportion is 
+
+```{r}
+28126/100000
+```
+3. Simulate the sampling distribution of the sample proportion and compute its expectation.
+
+```{r}
+Sample_distribution <- rep(0, 10^5)
+for(i in 1:10^5){
+  X <- sample(pop2$group, 150)
+  Sample_distribution [i] <- mean (X == "HIGH")
+}
+mean(Sample_distribution)
+```
+
+4. Compute the variance of the sample proportion.
+
+```{r}
+var(Sample_distribution)
+```
+5.  It is proposed in Section 10.5 that the variance of the sample proportion is Var(Pˆ) = p(1 − p)/n, where p is the probability of the event (having a high blood pressure in our case) and n is the sample size (n = 150 in our case). Examine this proposal in the current setting.
+
+```{r}
+p <- mean(pop2$group == "HIGH")
+p*(1-p)/150
+
+```
+
