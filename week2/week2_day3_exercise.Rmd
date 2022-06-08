@@ -1,0 +1,185 @@
+---
+title: "week_2_day_3"
+author: "Sushobhan Parajuli"
+date: '2022-06-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+# 7.1
+  
+```{r}
+pop2 <- read.csv("pop2.csv", stringsAsFactors = TRUE)
+mean(pop2$bmi)
+# the poplution average of bmi
+```
+
+```{r}
+sd(pop2$bmi)
+# the population standard deviation of bmi
+```
+
+```{r}
+X.bar <- rep(0, 10^5)
+for (i in 1:10^5){
+  X.samp <- sample(pop2$bmi, 150)
+  X.bar[i] <- mean(X.samp)
+}
+```
+
+```{r}
+mean(X.bar)
+# the expectation of the sampling distribution for the sample average of bmi
+```
+
+```{r}
+sd(X.bar)
+# the sd of sampling distribution
+# this is standard error
+# sd of pop / root sq of sample size 
+```
+
+```{r}
+quantile(X.bar, c(0.1, 0.9))
+# the central region that contains 80% of sampling distribution of the sample average
+```
+
+```{r}
+# can it be done this way? Central Limit Theorem.
+qnorm(0.1, 24.98548, 0.3421172)
+qnorm(0.9, 24.98548, 0.3421172)
+```
+
+```{r}
+# here it is. Using Central Limit Theorem. 
+qnorm(c(0.1,0.9), mean(X.bar), sd(X.bar))
+```
+
+# 9.1
+
+```{r}
+magnets <- read.csv("magnets.csv", stringsAsFactors = TRUE)
+mean(magnets$change)
+# or summary(magnets) and look of the mean under change variable
+```
+variable "active" is a factor
+
+```{r}
+mean(magnets$change[1:29]) 
+```
+
+```{r}
+mean(magnets$change[30:50])
+```
+
+```{r}
+sd(magnets$change[1:29])
+```
+
+```{r}
+sd(magnets$change[30:50])
+```
+
+```{r}
+boxplot(magnets$change[1:29]) # has no outliers
+```
+
+```{r}
+boxplot(magnets$change[30:50]) # has outliers at three points
+```
+
+```{r}
+table(magnets$change[30:50]) # inspect no of observations in those three points
+# 1 observation in 3, 2 in 4 and 1 in 5
+# total no of outliers is 4
+```
+# 10.1
+
+```{r}
+mu <- 3
+sigma <- sqrt(2)
+X.bar <- rep(0, 10^5)
+X.med <- rep(0, 10^5)
+for(i in 1:10^5){
+  X <- rnorm(100, mu, sigma)
+  X.bar[i] <- mean(X)
+  X.med[i] <- median(X)
+}
+```
+
+```{r}
+mean(X.bar)
+mean(X.med)
+# both are as same as the population parameter 
+# thus both are unbiased
+```
+
+```{r}
+var(X.bar)
+var(X.med)
+# MES = variance + bias
+# MES = variance + 0 , becasue the estimators are unbiased
+# var(X.bar) < var(X.med)
+# thus MES of X.bar < MES of X.med
+```
+
+```{r}
+X.bar <- rep(0, 10^5)
+X.med <- rep(0, 10^5)
+for(i in 1:10^5){
+  X <- runif(100, 0.5, 5.5)
+  X.bar[i] <- mean(X)
+  X.med[i] <- median(X)
+}
+```
+
+```{r}
+mean(X.bar)
+mean(X.med)
+# as same as the population parameter
+```
+
+```{r}
+var(X.bar)
+var(X.med)
+# since the estimators, average and median, are unbiased
+# MSE of X.bar = var(X.bar) and likewise for median
+# thus MES of x.bar < MES of x.med
+```
+# 10.2
+
+```{r}
+ex2 <- read.csv("ex2.csv", stringsAsFactor = TRUE)
+mean(ex2$group == "HIGH")
+```
+
+```{r}
+pop2 <- read.csv("pop2.csv")
+mean(pop2$group == "HIGH")
+```
+
+```{r}
+p.hat <- rep(0, 10^5)
+for(i in 1:10^5){
+  X <- sample(pop2$group, 150)
+  p.hat[i] <- mean(X == "HIGH")
+}
+```
+
+```{r}
+mean(p.hat)
+```
+
+```{r}
+var(p.hat)
+```
+
+```{r}
+p.hat <- mean(pop2$group == "HIGH")
+p.hat*(1-p.hat)/150 
+```
