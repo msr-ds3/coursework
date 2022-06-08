@@ -1,0 +1,138 @@
+---
+title: "week2_day3_book_exercises_rmd"
+author: "Christopher Esquivel"
+date: '2022-06-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Chapter 7 Exercises
+#7.1
+# 1. Population average of the variable bmi = 24.98446
+```{r}
+pop2 <- read_csv("pop2.csv")
+mean(pop2$bmi)
+```
+# 2. Population standard deviation of the variable bmi = 4.188511
+```{r}
+sd(pop2$bmi)
+```
+# 3. Expectation of the sampling distribution for the sample average of bmi = 24.98543
+```{r}
+samp_dis <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+    samp_dis_Sample <- sample(pop2$bmi, 150)
+    samp_dis[i] <- mean(samp_dis_Sample)
+}
+mean(samp_dis)
+```
+# 4. Standard deviation of the sampling distribution for the sample average of bmi = 0.3420798
+```{r}
+sd(samp_dis)
+```
+# 5. The central region that contains 80% of the sampling distribution of the sample average = [24.55021, 25.42505]
+```{r}
+quantile(samp_dis, c(0.1, 0.9))
+```
+# 6. Approximation of the central region that contains 80% of the sampling distribution of the sample average using the Central Limit Theorem = [24.54704, 25.42382]
+```{r}
+qnorm(c(0.1, 0.9), mean(samp_dis), sd(samp_dis))
+```
+# Chapter 9 Exercises
+# 9.1
+# 1. The sample average of the change in score between the patient's rating before the application and after the application of the device = 3.5 (The mean of the change column)
+```{r}
+magnets <- read_csv()
+summary(magnets)
+```
+# 2. The variable active is a factor.
+# 3. Average value of the variable change for the patients that received an active magnet =  5.241379
+#    Average value of the variable change for the patinets that received an inactive placebo = 1.095238
+```{r}
+mean(magnets$change[1:29])
+mean(magnets$change[30:50])
+```
+# 4. Standard deviation of the variable change for the patients that received an active magnet = 3.236568
+#    Standard deviation of the variable change for the patients that received an inactive placebo = 1.578124
+```{r}
+sd(magnets$change[1:29])
+sd(magnets$change[30:50])
+```
+# 5. Number of outliers of the variable change for the patients that received an active magnet = 0
+#    Number of outliers of the variable change for the patients that received an inactive placebo = 4
+```{r}
+boxplot(magnets$change[1:29])
+boxplot(magnets$change[30:50])
+table(magnets$change[30:50])
+```
+# Chapter 10 Exercises
+# 10.1
+# 1. The estimator that has a smaller mean square error = sample average
+```{r}
+mu <- 3
+sig <- sqrt(2)
+sample_mean_dis <- rep(0, 10^5)
+sample_median_dis <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+    X <- rnorm(100, mu, sig)
+    sample_mean_dis[i] <- mean(X)
+    sample_median_dis[i] <- median(X)
+}
+mean(sample_mean_dis)
+mean(sample_median_dis)
+var(sample_mean_dis)
+var(sample_median_dis)
+```
+# 2. The estimator that has a smaller mean square error = sample average
+```{r}
+a <- 0.5
+b <- 5.5
+sample_mean_dis <- rep(0, 10^5)
+sample_median_dis <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+    X <- runif(100, a, b)
+    sample_mean_dis[i] <- mean(X)
+    sample_median_dis[i] <- median(X)
+}
+mean(sample_mean_dis)
+mean(sample_median_dis)
+var(sample_mean_dis)
+var(sample_median_dis)
+```
+# 10.2
+# 1. Proportion in the sample of those with a high level blood pressure =  0.2466667
+```{r}
+ex2 <- read.csv("ex2.csv")
+summary(ex2)
+37/150
+mean(ex2$group == "HIGH")
+```
+# 2. Proportion in the population of those with a high level blood pressure = 0.28126
+```{r}
+pop2 <- read.csv("pop2.csv")
+mean(pop2$group == "HIGH")
+```
+# 3. Expectation of the sampling distribution =  0.2812307
+```{r}
+P.hat <- rep(0,10^5)
+for(i in 1:10^5)
+{
+    X <- sample(pop2$group,150)
+    P.hat[i] <- mean(X == "HIGH")
+}
+mean(P.hat)
+```
+# 4. Variance of the sample proportion = 0.001350041
+```{r}
+var(P.hat)
+```
+# 5.
+```{r}
+p <- mean(pop2$group == "HIGH")
+p*(1-p)/150
+```
