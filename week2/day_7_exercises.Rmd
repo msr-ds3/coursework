@@ -1,0 +1,400 @@
+---
+title: "Day 7 Exercises"
+author: "Shoshana Farber"
+---
+
+# Chapter 7
+
+```{r}
+pop.1 <- read.csv("pop1.csv")
+X.samp <- sample(pop.1$height, 100)
+X.samp
+```
+
+```{r}
+mean(X.samp)
+mean(pop.1$height)
+```
+
+```{r}
+X.samp <- sample(pop.1$height,100)
+X.bar <- mean(X.samp)
+X.bar
+```
+
+```{r}
+X.samp <- sample(pop.1$height,100)
+X.bar <- mean(X.samp)
+X.bar
+```
+
+```{r}
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp <- sample(pop.1$height, 100)
+  X.bar[i] <- mean(X.samp)
+}
+hist(X.bar)
+```
+
+```{r}
+mean(pop.1$height)
+sd(pop.1$height)
+mean(X.bar)
+sd(X.bar)
+```
+
+```{r}
+mean(abs(X.bar - mean(pop.1$height)) <= 1)
+```
+
+```{r}
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp <- rbinom(64, 10, 0.5)
+  X.bar[i] <- mean(X.samp)
+}
+hist(X.bar)
+```
+
+```{r}
+mean(X.bar)
+sd(X.bar)
+```
+
+```{r}
+quantile(X.bar, c(0.025, 0.975))
+```
+
+```{r}
+qnorm(c(0.025, 0.975), mean(X.bar), sd(X.bar))
+```
+
+variability decreases as sample size increases
+```{r}
+unif.10 <- rep(0, 10^5)
+unif.100 <- rep(0, 10^5)
+unif.1000 <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp.10 <- runif(10, 3, 7)
+  unif.10[i] <- mean(X.samp.10)
+  X.samp.100 <- runif(100, 3, 7)
+  unif.100[i] <- mean(X.samp.100)
+  X.samp.1000 <- runif(1000, 3, 7)
+  unif.1000[i] <- mean(X.samp.1000)
+}
+
+var(unif.10)
+var(unif.100)
+var(unif.1000)
+```
+
+```{r}
+exp.10 <- rep(0, 10^5)
+exp.100 <- rep(0, 10^5)
+exp.1000 <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp.10 <- rexp(10, 0.5)
+  exp.10[i] <- mean(X.samp.10)
+  X.samp.100 <- rexp(100, 0.5)
+  exp.100[i] <- mean(X.samp.100)
+  X.samp.1000 <- rexp(1000, 0.5)
+  exp.1000[i] <- mean(X.samp.1000)
+}
+
+mean(exp.10)
+mean(exp.100)
+mean(exp.1000)
+
+var(exp.10)
+var(exp.100)
+var(exp.1000)
+```
+
+## Question 7.1
+
+1. Compute the population mean of the variable "bmi"
+2. Compute the population standard deviation of the variable "bmi"
+```{r}
+pop.2 <- read.csv("pop2.csv")
+mean(pop.2$bmi)
+sd(pop.2$bmi)
+```
+pop mean = 24.98
+pop sd = 4.19
+
+3. Compute the expectation of the sampling distribution for the sample average of the variable
+4. Compute the standard deviation of the sampling distribution for the sample average of the variable
+*assume sample size of n = 150
+```{r}
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X.samp <- sample(pop.2$bmi, 150)
+  X.bar[i] = mean(X.samp)
+}
+mean(X.bar)
+sd(X.bar)
+```
+sample avg = 24.98
+sample sd = 0.34
+
+5. Identify, using simulations, the central region that contains 80% of the sampling distribution of the sample average
+```{r}
+quantile(X.bar, c(0.1, 0.9))
+```
+[24.55, 25.42]
+
+6. Identify, using CLT, an approx of the central region that contains 80% of the sampling distribution of the sample average
+```{r}
+qnorm(c(0.1, 0.9), mean(X.bar), sd(X.bar))
+```
+[24.55, 25.42]
+
+# Chapter 9
+
+```{r}
+cars <- read.csv("cars.csv")
+summary(cars)
+```
+
+```{r}
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- rexp(201, 1/12000)
+  X.bar[i] <- mean(X)
+}
+mean(abs(X.bar-12000) <= 1.96 * 0.0705 * 12000)
+```
+
+```{r}
+mid.range <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- runif(100, 3, 7)
+  mid.range[i] <- (max(X) + min(X))/2
+}
+quantile(mid.range, c(0.025, 0.975))
+
+mean(mid.range)
+sd(mid.range)
+```
+
+## Question 9.1
+
+n = 50
+
+1. What is the sample average of the change in score between the patient's rating before the application and after the application
+
+2. Is the variable "active" a factor or a numeric variable?
+
+```{r}
+magnets <- read.csv("magnets.csv")
+summary(magnets)
+```
+sample average = mean = 3.5
+"active" is a factor
+
+3. Compute the average value of the variable "change: for the patients that received an active magnet and for those that received an inactive placebo
+
+```{r}
+mean(magnets$change[1:29])
+mean(magnets$change[30:50])
+```
+mean active = 5.24
+mean inactive = 1.10
+
+Compute the sample sd of the variable "change" for those that received active and inactive
+
+```{r}
+sd(magnets$change[1:29])
+sd(magnets$change[30:50])
+```
+sd active = 3.24
+sd inactive = 1.58
+
+5. Produce a boxplot of the variable "change" for the patients that received an active magnet and for those that received an inactive placebo. War is the number of outliers in each subsequence?
+
+```{r}
+boxplot(magnets$change[1:29])
+boxplot(magnets$change[30:50])
+```
+0 outliers for active
+3 outliers for inactive
+
+# Chapter 10
+
+```{r}
+mean(cars$price)
+mean(cars$price, na.rm = TRUE)
+```
+
+```{r}
+lam <- 1/13000
+X.bar <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- rexp(201, lam)
+  X.bar[i] <- mean(X)
+}
+mean(abs(X.bar - 1/lam) <= 1000)
+```
+
+```{r}
+mu <- 13000
+sig <- 13000/sqrt(201)
+pnorm(14000, mu, sig) - pnorm(12000, mu, sig)
+```
+
+```{r}
+mu <- 12000
+sig <- 12000/sqrt(201)
+pnorm(13000, mu, sig) - pnorm(11000, mu, sig)
+```
+
+```{r}
+mu <- 3
+sig <- sqrt(2)
+X.bar <- rep(0, 10^5)
+mid.range <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- rnorm(100, mu, sig)
+  X.bar[i] <- mean(X)
+  mid.range[i] <- (max(X) + min(X))/2
+}
+var(X.bar)
+var(mid.range)
+```
+
+```{r}
+a <- 0.5
+b <- 5.5
+X.bar <- rep(0, 10^5)
+mid.range <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- runif(100, a, b)
+  X.bar[i] <- mean(X)
+  mid.range[i] <- (max(X) + min(X))/2
+}
+var(X.bar)
+var(mid.range)
+```
+
+```{r}
+mu <- 5
+std <- sqrt(3)
+X.var <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- rnorm(20, mu, std)
+  X.var[i] <- var(X)
+}
+mean(X.var)
+mean((19/20) * X.var)
+
+var(X.var)
+var((19/20) * X.var)
+```
+
+## Question 10.1
+
+1. Simulate the sampling dist of avg and the median of a sample of size n = 100 from the Normal(3,2) dist. Compute the expectation and the varaince of the sample avg and of the sample median. Which of the 2 estimators has a smaller mean square error?
+```{r}
+mu <- 3
+sig <- sqrt(2)
+X.bar <- rep(0, 10^5)
+X.med <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- rnorm(100, mu, sig)
+  X.bar[i] <- mean(X)
+  X.med[i] <- median(X)
+}
+mean(X.bar)
+mean(X.med)
+
+var(X.bar)
+var(X.med)
+```
+MSE of X.bar is smaller 
+
+2. Simulate the sampling dist of average and the median of a sample of size n = 100 from the Uniform(0.5, 5.5) dist. Compute the expectation and the variance of the sample average and of the sample median. Which of the 2 estimators had a smaller mean square error?
+```{r}
+a <- 0.5
+b <- 5.5
+X.bar <- rep(0, 10^5)
+X.med <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- runif(100, a, b)
+  X.bar[i] <- mean(X)
+  X.med[i] <- median(X)
+}
+mean(X.bar)
+mean(X.med)
+
+var(X.bar)
+var(X.med)
+```
+MSE of X.bar is smaller
+
+## Question 10.2
+
+1. Compute the proportion in the sample of those with a high level of blood pressure
+```{r}
+ex.2 <- read.csv("ex2.csv", stringsAsFactors = TRUE)
+summary(ex.2)
+```
+proportion = 37/150 = 0.247
+```{r}
+37/150
+```
+
+```{r}
+mean(ex.2$group == "HIGH")
+```
+
+2. Compute the proportion in the population of those with a high level of blood pressure
+```{r}
+pop.2 <- read.csv("pop2.csv", stringsAsFactors = TRUE)
+summary(pop.2)
+```
+proportion = 28126/100000 = 0.281
+```{r}
+28126/100000
+```
+
+```{r}
+mean(pop.2$group == "HIGH")
+```
+
+3. Simulate the sampling dist of the sample proportion and compute its expectation
+```{r}
+P.hat <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X <- sample(pop.2$group, 150)
+  P.hat[i] <- mean(X == "HIGH") 
+}
+mean(P.hat)
+```
+4. Compute the variance of the sample proportion
+```{r}
+var(P.hat)
+```
+
+5. It is proposed in Section 10.5 that the variance of the sample proportion is Var(P.hat) = p(1-p)/n. Examine this proposal in the current setting. 
+p = prob of event (having HIGH)
+n = sample size (150)
+```{r}
+p <- mean(pop.2$group == "HIGH")
+p*(1-p)/150
+```
+

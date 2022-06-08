@@ -132,5 +132,6 @@ load('trips.RData')
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
   View(weather)
+  ?wday()
   
   
