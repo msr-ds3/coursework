@@ -1,0 +1,194 @@
+Week 2 Day 3 Exercises
+```{r}
+library(tidyverse)
+
+theme_set(theme_bw())
+
+set.seed(42)
+```
+#CHAPTER 7 
+```{r}
+library(readr)
+
+pop.2 <- read.csv(file = "pop2.csv", stringsAsFactors = TRUE)
+summary(pop.2)
+```
+
+#Question 7.1.1 - Compute the population average of the variable "bmi".
+Answer -
+
+```{r}
+mean(pop.2$bmi)
+```
+
+#Question 7.1.2 - Compute the population standard deviation of the variable "bmi".
+Answer -
+```{r}
+sd(pop.2$bmi)
+```
+
+#Question 7.1.3 - Compute the expectation of the sampling distribution for the sample average of the variable.
+Answer - 
+```{r}
+X.bar2 <- rep(0,10^5)
+for(i in 1:10^5)
+{
+  X.samp2 <- sample(pop.2$bmi,150)
+  X.bar2[i] <- mean(X.samp2)
+}
+mean(X.bar2)
+```
+
+#Question 7.1.4 - Compute the standard deviation of the sampling distribution for the sample average of the variable.
+Answer - 
+```{r}
+sd(X.bar2)
+```
+
+#Question 7.1.5 - Identify, using simulations, the central region that contains 80% of the sampling distribution of the sample average.
+Answer - 
+```{r}
+quantile(X.bar2,c(0.10,0.90))
+```
+
+#Question 7.1.6 - Identify, using the Central Limit Theorem, an approximation of the central region that contains 80% of the sampling distribution of the sample average.
+Answer - 
+```{r}
+qnorm(c(0.10,0.90), mean(X.bar2), sd(X.bar2))
+```
+
+#CHAPTER 9
+```{r}
+library(readr)
+
+magnets <- read.csv(file = "magnets.csv",stringsAsFactors = TRUE)
+summary(magnets)
+str(magnets)
+summary(as.factor(magnets$active))
+?read.csv
+```
+
+#Exercise 9.1.1 - What is the sample average of the change in score between the patient's rating before the application of the device and the raing after the application?
+Answer - 
+```{r}
+mean(magnets$change)
+```
+
+#Exercise 9.1.2 - Is the variable "active" a factor or a numeric variable?
+Answer - The variable "active" is a factor. (Character type)
+```{r}
+magnets$active
+```
+
+#Exercice 9.1.3 - Compute the average value of the variable "change" for the patients that received an active magnet and average value for those that received an inactive placebo.
+Answer - 
+```{r}
+mean(magnets$change[1:29])
+mean(magnets$change[30:50])
+```
+
+#Exercise 9.1.4 - Compute the sample standard deviation of the variable "change" for the patients that received an active magnet and the sample standard deviation for those that received an inactive placebo.
+Answer - 
+```{r}
+sd(magnets$change[1:29])
+sd(magnets$change[30:50])
+```
+
+#Exercise 9.1.5 - Produce a boxplot of the variable "change" for the patients that received an active magnet and for patients that received an inactive placebo. What is the number of outliers in each subsequence?
+Answer - The number of outliers for the sequence where patients received an active magnet is 0 and for the sequence where patients received an inactive placebo is 3. 
+```{r}
+boxplot(magnets$change[1:29])
+boxplot(magnets$change[30:50])
+```
+
+#CHAPTER 10
+
+#Question 10.1.1 - Stimulate the sampling distribution of average and the median of a sample of size n = 100 from the Normal(3,2) distribution. Compute the expectation and the variance of the sample average and of the sample median. Which of the two estimators has smaller mean square error?
+Answer - The variance for the sample average is smaller than the variance for the sample median, so in this case the estimator with the smaller mean square error would be the sample average.
+```{r}
+mu <- 3
+sigma <- sqrt(2)
+X.bar3 <- rep(0,10^5)
+X.median <- rep(0,10^5)
+for (i in 1:10^5)
+{
+  X <- rnorm(100,mu,sigma)
+  X.bar3[i] <- mean(X)
+  X.median[i] <- median(X)
+}
+var(X.bar3) #variance sample average
+var(X.median) #variance sample median
+
+mean(X.bar3) #expectation sample average
+mean(X.median) #expectation sample median
+```
+
+#Question 10.1.2 - Simulate the sampling distribution of average and the median of a sample of size n = 100 from the Uniform(0.5,5.5) distribution. Compute the expectation and the variance of the sample average of the sample median. Which of the two estimators has a smaller mean square error?
+Answer - In this problem, the variance for the sample average is lower then the variance for the sample median, so the estimator with the smaller mean square error is the sample average.
+```{r}
+a <- 0.5
+b <- 5.5
+X.bar4 <- rep(0,10^5)
+X.median2 <- rep(0,10^5)
+for (i in 1:10^5)
+{
+  X <- runif(100,a,b)
+  X.bar3[i] <- mean(X)
+  X.median2[i] <- median(X)
+}
+var(X.bar3) #sample average
+var(X.median2) #sample median
+
+mean(X.bar3) #sample average
+mean(X.median2) #sample median
+```
+
+```{r}
+ex.2 <- read.csv(file = "ex2.csv", stringsAsFactors = TRUE)
+```
+#Question 10.2.1 - Compute the proportion in the sample of those with a high level of blood pressure.
+Answer - Sample size = 150
+         Amount with high bp = 37
+         $\frac{37}{150}$
+
+```{r}
+summary(ex.2)
+```
+
+#Question 10.2.2 - Compute the proportion in the population of those with a high level of blood pressure. 
+Answer - High Lvl of BP: 28,126
+         Population: 100,000
+         $\frac{28,126}{100,000}$
+```{r}
+summary(pop.2)
+```
+
+#Question 10.2.3 - Simulate the sampling distribution of the sample proportion and compute its expectation.
+Answer - 
+```{r}
+P.hat <- rep(0,10^5)
+#pop.2High <- pop.2 %>% filter(group == "HIGH")
+for(i in 1:10^5)
+{
+  X <- sample(pop.2$group,150)
+  P.hat[i] <- mean(X=="HIGH")
+}
+mean(P.hat)
+```
+
+#Question 10.2.4 - Compute the variance of the sample proportion.
+Answer - 
+
+```{r}
+var(P.hat)
+```
+
+#Question 10.2.5 - It is proposed in Section 10.5 that the variance of the sample proportion  
+$Var(\hat{P}) = \frac{p(1-p)}{n}$, where p is the probability of the event (having a high blood pressure in our case) and n is the sample size (n = 150 in our case). Examine this proposal in the current setting. 
+Answer - 
+```{r}
+p <- mean(pop.2$group == "HIGH")
+n <- 150
+variance <- p * (1 - p) / n
+variance
+```
