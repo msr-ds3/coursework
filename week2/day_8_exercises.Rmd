@@ -1,0 +1,102 @@
+---
+title: "Day 8"
+---
+
+```{r}
+library(tidyverse)
+library(readr)
+library(dplyr)
+```
+
+# Chapter 2 (ISRS)
+
+## Question 2.2
+
+a. What proportion of patients in each group died?
+  Control group: prop = 30/34 = 0.8824
+  Treatment group: prop = 45/69 = 0.6522
+  
+b. Randomization technique
+  i. What are the claims being tested?
+    t = treatment, c = control
+    H0: pt - pc = 0 (Heart transplants do not significantly decrease chance of death)
+    Ha: pt - pc < 0  (Heart transplants do significantly decrease chance of death)
+    (p is the proportion of people who died)
+    
+  ii. Write ALIVE on 28 cards and DEAD on 75 cards representing results of the study. Shuffle the cards and split into 2 groups, one of size 69 representing treatment and another of size 34 representing contro. We calculate the diff between the prop of DEAD in treatments and control (treatment - control). We repeat many times to build a distribution centered at 0. Lastly, calculate the fraction of simulations where the simulated diffs in proportions are low (close to 0). If this fraction is low, we conclude that it is unlikely to have observed such an outcome by chance and the null hypothesis should be rejected in favor of alternative. 
+  iii. What do the simulation results suggest about the effectiveness of the transplant program.
+    pt - pc = -0.2302
+    Based on the simulation, we would reject the null hypothesis and this would suggest that the transplant program is effective in decreasing the likelihood of death. 
+    
+## Question 2.5
+
+a. What are the hypotheses?
+  p = provocative, c = conservative
+  H0: pp = pc 
+  Ha: pp != pc
+  (p is the proportion of people who intervened)
+
+b. Calculate the observed diff between the rates of intervention
+  pp - pc = (5/20) - (15/25) = -0.35
+
+c. Estimate the p-value using the figure above and determine the conclusion
+  p-value = 0.02 * 2 = 0.04
+  Since the p-value is very small, we would reject H0 and determine that the way that the woman dresses does affect the rate of intervention. 
+  
+  
+# Chapter 9 (IST)
+
+## Question 9.2
+1. Find the interval that contains 95% of the sampling dist
+
+```{r}
+magnets <- read.csv("magnets.csv")
+
+# a = active, i = inactive
+
+mu_a <- 3.5
+sig_a <- 3
+n_a <- 29
+
+mu_i <- 3.5
+sig_i <- 1.5
+n_i <- 21
+
+test.stat <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  Xa <- rnorm(n_a, mu_a, sig_a)
+  Xa.bar <- mean(Xa)
+  Xa.var <- var(Xa)
+  
+  Xi <- rnorm(n_i, mu_i, sig_i)
+  Xi.bar <- mean(Xi)
+  Xi.var <- var(Xi)
+  
+  test.stat[i] <- (Xa.bar - Xi.bar) / sqrt((Xa.var/n_a) + (Xi.var/n_i))
+}
+
+quantile(test.stat, c(0.025, 0.975))
+```
+[-1.999, 2.021]
+    
+2. Does the observed value of the statistic in "magnets" fall inside or outside of the interval computed in 1?
+
+```{r}
+magnets_summ <- magnets %>%
+  group_by(active) %>%
+  summarize(mean = mean(change))
+  
+Xa.bar <- mean(magnets$change[1:29])
+Xi.bar <- mean(magnets$change[30:50])
+
+Xa.var <- var(magnets$change[1:29])
+Xi.var <- var(magnets$change[30:50])
+
+n_a <- 29
+n_i <- 21
+
+test.stat <- (Xa.bar - Xi.bar) / sqrt((Xa.var/n_a) + (Xi.var/n_i))
+test.stat
+```
+Observed value = 5.986 which falls outside of the interval [-1.999, 2.021]

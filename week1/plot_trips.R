@@ -19,16 +19,20 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
-  ggplot(data = trips, mapping = aes(x = starttime)) +
-    geom_histogram()
+  ggplot(data = trips, mapping = aes(x = tripduration)) +
+    geom_histogram() +
+    scale_y_log10(label = comma) +
+    scale_x_log10(label = comma)
 
-  ggplot(trips, mapping = aes(x = starttime)) + 
-    geom_density(fill = "grey")
+ ggplot(trips, mapping = aes(x = tripduration)) + 
+    geom_density() +
+    scale_y_log10(label = comma) +
+    scale_x_log10(label = comma)
     
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
   ggplot(data = trips, mapping = aes(x = starttime, color = gender, fill = gender)) +
-    geom_histogram()
+    geom_histogram() 
   
   ggplot(trips, mapping = aes(x = starttime)) + 
     geom_density(mapping = aes(fill = gender))
@@ -42,7 +46,7 @@ load('trips.RData')
   trips %>% 
     mutate(age = 2014 - birth_year) %>%
     ggplot(mapping = aes(x = age, color = gender, fill = gender)) +
-      geom_bar() +
+      geom_histogram() +
       ylab('total number of trips') +
       xlab('age') +
       scale_y_continuous(label = comma)
@@ -52,6 +56,22 @@ load('trips.RData')
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+  trips_age <- trips %>%
+    mutate(age = 2014 - birth_year)
+  
+  trips_gender_age <- trips_age %>%
+    group_by(age, gender) %>%
+    summarize(num_trips = n())
+  
+  ?pivot_wider()
+  
+  trips_by_age_gender <- pivot_wider(trips_gender_age, names_from = gender, values_from = num_trips)
+  trips_ratio <- trips_by_age_gender %>%
+    mutate(ratio = Male / Female)
+  
+  trips_ratio %>%
+    ggplot(aes(x = age, y = ratio)) +
+    geom_point()
 
 ########################################
 # plot weather data
@@ -66,6 +86,17 @@ load('trips.RData')
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+  ?pivot_longer()
+  
+  trips_with_weather %>% 
+    group_by(ymd) %>%
+    summarize(tmax = mean(tmax), tmin = mean(tmin)) %>%
+    ggplot() +
+    geom_point(aes(x = ymd, y = tmax), color = "Pink") +
+    geom_point(aes(x = ymd, y = tmin), color = "Blue") +
+    labs(x = 'Day', y = 'Temp')
+  
+  # did this actually need pivot_longer()
 
 ########################################
 # plot trip and weather data
@@ -116,22 +147,69 @@ load('trips.RData')
     group_by(hour, ymd) %>%
     summarize(num_trips = n()) 
   
-  hours_sum <- hour_summ_by_day %>%
+  hours_summ <- hour_summ_by_day %>%
     group_by(hour) %>%
     summarize(average = mean(num_trips), sd = sd(num_trips))
   
 # plot the above
   hours_summ %>%
-    ggplot(mapping = aes(x = hour, y = average)) +
+    ggplot(aes(x = hour, y = average)) +
+    geom_point() 
+  
+  hours_summ %>%
+    ggplot(aes(x = hour, y = sd)) +
     geom_point()
   
   hours_summ %>%
-    ggplot(mapping = aes(x = hour, y = sd)) +
-    geom_point()
+    ggplot() +
+    geom_line(aes(x = hour, y = average)) +
+    geom_ribbon((aes(x = hour, ymin = average - sd, ymax = average + sd)), alpha = 0.2)
+  
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
   View(weather)
   ?wday()
   
+  # days
   
+  trips_summ_dow <- trips %>% 
+    mutate(hour = hour(starttime), day = wday(starttime)) %>%
+    group_by(hour, day) %>%
+    summarize(num_trips = n())
+  
+  dow_sum <- trips_summ_dow %>%
+    group_by(day) %>%
+    summarize(average = mean(num_trips), sd = sd(num_trips))
+  
+  dow_sum %>% 
+    ggplot()+
+    geom_line(aes(x = day, y = average)) +
+    geom_ribbon(aes(x = day, ymin = average - sd, ymax = average + sd), alpha = 0.2) 
+  
+  
+  # hours by dow
+  
+  hours_summ_by_day_dow <- trips %>%
+    mutate(hour = hour(starttime), day = wday(starttime)) %>%
+    group_by(hour, day, ymd) %>%
+    summarize(num_trips = n())
+  
+  hours_summ_dow <- hours_summ_by_day_dow %>%
+    group_by(hour, day) %>%
+    summarize(average = mean(num_trips), sd = sd(num_trips))
+
+  days_of_week <- data.frame(day = rep(1:7),
+                               names = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))
+
+  hours_day_names <- left_join(hours_summ_dow, days_of_week, by = "day")  
+  
+  hours_day_names <- within(hours_day_names, names <- factor(names, levels = c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')))
+    
+  hours_day_names %>%
+    ggplot() +
+    geom_line(aes(x = hour, y = average)) +
+    geom_ribbon(aes(x = hour, ymin = average - sd, ymax = average + sd), alpha = 0.2) +
+    facet_wrap(vars(names))
+    
+               
