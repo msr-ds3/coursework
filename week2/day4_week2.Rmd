@@ -1,0 +1,93 @@
+---
+title: "Day 4 Week 2 assignment"
+author: "Alexandra Roffe"
+date: 2022-06-09
+output: html_document
+---
+
+day 4, week 2
+next textbook chapter 2. assignment 2.2 and 2.5
+
+2.2: Heart transplants, Past II
+a) What proportion of the patients in the treatment group and the control group died?
+```{r}
+# in the treatment group 
+45/69
+30/34
+```
+
+b) 
+i. The claims being tested are:
+  
+  null: the treatment has no effect on whether the patient dies or not. The difference in the proportions of the treated group and the control group is due to chance. 
+  
+  alternative: The treatment has an effect on whether the patient dies or not. The difference in the proportions of the treated group and the control group is due to the treatment. 
+  
+ii. 28, 75, 69, 34, 75/103 = 0.728,  30/34 - 45/69 = 0.230179, 
+
+iii. 
+  mean of chart is 0.01. These simulations show us that the treatment is effective. The fraction (difference in the proportions) is low, so we reject the null hypothesis in favor of the alternative. 
+  
+  
+2.5) Social experiment 
+
+a) 
+  null would same distribution, average is 0. The p(pr_sim) = p(con_sim). 
+
+  alternative is that the average is not equal to zero; the p(pr_sim) != p(con_sim).
+  
+b) 
+```{r}
+5/20 - 15/25
+```
+c)
+The graph shows us the probability of getting -0.35 is around 0.025 (2.5%). 
+This is less than alpha so reject the null hypothesis. 
+```{r}
+prop.test(3500, 10000) ## ???
+```
+the p-value < 2.2e-16. 
+We are not rejecting the null
+
+
+Read Sections 3.1 and 3.2 of ISRS
+Do exercise 9.2 in IST
+2.9:
+1) 
+```{r}
+mu <- 3.5
+sd.active <- 3
+sd.inactive <- 1.5
+
+test.stat <- rep(0, 10^5)
+for (i in 1:10^5)
+{
+  X1 <- rnorm(29, mu, sd.active)
+  X2 <- rnorm(21, mu, sd.inactive)
+  X1.bar <- mean(X1)
+  X2.bar <- mean(X2)
+  X1.var <- var(X1)
+  X2.var <- var(X2)
+  test.stat[i] <- (X1.bar-X2.bar)/sqrt(X1.var/29 + X2.var/21)
+
+}
+quantile(test.stat, c(0.025, 0.975))
+
+```
+
+
+2. Does the observed value of the statistic, computed for the data frame
+“magnets”, falls inside or outside of the interval that is computed in 1?
+
+```{r}
+magnets <- read.csv("magnets.csv", stringsAsFactor = TRUE)
+x1.bar <- mean(magnets$change[1:29])
+x2.bar <- mean(magnets$change[30:50])
+x1.var <- var(magnets$change[1:29])
+x2.var <- var(magnets$change[30:50])
+(x1.bar-x2.bar)/sqrt(x1.var/29 + x2.var/21)
+
+
+```
+The computed value of the statistic turns out to be 5.985601, a value that does not belong to the interval [−2.014838, 2.018435].
+
