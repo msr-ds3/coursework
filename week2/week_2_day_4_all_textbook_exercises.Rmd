@@ -1,0 +1,111 @@
+---
+title: "week_2_day_3_textbook_exercises"
+output: html_document
+date: '2022-06-09'
+---
+
+###############Chapter 2 (ISRS)
+
+####2.2 
+
+(a)
+```{r}
+control_patients_died <- 30/34
+control_patients_died
+
+treated_patients_died <-45/69
+treated_patients_died
+
+```
+
+(b)
+          (i)
+          The claims being tested are:
+          Null hypothesis: Survival rate is not effected by treatment. Observations of higher survival rate                            occured due to chance. 
+          Alternate hypothesis: Survival rate is effected by treatment. Observations of higher survival                                    rate didn't occur due to chance. 
+    
+          (ii)
+          Blank1: 28
+          Blank2: 75
+          Blank3: 69
+          Blank4: 34
+          Blant5: 0
+          Blank6: -0.23
+```{r}
+Blank6 <- (1 - control_patients_died) - (1 - treated_patients_died)
+Blank6
+```
+          
+          (iii)
+          Having a a differnece in proprtion of 23% while due to chance is highly unlikely because                   simulation results express the liklihood of a difference in 23% due to chance being less than 5%.           Therefore we should reject the null hypothesis and accept that treated patients have a higher              chance of survival.
+          
+
+          
+####2.5
+
+(a)
+Null hypothesis: No difference in number of interventions based on dressing "provocatively" or                              "conservatively"
+Alternate hypothesis: There is a difference in number of interventions based on dressing "provocatively"                         or conservatively"
+
+(b)
+
+```{r}
+provocative_interventions <- 5/20
+conservative_interventions <- 15/25
+
+Difference_in_interventions <- provocative_interventions - conservative_interventions
+Difference_in_interventions
+```
+(c)
+left tail using left two bins
+```{r}
+bin1 <- 0.02
+bin2 <- 0.005
+left_tail <- bin1 + bin2
+p_value <- left_tail * 2
+p_value
+```
+Reject null hypothesis since p-value is 0.05. Data suggests strong evidence that interventions occur differently under the two different scenarios
+
+
+
+############ Chapter 9 (IST)
+
+####9.2
+
+#Part 1
+
+```{r}
+?rnorm
+
+Interval <- rep(0, 10^5)
+for(i in 1:10^5){
+  group1 <- rnorm(29, 3.5, 3)
+  group2 <- rnorm(21, 3.5, 1.5)
+  group1_mean <- mean(group1)
+  group2_mean <- mean(group2)
+  group1_var <- var(group1)
+  group2_var <- var(group2)
+  
+  Interval[i] <- (group1_mean-group2_mean)/sqrt(group1_var/29 + group2_var/21)
+  
+}
+quantile(Interval, c(0.025, 0.975))
+
+
+
+```
+
+#Part 2
+
+```{r}
+  magnets <- read.csv("magnets.csv")
+  group1_mean2 <- mean(magnets$change[1:29])
+  group2_mean2 <- mean(magnets$change[30:50])
+  group1_var2 <- var(magnets$change[1:29])
+  group2_var2 <- var(magnets$change[30:50])
+  
+  (group1_mean2-group2_mean2)/sqrt(group1_var2/29 + group2_var2/21)
+
+```
+
