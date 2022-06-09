@@ -66,13 +66,14 @@ This week covers:
   * Read Chapter 9 of IST and do exercise 9.1
   * Read Chapter 10 of IST and do exercises 10.1 and 10.2
   * Review the "Hypothesis testing" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
+  * Also check out the this analysis of [the color distribution of M&Ms](https://github.com/jhofman/delicious-statistics) that we discussed
 
 ## References
   * See the relevant part of these [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_5/lecture_5.pdf) on statistics by simulation
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
   * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
 
-<!--
+
 
 # Day 4
 
@@ -83,6 +84,8 @@ This week covers:
   * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS) and do exercises 2.2 and 2.5
   * Read Sections 3.1 and 3.2 of ISRS
   * Do exercise 9.2 in IST
+
+<!--
 
 ## References
   * [Understanding Statistical Power and Significance Testing](https://rpsychologist.com/d3/NHST/)
