@@ -1,0 +1,157 @@
+---
+title: "Week 2 Day 4 Classwork"
+output: html_document
+date: '2022-06-09'
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+
+2.2 Heart transplants, Part II. Exercise 1.50 introduces the Stanford Heart Transplant Study. Of the 34 patients in the control group, 4 were alive at the end of the study. Of the 69 patients in the treatment group, 24 were alive. The contingency table below summarizes these results.
+
+      Group
+            Control Treatment Total
+      Alive     4     24        28 
+      Dead    30        45      75
+      Total     34    69        103
+
+(a) What proportion of patients in the treatment group and what proportion of patients in the control group died?
+
+  Treatment group: 45/69
+  Control group: 30/34
+  
+```{r}
+(45/69) - (30/34)
+```
+
+(b) One approach for investigating whether or not the treatment is effective is to use a randomization technique.
+i. What are the claims being tested? Use the same null and alternative hypothesis notation used in the section.
+
+*p is the proportion of people who died
+
+  Null hypothesis (H0): ptreat - pcon = 0
+    There is no difference in lifespan of official heart transplant candidates who         received heart transplants from those who didn't
+      
+  Alternative hypothesis (HA): ptreat - pcon < 0
+    Official heart transplant candidates who received heart transplants have longer        lifespans.
+      
+
+ii. The paragraph below describes the set up for such approach, if we were to do it without using statistical software. Fill in the blanks with a number or phrase, whichever is appropriate.
+
+We write alive on \28\ cards representing patients who were alive at
+the end of the study, and dead on \75\ cards representing patients
+who were not. Then, we shuffle these cards and split them into two groups:
+one group of size \69\ representing treatment, and another group of
+size \34\ representing control. We calculate the difference between
+the proportion of dead cards in the treatment and control groups (treatment -
+control) and record this value. We repeat this many times to build a distribution
+centered at \0\. Lastly, we calculate the fraction of simulations where
+the simulated differences in proportions are \less than or equal to -0.23\. If this fraction is low, we conclude that it is unlikely to have observed such an outcome by chance and that the null hypothesis should be rejected in favor of the alternative.
+
+iii. What do the simulation results shown below suggest about the effectiveness of the transplant program? (Graph in the textbook)
+
+  Our p-value = 0  < 0.05, we reject the null hypothesis. The data gives strong 
+  evidence that those who receive heart transplants will have a longer lifespan,
+  than if they didn't.
+  
+
+2.5 Social experiment, Part I. A “social experiment” conducted by a TV program questioned what people do when they see a very obviously bruised woman getting picked on by her boyfriend. On two different occasions at the same restaurant, the same couple was depicted. In one scenario the woman was dressed “provocatively” and in the other scenario the woman was dressed “conservatively”. The table below shows how many restaurant diners were present under each scenario,and whether or not they intervened.
+
+Scenario
+              Provocative Conservative Total
+Intervene Yes       5         15          20
+          No        15        10          25
+          Total     20        25          45
+A simulation was conducted to test if people react differently under the two scenarios. 10,000 simulated differences were generated to construct the null distribution shown. 
+
+(a) What are the hypotheses? For the purposes of this exercise, you may assume that each observed person at the restaurant behaved independently, though we would want to evaluate this assumption more rigorously if we were reporting these results.
+
+  Null Hypothesis (H0): ppr = pcon
+    People's intervention isn't impacted by how the woman was dressed
+      
+  Alternative Hypothesis (HA): ppr != pcon
+    People's intervention is impacted by how the woman was dressed
+
+(b) Calculate the observed difference between the rates of intervention under the provocative and conservative scenarios: ˆppr − pˆcon.
+
+  Provocative: 5/20
+  Conservative: 15/25
+
+```{r}
+(5/20) - (15/25)
+```
+
+(c) Estimate the p-value using the figure above and determine the conclusion of the hypothesis test.
+
+  p-value = 0.02*2 = 0.04 (roughly)
+    two-tailed since we're testing whether they're equal or not equal
+    
+  Since the p-value = 0.04 < 0.05, we reject the null hypothesis. The data
+  gives strong evidence that people react differently based on the two scenarios.
+  
+
+Chapter 9
+
+Question 9.2. In Chapter 13 we will present a statistical test for testing if
+there is a difference between the patients that received the active magnets and
+the patients that received the inactive placebo in terms of the expected value
+of the variable that measures the change. The test statistic for this problem is
+taken to be, where X¯1 and X¯2 are the sample averages for the 29 patients that receive active magnets and for the 21 patients that receive inactive placebo, respectively. The quantities S21 and S22 are the sample variances for each of the two samples. Our goal is to investigate the sampling distribution of this statistic in a case where both expectations are equal to each other and to compare this distribution to the observed value of the statistic.
+
+1. Assume that the expectation of the measurement is equal to 3.5, regardless of what the type of treatment that the patient received. We take the standard deviation of the measurement for patients the receives an active magnet to be equal to 3 and for those that received the inactive placebo we take it to be equal to 1.5. Assume that the distribution of the measurements is Normal and there are 29 patients in the first group and 21 in the second. Find the interval that contains 95% of the sampling distribution of the statistic.
+
+```{r}
+magnets <- read.csv('magnets.csv')
+
+mu <- 3.5
+sig_act <- 3
+sig_inact <- 1.5
+
+teststat <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  x1 <- rnorm(29, mu, sig_act)
+  x2 <- rnorm(21, mu, sig_inact)
+  x1bar <- mean(x1)
+  x2bar <- mean(x2)
+  x1var <- var(x1)
+  x2var <- var(x2)
+  teststat[i] <- (x1bar-x2bar)/sqrt(x1var/29 + x2var/21)
+}
+quantile(teststat, c(0.025, 0.975))
+
+
+```
+
+
+2. Does the observed value of the statistic, computed for the data frame
+“magnets”, falls inside or outside of the interval that is computed in 1?
+
+  The value 5.985601 falls outside the interval computed in the previous question   
+  [-2.016147,2.012576].
+
+```{r}
+x1bar <- mean(magnets$change[1:29])
+x2bar <- mean(magnets$change[30:50])
+x1var <- var(magnets$change[1:29])
+x2var <- var(magnets$change[30:50])
+sampstat <- (x1bar - x2bar) / sqrt(x1var/29 + x2var/21)
+sampstat
+
+```
+
+I tried doing this using a group_by method, but I couldn't quite figure out how to pull the values of mean and variances out of the summarize dataframe I'm given to perform the value of the statistic.
+
+
+```{r}
+magnets %>%
+  group_by(active) %>%
+  summarize(mean(change), var(change))
+
+
+```
+
+
