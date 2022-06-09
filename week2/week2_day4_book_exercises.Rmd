@@ -1,0 +1,65 @@
+---
+title: "week2_day4_book_exercises"
+author: "Christopher Esquivel"
+date: '2022-06-09'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+###
+Chapter 2 exercises
+2.2
+a)
+The proportion of the patients in the treatment group who died = 45/69
+The proportion of the patients in the control group who died = 30/34
+b)
+Null hypothesis = The treatment has no effect on the patients
+Alternative hypothesis = The treatment has some effect on the patients
+{28, 75, 69, 34, 0, -0.23017}
+The treatment had some effect on the patients. It rejects the null hypothesis
+
+2.5
+a)
+Null Hypothesis = Dressing provocatively or conservatively has no effect on the number
+of interventions.
+Alternative Hypothesis = Dressing provocatively or conservatively has some effect on the number of
+interventions.
+b)
+5/20 - 15/25 = -7/20 = -0.35
+c)
+p-value = 0.05
+Reject the null hypothesis. Dressing provocatively or conservatively has some effect on the number of interventions.
+
+9.2
+1. The interval that contains 95% of the sampling distribution of the statistic = [−2.014838, 2.018435]
+```{r}
+mu1 <- 3.5
+sig1 <- 3
+mu2 <- 3.5
+sig2 <- 1.5
+test.stat <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+  X1 <- rnorm(29, mu1, sig1)
+  X2 <- rnorm(21, mu2, sig2)
+  X1.bar <- mean(X1)
+  X2.bar <- mean(X2)
+  X1.var <- var(X1)
+  X2.var <- var(X2)
+  test.stat[i] <- (X1.bar-X2.bar)/sqrt(X1.var/29 + X2.var/21)
+}
+quantile(test.stat,c(0.025,0.975))
+
+```
+2. 5.985601 does not belong to the interval [−2.014838, 2.018435]
+```{r}
+magnets <- read.csv("magnets.csv")
+x1.bar <- mean(magnets$change[1:29])
+x2.bar <- mean(magnets$change[30:50])
+x1.var <- var(magnets$change[1:29])
+x2.var <- var(magnets$change[30:50])
+(x1.bar-x2.bar)/sqrt(x1.var/29 + x2.var/21)
+
+```
