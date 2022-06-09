@@ -73,7 +73,7 @@ This week covers:
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
   * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
 
-<!--
+
 
 # Day 4
 
@@ -84,6 +84,8 @@ This week covers:
   * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS) and do exercises 2.2 and 2.5
   * Read Sections 3.1 and 3.2 of ISRS
   * Do exercise 9.2 in IST
+
+<!--
 
 ## References
   * [Understanding Statistical Power and Significance Testing](https://rpsychologist.com/d3/NHST/)
