@@ -1,0 +1,135 @@
+---
+title: "Day 9"
+---
+
+# ISRS
+
+### Question 5.20:
+
+**Data**:
+mean shoulder girth = 108.20 cm, 
+sd shoulder girth = 10.37 cm, 
+mean height = 171.14 cm, 
+sd height = 9.41 cm, 
+corr = R = 0.67, 
+
+a. Write the equation of the regression line for predicting height.
+  * b~1~ = (9.41/10.37) * 0.67 = 0.60797
+  * h = height, s = shoulder girth
+  * h - 171.14 = b~1~(s - 108.20)
+  * h~approx~ = 105.36 + 0.608(s)
+
+b. Interpret the slope and intercept in this context.
+  * The slope over here means that, for each increase of 1 cm in shoulder girth, height is expected to increase by 0.608 cm. 
+  * The intercept shows the average height to be 105.36 if shoulder girth were zero. 
+
+c. Calculate R^2^ of the regression line for predicting height from shoulder girth, and interpret it in the context of the application.
+  * R^2^ = 0.67^2^ = 0.4489. About 45% of variability is accounted for by the model. 
+
+d. A randomly selected student has a shoulder girth of 100 cm. Predict the height of this student using the model.
+  * h~approx~ = 105.36 + 0.608(100) = 166.16
+
+e. The student from (d) is 160 cm tall. Calculate the residual and explain what this residual means.
+  * Residual = e = 160 - 166.6 = -6.6. The difference is negative so the model slightly overestimated but the expected is still close to the estimated. 
+
+f. A one year old has a shoulder girth of 56 cm. Would it be appropriate to use this linear model to predict the height of this child?
+  * The sample was taken from an older population so it would not be appropriate to use to estimate the heights of children. 
+
+### Question 5.29
+
+a. Describe the relationship between height and weight.
+  * There is a positive, linear relationship between height and weight. (As height increases, weight increases.)
+
+b. Write the equation of the regression line. Interpret the slope and intercept in context.
+  * h = height, w = weight
+  * w~approx~ = -105.0113 + 1.0176(h)
+  * The slope here means that, for every increase of 1 cm in height, the model predicts an increase of 1.0176 kg in weight.
+  * The Intercept shows the average weight of someone who is 0 cm tall to be -105.0113 kg.  
+
+c. Do the data provide strong evidence that an increase in height is associated with an increase in weight? State the null and alternative hypothesis, report the p-value, and state your conclusion.
+  * H0: beta~1~ = 0
+  * HA: beta~1~ != 0
+  * The p-value is 0.0000 so it is very small and therefore very unlikely for these results to occur given the null hypothesis being true so we reject the null hypothesis here and conclude that there is a relationship between height and weight.
+
+d. The correlation coefficient for height and weight is 0.72. Calculate R^2^ and interpret it in context. 
+  * R^2^ = 0.72^2^ = 0.5184
+  * About 52% of the variability in weight is accounted for by the model. 
+  
+# ISL
+
+### Lab 3.6.2
+
+```{r setup}
+library(ISLR2)
+```
+
+```{r}
+head(Boston)
+```
+
+Linear Regression Model
+```{r}
+lm.fit <- lm(medv ~ lstat, data = Boston)
+
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+```
+
+Summary of Information
+```{r}
+lm.fit
+
+summary(lm.fit)
+```
+
+```{r}
+names(lm.fit)
+
+coef(lm.fit)
+```
+
+Confidence Interval
+```{r}
+confint(lm.fit)
+```
+
+Prediction
+```{r}
+predict(lm.fit, data.frame(lstat = (c(5,10,15))),
+        interval = "confidence")
+
+predict(lm.fit, data.frame(lstat = (c(5,10,15))),
+        interval = "prediction")
+```
+
+```{r}
+plot(lstat, medv)
+abline(lm.fit)
+```
+
+```{r}
+plot(lstat, medv)
+abline(lm.fit)
+
+abline(lm.fit, lwd = 3)
+abline(lm.fit, lwd = 3, col = "red")
+plot(lstat, medv, col = "red")
+plot(lstat, medv, pch = 20)
+plot(lstat, medv, pch = "+")
+plot(1:20, 1:20, pch = 1:20)
+```
+
+```{r}
+par(mfrow = c(2,2))
+plot(lm.fit)
+```
+
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```

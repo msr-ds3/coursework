@@ -91,12 +91,11 @@ load('trips.RData')
   trips_with_weather %>% 
     group_by(ymd) %>%
     summarize(tmax = mean(tmax), tmin = mean(tmin)) %>%
+    pivot_longer("tmax":"tmin", names_to = "type", values_to = "temp") %>%
     ggplot() +
-    geom_point(aes(x = ymd, y = tmax), color = "Pink") +
-    geom_point(aes(x = ymd, y = tmin), color = "Blue") +
+    geom_point(aes(x = ymd, y = temp, color = type)) +
     labs(x = 'Day', y = 'Temp')
-  
-  # did this actually need pivot_longer()
+
 
 ########################################
 # plot trip and weather data
