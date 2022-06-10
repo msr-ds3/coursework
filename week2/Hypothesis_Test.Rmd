@@ -1,0 +1,108 @@
+---
+title: "Hypothesis_Test"
+output: html_document
+date: '2022-06-09'
+---
+2.2
+
+a. What proportion of patients in the treatment group and what proportion of patients in the control group died?
+```{r}
+proportion_in_treatment_group <- 45/69
+print(proportion_in_treatment_group)
+
+proportion_in_control_group <- 30/34
+print(proportion_in_control_group)
+```
+
+
+b. 
+i) What are the claims being tested? Use the same null and alternative hypothesis notation used in the section.
+
+H0 -> Number of death is independent of the group that patients were kept on. 
+HA -> Number of death is dependent on the group that patients were kept. 
+
+ii) 
+- We write alive on 25 index cards. 
+- Dead on 75 index cards representing....
+- One group of size 69 representing treatement 
+- Another group of size 34 representing control. 
+- Build a distribution cneterd at 0. 
+- Simulated differences in proportions are 0.23. 
+
+iii) 
+Let us suppose our alpha is 0.05
+From the simulated idfferences in proportions, we consider 0.23 and count the number of values which comes to 6. 
+```{r}
+p_value <- 6/103
+print(p_value)
+```
+
+
+The outcome of p-value is 0.06. 
+Here, 
+p-value !<= threshold. 
+
+Hence, the simulation result suggests that it fails to reject. 
+2.5 
+
+a. What are the hypotheses?
+
+H0 -> The way women dressed was independent of people intervention.
+HA -> The way women dressed was dependent of people intervention. 
+
+b. Calculate the observed difference between the rates of intervention under the provocative and conservative scenarios: ˆppr − pˆcon.
+
+```{r}
+Ppr <- 5/20
+Pcon <- 15/25
+
+print(Difference <- Ppr - Pcon)
+
+```
+Assuming threshold as 0.05.
+It is two tailed. So, observing the value on both negative and positive sides. 
+We find 0.025 on the positive side. 2*0.025 = 0.05
+Hence, p-value is <= alpha. 
+
+So, we reject H0. 
+
+9.2
+
+1.
+Assume that the expectation of the measurement is equal to 3.5, regardless of what the type of treatment that the patient received. We take the standard deviation of the measurement for patients the receives an active magnet to be equal to 3 and for those that received the inactive placebo we take it to be equal to 1.5. Assume that the distribution of the measurements is Normal and there are 29 patients in the first group and 21 in the second. Find the interval that contains 95% of the sampling distribution of the statistic.
+
+
+```{r}
+E1 <- 3.5
+Sigma1 <- 3
+E2 <- 3.5
+Sigma2 <- 1.5
+test_statist <- rep(0,10^5)
+for(i in 1:10^5){
+  X1 <- rnorm(29, E1, Sigma1)
+  X2 <- rnorm(21, E2, Sigma2)
+  X1_bar <- mean(X1)
+  X2_bar <- mean(X2)
+  X1_var <- var(X1)
+  X2_var <- var(X2)
+  test_statist[i] <- (X1_bar -X2_bar)/sqrt((X1_var/29)+(X2_var/21))
+}
+quantile(test_statist,c(0.025, 0.0975))
+
+
+```
+
+2.  Does the observed value of the statistic, computed for the data frame “magnets”, falls inside or outside of the interval that is computed in 1?
+
+```{r}
+X1_bar <- mean(magnets$change[1:29])
+  X2_bar <- mean(magnets$change[30:50])
+  X1_var <- var(magnets$change[1:29])
+  X2_var <- var(magnets$change[30:50])
+  Observed_Value <- (X1_bar -X2_bar)/sqrt((X1_var/29)+(X2_var/21))
+print(Observed_Value)
+```
+
+The observed value is 5.99 which does not fall under the interval. 
+
+
