@@ -1,0 +1,148 @@
+---
+title: "Week 2 Day 5 Classwork"
+output: html_document
+date: '2022-06-10'
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+5.20 Body measurements, Part III. Exercise 5.13 introduces data on shoulder girth and height of a group of individuals. The mean shoulder girth is 108.20 cm with a standard deviation of 10.37 cm. The mean height is 171.14 cm with a standard deviation of 9.41 cm. The correlation between height and shoulder girth is 0.67.
+
+(a) Write the equation of the regression line for predicting height.
+
+  (9.41/10.37) * 0.67 = 0.6079749
+  
+```{r}
+(9.41/10.37) * 0.67
+```
+  Ans: y - 171.14 = 0.6079749(x - 108.20)
+
+(b) Interpret the slope and the intercept in this context.
+  Slope: 0.608
+    As the shoulder girth increases by 1 cm, the height of the 
+    individuals increases by about 6 cm.
+    
+  Intercept: 105.36
+    The estimated intercept 105.36 cm describes the average height if 
+    an individual had 0 cm shoulder girth. This intercept is irrelevant
+    to this application because an individual cannot have shoulder 
+    girth of 0 cm.
+
+(c) Calculate R2 of the regression line for predicting height from shoulder girth, and interpret it in the context of the application.
+
+```{r}
+0.67^2
+```
+  R^2 = 0.4489
+  Approximately 45% of the variability in height can be explained by 
+  the shoulder girth of individuals.
+
+(d) A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height of this student using the model.
+  y - 171.14 = 0.6079749(100 - 108.20)
+```{r}
+0.6079749 * (100 - 108.20) + 171.14
+```
+  height = 166.1546 cm
+
+(e) The student from part (d) is 160 cm tall. Calculate the residual, and explain what this residual means.
+```{r}
+160 - 166.1546
+```
+  The residual of -6.1546 shows that the actual data lies 6.1546cm 
+  below the predicted value of the linear model.
+
+(f) A one year old has a shoulder girth of 56 cm. Would it be appropriate to use this linear model to predict the height of this child?
+
+  It is not appropriate to use this linear model to predict the height
+  of this child because the data used to create the linear model does 
+  not include any data points less than 80 cm for shoulder girth and 
+  less than 140cm for height. Thus, it wouldn't be appropriate to use 
+  this linear model
+  
+5.29 Body measurements, Part IV. The scatterplot and least squares summary below show the relationship between weight measured in kilograms and height measured in centimeters of 507 physically active individuals.
+
+          Estimate Std. Error t value Pr(>|t|)
+(Intercept) -105.0113 7.5394 -13.93 0.0000
+height        1.0176 0.0440 23.13 0.0000
+
+(a) Describe the relationship between height and weight.
+
+  As the height of an individual increases, the weight of an 
+  individual also increases.
+
+(b) Write the equation of the regression line. Interpret the slope and intercept in context.
+  weight = 1.0176*height - 105.0113
+  
+  Slope: 1.0176
+    As the height of an individual increases by 1 cm, the weight of an 
+    individual increases by about 1.0176 kg.
+  Intercept: -105.0113
+    The estimated intercept -105.0113 kg describes the average weight 
+    if an individual was 0 cm tall. This intercept is irrelevant
+    to this application because an individual cannot have a height of 
+    0 cm or a negative weight.
+
+(c) Do the data provide strong evidence that an increase in height is associated with an increase in weight? State the null and alternative hypotheses, report the p-value, and state your conclusion.
+
+  H0: The true coefficient for an individual's height is 0.
+  HA: The true coefficient for an individual's height is not 0.
+  
+  The p-value = 0, thus we reject the null hypothesis. There is 
+  convincing evidence that the true coefficient for an individual's
+  height is not 0. That the height of an individual influences their
+  weight.
+
+(d) The correlation coefficient for height and weight is 0.72. Calculate R2 and interpret it in context.
+
+```{r}
+0.72^2
+```
+  Approximately 52% of the variability in weight can be explained by 
+  the height of individuals.
+  
+  
+Lab 3.6.2
+  
+```{r}
+head(Boston)
+
+lmfit <- lm(medv ~ lstat, data = Boston)
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+
+summary(lm.fit)
+
+
+names(lm.fit)
+coef(lm.fit)
+
+confint(lm.fit)
+
+
+predict(lm.fit, data_frame(lstat = c(5,10,15)), interval = "confidence")
+predict(lm.fit, data.frame(lstat = c(5,10,15)), interval = "prediction")
+
+
+plot(lstat, medv)
+abline(lm.fit)
+abline (lm.fit , lwd = 3)
+abline (lm.fit , lwd = 3, col = " red ")
+plot (lstat , medv , col = " red ")
+plot (lstat , medv , pch = 20)
+plot (lstat , medv , pch = "+")
+plot (1:20, 1:20, pch = 1:20)
+
+par(mfrow = c(2,2))
+plot(lm.fit)
+
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+
+```
+
