@@ -1,0 +1,102 @@
+---
+title: "week_2_day_5_all_exercises"
+output: html_document
+date: '2022-06-10'
+---
+
+Chapter 5 (pages 219-243)
+
+
+
+5.20 (page 253)
+-----
+(a) 
+beta_1 = r(sd_shoulder_height/sd_shoulder_girth) = 0.67(9.41/10.37) = 0.6079749
+beta_0 = y_bar-beta_1(x_bar) = 171.14-(0.6079749)(108.20) = 105.357
+y= 105.357 + 0.6079749(x)
+
+(b) 
+Slope: Every 1 cm increase in shoulder girth results in a average height increases of 0.6079749
+Intercept: If you'd have 0cm shoulder width they'd be 105.357cm tall
+
+(c) 
+r=0.67 ==> r^2= 0.4489 so %44.89 of the model is explained by the shoulder girth.
+
+(d) .
+y= 105.357 + 0.6079749(100) = 166.154
+
+(e) 
+e=y_i-y_hat = 160 - (166.154) = -6.15449
+There is a 6.15449 difference between the model prediction and what was measured.
+
+(f) 
+No, the data is based on adults. Children are not from the same population.
+
+
+5.29(Page 256)
+-----
+
+(a) 
+There is positive correlation. As the height increases, the weight increases.
+
+(b) 
+y= (1.0176)x + (-105.0113)
+Slope: Every 1 cm increase in height results in a average weight increase of 1.1076 kg.
+Intercept: If you were 0cm in height, you'd weigh -105.011 which is obviously impossible.
+
+(c)
+Null hypothesis: Beta_1=0 
+Alternate hypothesis: Beta_1≠0 
+P-value is given as 0.0000 (Beta is the slope)
+Result is significant (increase in height is associated with increase in weight) because p-value is significantly low.
+
+(d) 
+r = 0.72 ==> r^2=(0.72)^2 = 0.5184 ==> The model explains 51.84% variability of the response data around its mean.
+
+
+3.6.2 Lab 
+---
+```{r}
+library(MASS)
+library(ISLR2)
+
+lm.fit <- lm(medv ~ lstat , data = Boston)
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+  
+lm.fit
+
+lm(formula = medv ~ lstat)
+
+summary(lm.fit)
+
+lm(formula = medv ~ lstat)
+
+names(lm.fit)
+coef(lm.fit)
+
+confint(lm.fit)
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "confidence")
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "prediction")
+
+plot(lstat , medv)
+abline(lm.fit)
+
+abline(lm.fit , lwd = 3)
+abline(lm.fit , lwd = 3, col = " red ")
+plot(lstat , medv , col = " red ")
+plot(lstat , medv , pch = 20)
+plot(lstat , medv , pch = "+")
+plot(1:20, 1:20, pch = 1:20)
+
+par(mfrow = c(2, 2))
+plot(lm.fit)
+
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+
+plot (hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
+
