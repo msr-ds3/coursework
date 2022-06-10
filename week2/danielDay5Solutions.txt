@@ -1,0 +1,63 @@
+Chapter 5 (pages 219-243)
+
+5.20 (page 253)
+-----
+The mean shoulder girth is 108.20 cm with a standard deviation
+of 10.37 cm. The mean height is 171.14 cm with a standard deviation of 9.41 cm. The correlation
+between height and shoulder girth is 0.67.
+
+(a) Write the equation of the regression line for predicting height.
+	beta_1 = r(sd_h/sd_g) = 0.67(9.41/10.37) = 0.6079749
+	beta_0 = y_bar-beta_1(x_bar) = 171.14-(0.6079749)(108.20) = 105.357
+	y= 105.357 + 0.6079749(x)
+
+(b) Interpret the slope and the intercept in this context.
+	Slope: Every 1 cm  increase in shoulder girth results in a average height increases of 0.6079749
+	Intercept: If you'd have 0cm shoulder width they'd be 105.357cm tall
+
+(c) Calculate R^2 of the regression line for predicting height from shoulder girth, and interpret it in the context of the application.
+	r=0.67 ==> r^2= 0.4489 	so %44.89 of the model is explained by the shoulder girth.
+
+(d) A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height of this student using the model.
+		y= 105.357 + 0.6079749(100) = 166.154 
+ 
+(e) The student from part (d) is 160 cm tall. Calculate the residual, and explain what this residual means.
+	e=y_i-y_hat = 160 - (166.154) = -6.15449 
+	There is a 6.15449 difference between  the model prediction and what was measured.
+
+(f) A one year old has a shoulder girth of 56cm. Would it be appropriate to use this linear model to predict the height of this child?
+	No. The data is based on adults. Children are not from the same population.
+
+5.29(Page 256)
+-----
+The scatterplot and least squares summary below show
+the relationship between weight measured in kilograms and height measured in centimeters of 507
+physically active individuals.
+
+             Estimate     Std. Error 	t value     Pr(>|t|)
+(Intercept)  -105.0113     7.5394  	 	-13.93	 0.0000
+height 	    1.0176     0.0440 		 23.13 	 0.0000
+
+(a) Describe the relationship between height and weight.
+	There is positive correlation. As the height increases, the weight increases.
+	
+(b) Write the equation of the regression line. Interpret the slope and intercept in context.
+	y= (1.0176)x + (-105.0113)
+	Slope: Every 1 cm increase in height results in a average weight increase of 1.1076 kg.
+	Intercept: If you were 0cm in height, you'd weigh -105.011 which is obviously impossible.
+
+(c) Do the data provide strong evidence that an increase in height is associated with an increase in weight? State the null and alternative hypotheses, report the p-value, and state your conclusion.
+	H_0: Beta_1=0 	H_1: Beta_1≠0 	 P-value is given as 0.0000		(Beta is the slope)
+	Result is significant (increase in height is associated with increase in weight) because p-value is siginificantly low.
+		
+(d) The correlation coefficient for height and weight is 0.72. Calculate R^2 and interpret it in context.
+	r = 0.72  ==> r^2=(0.72)^2 = 0.5184 ==> The model explains %51.84 variability of the response data around its mean. 
+
+
+
+Chapter 3.1 (59-71)
+
+Lab 3.6.2 (Page 111)
+-----
+Read through the chapter.
+
