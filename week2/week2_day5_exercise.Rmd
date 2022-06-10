@@ -1,0 +1,80 @@
+---
+title: "Untitled"
+author: "Sushobhan Parajuli"
+date: '2022-06-10'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(ISLR2)
+```
+
+5.20 If a linear model has a very strong negative relationship with a correlation of -0.97, how much of the variation in the response is explained by
+the explanatory variable?
+~~> R^2 = (-0.97)^2 = 0.94 percentage of the variation in the response is explained by the explanatory variable.
+
+5.29 
+a) positively correlated, linear relationship
+b) weight = 1.0176 * height - 105.0113
+c) Ho : there is no relationship between height and weight 
+   Ha : there is a relationship between height and weight
+   p-value is 0.00000
+d) 52 percentage of variation in weight is explained variation in height.
+
+3.6 Lab Exercise
+
+```{r}
+head(Boston)
+```
+```{r}
+lm.fit <- lm(medv ~ lstat, Boston)
+lm.fit
+```
+```{r}
+summary(lm.fit)
+```
+```{r}
+names(lm.fit)
+```
+```{r}
+coef(lm.fit)
+```
+```{r}
+confint(lm.fit)
+```
+```{r}
+predict(lm.fit, data.frame(lstat = (c(5,10,15))),
+        interval = "confidence")
+```
+```{r}
+predict(lm.fit, data.frame(lstat = (c(5,10,15))),
+        interval = "prediction")
+```
+```{r}
+plot(Boston$lstat, Boston$medv)
+abline(lm.fit)
+```
+```{r}
+plot(Boston$lstat, Boston$medv)
+abline(lm.fit)
+abline(lm.fit, lwd = 3, col = "red")
+plot(Boston$lstat, Boston$medv, col = "red")
+plot(Boston$lstat, Boston$medv, pch = 20)
+plot(Boston$lstat, Boston$medv, pch = "+")
+plot(1:20, 1:20, pch = 1:20)
+```
+```{r}
+par(mfrow = c(2,2))
+plot(lm.fit)
+```
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), residuals(lm.fit))
+```
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
