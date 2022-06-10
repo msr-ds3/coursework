@@ -1,0 +1,139 @@
+#Week2 Day5 Exercises
+```{r}
+library(tidyverse)
+
+theme_set(theme_bw())
+
+set.seed(42)
+```
+#Exercise 5.20 - Body Measurements, Part III
+Exercise 5.13 introduces data on a shoulder girth and height of a group of individuals. The mean shoulder girth is 108.20 cm with a standard deviation of 10.37 cm. The mean height is 171.4 cm with a standard deviation of 9.41 cm. The correlation between height and shoulder girth is 0.67. 
+
+#Exercise 5.20 Part (a) - Write the equation of the regression line for predicting height. 
+Answer - using the least squares method, 
+ b= sx/sy R
+ X.bar <- 
+ X.sd <- 10.37
+ Y.sd <- 9.41
+ R <- 0.67
+ slope <- 0.6749
+ 
+ y - 171.14 = (0.607)(x - 108.20)
+ 
+#Part (b) - Interpret the slope and the intercept in this context.
+Answer - 
+ The slope is 0.607 which tells us that as the shoulder girth increases, the height increases. 
+ y-intercept : 105.36 <- y0
+ The meaning of the intercept is irrelevant to this situation since a person having 0 cm of shoulder girth would not be possible. Otherwise the meaning of the intercept is the mean when all the variables used in the model are 0. 
+ 
+#Part(c) - Calculate R^2 of the regression line for predicting height from shoulder girth, and interpret it in the context of this application.
+Answer - R^2 = 0.4489
+ There's about 45% reduction in the data's variations using information about the shoulder girth for predicting height using a linear model.
+ 
+#Part(d) - A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height of this student using the model.
+Answer - 166.1546 cm
+ 
+#Part (e) - The student from part (d) is 160 cm tall. Calculate the residual, and explain what this residual means.
+Answer - Residual = expected - observed = 160 - 166.1546 = -6.1546 
+ The residual of -6.1546 shows that the observed height is below the expected height by 6.1546 cms, which is quite large.
+ 
+#Part (f) - A one year old has a shoulder girth of 56 cm. Would it be appropriate to use this linear model to predict the height of this child?
+Answer - Expected Height using model - 139.45 
+ It would be inappropriate to use this linear model since the data plotted in the graph begins from around 80 cm, values below that would be unreasobnable. If we were to use our model and predict the height of the one year old, the height would be 139.45 cm which is very unrealistic.
+ 
+#Exercise 5.29 - Body Measurements Part IV - 
+The scatterplot and least squares summary below show the relationship between weight measured in kilograms and height measured in centimeters of 507 physically active individuals.
+
+#Exercise 5.29 Part(a) - Describe the relationship between height and weight.
+Answer - The relationship between height and weight is that as the height increases by 1 cm the weight increases by a slope of 1.0176 kgs showing a positive relationship between the 2 variables.
+
+#Part (b) - Write the equation of the regression line. Interpret the slope and intercept in context.
+Answer - w = 1.0176h - 105.0113
+The slope tells us that as the height increases the weight increases at a rate of 1.0176 kgs per 1 cm grown. The intercept here again is irrelevant in this example since the intercept is a negative value and weight cannot be negative.
+ 
+#Part (c) - Do the data provide strong evidence that an increase in height is associated with an increase in weight? State the null and alternative hypotheses, report the p-value, and state your conclusion.
+ Null Hypothesis - The weight is not affected by the height. The true coefficient for height is zero. 
+ Alternative Hypothesis - The weight is affected by the height/ The true coefficient for height is not zero/
+ P-Value - Since the p-value is extremely small we reject the null hypothesis since it is less than 0.05.
+ Conclusion - This means that there is good evidence that the height is a good predictor of weight. 
+ 
+#Part (d)- The correlation coefficient for height and weight is 0.72. Calculate the R^2 and interpret it in context.
+ Answer - R^2 - 0.5184
+  There's about 52% reduction in the data's variations using information about the height for predicting weight using a linear model.
+
+#Lab 3.6.2 - Simple Linear Regression
+```{r}
+library(MASS)
+
+head(Boston)
+```
+```{r}
+?Boston
+```
+
+```{r}
+lm.fit <- lm(medv ~ lstat)
+```
+
+```{r}
+lm.fit <- lm(medv ~ lstat, data = Boston)
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+```
+
+```{r}
+lm.fit
+```
+
+```{r}
+summary(lm.fit)
+```
+
+```{r}
+names(lm.fit)
+```
+
+```{r}
+coef(lm.fit)
+```
+
+```{r}
+confint(lm.fit)
+```
+
+```{r}
+predict (lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "confidence")  
+```
+
+```{r}
+predict (lm.fit, data.frame(lstat = (c(5,10,15))), interval = "prediction")
+```
+
+```{r}  
+plot(lstat, medv)
+abline(lm.fit)
+
+abline(lm.fit, lwd = 3)
+abline(lm.fit, lwd = 3, col = " red ")
+plot(lstat, medv, col = " red ")
+plot(lstat, medv, pch = 20)
+plot(lstat, medv, pch = "+")
+plot(1:20, 1:20, pch = 1:20)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(lm.fit)
+```
+
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
+ 
