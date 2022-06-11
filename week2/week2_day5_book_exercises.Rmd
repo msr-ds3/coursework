@@ -1,0 +1,87 @@
+---
+title: "week2_day5_book_exercises"
+author: "Christopher Esquivel"
+date: '2022-06-10'
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##
+Chapter 5 exercises
+5.20
+a) The equation is y = 0.607975x + 105.2963
+```{r}
+avg_shoulder_girth <- 108.20
+avg_height <- 171.14
+sd_shoulder_girth <- 10.37
+sd_height <- 9.41
+R <- 0.67
+
+b1 <- (sd_height / sd_shoulder_girth) * R
+b0 <- 105.2963
+
+```
+b) For the slope, for every increase of 10 cm in shoulder girth, we expect an increase in height of
+6.07675 cm on average. The intercept describes the average height (105.2963 cm) when the shoulder girth is a small value.
+
+c) R-squared is 0.4489 or 45%. R-squared is the strength of a linear fit.
+```{r}
+r_sqr <- R * R
+r_sqr
+```
+d) When the shoulder girth is 100 cm, the height predicted by the model is 166.0938
+```{r}
+y <- 0.607975 * (100) + 105.2963
+y
+```
+e) (100, 160) The residual is -6.1. This means that the linear model is overestimating.
+```{r}
+e <- 160 - 166.1
+e
+```
+f) When the shoulder girth is 56cm, the predicted height is 139.3429. The average height of a
+1 year old is 77-70 cm. The model is not appropiate to predict the height of this child.
+```{r}
+y <- 0.607975 * (56) + 105.2963
+y
+```
+5.29
+a) As height increases, weight increases.
+b) weight = -105.0113 + 1.0176 * height. The intercept is the estimated value when height is a small value. The slope indicates that in average, weight increases by 1.0176 as height increases.
+c) The null hypothesis is that there is no connection between height and weight. The alternative hypothesis states that as height increases, weight increases too. The p-value is 0.0000. By looking at the graph, I think that the alternative hypothesis is more likely.
+d) R-squared is 0.5184 or 52%. It represents the strength of the linear fit.
+
+Lab 3.6.2
+```{r}
+#library(MASS)
+#install.packages("ISLR2")
+#library(ISLR2)
+head(Boston)
+lm.fit <- lm(medv ~ lstat, data = Boston)
+summary(lm.fit)
+names(lm.fit)
+coef(lm.fit)
+confint(lm.fit)
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "confidence")
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "prediction")
+plot(Boston$lstat, Boston$medv)
+abline(lm.fit)
+abline(lm.fit, lwd = 3)
+abline(lm.fit, lwd = 3, col = "red")
+plot(Boston$lstat, Boston$medv, col = "red")
+plot(Boston$lstat, Boston$medv, pch = 20)
+plot(Boston$lstat, Boston$medv, pch = "+")
+plot(1:20, 1:20, pch = 1:20)
+par(mfrow = c(2, 2))
+plot(lm.fit)
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
