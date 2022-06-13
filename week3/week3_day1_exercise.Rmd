@@ -1,0 +1,261 @@
+---
+title: "week3_day1_exercise"
+author: "Sushobhan Parajuli"
+date: '2022-06-13'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##See if you can reproduce the table in ISRS 5.29 using the original dataset in body.dat.txt.
+
+```{r}
+df <- read.table("body.dat.txt")
+head(df)
+```
+```{r}
+df <- read.table("body.dat.txt")
+lm.fit <- lm(V23 ~ V24, df)
+summary(lm.fit)
+```
+
+## Do Labs 3.6.3 through 3.6.6 of Intro to Statistical Learning to get practice with linear models in R
+
+```{r}
+library(ISLR2)
+library(MASS)
+```
+
+## Lab 3.6.3 Multiple Linear Regression
+
+```{r}
+lm.fit <- lm(medv ~ lstat + age, Boston)
+summary(lm.fit)
+```
+
+```{r}
+lm.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+```
+
+```{r}
+library(car)
+vif(lm.fit)
+```
+
+## Age is not statistically significant, exclude from the model
+
+```{r}
+lm.fit1 <- lm(medv ~ . - age, data = Boston)
+summary(lm.fit1)
+```
+
+## Alternatively
+# This update the existing model
+```{r}
+lm.fit1 <- update(lm.fit, ~ . - age)
+```
+
+## 3.6.4 Interaction Terms
+
+```{r}
+summary(lm(medv ~ lstat * age, Boston))
+```
+# lstat * age is a short hand for lstat + age + lstat:age
+
+## 3.6.5 Non-linear Transformations of the Predictors
+
+```{r}
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), Boston)
+summary(lm.fit2)
+```
+
+```{r}
+lm.fit <- lm(medv ~ lstat, Boston)
+anova(lm.fit, lm.fit2)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(lm.fit2)
+```
+
+```{r}
+lm.fit5 <- lm(medv ~ poly(lstat, 5), Boston)
+summary(lm.fit5)
+```
+
+```{r}
+summary(lm(medv ~ log(rm), Boston))
+```
+
+## 3.6.6 Qualitative Predictors
+
+```{r}
+head(Carseats)
+```
+
+# Dummy variables for such qualitative predictors
+
+```{r}
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age, Carseats)
+summary(lm.fit)
+```
+
+```{r}
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+
+## 6.1
+
+```{r}
+df1 <- read.table("babyweights.txt")
+lm.fit <- lm(bwt ~ smoke, df1)
+summary(lm.fit)
+```
+
+# a) Write the equation of the regression line.
+  y = -8.94 * smoke + 123.05
+# b) Interpret the slope in this context, and calculate the predicted birth weight of babies born to smoker and non-smoker mothers.
+    The average weight of baby from smoker is        less than the average weight of baby from        non-smoker.
+    
+# predicted birth weight of babies born to smoker mothers.
+```{r}
+y = -8.94 * 1 + 123.05
+y
+```
+# predicted birth weight of babies born to non smoker mothers.
+```{r}
+y = -8.94 * 0 + 123.05
+y
+```
+# c) Is there a statistically significant relationship between the average birth weight and smoking?
+    Yes because the p-value is less than 0.05        which is our alpha.
+
+## 6.2
+
+```{r}
+df2 <- read.table("babyweights.txt")
+lm.fit <- lm(bwt ~ parity, df2)
+summary(lm.fit)
+```
+# a) Write the equation of the regression line.
+  y = -1.93 * parity + 120.07
+# b) Interpret the slope in this context, and calculate the predicted birth weight of first born and others.
+  Birth weight is higher for first born than others.
+
+# Predicted birth weight of first borns.
+```{r}
+y = -1.93 * 0 + 120.07
+y
+```
+# Predicted birth weight of others.
+```{r}
+y = -1.93 * 1 + 120.07
+y
+```
+# c) Is there a statistically significant relationship between the average birth weight and parity?
+  No because the p-value is greater than 0.05.
+  
+## 6.3
+
+```{r}
+df3 <- read.table("babyweights.txt")
+lm.fit <- lm(bwt ~ gestation + parity + age + height + weight + smoke, df3)
+summary(lm.fit)
+```
+
+# a) Write the equation of the regression line that includes all of the variables.
+  y =  0.44 * gestation - 3.33 * parity - 0.01 * age + 1.15 * height + 0.05 * weight - 8.40 * smoke - 80.41
+
+# b) Interpret the slopes of gestation and age in this context.
+  Birth weight is higher for higher gestation period, as the gestation period increases by 1 unit, birth weight increases by 0.44
+  However, an increase in mother's age by one unit decreases the baby's birth weight by 0.01 
+  
+# c) The coefficient of parity is different than in the linear model because the model fit line shifts with the increse of features. This changes the coefficient of parity.
+
+# d) Calculate the residual for the first observation in the data set.
+```{r}
+head(df3,1)
+```
+```{r}
+y = 120
+y_hat = 0.44 * 284 - 3.33 * 0 - 0.01 * 27 + 1.15 * 62 + 0.05 * 100 - 8.40 * 0 -80.41
+residual = y - y_hat
+residual
+```
+# e) variance of the residual = 249.28
+#    variance of the birth weights of all babies in the dataset = 332.57
+#    total observations = 1,236
+```{r}
+R_squared = 1 -(249.28 / 332.57)
+R_squared
+```
+```{r}
+adj_R_squared = 1 - (249.28 / 332.57) * ((1236-1)/(1236-6-1))
+adj_R_squared
+```
+## The validation set approach
+
+```{r}
+library(ISLR2)
+set.seed(1)
+train <- sample(392, 196)
+```
+
+```{r}
+lm.fit.new <- lm(mpg ~ horsepower, data = Auto, subset = train)
+```
+
+```{r}
+attach(Auto)
+mean((mpg - predict(lm.fit.new, Auto))[-train]^2)
+```
+
+```{r}
+lm.fit.new2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit.new2, Auto))[-train]^2)
+lm.fit.new3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit.new3, Auto))[-train]^2)
+```
+# We can use different training set by altering seed value and get slightly different errors.
+
+## 5.3.2 Leave one out cross validation
+
+```{r}
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+```
+```{r}
+lm.fit <- lm(mpg ~ horsepower, data = Auto)
+coef(lm.fit)
+```
+```{r}
+library(boot)
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+```
+```{r}
+cv.error <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+```
+
+## 5.3.3
+
+```{r}
+set.seed(15)
+cv.error.10 <- rep(0, 10)
+for (i in 1:10){
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+}
+cv.error.10
+```
