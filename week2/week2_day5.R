@@ -20,7 +20,7 @@
 # c)null hypothesis: slope is 0
 #   alt hypothesis: slope isn't 0 and is positive
 #   p-value = 23.13
-#   conclusion is that the probability of that p-value occuring in a world where
+#   conclusion is that the probability of that p-value ocurring in a world where
 #   the slope is 0 is 0.000. So we reject the null hypothesis
 # d) .72^2 = .5184. 51.84% of weight is explained by height
 
