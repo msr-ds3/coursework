@@ -1,0 +1,163 @@
+---
+title: "week3_day1_book_exercises"
+author: "Christopher Esquivel"
+date: '2022-06-13'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Chapter 5 exercises
+5.29
+```{r}
+df <- read.table("body.dat.txt")
+lm.fit <- lm(V23 ~ V24, df)
+summary(lm.fit)
+```
+Chapter 6 exercises
+6.1
+a) weight = -8.94x + 123.05
+b) Since the slope is negative, this means the average weight of the smoker's baby is going to be less than the average weight of the non-smoker's baby.
+-8.94 * 0 + 123.05 = 123.05
+-8.94 * 1 + 123.05 = 114.11
+c) By looking at the p-values, I believe there is a statistically significant relationship between the average birth weight and smoking.
+
+6.2
+a) weight = -1.93x + 120.07
+b) Since the slope is negative, the average weight of a child who is first born is greater than the average weight of a child who is not.
+-1.93 * 0 + 120.07 = 120.07
+-1.93 * 1 + 120.07 = 118.14
+c) There is not a statistically significance between average birth weight and parity.
+
+6.3
+a) weight = 0.44x1 - 3.33x2 - 0.01x3 + 1.15x4 + 0.05x5 - 8.40x6 - 80.41
+b) The more days of gestation, the likely it is for the baby to have a higher average weight. The older the mother, the more likely it is for the baby to have a lower average weight.
+c) When adding new variables the model changes. Thus the parity 
+d) The residual is -0.58
+e) R-squared is 0.2504435. R-adjusted is 0.2516662.
+
+Lab 3.6.3
+```{r}
+lm.fit <- lm(medv ~ lstat + age, data = Boston)
+summary(lm.fit)
+```
+```{r}
+lm.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+```
+```{r}
+vif(lm.fit)
+```
+```{r}
+lm.fit1 <- lm(medv ~ . - age, data = Boston)
+summary(lm.fit1)
+```
+```{r}
+lm.fit1 <- update(lm.fit, ~ . - age)
+```
+Lab 3.6.4
+```{r}
+summary(lm(medv ~ lstat * age, data = Boston))
+```
+```{r}
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), data = Boston)
+summary(lm.fit2)
+```
+```{r}
+lm.fit <- lm(medv ~ lstat, data = Boston)
+anova(lm.fit, lm.fit2)
+```
+```{r}
+par(mfrow = c(2, 2))
+plot(lm.fit2)
+```
+```{r}
+lm.fit5 <- lm(medv ~ poly(lstat, 5), data = Boston)
+summary(lm.fit5)
+```
+```{r}
+summary(lm(medv ~ log(rm), data = Boston))
+```
+Lab 3.6.6
+```{r}
+head(Carseats)
+```
+```{r}
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+summary(lm.fit)
+```
+```{r}
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+Lab 5.3.1
+```{r}
+set.seed(1)
+train <- sample(392, 196)
+```
+
+```{r}
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+```
+
+```{r}
+attach(Auto)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+```
+
+```{r}
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+```
+
+```{r}
+set.seed(2)
+train <- sample(392, 196)
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+```
+Lab 5.3.2
+
+```{r}
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+```
+
+```{r}
+lm.fit <- lm(mpg ~ horsepower, data = Auto)
+coef(lm.fit)
+```
+
+```{r}
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+```
+
+```{r}
+cv.error <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+```
+Lab 5.3.3
+
+```{r}
+set.seed(17)
+cv.error.10 <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+}
+cv.error.10
+```
+
