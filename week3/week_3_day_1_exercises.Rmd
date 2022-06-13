@@ -1,0 +1,247 @@
+---
+title: "week_3_day_1_exercises"
+output: html_document
+date: '2022-06-13'
+---
+
+-----Reproduce the table ISRS 5.29
+
+```{r}
+library(tidyverse)
+body <- read.table("body.dat.txt", header = FALSE, sep="")
+body %>% 
+  ggplot(data = body, mapping  = aes(x = V24, y = V23)) + 
+  geom_point() + 
+  xlab("Height (in kg)") + 
+  ylab("Weight (in cm)")
+
+```
+
+
+
+-------Labs 3.6.3 (ISL)
+```{r}
+library (MASS)
+library (ISLR2)
+
+
+lm.fit <- lm(medv ~ lstat + age , data = Boston)
+summary (lm.fit)
+
+lm.fit <- lm(medv ~ ., data = Boston)
+summary (lm.fit)
+
+library (car)
+vif (lm.fit)
+
+lm.fit1 <- lm(medv ~ . - age , data = Boston)
+summary (lm.fit1)
+
+```
+
+-------Labs 3.6.4 (ISL)
+
+```{r}
+summary (lm(medv ~ lstat * age , data = Boston))
+```
+
+
+-------Labs 3.6.5 (ISL)
+```{r}
+  
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), data = Boston)
+summary (lm.fit2)
+
+lm.fit <- lm(medv ~ lstat, data = Boston)
+anova (lm.fit , lm.fit2)
+
+par (mfrow = c(2, 2))
+plot (lm.fit2)
+
+lm.fit5 <- lm(medv ~ poly (lstat , 5), data = Boston)
+summary (lm.fit5)
+
+summary (lm(medv ~ log(rm), data = Boston))
+
+```
+
+
+-------Labs 3.6.6 (ISL)
+```{r}
+head(Carseats)
+
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+summary (lm.fit)
+
+attach (Carseats)
+contrasts (ShelveLoc)
+
+```
+
+
+
+------6.1 (ISRS)
+```{r}
+babyWeight <- read.delim("babyweights.txt", sep= " ")
+
+
+#part A
+regression_equation <- 123.05 - 8.94 * babyWeight$smoke   
+
+
+#part B
+Mothers_who_smoke <-123.05 - 8.94 * 1
+Mothers_who_dont_smoke <- 123.05 - 8.94 * 0
+
+Diff_In_Weight <- Mothers_who_dont_smoke - Mothers_who_smoke
+Diff_In_Weight
+
+```
+Part C
+
+Reject Null hypothesis  because babies' weight based on mothers who smoke or not are different. The data suggests there's a negative correlation between baby weight and mothers who smoke. 
+
+Reproduce results
+```{r}
+
+babyWeight <- read.delim("babyweights.txt", sep= " ")
+summary(lm(bwt ~ +smoke, data = babyWeight))
+
+```
+
+
+
+
+
+
+-----------6.2 (ISRS)
+```{r}
+babyWeight <- read.delim("babyweights.txt", sep= " ")
+
+#Part A
+regression_equation2 <- 120.07 - 1.93 * babyWeight$parity
+
+#Part B
+first_born <- 120.07 - 1.93 * 0
+not_first_born <- 120.07 - 1.93 * 1
+Diff_In_Weight2 <- first_born - not_first_born
+
+```
+
+Part C
+Fail to reject null hypothesis because there isn't enough data to suggest a weight difference between first born child and other children. 
+
+Reproduce results
+```{r}
+
+babyWeight <- read.delim("babyweights.txt", sep= " ")
+summary(lm(bwt ~ +parity, data = babyWeight))
+
+```
+
+----------6.3 (ISRS)
+
+```{r}
+babyWeight <- read.delim("babyweights.txt", sep= " ")
+#Part A
+babyWeight %>% regression_equation3 <- -80.41 + 0.44(gestation) - 0.33(parity) - 0.01(age) + 1.15(height) + 0.05(weight) + -8.40(smoke)
+
+```
+Part B 
+Age has a positive correlation and age has a negative correlation. 
+ 
+Part C
+Coefficient for parity might change as a result of introducing new variables like age. For example a female giving birth at a young age might have a baby at a heavier weight when compared to and older female giving birth. 
+
+Part D
+```{r}
+expected <- -80.41 + 0.44*284 - 0.33*0 - 0.01*27 + 1.15*62 + 0.05*100 + -8.40*0
+residual =  120 - expected
+residual
+
+```
+Part E
+```{r}
+R_squared  <- 1 - 249.28/332.57
+R_squared_adjusted <- 1 - (249.28/(1236-6-1))/(332.57/(1236-1))
+```
+
+ 
+Reproduce results
+```{r}
+
+babyWeight <- read.delim("babyweights.txt", sep= " ")
+summary(lm(bwt ~ ., data = babyWeight))
+
+```
+
+
+------ Lab 5.3.1 
+
+```{r}
+library (ISLR2)
+set.seed (1)
+train <- sample (392, 196)
+
+lm.fit <- lm(mpg ~ horsepower , data = Auto , subset = train)
+
+attach (Auto)
+mean ((mpg - predict (lm.fit , Auto))[-train ]^2)
+
+lm.fit2 <- lm(mpg ~ poly (horsepower , 2), data = Auto , subset = train)
+mean ((mpg - predict (lm.fit2 , Auto))[-train]^2)
+
+lm.fit3 <- lm(mpg ~ poly (horsepower , 3), data = Auto , subset = train)
+mean ((mpg - predict (lm.fit3 , Auto))[-train]^2)
+
+set.seed (2)
+train <- sample (392, 196)
+lm.fit <- lm(mpg ~ horsepower , subset = train)
+mean ((mpg - predict (lm.fit , Auto))[-train ]^2)
+
+lm.fit2 <- lm(mpg ~ poly (horsepower , 2), data = Auto , subset = train)
+mean ((mpg - predict (lm.fit2 , Auto))[-train]^2)
+
+lm.fit3 <- lm(mpg ~ poly (horsepower , 3), data = Auto , subset = train)
+mean ((mpg - predict (lm.fit3 , Auto))[-train]^2)
+```
+
+------ Lab 5.3.2
+
+```{r}
+glm.fit <- glm (mpg ~ horsepower , data = Auto)
+coef (glm.fit)
+
+lm.fit <- lm(mpg ~ horsepower , data = Auto)
+coef (lm.fit)
+
+library (boot)
+glm.fit <- glm (mpg ~ horsepower , data = Auto)
+cv.err <- cv.glm(Auto , glm.fit)
+cv.err$delta
+ cv.error <- rep (0, 10)
+for (i in 1:10) {
+  glm.fit <- glm (mpg ~ poly (horsepower , i), data = Auto)
+  cv.error[i] <- cv.glm(Auto , glm.fit)$delta[1]
+}
+cv.error
+
+
+
+```
+
+
+-------5.3.3
+```{r}
+set.seed (17)
+cv.error.10 <- rep (0, 10)
+for (i in 1:10) {
+  glm.fit <- glm (mpg ~ poly (horsepower , i), data = Auto)
+  cv.error.10[i] <- cv.glm (Auto , glm.fit , K = 10)$delta[1]
+}
+cv.error.10
+```
+
+
+
+
