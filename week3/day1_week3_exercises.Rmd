@@ -1,0 +1,197 @@
+---
+title: "day1_week3_exercises.Rmd"
+output: html_document
+date: '2022-06-13'
+---
+
+Reproduce the table in ISRS 5.29 using the original dataset in body.dat.txt
+```{r}
+library(tidyverse)
+library(scales)
+
+library(modelr)
+options(na.action = na.warn)
+
+library(broom)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+body_dat <- read.table("body.dat.txt", sep='')
+
+height_weight <- select(body_dat, "weight" = V23, "height" = V24)
+form <- as.formula(weight ~ height)
+model <- lm(form, height_weight)
+
+tidy(model)
+glance(model)
+
+```
+
+Labs 3.6.3 through 3.6.6 of Intro to Statistical Learning
+```{r}
+#3.6.3
+library(ISLR2)
+lm.fit <- lm(medv ~ lstat + age, data = Boston)
+summary(lm.fit)
+
+lm.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+
+library(car)
+vif(lm.fit)
+
+lm.fit1 <- lm(medv ~ . - age, data = Boston)
+summary(lm.fit1)
+
+#3.6.4
+summary(lm(medv ~ lstat*age, data = Boston))
+
+#3.6.5
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), data = Boston)
+summary(lm.fit2)
+
+lm.fit <- lm(medv ~ lstat, data = Boston)
+anova(lm.fit, lm.fit2)
+
+par(mfrow = c(2,2))
+plot(lm.fit2)
+
+lm.fit5 <- lm(medv ~ poly(lstat, 5), data = Boston)
+summary(lm.fit5)
+
+summary(lm(medv ~ log(rm), data = Boston))
+
+#3.6.6
+head(Carseats)
+
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+summary(lm.fit)
+
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+
+ISRS 
+6.1 
+a) weight = 123.05 - 8.94*smoke 
+
+b) If the mother is a smoker, the baby is 8.94 units of weight (ounces) lighter
+non-smoker mother, baby's birth weight --> weight = 123.05
+smoker mother, baby's birth weight --> weight = 123.05 - 8.94 = 114.11
+
+c) the p-value in the table is close to zero so we reject the null and we state that there is a statistically significant relationship between the average birth weight and smoking
+
+6.2
+a) weight = 120.07 - 1.93*parity 
+
+b) According to the slope, if the child is not a first born, his/her weight will decrease by 1.93 ounces, otherwise it will stay the same.
+firstborn birth weight --> weight = 120.07 
+not a firstborn birth weight --> weight = 120.07 - 1.93 = 118.14
+
+c) Since the p-value is close to 10% (as shown in the table), we fail to reject the null, 
+therefore there is no relationship between the average birth weight and parity
+
+6.3
+a) bwt = -80.41 + 0.44xgestation - 3.33xparity - 0.01xage + 1.15xheight + 0.05xweight - 8.40xsmoke
+b) For an increase of one unit (a day) in gestation, the total btw of the baby increases by 0.44 units
+   For an increase of one unit in the mother's age, the total btw of the baby decreases by 0.01 units
+c) Parity is probably correlated to another variable (for example the mother's age), so before, when we were only considering that and not other variable, there was probably a bias in estimating it.
+d) 
+```{r}
+actual_value <- 120
+predicted_value <-  -80.41 + 0.44*284 - 3.33*0 - 0.01*27 + 1.15*62 + 0.05*100 - 8.40*0 #120.58
+```
+
+e)
+R**2 = amount of variability in the response that was explained by the model
+R**2adj = 1 - (Var(ei)/(n-k-1))/(Var(yi)/(n-1))
+```{r}
+r_sq <- 1 - 249.28/332.57
+r_sq_Adj <- 1 - ((249.28/332.57) * ((1236 - 1)/(1236 - 6 -1)))
+r_sq
+r_sq_Adj
+```
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+options(na.action = na.warn)
+library(broom)
+bw <- read.table("babyweights.txt", sep="")
+
+form1 <- as.formula(bwt ~ smoke)
+model1 <- lm(form1, bw)
+tidy(model1)
+
+form2 <- as.formula(bwt ~ parity)
+model2 <- lm(form2, bw)
+tidy(model2)
+
+form3 <- as.formula(bwt ~ .)
+model3 <- lm(form3, bw)
+tidy(model3)
+
+```
+
+ISL
+
+```{r}
+#5.3.1
+library(ISLR2)
+set.seed(1)
+train <- sample(392, 196)
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+
+attach(Auto)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+
+
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+
+set.seed(2)
+train <- sample(392, 196)
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+
+attach(Auto)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+
+
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+
+#5.3.2
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+
+lm.fit <- lm(mpg ~ horsepower, data = Auto)
+coef(lm.fit)
+
+library(boot)
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+
+cv.error <- rep(0, 10)
+for(i in 1:10){
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+
+#5.3.3
+set.seed(17)
+cv.error.10 <- rep(0, 10)
+for(i in 1:10){
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K=10)$delta[1]
+}
+cv.error.10
+```
+
