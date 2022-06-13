@@ -1,0 +1,40 @@
+5.29
+-----
+
+
+
+
+
+6.1 (285/291)
+-----
+a-	y = 123.05 - 8.94(x)
+b-	-8.94, Smoker: 114.11  NonSmoker: 123.05
+c-	Yes, the P=value of 0.0000 is less than 0.05
+
+
+6.2
+-----
+a-	y = 120.07 - 1.93(x)
+b-	-1.93, FirstBorn: 120.07 Others: 118.14
+c-	No, because we get a P-value larger than 0.05
+
+
+
+
+6.3
+-----
+a-	y  = -80.41 + 0.44(gestation) - 3.33(parity) - 0.01(age) + 1.15(height) + 0.05(weight) - 8.40(smoke)
+  
+b-	Gestation: 0.44, Age: -0.01
+
+c-	Once you include other factors, it has an effect on Parity.
+
+d-	y= y - y_hat
+
+	y_hat = -80.41 + 0.44(284) - 3.33(0) - 0.01(27) + 1.15(62) + 0.05(100) - 8.40(0) = 120.58
+	
+	120 - 120.58 = -0.58  
+	
+e-	R^2 = 1 -(249.28 / 332.57) = 0.2504
+	Adjusted: R^2 = 1- [var(e_i)/(n-k-1)] / [(var(y_i)/(n-1)] = 1 -  [(249.28 / (1236-6-1)] / [332.57/(1236-1)] = 0.2468
+	 
