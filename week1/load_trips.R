@@ -14,7 +14,6 @@ parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
 # load each month of the trip data into one big data frame
 csvs <- Sys.glob('*-tripdata.csv')
 trips <- data.frame()
-
 for (csv in csvs) {
   print(csv)
   tmp <- read_csv(csv, na='\\N')
@@ -30,7 +29,6 @@ for (csv in csvs) {
 }
 
 # replace spaces in column names with underscores
-
 names(trips) <- gsub(' ', '_', names(trips))
 
 # add a column for year/month/day (without time of day)
@@ -44,7 +42,7 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 ########################################
 
 # load weather data from belvedere tower in central park
-# https://www.ncei.noaa.gov/orders/cdo/2991681.csv
+# https://www.ncei.noaa.gov/orders/cdo/2992179.csv
 # ordered from
 # http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
 weather <- read.table('weather.csv', header=T, sep=',')
@@ -58,4 +56,5 @@ weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
+
 
