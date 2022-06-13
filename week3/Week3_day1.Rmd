@@ -1,0 +1,53 @@
+6.1 
+a. Regression line equation 
+ y = 123.05-8.94x 
+ slope = -8.94
+ intercept = 123.05
+ 
+ b. plugging in 1 for smoker and 0 for non-smoker. 
+ For smokers 
+ y = 123.05 - 8.94(1) = 114.11 
+ 
+ For non smokers
+ y = 123.05 - 8.94(0) = 123.05 
+ 
+ c. It is significant because p-value is < 0.05. 
+ 
+ 6.2 
+ 
+ a. Regression line equation 
+ 
+ y = 120.07 - 1.93X 
+ 
+ b. plugging in x =0 for first born. y = 120.07
+    plugging in x =1 for others. y = 118.14 
+    
+    c. 0.1052 >= 0.05. i.e., p-value is not <= 0.05. Hence, it is not significant. 
+    
+
+6.3 
+
+a. y = -80.41 + 0.44(gestation) - 3.33 (parity) - 0.01 (age) + 1.15 (height) + 0.05 (weight) - 8.40 (smoke)
+
+b. slope of gestation = 0.44
+slope of age = -0.01 
+
+c. There might be difference because the measurement is included when holding the other variables constant. 
+
+d. residual 
+ei = yi - y^i 
+
+```{r}
+ei = 120 - (-80.41 + 124.96 - 0.27 + 71.3 +5)
+ei
+```
+e. r^2 = 1 - var(ei)/ var(yi) 
+```{r}
+1 - 249.28/332.57
+```
+
+f. adjusted R^2 = r^2 * n-1/ n-k-1
+```{r}
+0.25044 * (1236-1)/(1236-6-1)
+```
+
