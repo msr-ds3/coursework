@@ -1,0 +1,240 @@
+#Week 3 Day 1 Exercises 
+```{r}
+library(tidyverse)
+
+theme_set(theme_bw())
+
+set.seed(42)
+```
+#Reproduce the ISRS 5.29 using the original dataset
+```{r}
+library(tidyr)
+library(tidyverse)
+library(readr)
+
+body_data <- read.table("body.dat.txt", header = FALSE, sep = "")
+
+?read_delim
+
+body_data %>% rename(weight = V23, height = V24)
+
+#plot the graph
+ggplot(body_data, aes(x = V24, y = V23)) +
+  geom_point() +
+  xlab("Height (in cm)") + 
+  ylab("Weight (in kg)")
+
+```
+
+#Lab 3.6.3 - Multiple Linear Regression
+```{r}
+library(MASS)
+
+lm.fit <- lm(medv ~ lstat + age , data = Boston)
+summary (lm.fit)
+
+lm.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+
+library(car)
+#variance inflation factors
+vif(lm.fit)
+
+lm.fit1 <- lm(medv ~ . - age , data = Boston)
+summary(lm.fit1)
+
+lm.fit1 <- update(lm.fit , ~ . - age)
+```
+
+#Lab 3.6.4 - Interaction Terms
+```{r}
+ summary(lm(medv ~ lstat * age , data = Boston))
+```
+
+#Lab 3.6.5 - Non-linear Transformations of the Predictors
+```{r}
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), data = Boston)
+summary(lm.fit2)
+
+lm.fit <- lm(medv ~ lstat, data=Boston)
+anova(lm.fit ,lm.fit2)
+
+par(mfrow = c(2, 2))
+plot(lm.fit2)
+
+par(mfrow = c(2, 2))
+plot(lm.fit2)
+
+lm.fit5 <- lm(medv ~ poly(lstat ,5), data = Boston)
+summary(lm.fit5)
+
+summary(lm(medv ~ log(rm), data = Boston))
+```
+
+#Lab 3.6.6 - Quadratic Predictors
+```{r}
+library(MASS)
+library(ISLR2)
+
+head(Carseats)
+
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age ,
+data = Carseats)
+summary(lm.fit)
+
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+
+#Exercises 6.1 - Baby Weights, Part I
+The Child Health and Development Studies investigate a range of topics. One study considered all pregnancies between 1960 and 1967 among women in the Kaiser Foundation Health Plan in the San Francisco East Bay area. Here, we study the relationship between smoking and weight of the baby. The variable smoke is coded 1 if the mother is a smoker, and 0 if not. The summary table below shows the results of a linear regression model for
+predicting the average birth weight of babies, measured in ounces, based on the smoking status of
+the mother.
+
+The variability within the smokers and non-smokers are about equal and the distributions are symmetric. With these conditions satisfied, it is reasonable to apply the model. (Note that we don’t need to check linearity since the predictor has only two levels.)
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+library(broom)
+
+baby_weights <- read.delim("babyweights.txt",sep=" ")
+summary(lm(bwt ~ smoke, data = baby_weights))
+```
+
+#Exercise 6.1 - Part(a) - Write the equation of the regression line.
+Answer - y = 123.05 - 8.94s
+
+#Exercise 6.1 - Part(b) -  Interpret the slope in this context, and calculate the predicted birth weight of babies born to smoker and non-smoker mothers
+Answer - The slope is -8.94 which tells us that for mothers who smoke the baby weight decreases.  
+For smoker mothers: y = 123.05 - 8.94 * 1
+For nonsmoker mothers: y = 123.05 - 8.94 * 0
+
+#Exercise 6.1 - Part(c) - Is there a statistically significant relationship between the average birth weight and smoking?
+Answer - The p-value given to us by the table is 0.0000 and if we choose alpha value of 0.05 then we can reject the null hypothesis. The null hypothesis is that the weight of babies born to mothers who are nonsmokers are the same as the number of babies born to mothers who are smokers.
+
+#Exercise 6.2 - Baby Weights, Part II
+Exercise 6.1 introduces a data set on birth weight of babies. Another variable we consider is parity, which is 0 if the child is the first born, and 1 otherwise. The summary table below shows the results of a linear reg
+```{r}
+summary(lm(bwt ~ parity, data = baby_weights))
+```
+
+#Exercise 6.2 - Part(a) -  Write the equation of the regression line.
+Answer - y = 120.07 - 1.93p
+
+#Exercise 6.2 - Part(b) - Interpret the slope in this context, and calculate the predicted birth weight of first borns and others.
+Answer - The slope in this context tells us that for babies that are not first born the weight decreases by 1.93.
+
+For first borns: y = 120.07 - 1.93 * 0
+For others: y = 120.07 - 1.93 * 1
+
+#Exercise 6.2 - Part(c) -  Is there a statistically significant relationship between the average birth weight and parity?
+Answer - The p-value given to us by the table is 0.1052 and again if we choose our threshold value as 0.05 then this p-value is greater and thus we fail to reject our null hypothesis. The null hypothesis in this example is that the weight of first born babies is the same as the weight of other babies. Thus, there is not enough evidence that supports the claim that there is a difference between the weights of babies who are first born and those that are not. 
+
+#Exericise 6.3 - Baby Weights, Part III
+We considered the variables smoke and parity, one at a time, in modeling birth weights of babies in Exercises 6.1 and 6.2. A more realistic approach to modeling
+infant weights is to consider all possibly related variables at once. Other variables of interest include length of pregnancy in days (gestation), mother’s age in years (age), mother’s height in inches (height), and mother’s pregnancy weight in pounds (weight). Below are three observations from this data set.
+The summary table below shows the results of a regression model for predicting the average birth weight of babies based on all of the variables included in the data set.
+
+```{r}
+summary(lm(bwt ~ ., data = baby_weights))
+```
+
+#Exercise 6.3 - Part(a) - Write the equation of the regression line that includes all of the variables.
+Answer - y = -80.41 + 0.44g - 3.33p - 0.01a + 1.15h + 0.05w - 8.40s
+
+where g = gestation, p = parity, a = age, h = height, w = weight, and s = smoke.
+
+#Exercise 6.3 - Part(b) - Interpret the slopes of gestation and age in this context.
+Answer - The slope of gestation tells us that there is a 0.44 ounce increase for each ---- of gestation. The slope of age tells us that for each age there is a decrease of 0.01 in the weight. 
+
+#Exercise 6.3 - Part(c) -  The coefficient for parity is different than in the linear model shown in Exercise 6.2. Why might there be a difference?
+Answer - One reason it might be different is that parity might have a relationship with one of the other variables being used to make a prediction. For example, parity and age might have some relationship together which would change the coefficients for parity from the linear model.
+
+#Exercise 6.3 - Part(d) - Calculate the residual for the first observation in the data set.
+Answer - residual = observed - expected
+         residual = 120 - 120.58
+         residual = -0.58
+```{r}
+-80.41 + 0.44 * 284 + 0 -0.01 * 27 + 1.15 * 62 + 0.05 * 100 + 0
+```
+
+#Exercise 6.3 - Part(e) - The variance of the residuals is 249.28, and the variance of the birth weights of all babies in the data set is 332.57. Calculate the R^2 and the adjusted R^2. Note there are 1,236 observations in the data set. 
+Answer - R^2 = 0.2504435
+        Adjusted R^2 = 0.2467842
+```{r}
+var_of_residuals <- 249.28
+var_of_babyweights <- 332.57
+
+R_squared <- 1 - (var_of_residuals/var_of_babyweights)
+R_squared
+
+adjusted_R_squared <- 1 - (var_of_residuals/(1236-6-1))/(var_of_babyweights/(1236-1))
+adjusted_R_squared
+
+```
+
+#Lab 5.3.1 - The Validation Set Approach
+```{r}
+library(ISLR2)
+set.seed(1)
+train <- sample(392, 196)
+
+lm.fit <- lm(mpg ~ horsepower , data = Auto , subset = train)
+
+attach(Auto)
+mean((mpg - predict(lm.fit, Auto))[-train ]^2)
+
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto,
+subset = train)
+mean((mpg - predict (lm.fit2, Auto))[-train]^2)
+
+lm.fit3 <- lm(mpg ~ poly (horsepower, 3), data = Auto,
+subset = train)
+mean((mpg - predict (lm.fit3, Auto))[-train]^2)
+
+set.seed(2)
+train <- sample(392, 196)
+lm.fit <- lm(mpg ~ horsepower, subset = train)
+mean((mpg - predict(lm.fit, Auto))[-train ]^2)
+
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto,
+subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto,
+subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+```
+
+#Lab 5.3.2 - Leave-One-Out Cross-Validation
+```{r}
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+
+lm.fit <- lm(mpg ~ horsepower, data = Auto)
+coef(lm.fit)
+
+library(boot)
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm (Auto, glm.fit)
+cv.err$delta
+
+cv.error <- rep(0, 10)
+for (i in 1:10) {
+ glm.fit <- glm (mpg ~ poly (horsepower, i), data =Auto)
+ cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+ }
+cv.error
+```
+
+#Lab 5.3.3 - k-Fold Cross-Validation
+```{r}
+set.seed (17)
+cv.error.10 <- rep(0, 10)
+for (i in 1:10) {
+ glm.fit <- glm (mpg ~ poly (horsepower, i), data = Auto)
+ cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+ }
+cv.error.10
+```
