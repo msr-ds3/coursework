@@ -1,0 +1,139 @@
+---
+title: "day5_week2_exercises"
+output: html_document
+date: '2022-06-13'
+---
+Chapter 5
+
+*Exercise 5.20* 
+
+Mean shoulder girth = mean x = 108.20 cm 
+sd shoulder girth = 10.37 cm
+
+mean height = mean y = 171.14 cm 
+sd height = 9.41 cm
+
+correlation = R = 0.67
+
+(a) Write the equation of the regression line for predicting height
+```{r}
+mean_shoulder <- 108.20
+sd_shoulder <- 10.37
+mean_height <- 171.14
+sd_height <- 9.41
+r <- 0.67
+
+b1 <- r * (sd_height / sd_shoulder)
+b1
+## [1
+```
+```{r}
+b0 <- mean_height - (b1 * mean_shoulder)
+b0
+```
+The equation for the regression line is: y = b1x + b0 --> height = 0.60797 * girth + 105.3571
+
+(b) Interpret the slope and the intercept in this context.
+
+The slope shows that for every 1 cm increase in shoulder girth (x = explanatory variable), there is an increase of 0.608 in height (y = outcome)
+
+
+The intercept describes the average outcome of y (height) when x  (girth) is 0, if there happens to be at least an observationn in which x = 0, but this is not the case, so the intercept is not relevant.
+
+(c) Calculate R**2 of the regression line for predicting height from shoulder girth, and interpret it in the context of the application.
+
+```{r}
+r_sq <- r^2
+r_sq
+```
+R**2 describes the amount of variation in the response that is explained by the least squares line (which is supposed to be more accurate than the regular line). In this case there would be around 45% of variation in the linear model.
+
+(d) A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height of this student using the model.
+```{r}
+y = b1*100 + b0
+y
+```
+
+
+(e) The student from part (d) is 160 cm tall. Calculate the residual, and explain what this residual means.
+```{r}
+actual_height = 160
+predicted_height = y
+e = actual_height - predicted_height 
+e
+
+```
+-6.154606 is the difference between what our model predicted and what we actually measured, the model is adding around 6cm to the student's actual height.
+
+(f) A one year old has a shoulder girth of 56 cm. Would it be appropriate to use this linear model to predict the height of this child?
+No because the shortest height in the graph is around 145cm, which is much taller than a one year old's height.
+
+
+
+*Exercise 5.29*
+
+(a) Describe the relationship between height and weight.
+There is a strong and positive linear relationship between height and weight because b0 = 1.0176
+
+(b) Write the equation of the regression line. Interpret the slope and intercept in context.
+w = 1.0176*h - 105.0113
+The slope shows that for an increase of 1cm in height, there is an increase of 1.0176 kg in weight.
+
+The intercept is not relevant because no observation in which height = 0 cm and weight = -105 kg is possible.
+
+(c) Do the data provide strong evidence that an increase in height is associated with an increase in weight? State the null and alternative hypotheses, report the p-value, and state your
+conclusion.
+
+H0: β1 = 0. The true linear model has slope zero. No relationship between height and weight.
+
+HA: β1 != 0. The true linear model has a slope different than zero. The higher the height, the greater the weight of a person.
+
+We would reject H0 in favor of HA if the data provide strong evidence that the true slope parameter is greater than zero. 
+
+To assess the hypotheses, we identify a standard error for the
+estimate, compute an appropriate test statistic, and identify the p-value.
+
+The p-value is close to 0 in the table shown, so we can reject the null and state that the slope is > 0, therefore there is a relationship between height and weight.
+
+(d) The correlation coefficient for height and weight is 0.72. Calculate R**2 and interpret it in context.
+
+R**2 = 0.5184, which means that there was a reduction of 51.84% in the data's variation by using information about height, to predict weight
+
+An Introduction to Statistical Learning 
+*Lab 3.6.2*
+```{r}
+library(ISLR2)
+lm.fit <- lm(medv ~ lstat, data = Boston)
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+# lm.fit
+# summary(lm.fit)
+# names(lm.fit)
+# coef(lm.fit)
+# confint(lm.fit)
+# predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "confidence")
+# predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "prediction")
+plot(lstat, medv)
+#abline(lm.fit) # least sqaures regression line
+
+#abline(lm.fit, lwd = 3)
+abline(lm.fit, lwd = 3, col = "red")
+
+plot(lstat, medv, col = "red")
+plot(lstat, medv, pch = 20)
+plot(lstat, medv, pch = "+")
+plot(lstat, medv, pch = 1:20)
+
+#RESIDUALS 
+par(mfrow = c(2,2))
+plot(lm.fit)
+
+# or
+
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
