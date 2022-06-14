@@ -35,6 +35,12 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+
+ratings %>% 
+  group_by(rating) %>%
+  ggplot(aes(x = rating)) +
+  geom_bar() +
+  scale_y_continuous(label = comma)
 ```
 
 ## Per-movie stats
@@ -42,16 +48,36 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+
+ratings_by_movie <- ratings %>%
+  group_by(movie_id) %>%
+  summarize(average_rating = mean(rating),
+            num_ratings = n())
+
+ratings_by_movie
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+
+ratings_by_movie %>%
+  ggplot(aes(x = num_ratings)) +
+  geom_density(fill = "grey") +
+  scale_x_log10(label = comma) + 
+  xlab("Number of Ratings by Movie") +
+  ylab("Density")
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+ratings_by_movie %>%
+  ggplot(aes(x = average_rating)) +
+  geom_density(fill = "grey") +
+  xlab("Mean Ratings by Movie") +
+  ylab("Density")
 ```
 
 ```{r cdf-movie-pop}
@@ -59,7 +85,17 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+ratings_by_movie <- ratings_by_movie %>%
+  arrange(desc(num_ratings)) %>%
+  mutate(rank = rank(desc(num_ratings)), cdf = cumsum(num_ratings) / sum(num_ratings))
+
 # plot the CDF of movie popularity
+
+ratings_by_movie %>%
+  ggplot(aes(x = rank, y = cdf)) +
+  geom_line() +
+  xlab("Rank") +
+  ylab("Cumulative Popularity")
 ```
 
 
@@ -67,11 +103,24 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+
+ratings_by_user <- ratings %>%
+  group_by(user_id) %>%
+  summarize(average_rating = mean(rating), num_ratings = n())
+
+ratings_by_user
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+
+ratings_by_user %>%
+  ggplot(aes(x = num_ratings)) +
+  geom_density(fill = "grey") +
+  scale_x_log10() +
+  xlab("Number of Ratings by User") +
+  ylab("Density")
 ```
 
 # Anatomy of the long tail
@@ -89,4 +138,61 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+ratings_by_user_least10 <- ratings_by_user %>% 
+  filter(num_ratings >= 10)
+
+ratings_least10 <- left_join(ratings_by_user_least10, ratings, by = "user_id")
+
+ratings_least10 <- left_join(ratings_least10, ratings_by_movie, by = "movie_id")
+
+rank_user_movie <- ratings_least10 %>%
+  transmute(user_id, movie_id, rank)
+
+user_sat <- rank_user_movie %>% 
+  group_by(user_id) %>%
+  summarize(sat_100 = max(rank), sat_90 = quantile(rank, 0.9))
+
+count_sat_100 <- user_sat %>%
+  group_by(sat_100) %>%
+  summarize(count = n()) %>%
+  arrange(sat_100)
+
+count_sat_90 <- user_sat %>%
+  group_by(sat_90) %>%
+  summarize(count = n()) %>%
+  arrange(sat_90)
+
+count_sat_100 <- count_sat_100 %>%
+  mutate(percent_sat = cumsum(count) / sum(count))
+
+count_sat_90 <- count_sat_90 %>%
+  mutate(percent_sat = cumsum(count) / sum(count))
+
+ggplot() +
+  geom_line(aes(x = sat_100, y = percent_sat), data = count_sat_100) +
+  geom_line(aes(x = sat_90, y = percent_sat), data = count_sat_90) +
+  xlab("Inventory Size") +
+  ylab("Percent of Users Satisfied") +
+  scale_y_continuous(label = percent) + 
+  geom_vline(xintercept = 3000, linetype = "dashed")
+
+# further cleaning 
+
+count_sat_100_to_bind <- count_sat_100 %>%
+  transmute(size = sat_100, count, percent_sat, sat = "100% Satisfied")
+
+count_sat_90_to_bind <- count_sat_90 %>%
+  transmute(size = sat_90, count, percent_sat, sat = "90% Satisfied")
+
+total_sat <- bind_rows(count_sat_100_to_bind, count_sat_90_to_bind)
+
+total_sat %>%
+  ggplot(aes(x = size, y = percent_sat, color = sat)) +
+  geom_line() +
+  scale_y_continuous(label = percent) +
+  xlab("Inventory") +
+  ylab("Percent of Users Satisfied") +
+  labs(color = "Amount Satisfied") + 
+  geom_vline(xintercept = 3000, linetype = "dashed")
 ```
