@@ -64,7 +64,7 @@ mean_count_ratings_movie %>% ggplot(mapping = aes(x = mean_ratings)) + geom_dens
 # rank movies by popularity and compute the cdf, or fraction of movies covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
-movies_ranks <- mean_count_ratings_movie %>% arrange(desc(count)) %>% mutate(rank = rank(desc(count), ties.method = "random"), cdf = cumsum(count)/sum(count))
+movies_ranks <- mean_count_ratings_movie %>% arrange(desc(num_ratings)) %>% mutate(rank = rank(desc(num_ratings), ties.method = "random"), cdf = cumsum(num_ratings)/sum(num_ratings))
 
 # plot the CDF of movie popularity
 ggplot(movies_ranks, mapping = aes(x = rank, y = cdf)) + geom_smooth() + geom_vline(xintercept=c(3000), linetype="dotted") + xlab("Movie Rank") + ylab("CDF")
