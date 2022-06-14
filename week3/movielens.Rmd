@@ -35,6 +35,11 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+
+ratings %>% 
+  ggplot(aes(x = rating)) + 
+  geom_bar()
+
 ```
 
 ## Per-movie stats
@@ -42,16 +47,37 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+
+ratings %>%
+  group_by(movie_id) %>%
+  summarize(count = n(),
+            mean = mean(rating))
+
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+
+ratings %>%
+  ggplot(aes(x = movie_id)) +
+  geom_bar() +
+  scale_x_log10()
+
+
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+ratings %>%
+  group_by(movie_id) %>%
+  summarize(count = n(),
+            mean = mean(rating)) %>%
+  ggplot(aes(x = mean)) + 
+  geom_density(fill = "black")
+
 ```
 
 ```{r cdf-movie-pop}
@@ -59,7 +85,23 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+movie_ranks <- ratings %>% 
+  group_by(movie_id) %>%
+  summarize(num_ratings = n()) %>%
+  mutate(rank = rank(desc(num_ratings))) %>%
+  arrange(rank)
+
+
 # plot the CDF of movie popularity
+
+movie_ranks %>%
+  mutate(frac_ratings = cumsum(num_ratings) / sum(num_ratings)) %>%
+  ggplot(aes(x = rank, y = frac_ratings)) +
+  geom_line() +
+  scale_y_continuous(label = percent) +
+  xlab("Movie Rank") + 
+  ylab("CDF")
+
 ```
 
 
@@ -67,11 +109,24 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+
+ratings %>%
+  group_by(user_id) %>%
+  summarize(count = n(),
+            mean_ratings = mean(rating))
+
+
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+
+ratings %>%
+  ggplot(aes(x = user_id)) +
+  geom_bar() +
+  scale_x_log10()
+
 ```
 
 # Anatomy of the long tail
@@ -89,4 +144,38 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+rated_10_movies <- ratings %>%
+  group_by(user_id) %>%
+  mutate(num_movies = n()) %>%
+  filter(num_movies >= 10)
+
+user_satisfaction <- merge(rated_10_movies, movie_ranks, by = 'movie_id')
+
 ```
+```{r}
+df1 <- user_satisfaction %>%
+  group_by(user_id) %>%
+  mutate(low_movie = max(rank)) %>%
+  ungroup() %>%
+  group_by(low_movie) %>%
+  summarize(num_people = n())
+
+df2 <- user_satisfaction %>%
+  group_by(user_id) %>%
+  mutate(weird_movie = quantile(rank, 0.9)) %>%
+  ungroup() %>%
+  group_by(weird_movie) %>%
+  summarize(people = n())
+  
+ggplot() + 
+  geom_line(data = df1, aes(x = low_movie, y = cumsum(num_people) / sum(num_people))) + 
+  xlab('Inventory') +
+  ylab('Percent of people satisfied') +
+  geom_vline(aes(xintercept = 3000), linetype = 'dashed') +
+  geom_line(data = df2, aes(x = weird_movie, y = cumsum(people) / sum(people))) + 
+  xlab('Inventory') +
+  ylab('Percent of people satisfied')
+
+```
+
