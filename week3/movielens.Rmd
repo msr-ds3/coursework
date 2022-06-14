@@ -40,7 +40,7 @@ head(ratings) %>% kable()
 ## Per-movie stats
 
 ```{r aggregate-by-movie}
-# aggregate ratings by movie, computing mean and number of ratings
+# aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
 ```
 
