@@ -35,6 +35,13 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+#okay, so num of ratings along with avg rating
+#first I probably want timestamp gone
+#reference https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
+ratings = subset(ratings, select = -timestamp )
+#okay, i group by movies, i can then grab the average of each one
+#AND the num of rows. which ought to be ratings
+group_by(ratings, rating) %>% ggplot(aes(x = rating)) + geom_histogram(bins = 10) + xlab('Rating') + ylab('Number of ratings')
 ```
 
 ## Per-movie stats
@@ -42,16 +49,21 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+group_by(ratings, movie_id) %>% summarise(avg = mean(rating), count = n())
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+group_by(ratings, movie_id) %>% summarise(popularity = n()) %>% ggplot(aes(x = popularity)) + geom_histogram() + scale_x_log10()
+
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+group_by(ratings, movie_id) %>% summarise(avg = mean(rating)) %>% 
+ggplot(aes(x = avg)) + geom_density(fill = "black") +xlab("Mean Rating by Movie")
 ```
 
 ```{r cdf-movie-pop}
@@ -59,6 +71,13 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+# reference https://cmdlinetips.com/2020/08/dplyr-arrange-sort-reorder-by-variable/
+library(dplyr)
+for_cdf <-group_by(ratings, movie_id) %>% summarise(count = n()) %>% mutate(ranking = rank(desc(count))) %>% arrange(ranking) %>% mutate(c_sum = cumsum(count)/sum(count) )
+
+for_cdf
+
+for_cdf %>% ggplot(aes(x = ranking, y = c_sum)) + geom_line()
 # plot the CDF of movie popularity
 ```
 
@@ -67,11 +86,16 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+group_by(ratings, user_id) %>% summarise(count = n(), avg = mean(rating))
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+
+group_by(ratings, user_id) %>% summarise(num_ratings = n()) %>% ggplot(aes(x = num_ratings)) + geom_histogram() + scale_x_log10()
+
+
 ```
 
 # Anatomy of the long tail
@@ -89,4 +113,44 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+
+
+users_movies <- group_by(ratings, user_id) #%>% mutate(num_reviews = n())
+
+View(users_movies)
+
+ hundred_satisfied <- group_by(ratings, movie_id) %>%
+  summarise(count = n()) %>%
+  mutate(ranking = rank(desc(count))) %>%
+  arrange(ranking) %>%
+  inner_join(users_movies, by=c('movie_id'='movie_id')) %>%
+  subset( select = -c(count, rating) ) %>%
+  ungroup() %>%
+  group_by(user_id) %>%
+  summarise(max_weird = max(ranking)) %>%
+  arrange(max_weird) %>%
+  group_by(max_weird) %>%
+  summarise(num_users = n()) %>%
+  mutate(amount_pleased = cumsum(num_users)/sum(num_users))
+  
+ninety_satisfied <- group_by(ratings, movie_id) %>%
+  summarise(count = n()) %>%
+  mutate(ranking = rank(desc(count))) %>%
+  arrange(ranking) %>%
+  inner_join(users_movies, by=c('movie_id'='movie_id')) %>%
+  subset( select = -c(count, rating) ) %>%
+  ungroup() %>%
+  group_by(user_id) %>%
+  filter(ranking >= quantile(ranking, probs = .9)) %>%
+  summarise(ninety_weird = min(ranking)) %>%
+  arrange(ninety_weird) %>%
+  group_by(ninety_weird) %>%
+  summarise(num_users = n()) %>%
+  mutate(amount_pleased = cumsum(num_users)/sum(num_users))
+ 
+
+ggplot() + geom_line(data = hundred_satisfied, aes(x = max_weird, y = amount_pleased))+ geom_line(data = ninety_satisfied, aes(x = ninety_weird, y = amount_pleased))
+
+
 ```
