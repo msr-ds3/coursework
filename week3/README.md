@@ -14,7 +14,7 @@ This week starts with a discussion of modeling and machine learning, and then in
   * Read section 5.1 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
 
 
-<!--
+
 
 # Day 2
 
@@ -24,7 +24,7 @@ This week starts with a discussion of modeling and machine learning, and then in
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-
+<!--
 
 # Day 3
 
