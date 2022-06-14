@@ -24,7 +24,7 @@ This week starts with a discussion of modeling and machine learning, and then in
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-<!--
+
 
 # Day 3
 
@@ -35,6 +35,7 @@ This week starts with a discussion of modeling and machine learning, and then in
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
+<!--
 
 # Day 4
 
