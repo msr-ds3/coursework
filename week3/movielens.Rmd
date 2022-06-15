@@ -113,7 +113,7 @@ f1 %>%
 
 user_rating <- ratings %>%
   group_by(user_id) %>%
-  summarize(sumOfRating = sum(rating), totalRatingCount = n(), mean_rating = sum(rating) / n()) %>% view()
+  summarize(movie_id, sumOfRating = sum(rating), totalRatingCount = n(), mean_rating = sum(rating) / n())
 
 ```
 
@@ -144,30 +144,36 @@ user_rating %>%
 # model (shown in the dashed lines).
 
 # user_id, movie_id, pop_rank. 
-f2 <- ratings %>%
-  left_join(f1)
+user_rank <- inner_join(user_rating, f1, "movie_id")
 
-# need to get: user_id, poprank (weirdest movie rank), 
 
-userID_weirdRank <- f2 %>%
-  group_by(user_id) %>%
-  mutate(user_id, poprankMax = max(poprank)) %>% 
-  summarize(user_id, poprankMax) %>%
-  distinct()   # user id, weirdest movie rank. 
+user_sat <- user_rank %>% 
+  summarize(sat_100 = max(poprank), sat_90 = quantile(poprank, probs = 0.9))
 
-temp1 <- userID_weirdRank %>%  
-  arrange(poprankMax) %>%
-  group_by(poprankMax) %>%
-  
-  mutate(count = cumsum(row_number())) %>% # get how many had that weird movie rank.
-  
+# user_id, poprank (weirdest movie rank), 
+
+user100 <- user_sat %>%
+  group_by(sat_100) %>%
+  summarize(num_sat = n()) %>%
   ungroup() %>%
-  
-  mutate(count2 = cumsum(count), fraction = cumsum(count) / sum(count)) 
+  arrange(user100, sat_100) %>%
+  mutate(frac_users_sat = cumsum(num_sat) / sum(num_sat))
+
+user90 <- user_sat %>%
+  group_by(sat_90) %>%
+  summarize(num_sat = n()) %>%
+  ungroup() %>%
+  arrange(sat_90) %>%
+  mutate(frac_users_sat = cumsum(num_sat) / sum(num_sat))
+
+ggplot() + 
+  geom_line(user100, mapping = aes(x = sat_100, y = frac_users_sat)) + 
+  geom_line(user90, mapping = aes(x = sat_90, y = frac_users_sat)) +
+  xlab("Inventory Size") + 
+  ylab("Percent of Users Satisfied")
 
 
-temp1 %>%
-  ggplot(aes(x = count, y = fraction)) + 
-    geom_line()
 
 ```
+
+
