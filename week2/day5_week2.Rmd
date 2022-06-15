@@ -1,0 +1,82 @@
+
+---
+title: "Day 4 Week 2 assignment"
+author: "Alexandra Roffe"
+date: 2022-06-10
+output: html_document
+---
+Chapter 5: 
+
+5.20 If a linear model has a very strong negative relationship
+with a correlation of -0.97, how much of the variation in the response is explained by the explanatory variable?
+
+  R = -0.97, R^2 = 0.94. Then, 94% of the variation is from the explanatory variable. 
+
+  R square described the proportion of the variability in the response variable explained by explanatory variable. 
+  
+  
+5.29: Body measurements:
+a) a linear positive relationship. 
+  
+b) y = mx + b
+
+  m = 1.0176 is slope
+  b = -105.0113
+  
+  With an increase of 1 cm of height, the width increase by 1.017. Slope is positive because there is a positive correlation between height and width, according to the data given. 
+  
+  height of 0 will have a weight of -105. 
+  
+  
+c) 
+  Null: Height does not effect weight; there is no relationship between the two. The slope of the line is zero.
+  Alternative: Height does effect weight. The slope of the graph is not zero.
+  
+  p-value = 0.0000
+  We can reject the null and conclude that height and weight do affect one another. There is positive relation between height and wight. 
+  
+d) 
+R = 0.72
+```{r}
+.72 * .72
+```
+  This means that proportion of variation in height and weight is .52. 
+  52% of the variation is due to explanatory data. 
+  R squ
+  
+  
+
+Section 3.1 of Intro to Statistical Learning, do Lab 3.6.2
+```{r}
+
+library(MASS)
+library(ISLR2)
+#head(Boston)
+
+lm.fit <- lm(medv ~ lstat, data = Boston)
+#lm.fit
+#summary(lm.fit)
+
+names(lm.fit)
+coef(lm.fit)
+confint(lm.fit)
+
+
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "confidence")
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))), interval = "prediction")
+
+
+plot(Boston$lstat, Boston$medv, col = "green")
+abline(lm.fit)
+
+par(mfrow = c(2, 2))
+plot(lm.fit)
+
+
+```
+  
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+  

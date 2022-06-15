@@ -35,6 +35,11 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+
+ratings %>%
+  ggplot(aes(x = rating)) + 
+  geom_histogram(bins = 10) 
+
 ```
 
 ## Per-movie stats
@@ -42,16 +47,41 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+
+# for each movie_id: average rating(0 to 5), number of ratings for that movie 
+                    # average rating will be sum of rating / number of rating
+
+mean_rating_movie <- ratings %>%
+  group_by(movie_id) %>%
+  mutate(sumOfRating = sum(rating), totalRatingCount = n(), mean_rating = sum(rating) / n())
+  # get the average rating of each movie. 
+
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+
+mean_rating_movie %>%
+  ggplot(aes(x = totalRatingCount)) +
+  geom_histogram(bins = 10) + scale_x_log10(label = comma)
+
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+
+mean_rating_movie %>%
+  ggplot(aes(x = mean_rating)) +
+  geom_histogram(bins = 10) + scale_x_log10(label = comma)
+
+mean_rating_movie %>%
+  ggplot(aes(x = mean_rating)) + 
+  geom_density(fill = "grey") + 
+  scale_x_log10(label = comma)
+  
 ```
 
 ```{r cdf-movie-pop}
@@ -59,7 +89,18 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+
 # plot the CDF of movie popularity
+f1 <- mean_rating_movie %>%
+  arrange(desc(totalRatingCount)) %>%
+  mutate(poprank = row_number(), sum = cumsum(totalRatingCount)/sum(totalRatingCount))
+
+# f1 is the movie, number of ratings, total amount of ratings in total. 
+
+f1 %>%
+  ggplot(aes(x = poprank, y = sum)) + 
+  geom_line()
+
 ```
 
 
@@ -67,11 +108,23 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+
+# person's id, average rating (sum of all the ratings), how many ratings they gave. 
+
+user_rating <- ratings %>%
+  group_by(user_id) %>%
+  summarize(sumOfRating = sum(rating), totalRatingCount = n(), mean_rating = sum(rating) / n()) %>% view()
+
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+
+user_rating %>%
+  ggplot(aes(x = totalRatingCount)) +
+  geom_histogram(bins = 10) + scale_x_log10(label = comma)
+
 ```
 
 # Anatomy of the long tail
@@ -89,4 +142,32 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+# user_id, movie_id, pop_rank. 
+f2 <- ratings %>%
+  left_join(f1)
+
+# need to get: user_id, poprank (weirdest movie rank), 
+
+userID_weirdRank <- f2 %>%
+  group_by(user_id) %>%
+  mutate(user_id, poprankMax = max(poprank)) %>% 
+  summarize(user_id, poprankMax) %>%
+  distinct()   # user id, weirdest movie rank. 
+
+temp1 <- userID_weirdRank %>%  
+  arrange(poprankMax) %>%
+  group_by(poprankMax) %>%
+  
+  mutate(count = cumsum(row_number())) %>% # get how many had that weird movie rank.
+  
+  ungroup() %>%
+  
+  mutate(count2 = cumsum(count), fraction = cumsum(count) / sum(count)) 
+
+
+temp1 %>%
+  ggplot(aes(x = count, y = fraction)) + 
+    geom_line()
+
 ```

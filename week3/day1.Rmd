@@ -1,0 +1,268 @@
+---
+title: "Day 1 Week 3 assignment"
+author: "Alexandra Roffe"
+date: 2022-06-13
+output: html_document
+---
+```{r}
+
+library(tidyverse)
+library(scales)
+library(modelr)
+library(scales)
+library(broom)
+
+options(na.action = na.warn)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+- See if you can reproduce the table in ISRS 5.29 using the original dataset in body.dat.txt, taken from here
+
+```{r}
+
+data <- read.table("body.dat.txt")
+
+# height is 24, weight is 23. 
+model <- lm(data$V23 ~ V24, data = data)
+
+tidy(model)
+
+```
+
+- Do Labs 3.6.3 through 3.6.6 of Intro to Statistical Learning to get practice with linear models in R
+
+3.6.3:
+```{r}
+library(MASS)
+library(ISLR2)
+
+lm.fit <- lm(medv ~ lstat + age, data = Boston)
+#summary(lm.fit)
+
+lm.fit <- lm(medv ~ ., data = Boston) # to get all variables in the data
+#summary(lm.fit)
+
+library(car)
+vif(lm.fit)
+
+lm.fit1 <- lm(medv ~ . - age, data = Boston) # all variables expect age
+summary(lm.fit1)
+
+lm.fit1 <- update(lm.fit, ~ . - zn) # can use update too. 
+```
+
+Lab 3.6.4 Interaction Terms
+```{r}
+summary(lm(medv ~ lstat * age, data = Boston))
+# lstat * age = lstat + age + lstat:age
+
+```
+
+Lab 3.6.5 Non-linear Transformation of the Predictor
+```{r}
+
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), data = Boston)
+#summary(lm.fit2)
+
+lm.fit <- lm(medv ~ lstat, data = Boston)
+
+anova(lm.fit, lm.fit2)
+
+par(mfrow = c(2, 2))
+plot(lm.fit2)
+
+lm.fit5 <- lm(medv ~ poly(lstat, 5), data = Boston)
+summary(lm.fit5)
+
+
+summary(lm(medv ~ log(rm), data = Boston))
+
+```
+
+
+Exercise 3.6.6 Qualitative Predictor 
+```{r}
+#head(Carseats)
+
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+summary(lm.fit)
+
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+
+
+
+- Read Sections 6.1 through 6.3 of ISRS on regression with multiple features
+- Do Exercises 6.1, 6.2, and 6.3, and use the original data set in babyweights.txt, taken from here, to reproduce the results from the book
+
+
+6.1:
+a) equation of the regression line is: y = -8.94x + 123.05 
+b) From the slope, there is a negative relationship between smoking and baby weight. 
+    when x = 0, non-smoker mother and the weight is 123.05
+    when x = 1, smoker mother and the weight of the baby is 114.11
+    The babies born to smoking mother is 8.94 lower than to non-smoking mothers. 
+    
+c) the p-value is less than alpha which is 0.05. The p-value is zero. Can reject the null and conclude that smoking is associated with lower birth weights. 
+
+```{r}
+# 6.1 reproduce
+data <- read.table("babyweights.txt")
+
+# height is 24, weight is 23. 
+model <- lm(bwt ~ smoke, data = data)
+
+tidy(model)
+
+```
+
+6.2 Baby weights Part II. 
+a) y = -1.93x + 120.07
+b) From the slope, there is a negative relationship between smoking and parity. 
+    when x = 0, the child is the first born, the weight is 120.07
+    when x = 1, the child is not the first born, the weight of the baby is 118.14
+    The first born babies is 1.93 lower than to non-smoking mothers. 
+
+c) No statistically significant relationship, the p-value is greater then 0.05. We fail to reject the null hypothesis. 
+
+```{r}
+# 6.1 reproduce
+data <- read.table("babyweights.txt", stringsAsFactors = TRUE)
+
+# height is 24, weight is 23. 
+model <- lm(bwt ~ parity, data = data)
+
+tidy(model)
+
+```
+
+6.3 Baby weights, Part III:
+a) y = -80.41 + 0.44x1 -3.33x2 -0.01x3 + 1.15x4 + 0.05x5 -8.40x6
+
+b) there is a positive correlation of gestation. 
+
+c) Parity might be correlated with a different predictor which complicates the model estimation. It is also possible that they are missing some values of the data because there is no value for any of the varables. 
+
+d) for first observation  
+    y = -80.41 + 0.44x1 -3.33x2 -0.01x3 + 1.15x4 + 0.05x5 -8.40x6
+```{r}
+x1 <- 284
+x2 <- 0
+x3 <- 27
+x4 <- 62
+x5 <- 100
+x6 <- 0
+  
+y = -80.41 + 0.44*x1 -3.33*x2 -0.01*x3 + 1.15*x4 + 0.05*x5 -8.40*x6
+
+#Residual = Actual - Predicted
+residual <- 120 - 120.58
+residual
+```
+e) 
+
+R2 = 1- var(in residuals) / var(outcome)
+
+```{r}
+varResiduals <- 249.28
+varOutcome <- 332.57
+
+r2 <- 1 - (249.28) / (332.57)
+r2
+
+n <- 1236
+k <- 6
+
+adjR2 <-  1 - (varResiduals / (n - k - 1)) / (varOutcome / (n - 1))
+adjR2
+```
+```{r}
+# 6.3 reproduce
+data <- read.table("babyweights.txt", stringsAsFactors = TRUE)
+
+# use all predictors
+model <- lm(bwt ~ ., data = data)
+tidy(model)
+
+```
+
+
+
+- Read section 5.1 of An Introduction to Statistical Learning on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
+
+5.3.1:
+```{r}
+library(ISLR2)
+set.seed(1)
+train <- sample(392, 196)
+
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+
+attach(Auto)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+
+set.seed(2)
+train <- sample(392, 196)
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+attach(Auto)
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+
+lm.fit3 <- lm(mpg ~ poly(horsepower, 3), data = Auto, subset = train)
+mean((mpg - predict(lm.fit3, Auto))[-train]^2)
+
+```
+
+
+5.3.2 Leave-One-Out Cross-Validation
+```{r}
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+coef(glm.fit)
+
+library(boot)
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+
+
+cv.error <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+  
+}
+cv.error
+
+```
+
+
+
+5.3.3 k-fold Cross-Validation
+```{r}
+set.seed(17)
+cv.error.10 <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+  
+}
+cv.error.10
+
+```
+
+
+
+
+
+
