@@ -52,13 +52,22 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+#here("ngrams", "year_counts.tsv")
+#here("ngrams", "total_counts.csv")
 
+my_yr <- read.table("year_counts.tsv", sep = "\t", header = FALSE, col.names = c("term", "year", "volume", "book_count"))
+
+my_tot <-read.csv("total_counts.csv", col.names = c("year", "total_volume", "page_count", "book_count"))
 
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+```{r}
+nrow(my_yr)
+nrow(my_tot)
+```
 
 # Part B
 
@@ -69,7 +78,7 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
+yr_tot <- inner_join(my_yr,my_tot, by=c('year' = 'year')) %>% mutate(prop = 100* (volume / total_volume) )
 
 ```
 
@@ -78,12 +87,20 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
+my_graph <- yr_tot %>% filter(term == "1883" | term == "1910" | term == "1950") %>% filter(year > 1849 & year < 2013)
 
+eight_three <- my_graph %>% filter(term == "1883")
+nine_ten <- my_graph %>% filter(term == "1910")
+nine_five <- my_graph %>% filter(term == "1950")
+
+
+my_graph %>% ggplot() + geom_line(data = eight_three, aes(x = year, y = prop), color = "blue") + geom_line(data = nine_ten, aes(x = year, y = prop) , color = "green") + geom_line(data = nine_five, aes(x = year, y = prop), color = "red") + scale_y_continuous(labels = scales::percent)
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+It seems as years get later, there is a larger spike in references when that year comes, but it is quicker to drop off in subsequent years.
 
 # Part C
 
@@ -97,6 +114,8 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
+![](google_screenshot.png)
+It seems that the pattern is relatively similar, but the overall percentages are lower. I assume this is because Google has access to more documents and therefore the percentage is smaller
 
 # Part D
 
@@ -107,7 +126,7 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
-
+my_graph %>% ggplot() + geom_line(data = eight_three, aes(x = year, y = volume), color = "blue") + geom_line(data = nine_ten, aes(x = year, y = volume) , color = "green") + geom_line(data = nine_five, aes(x = year, y = volume), color = "red") + scale_y_continuous(labels = scales::comma)
 ```
 
 # Part E
@@ -121,12 +140,14 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+my_graph %>% ggplot() + geom_line(data = yr_tot, aes(x = year, y = total_volume), color = "blue") + scale_y_continuous(labels = scales::comma)
 ```
 
 ## Your written answer
 
 Write up your answer to Part E here.
+
+Yeah it absolutely does. This suggests that the proportion of mentions about a year going down isn't due to less documents being made about it as time goes on, it's due to there being way more documents made total.
 
 # Part F
 
@@ -137,7 +158,7 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
-
+my_graph %>% group_by(term) %>% filter(prop == max(prop))
 ```
 
 ## Compute half-lifes
@@ -145,6 +166,14 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+yr_tot <-yr_tot %>% filter(year > 1849 & year < 2013) %>% filter(term > 1849 & term < 2013)
+
+max_yrs <- yr_tot %>% group_by(term) %>% filter(prop == max(prop)) %>% select(term,big_year = year, big_prop = prop) %>% arrange(term)
+
+
+tetsy <- yr_tot %>% inner_join(max_yrs, "term") %>% group_by(term) %>% filter(prop >= (big_prop/2) & year > big_year) %>% group_by(term) %>% filter(year == max(year)) %>% mutate(half = year - big_year) %>% arrange(term) %>% mutate(year = as.numeric(year))
+
+
 
 ```
 
@@ -154,12 +183,13 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-
+ggplot(tetsy, aes(x = year, y = half)) + geom_point() + scale_y_log10() + geom_smooth()
 ```
 
 ## Your written answer
 
 Write up your answer to Part F here.
+It is very different. There are much smaller differences for every half life. 
 
 # Part G
 
@@ -167,7 +197,15 @@ Write up your answer to Part F here.
 
 ## Your written answer
 
-Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lives.
+
+1860 took 80 years to reach its half life. Everything else is super close to 0 so it's unlikely that any of them can be considered outliers. I assume it's the Civil War that was refenced very often. As it took place in teh 1860's.
+
+```{r}
+tetsy %>% arrange(half)
+tetsy %>% arrange(desc(half))
+```
+
 
 # Makefile
 
