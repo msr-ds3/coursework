@@ -55,7 +55,7 @@ head(ratings) %>% kable()
 ```
 
 ```{r cdf-movie-pop}
-# rank movies by popularity and compute the cdf, or fraction of movies covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
+# rank movies by popularity (number of ratings) and compute the cdf, or fraction of movies covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
@@ -77,7 +77,9 @@ head(ratings) %>% kable()
 # Anatomy of the long tail
 
 ```{r long-tail}
-# generate the equivalent of figure 2 of this paper:
+# generate the equivalent of figure 2a of this paper:
+# note: don't worry about the "null model" lines
+# just do the solid lines and dotted line (optional)
 # https://5harad.com/papers/long_tail.pdf
 
 # Specifically, for the subset of users who rated at least 10 movies,
