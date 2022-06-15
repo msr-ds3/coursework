@@ -1,3 +1,4 @@
+
 ---
 title: "Movielens"
 date: '`r Sys.time()`'
@@ -206,7 +207,3 @@ ggplot() +
 # 100% and for 90% satisfaction. 
 
 
-
-
-
-```
