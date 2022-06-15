@@ -22,7 +22,7 @@ between height and shoulder girth is 0.67.
 		y= 105.357 + 0.6079749(100) = 166.154 
  
 (e) The student from part (d) is 160 cm tall. Calculate the residual, and explain what this residual means.
-	e=y_i-y_hat = 160 - (166.154) = -6.15449 
+	e = y_i - y_hat = 160 - (166.154) = -6.15449 
 	There is a 6.15449 difference between  the model prediction and what was measured.
 
 (f) A one year old has a shoulder girth of 56cm. Would it be appropriate to use this linear model to predict the height of this child?

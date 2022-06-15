@@ -24,17 +24,18 @@ This week starts with a discussion of modeling and machine learning, and then in
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-<!--
+
 
 # Day 3
 
 ## N-gram data and "Culturonomics"
 
-* Replicate and extend the results of the [Google n-grams "culturomics" paper](https://science.sciencemag.org/content/331/6014/176) ([pdf](https://scholar.stanford.edu/mse231/papers/michel_et_al_books.pdf)) using the template [here](ngrams/)
+* Replicate and extend the results of the [Google n-grams "culturomics" paper](https://science.sciencemag.org/content/331/6014/176) ([pdf](https://pdodds.w3.uvm.edu/research/papers/others/2011/michel2011a.pdf)) using the template [here](ngrams/)
 * Consider the last bit of this exercise on creating a Makefile "extra credit", here are some references for using GNU Make / Makefiles:
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
+<!--
 
 # Day 4
 

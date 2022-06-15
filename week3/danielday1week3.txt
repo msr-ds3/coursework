@@ -5,7 +5,7 @@
 
 
 
-6.1 (285/291)
+6.1 (Page 285)
 -----
 a-	y = 123.05 - 8.94(x)
 b-	-8.94, Smoker: 114.11  NonSmoker: 123.05
@@ -27,7 +27,7 @@ a-	y  = -80.41 + 0.44(gestation) - 3.33(parity) - 0.01(age) + 1.15(height) + 0.0
   
 b-	Gestation: 0.44, Age: -0.01
 
-c-	Once you include other factors, it has an effect on Parity.
+c-	Once you include other factors, it has an effect on Parity. (One or more of the other variables may be effecting     it.)
 
 d-	y= y - y_hat
 

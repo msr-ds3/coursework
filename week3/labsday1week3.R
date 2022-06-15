@@ -45,3 +45,6 @@ summary(lm.fit)
 
 attach (Carseats)
 contrasts (ShelveLoc)
+
+
+
