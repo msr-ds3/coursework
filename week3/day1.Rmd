@@ -106,7 +106,7 @@ b) From the slope, there is a negative relationship between smoking and baby wei
     when x = 1, smoker mother and the weight of the baby is 114.11
     The babies born to smoking mother is 8.94 lower than to non-smoking mothers. 
     
-c) the p-value is less than alpha which is 0.05. The p-value is zero. Can reject the null and conclude that smoking is associated with lower birth weights. 
+c) the p-value is less than alpha (alpha is 0.05 and the p-value is zero). We can reject the null and conclude that smoking is associated with lower birth weights. 
 
 ```{r}
 # 6.1 reproduce
@@ -126,7 +126,7 @@ b) From the slope, there is a negative relationship between smoking and parity.
     when x = 1, the child is not the first born, the weight of the baby is 118.14
     The first born babies is 1.93 lower than to non-smoking mothers. 
 
-c) No statistically significant relationship, the p-value is greater then 0.05. We fail to reject the null hypothesis. 
+c) There is no statistically significant relationship, the p-value is greater then 0.05. We fail to reject the null hypothesis. 
 
 ```{r}
 # 6.1 reproduce
@@ -142,9 +142,9 @@ tidy(model)
 6.3 Baby weights, Part III:
 a) y = -80.41 + 0.44x1 -3.33x2 -0.01x3 + 1.15x4 + 0.05x5 -8.40x6
 
-b) there is a positive correlation of gestation. 
+b) there is a positive correlation of gestation and birth weight. As birth weight increases, gestation increases.  
 
-c) Parity might be correlated with a different predictor which complicates the model estimation. It is also possible that they are missing some values of the data because there is no value for any of the varables. 
+c) Parity might be correlated with a different predictor which complicates the model estimation. It is also possible that they are missing some values of the data because there is no value for any of the variables. 
 
 d) for first observation  
     y = -80.41 + 0.44x1 -3.33x2 -0.01x3 + 1.15x4 + 0.05x5 -8.40x6
