@@ -155,3 +155,13 @@ ggplot(plot_data, aes(x = ymd, y = num_trips)) +
 ```
 
 Although the it appears to represent some overfit, that could be a result of weekday factors since travel is dependent upon day of the week. 
+
+
+Test
+```{r}
+model <- lm(num_trips ~ poly(tmax, 2, raw = T)
+ + snwd + snow + prcp + is_holiday + weekday, data=trips_per_day_train)
+test_err <- sqrt(mean((predict(model, trips_per_day_test) - trips_per_day_test$num_trips)^2))
+test_err
+```
+These are the test results and my prediction will be that new data will cause more error than reflected in the results. 
