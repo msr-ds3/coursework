@@ -1,0 +1,40 @@
+library(lubridate)
+trips_per_day <- read_tsv('trips_per_day.tsv', show_col_types = FALSE)
+holidays <- read.table(file = "holidays.csv", sep = ',', header = FALSE, col.names = c("row", "ymd", "holiday_name")) %>% select(ymd) %>% mutate(ymd = as.Date(ymd), is_holiday = "Holiday")
+
+trips <- right_join(holidays, trips_per_day_trainval, "ymd") %>% 
+  mutate(is_holiday= ifelse(is.na(is_holiday), "Not_holiday", is_holiday))%>%
+  mutate(is_weekend = ifelse(wday(ymd, week_start = 1) > 5, "Weekend", "Weekday"))%>% 
+  mutate(weather = ifelse(prcp > 0, "Raining", "Good_weather")) %>% 
+  mutate(weather = ifelse(snwd > 0, "Snowing", weather))
+
+trips_per_day_trainval <- trips
+
+#MODEL
+model <- lm(num_trips ~ poly(tmin, 5, raw = T) + is_weekend + is_holiday + weather, data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+
+
+#MODEL
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous() +
+  facet_grid(is_weekend ~ is_holiday ~ weather) 
+
+
+ggplot(plot_data, aes(x = pred, y = num_trips)) +
+  geom_point(aes(color = ymd)) +
+  xlab('Prediction') +
+  ylab('Actual Trips') +
+  scale_y_continuous() 
