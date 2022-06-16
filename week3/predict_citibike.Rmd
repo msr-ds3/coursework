@@ -1,0 +1,168 @@
+---
+title: "predict_citibike"
+output: html_document
+date: '2022-06-16'
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(scales)
+library(modelr)
+library(lubridate)
+library(broom)
+
+
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+trips_per_day <- read_tsv("trips_per_day.tsv")
+
+#Adding holiday data to trips per day
+holidays <- read.table('holidays', sep = ',', header = FALSE, col.names = c("row", "ymd", "holiday_name")) %>%
+  select(ymd) %>%
+  mutate(ymd = as.Date(ymd), is_holiday = 1)
+
+trips_per_day <- left_join(trips_per_day, holidays)
+trips_per_day[is.na(trips_per_day)] = 0
+
+
+#include weekdays and factorize them
+trips_per_day$weekday <- wday(trips_per_day$ymd, week_start=1)
+trips_per_day$weekday <- as.factor(trips_per_day$weekday)
+
+```
+
+now we set up to split off the validation and the test set.
+
+```{r cars}
+
+set.seed(25)
+
+num_days <- nrow(trips_per_day)
+frac_train <- 0.9
+num_train <- floor(num_days * frac_train)
+
+ndx <- sample(1:num_days, num_train, replace=F)
+trips_per_day_split <- trips_per_day[ndx, ]
+trips_per_day_test <- trips_per_day[-ndx, ]
+
+#now split for a validation set
+
+num_days <- nrow(trips_per_day_split)
+num_train <- floor(num_days * frac_train)
+ndx <- sample(1:num_days, num_train, replace=F)
+trips_per_day_train <- trips_per_day_split[ndx, ]
+trips_per_day_validate <- trips_per_day_split[-ndx, ]
+
+
+```
+
+## Part 3
+
+I'll replicate the process of making multiple linear models and see if i get similar results:
+
+```{r pressure}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+}
+
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+```
+
+Yeah these are pretty similar results, though I'm not sure why the lables are reversed. Now I'm gonna do my thing with the linear model.
+
+So now let's include all of the other columns
+
+```{r}
+  
+  #since tmin and tmax are probably super correlated, i'll only include tmax
+  # fit on the training data
+model <- lm(num_trips ~ tmax + snwd + prcp + snow + is_holiday + weekday, data=trips_per_day_train)
+    
+  # rmse on the training data
+train_err <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+  # rmse on the validate data
+validate_err <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+train_err
+validate_err
+
+```
+Great. We seem to have a lower validation error than the lowest point on the previous graph.
+
+```{r}
+tidy(model)
+```
+so according to this tidy model. The p-values are pretty decent but for a few. With an alpha of .05, snow, and every weekday don't pass the null hypothesis. Let's at least drop snow.
+
+```{r}
+model <- lm(num_trips ~ tmax + snwd + prcp + is_holiday + weekday, data=trips_per_day_train)
+    
+  # rmse on the training data
+train_err <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+  # rmse on the validate data
+validate_err <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+train_err
+validate_err
+```
+okay so it seems the error went up without snow. Thisd being said, it's probably best to keep it.
+
+also it's likely that temperature has more of a parabolic effect, since if it's really high or low, people won't ride as much, where closer to center will have the most people riding
+```{r}
+
+model <- lm(num_trips ~ poly(tmax, 2, raw = T)
+ + snwd + snow + prcp + is_holiday + weekday, data=trips_per_day_train)
+    
+  # rmse on the training data
+train_err <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+  # rmse on the validate data
+validate_err <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+train_err
+validate_err
+```
+okay, it's slightly higher. So we'll keep it like this and try it with the test data
+```{r}
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Day') +
+  ylab('Number of Trips') 
+```
+
+This looks really overfit. But I think this is due to the inclusion of weekdays factor. Since travel would go up and down based on if it's a weekday or day.
+
