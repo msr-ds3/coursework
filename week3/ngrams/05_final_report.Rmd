@@ -206,10 +206,10 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-half_life_df %>% ggplot(aes(x = decline_year, y = half_life)) + 
+half_life_df %>% ggplot(aes(x = term,y = half_life)) + 
   geom_point() + 
   geom_smooth(se = FALSE) + 
-  #scale_y_continuous(limits = c(0,20)) + 
+  scale_y_continuous(limits = c(0,50)) + 
   scale_x_continuous(limits = c(1850,2012)) + 
   xlab("Years") + 
   ylab("Half-Life (yrs)")
