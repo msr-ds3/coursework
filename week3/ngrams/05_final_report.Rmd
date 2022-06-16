@@ -15,7 +15,7 @@ output:
 library(here)
 library(scales)
 library(tidyverse)
-
+library(ggplot2)
 theme_set(theme_bw())
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -52,13 +52,21 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+year_counts.tsv <- here("year_counts.tsv")
+total_counts.csv <- here("total_counts.csv")
 
+yc <- read.table(file = "year_counts.tsv", sep = '\t', header = FALSE, col.names = c("term", "year", "volume", "book_count"))
 
+tc <- read.table(file = "total_counts.csv", sep = ',', header = FALSE, col.names = c("year", "total_volume", "page_count", "book_count"))
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+```{r}
+nrow(yc)
+nrow(tc)
+```
 
 # Part B
 
@@ -69,7 +77,7 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
+yc_tc <- inner_join(yc, tc, "year") %>% mutate(prop = (volume/total_volume)*100)
 
 ```
 
@@ -79,11 +87,18 @@ Plot the proportion of mentions for the terms "1883", "1910", and "1950" over ti
 
 ```{r plot-proportion-over-time}
 
+smaller_yc_tc <- yc_tc %>% filter(year > 1849 &  year < 2013)
+ggplot() + 
+  geom_line(filter(smaller_yc_tc, term == "1883"), mapping = aes(x = year, y = prop), color = "blue") +
+  geom_line(filter(smaller_yc_tc, term == "1910"), mapping = aes(x = year, y = prop), color = "green") +
+  geom_line(filter(smaller_yc_tc, term == "1950"),mapping = aes(x = year, y = prop), color = "red") + 
+  xlab("Year") + scale_y_continuous(labels = scales::percent) 
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+It seems that there is a peak of mentions for each selected year a couple of years after the year selected and then the mentions quickly go down.  
 
 # Part C
 
@@ -94,9 +109,11 @@ Write up your answer to Part B here.
 Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a screenshot.
 
 ## Your written answer
+The graphs are very similar , however the percentages on the y-axis are lower in Google's chart. I assume this happens because Google has access to more books and so the percentage of appearences for these specific terms are much smaller. 
+Additionally, Google's graph is much smoother and doesn't show all the "bumps" that each line has in mine.
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-
+![](./scrn.png)
 
 # Part D
 
@@ -107,7 +124,11 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
-
+ggplot() + 
+  geom_line(filter(smaller_yc_tc, term == "1883"), mapping = aes(x = year, y = volume), color = "blue") +
+  geom_line(filter(smaller_yc_tc, term == "1910"), mapping = aes(x = year, y = volume), color = "green") +
+  geom_line(filter(smaller_yc_tc, term == "1950"),mapping = aes(x = year, y = volume), color = "red") + 
+  xlab("Year") + scale_y_continuous(labels = scales::comma) 
 ```
 
 # Part E
@@ -121,12 +142,16 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+ggplot() + 
+  geom_line(smaller_yc_tc, mapping = aes(x = year, y = total_volume)) +
+  xlab("Year") + ylab("Frequency") + scale_y_continuous(labels = scales::comma) 
 ```
 
 ## Your written answer
 
 Write up your answer to Part E here.
+
+There is a big difference that led me to reevaluate the results of Michel et. al. (2001). Considering the total_volume of terms per year, and not the percentages of each term compared to the total, made me understand that we did not start forgetting faster and faster (stopped making documents about older terms), as the author of the article claims. Instead, the number of digitalized books (total number of terms) after the year 1950 significantly increased, and that is the only reason why the percentages for older terms become lower with time. If we look at the total appearances, we actually talk about older terms in recent years more than in the past. In other words, it is not the case that people are forgetting faster and faster, instead, the d graph shows that the percentage of appearances of "older" terms gets smaller and smaller only compared to the total number of terms, because the number of digitalized documents increases exponentially year by year (also due to technology).
 
 # Part F
 
@@ -137,14 +162,17 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
-
+peak_yc_tc <- smaller_yc_tc %>% group_by(term) %>% filter(prop == max(prop)) %>% select(term, "year_peak"= year)
 ```
 
-## Compute half-lifes
+## Compute half-lifesn
 
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+
+half_times <- inner_join(smaller_yc_tc, peak_yc_tc, "term") %>%  group_by(term) %>% filter(prop >= (max(prop)/2), year > year_peak) %>%  group_by(term) %>% filter(year == max(year)) %>% mutate(half_time = (year - year_peak))
+
 
 ```
 
@@ -155,19 +183,28 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 ```{r plot-half-lifes}
 
+half_times %>% ggplot() + 
+  geom_point(mapping = aes(x = year, y = half_time)) + geom_smooth(mapping = aes(x = year, y = half_time)) +
+  xlab("Year") 
 ```
 
-## Your written answer
 
-Write up your answer to Part F here.
 
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
 
 ## Your written answer
+The years that were forgotten particularly quickly are 1857, 1856 because there are fewer digitalized documents that include them compared to more recent years. At the same time, 1800 is the year with the largest half life because it was a very important year in history so it is mentioned in many historical books.
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+```{r}
+largest_half_time <- max(half_times$half_time)
+lg_year <- filter(half_times, half_time == largest_half_time)$term
+smallest_half_time <- min(half_times$half_time)
+sm_year <- filter(half_times, half_time == smallest_half_time)$term
+```
+
 
 # Makefile
 
