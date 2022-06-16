@@ -1,6 +1,6 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Your Name (your uni)"
+author: "Daniel Glick"
 date: '`r Sys.time()`'
 output:
   html_document:
@@ -52,13 +52,23 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+year_data <- read_tsv('year_counts.tsv', col_names = c('term','year','volume','book_count'))
+tot_data <- read_csv('total_counts.csv', col_names = c('year', 'total_volume', 'page_count', 'book_count'))
 
-
+head(year_data, 20)
+head(tot_data, 20)
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+```{r}
+
+nrow(year_data)
+nrow(tot_data)
+
+```
 
 # Part B
 
@@ -69,8 +79,12 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
+ngram_all <- inner_join(year_data, tot_data, by = c('year'='year'))
+head(ngram_all)
 
-
+ngram_proportion <- ngram_all %>% mutate( proportion = volume / total_volume ) 
+# %>% select(term, year, volume, total_volume, proportion) 
+head (ngram_proportion)
 ```
 
 ## Plot the main figure 3a
@@ -79,11 +93,20 @@ Plot the proportion of mentions for the terms "1883", "1910", and "1950" over ti
 
 ```{r plot-proportion-over-time}
 
+cleaned_graph <- ngram_proportion %>% 
+  filter(term == "1883" | term == "1910"| term == "1950") 
+
+cleaned_graph %>% ggplot((aes(x = year, y= proportion ))) + geom_line(aes(color = term)) + labs(x = 'Year', y = 'Frequency', color = 'Term') + scale_color_manual(values = c("Blue", "Green", "Red")) + coord_cartesian(xlim = c(1850, 2012)) 
+
+#+ percent( ngram_proportion$year, scale = 1000 )
+
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+
+Looks more or less the same. Couldn't get the scale function to work.
 
 # Part C
 
@@ -96,7 +119,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 ## Your written answer
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-
+![](google_ngram_screenshot.png)
 
 # Part D
 
@@ -107,6 +130,9 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
+
+cleaned_graph %>% 
+ggplot(aes(x=year, y = volume)) + geom_line(aes(color = term)) + scale_y_continuous(label = comma) + labs(x = "Year", y = "Raw Mentions", color = "Term") + scale_color_manual(values = c("Blue", "Green", "Red")) + coord_cartesian(xlim = c(1850, 2012)) 
 
 ```
 
@@ -122,11 +148,16 @@ Plot the total counts for each year over time, from 1850 to 2012. Use the `comma
 
 ```{r plot-totals}
 
+cleaned_graph %>% 
+ggplot(aes(x=year, y = total_volume)) + geom_line() + scale_y_continuous(label = comma) + labs(x = "Year", y = "Total Count") + coord_cartesian(xlim = c(1850, 2012)) 
+
 ```
 
 ## Your written answer
 
 Write up your answer to Part E here.
+
+It seems he's misguided. The first graph (b) plots the proportion while the second the Raw count. We can see from the last graph that the total count has gone up exponentially in recent years most probably due to the ability to easily publish articles online and therefore it is to be expected that the proportion would drop while the raw count stays steady. I wouldn't jump to say it's because people are forgetting faster. 
 
 # Part F
 
@@ -137,6 +168,20 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+#head (ngram_proportion)
+
+terms <- ngram_proportion %>%
+filter(year > 1849 & year < 2013) %>% filter(term %in% c("1850":"2012"))
+#head (terms)
+
+peak_terms <- terms %>% group_by(term) %>% summarize(proportion = max(proportion))
+#head(peak_terms)
+
+peak_terms <- left_join(peak_terms, terms, by = "proportion")
+#head(peak_terms)
+
+peak_terms <- peak_terms %>% transmute(term = term.x, peak_year = year.x, peak = proportion)
+head(peak_terms)
 
 ```
 
@@ -146,6 +191,20 @@ Now, for each year term, find the minimum number of years it takes for the propo
 
 ```{r compute-half-lifes}
 
+half_life <- peak_terms %>% mutate(half_life = peak / 2 )
+
+half_life <-  left_join(terms, half_life, by = "term") %>% filter(proportion <= half_life & year > peak_year) %>% group_by(term) %>% summarize(proportion = max(proportion))
+
+half_life <- left_join(half_life, terms, by = "proportion")
+
+half_life <- half_life %>% transmute(term = term.x, half_peak_year = year, half_peak = proportion)
+
+joined_tip <- left_join(peak_terms, half_life, by = "term")
+
+joined_tip <- joined_tip %>% mutate(min_years = half_peak_year - peak_year, year_term = as.numeric(term))
+
+
+
 ```
 
 ## Plot the inset of figure 3a
@@ -154,12 +213,16 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-
+joined_tip %>%
+  ggplot(aes(x = year_term, y = min_years)) + geom_point() + geom_smooth() +
+  scale_x_continuous(limits = c(1850, 2012)) +  labs(x = "Term", y = "Half-life")
 ```
 
 ## Your written answer
 
 Write up your answer to Part F here.
+
+Smaller differences here.
 
 # Part G
 
@@ -169,6 +232,13 @@ Write up your answer to Part F here.
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
 
+Yes. In the 1850's and 1900's. Maybe because of big wars? 
+
+
+```{r}
+tetsy %>% arrange(half)
+tetsy %>% arrange(desc(half))
+```
 # Makefile
 
 Edit the `Makefile` in this directory to execute the full set of scripts that download the data, clean it, and produce this report. This must be turned in with your assignment such that running `make` on the command line produces the final report as a pdf file.
