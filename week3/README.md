@@ -35,13 +35,15 @@ This week starts with a discussion of modeling and machine learning, and then in
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
-<!--
+
 
 # Day 4
 
 ## Predicting daily Citibike trips (open-ended)
 
-The point of this exercise is to get experience in an open-ended prediction exercise: predicting the total number of Citibike trips taken on a given day. Do all of your work in an RMarkdown file named `predict_citibike.Rmd`. Here are the rules of the game:
+The point of this exercise is to get experience in an open-ended prediction exercise: predicting the total number of Citibike trips taken on a given day. Create an RMarkdown file named `predict_citibike.Rmd` and do all of your work in it.
+
+Here are the rules of the game:
 
 1. Use the `trips_per_day.tsv` file that has one row for each day, the number of trips taken on that day, and the minimum temperature on that day.
 2. Split the data into randomly selected training, validation, and test sets, with 80% of the data for training the model, 10% for validation, and 10% for a final test set (to be used once and only once towards the end of this exercise). You can adapt the code from last week's [complexity control notebook](complexity_control.ipynb) to do this. You can use a single validation fold, don't worry about k-fold cross-validation here.
@@ -53,7 +55,7 @@ The point of this exercise is to get experience in an open-ended prediction exer
 8. Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository.
 9. Finally, use the model you just developed and pushed to Github to make predictions on the 10% of data you kept aside as a test set. Do this only once, and record the performance in your Rmarkdown file. Use this number to make a guess as to how your model will perform on future data (which we'll test it on!). Do you think it will do better, worse, or the same as it did on the 10% test set you used here? Write your answer in your Rmarkdown notebook. Render the notebook and push the final result to Github.
 
-
+<!--
 
 # Day 5
 
