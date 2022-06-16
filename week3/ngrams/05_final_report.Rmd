@@ -190,10 +190,11 @@ Now, for each year term, find the minimum number of years it takes for the propo
 half_life_df <- inner_join(ngram_year_counts_and_totals, proportion_of_mention_peaks, by = "term") %>%
   filter(year >= 1850 & year <= 2012) %>%
   group_by(term) %>%
-  mutate(half_life = abs(peak_year-year)) %>%
-  filter(proportion_of_mentions <= 0.5 * proportion_of_mentions_highest) %>%
-  #filter(proportion_of_mentions == max(proportion_of_mentions)) %>%
-  filter(half_life == min(half_life)) %>%
+  filter(proportion_of_mentions <= (proportion_of_mentions_highest * 0.5)) %>%
+  mutate(half_life = year - peak_year) %>%
+  filter(half_life > 0) %>% 
+  filter(proportion_of_mentions == max(proportion_of_mentions)) %>%
+  #filter(half_life == min(half_life)) %>%
   rename(decline_year = year)
   
 half_life_df
