@@ -165,4 +165,12 @@ ggplot(plot_data, aes(x = ymd, y = num_trips)) +
 ```
 
 This looks really overfit. But I think this is due to the inclusion of weekdays factor. Since travel would go up and down based on if it's a weekday or day.
+```{r}
+model <- lm(num_trips ~ poly(tmax, 2, raw = T)
+ + snwd + snow + prcp + is_holiday + weekday, data=trips_per_day_train)
 
+test_err <- sqrt(mean((predict(model, trips_per_day_test) - trips_per_day_test$num_trips)^2))
+
+test_err
+```
+Oddly enough, my test data did slightly better than my validation data. I predict that new data will have slightly more error than this and probably fall somewhere between this the validation error. I think this because these 37 points could have just been conveniently good points.
