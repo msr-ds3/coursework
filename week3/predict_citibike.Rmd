@@ -1,0 +1,391 @@
+---
+title: "predict_citibike"
+author: "Sushobhan Parajuli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(scales)
+library(modelr)
+library(lubridate)
+```
+
+```{r}
+# import the holidays date
+# join holidays with the trips_per_day
+
+holidays <- read_csv("US Bank holidays", col_names = c("row", "ymd", "holiday"))
+
+# import the data "trips_per_day.tsv"
+# mutate a column "is_weekend" and "is_holiday"
+trips_per_day <- read_tsv("trips_per_day.tsv") %>% 
+  left_join(holidays, by = "ymd") %>%
+  mutate(is_holiday = as.numeric(!is.na(holiday))) %>%
+  mutate(is_weekend = as.numeric(wday(ymd)==c(1,7))) %>%
+  select(-c(row, holiday))
+
+trips_per_day
+```
+
+```{r}
+# split the data into train and test sets
+
+set.seed(10)
+
+num_days <- nrow(trips_per_day)
+frac_train <- 0.9
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set 
+ndx <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model and validate
+trips_per_day_rest <- trips_per_day[ndx, ]
+
+# used to test the fit
+trips_per_day_test <- trips_per_day[-ndx, ]
+
+trips_per_day_rest
+trips_per_day_test
+```
+
+```{r}
+# plot the relationship of variables with num_trips
+
+trips_per_day_rest %>% ggplot() + geom_point(aes(x = is_weekend, y = num_trips))
+trips_per_day_rest %>% ggplot() + geom_point(aes(x = is_holiday, y = num_trips))
+trips_per_day_rest %>% ggplot() + geom_point(aes(x = snow, y = num_trips))
+trips_per_day_rest %>% ggplot() + geom_point(aes(x = tmax, y = num_trips))
+trips_per_day_rest %>% ggplot() + geom_point(aes(x = tmin, y = num_trips))
+trips_per_day_rest %>% ggplot() + geom_point(aes(x = prcp, y = num_trips))
+```
+```{r}
+# K-fold cross validation
+
+set.seed(10)
+num_folds <- 5
+num_days <- nrow(trips_per_day_rest)
+
+ndx <- sample(1:num_days, num_train, replace=F)
+
+trips_per_day_rest <- trips_per_day_rest[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+trips_per_day_rest
+```
+```{r}
+# fit a model for each polynomial degree
+# for minimum temperature (tmin)
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_rest, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_rest, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+```{r}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+```{r}
+# fit a model for each polynomial degree
+# for maximum temperature (tmax)
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_rest, fold != f)
+    model <- lm(num_trips ~ poly(tmax, k, raw = T), data=trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_rest, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+```{r}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+```{r}
+fm <- lm(num_trips ~ tmin + tmax + prcp + snwd + snow + is_holiday + is_weekend, data = trips_per_day_train)
+
+summary(fm)
+```
+> The feature variables tmin, tmax, prcp, snwd, is_holiday and is_weekend are statistically significant as their p-values are less than 0.05 (our significange level or alpha). 
+
+```{r}
+# fourth degree of both tmin and tmix results in better model  
+
+fm1 <- lm(num_trips ~ poly(tmin, 4, raw = T) + is_weekend + is_holiday, data = trips_per_day_train)
+
+fm2 <- lm(num_trips ~ poly(tmax, 4, raw = T) + is_weekend + is_holiday, data = trips_per_day_train)
+
+fm3 <- lm(num_trips ~ poly(tmax, 4, raw = T) + prcp + snwd + tmin + cos(is_holiday) + cos(is_weekend), data = trips_per_day_train)
+```
+
+```{r}
+# k fold validation for the fm1
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_rest, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_rest, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+```{r}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+```{r}
+# k fold validation for the fm2
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_rest, fold != f)
+    model <- lm(num_trips ~ poly(tmax, k, raw = T) + is_weekend + is_holiday, data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_rest, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+```{r}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+```{r}
+# k fold validation for the fm3
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_rest, fold != f)
+    model <- lm(num_trips ~ poly(tmax, k, raw = T) + prcp + snwd + tmin + cos(is_holiday) + cos(is_weekend), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_rest, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+```{r}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+```{r}
+# Best fit model with the date on the x-axis and the number of trips on the y-axis, showing the actual values as points and predicted values as a line.
+
+trips_per_day_validate %>% 
+  filter(ymd != "2014-04-30") %>% #outlier
+  add_predictions(fm3) %>%
+  ggplot() +
+  geom_point(aes(x= ymd, y = num_trips)) + 
+  geom_line(aes(x= ymd, y = pred), color = "red") +
+  scale_y_continuous(label = comma) +
+  labs(x = "Date", y = "Number of Trips")
+```
+
+```{r}
+#  Plot where the x-axis is the predicted value and the y-axis is the actual value, with each point representing one day.
+
+trips_per_day_validate %>%
+   filter(ymd != "2014-04-30") %>%
+  add_predictions(fm3) %>%
+  ggplot() + 
+  geom_point(aes(x= pred, y = num_trips), color = "red") +
+  scale_y_continuous(label = comma) +
+  scale_x_continuous(label = comma) + 
+  labs(x = "Predicted Number of Trips", y = "Actual Number of Trips")
+```
+
+```{r}
+# Validate the model with validation data
+
+load("model.Rdata")
+rmse_validate <- sqrt(mean((predict(fm3, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+rsq_validate <- rsquare(fm3, trips_per_day_validate)
+rmse_validate
+rsq_validate
+```
+
+```{r}
+# Train, validation and test data on a plot
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(fm3) %>% 
+  mutate(data_type = "train")
+trips_per_day_test <- trips_per_day_test %>% 
+  add_predictions(fm3) %>%
+  mutate(data_type = "test")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(fm3) %>%
+  mutate(data_type = "validate")
+all_predictions <- bind_rows(trips_per_day_train, trips_per_day_test, trips_per_day_validate)
+all_predictions %>% ggplot(aes(x = ymd, y = num_trips, color = data_type)) +
+  geom_point() +
+  geom_smooth(aes(x = ymd, y = pred))
+```
+
+```{r}
+save(fm3, file="model.Rdata")
+```
+
+```{r}
+# Test the saved model with test data
+
+load("model.Rdata")
+rmse_test <- sqrt(mean((predict(fm3, trips_per_day_test) - trips_per_day_test$num_trips)^2))
+rsq_test <- rsquare(fm3, trips_per_day_test)
+rmse_test
+rsq_test
+```
+
+```{r}
+trips_per_day_test %>% 
+  add_predictions(fm3) %>%
+  ggplot() + 
+  geom_point(aes(x= pred, y = num_trips), color = "red") +
+  scale_y_continuous(label = comma) +
+  scale_x_continuous(label = comma) + 
+  labs(x = "Predicted Number of Trips",
+       y = "Actual Number of Trips")
+```
+
+> RMSE for Validation data : 4358.378
+> R-squared value for Validation data : 0.8140411
+
+> RMSE for Test data : 4014.971
+> R-squared value for Test data : 0.8529029
+
+> Model seems to perform better on test data than in the validation data. However, there are instances where the predictions fall off the mark. Model should perform as it did with the test data in the future, however as we go on increasing test data size it may perform not so well because only a fraction of one year's data is used to model it.
