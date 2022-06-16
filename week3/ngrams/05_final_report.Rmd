@@ -190,10 +190,11 @@ Now, for each year term, find the minimum number of years it takes for the propo
 half_life_df <- inner_join(ngram_year_counts_and_totals, proportion_of_mention_peaks, by = "term") %>%
   filter(year >= 1850 & year <= 2012) %>%
   group_by(term) %>%
+  mutate(half_life = abs(peak_year-year)) %>%
   filter(proportion_of_mentions <= 0.5 * proportion_of_mentions_highest) %>%
-  filter(proportion_of_mentions == max(proportion_of_mentions)) %>%
-  rename(decline_year = year) %>%
-  mutate(half_life = abs(peak_year-decline_year))
+  filter(half_life == min(half_life)) %>%
+  rename(decline_year = year)
+  
 half_life_df
 ```
 
@@ -206,6 +207,7 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 half_life_df %>% ggplot(aes(x = decline_year, y = half_life)) + 
   geom_point() + 
   geom_smooth(se = FALSE) + 
+  #scale_y_continuous(limits = c(0,20)) + 
   scale_x_continuous(limits = c(1850,2012)) + 
   xlab("Years") + 
   ylab("Half-Life (yrs)")
