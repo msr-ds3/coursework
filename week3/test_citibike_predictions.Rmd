@@ -1,0 +1,86 @@
+---
+title: "Test Citibike Predictions"
+output: html_document
+date: '2022-06-17'
+---
+
+```{r}
+
+load(file = 'trips_2015.RData')
+load(file = 'model_final.RData')
+
+```
+
+
+Merge Dataframes
+
+
+```{r}
+
+trips_new <- trips %>%
+  group_by(ymd) %>%
+  summarize(num_trips = n())
+
+trips_per_day_2015 <- inner_join(trips_new, weather, by = 'ymd') 
+
+View(trips_per_day_2015)
+
+```
+
+
+```{r}
+
+test_err <- sqrt(mean((predict(model_final, trips_per_day_2015) - trips_per_day_2015$num_trips)^2))
+
+test_err
+
+```
+My rmse today was higher of 8360.902 versus my rmse on my results from yesterday of around 4400. It could possibly be because my model was overfit on the 2014 data and thus is less representative of data from other years.
+
+
+
+2020
+
+```{r}
+
+load(file = 'trips_2020.RData')
+
+```
+
+
+```{r}
+
+trips_new <- trips %>%
+  group_by(ymd) %>%
+  summarize(num_trips = n())
+
+trips_per_day_2020 <- inner_join(trips_new, weather, by = 'ymd')
+
+
+```
+
+
+```{r}
+
+test_err_2020 <- sqrt(mean((predict(model_final, trips_per_day_2020) - trips_per_day_2020$num_trips)^2))
+
+test_err_2020
+
+```
+Likewise here rmse is 35271.42 versus yesterday's 4400. I think it's likely that my model was overfit on the 2014 data and isn't representative on 2020. Or it could also be that the data from 2020 because of Covid-19 is significantly different from that of 2014.
+
+
+Reflection:
+
+I think this exercise was interesting and beneficial, especially since I've never been able to try different models on data with code. It was interesting to see how the linear model works with multiple variables and observing the RMSE and adjusted r-squared values. I believe that my original model was overfit on the 2014 data which is why the 2015 and 2020 rmse were higher than the original from 2014. I also think that the data from 2015 and 2020 (especially 2020) differed from 2014 so it was not exactly accurate in predicting.
+
+
+
+Warren's Model
+
+I was trying to run Warren's model but since our columns from our dataframes were different (the weekday and holiday columns were created differently) the model couldn't run. Instead I just discussed with him about the rmse values for each respective year.
+
+2015: 8086.308
+2020: 35293.530
+
+

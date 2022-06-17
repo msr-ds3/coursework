@@ -23,8 +23,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 
-trips_per_day <- read_tsv('trips_per_day.tsv') %>%
-  mutate(day = wday(ymd), weekday = (day < 6))
+trips_per_day <- read_tsv('trips_per_day.tsv')
+
+weather <- read_csv("weather.csv")
+
+weather <- weather %>%
+mutate(ymd = DATE)
+
+trips_per_day <- inner_join(trips_per_day, weather, on = "ymd")
+
+trips_per_day <- trips_per_day %>%
+transmute(ymd, num_trips, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN)
 
 holiday <- read_csv('holidays.csv', col_names = FALSE)
 colnames(holiday) = c("index", "ymd", "holiday")
@@ -33,7 +42,8 @@ holiday <- subset(holiday, select = -index)
 
 trips_per_day <- left_join(trips_per_day, holiday, by = 'ymd') %>%
   mutate(is_holiday = !is.na(holiday)) %>%
-  mutate(sub_rain = (prcp >= 0.5))
+  mutate(sub_rain = (prcp >= 0.5)) %>%
+  mutate(day = wday(ymd), weekday = (day < 6))
 
 View(trips_per_day)
 ```
@@ -133,7 +143,7 @@ We see from the k-fold cross-validation that a fifth degree polynomial is a reas
 Plot the model:
 
 ```{r}
-model1 <- lm(num_trips ~ poly(tmin, 5, raw = T), data = train_set)
+model1 <- lm(num_trips ~ poly(tmin, 5, raw = T), data = trips_train)
 
 train <- trips_train %>%
   add_predictions(model1) %>%
@@ -193,7 +203,7 @@ plot_data_new %>%
 
 
 ```
-The RMSE of 4690.563 is the lowest I've gotten after attempting multiple different arrangements of different variables.
+The RMSE of 4241.836 is the lowest I've gotten after attempting multiple different arrangements of different variables.
 
 ```{r}
 
@@ -208,7 +218,7 @@ Date vs Num_trips
 
 ```{r}
 
-model_final <- lm(num_trips ~ poly(tmin, 4, raw = T) + sub_rain + prcp + snow + snwd + weekday + is_holiday + tmax, data = trips_validate)
+model_final <- lm(num_trips ~ poly(tmin, 4, raw = T) + sub_rain + prcp + snow + snwd + weekday + is_holiday + tmax, data = trips_train)
 
 train_final <- trips_train %>%
   add_predictions(model_final) %>%
@@ -234,6 +244,10 @@ ggplot(plot_data, aes(x = pred, y = num_trips)) +
   ylab('Actual Values')
 
 save(model_final, file = 'model_final.RData')
+
+test_err <- sqrt(mean((predict(model_final, trips_per_day_test) - trips_per_day_test$num_trips)^2))
+
+test_err
 
 ```
 
