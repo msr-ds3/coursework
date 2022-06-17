@@ -1,0 +1,36 @@
+---
+title: "Untitled"
+output: html_document
+date: '2022-06-16'
+---
+
+```{r}
+library(tidyverse)
+library(scales)
+
+```
+```{r}
+trips_per_day <- read_tsv('trips_per_day.tsv') 
+```
+
+
+```{r}
+set.seed(3)
+
+num_days <- nrow(trips_per_day)
+frac_train_valid <- 0.9
+num_train_valid <- floor(num_days * frac_train_valid)
+#randomly sample rows for training and validating
+ndx <- sample(1:num_days, num_train_valid, replace=F)
+# used to fit the model
+trips_per_day_train _valid <- trips_per_day[ndx, ]
+
+# used to evaluate  and the fit
+trips_per_day_validate <- trips_per_day[-ndx, ]
+view(trips_per_train_valid)
+
+#use to test our model later
+trips_per_day_test <- trips_per_day[-ndx, ]
+
+```
+
