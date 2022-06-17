@@ -7,10 +7,15 @@ date: '2022-06-16'
 ```{r}
 library(tidyverse)
 library(scales)
+library(modelr)
+library(lubridate)
 
 ```
 ```{r}
 trips_per_day <- read_tsv('trips_per_day.tsv') 
+trips_per_day <- trips_per_day%>%
+  mutate(day = wday(ymd))%>%
+  mutate(weekday = ifelse(day==6|day==7, 0, 1))
 ```
 
 
@@ -23,14 +28,106 @@ num_train_valid <- floor(num_days * frac_train_valid)
 #randomly sample rows for training and validating
 ndx <- sample(1:num_days, num_train_valid, replace=F)
 # used to fit the model
-trips_per_day_train _valid <- trips_per_day[ndx, ]
-
+trips_per_day_train_valid <- trips_per_day[ndx, ]
 # used to evaluate  and the fit
-trips_per_day_validate <- trips_per_day[-ndx, ]
-view(trips_per_train_valid)
-
-#use to test our model later
 trips_per_day_test <- trips_per_day[-ndx, ]
 
 ```
+#
+```{r}
+set.seed(137)
+num_date <- nrow(trips_per_day_train_valid)
+frac_train <- 0.8
+num_train <- floor(num_date * frac_train)
+
+# randomly sample rows for  training
+ndv<- sample(1:num_date, num_train, replace=F)
+# used to fit the model
+train_trips <- trips_per_day_train_valid[ndv, ]
+
+# used to evaluate the fit
+validate_trips <- trips_per_day_train_valid[-ndv, ]
+
+
+```
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=train_trips)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, train_trips) - train_trips$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, validate_trips) - validate_trips$num_trips)^2))
+}
+```
+```{r}
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+```
+```{r}
+model <- lm(num_trips ~ poly(tmin, 5, raw = T), data = train_trips)
+
+train_trips <- train_trips%>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+validate_trips <- validate_trips %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(train_trips,validate_trips)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+
+```{r}
+model<- lm(formula = num_trips~poly(tmin, k, raw = T) + weekday,data=new_trips)
+weekday <- new_trips%>%
+  add_predictions(model) %>%
+  mutate(split = "trips")
+plot_data <- bind_rows(trips_per_day_train_valid, )
+
+ggplot(weekday, aes(x = tmin  weekday, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+```
+```{r}
+ snow_day <- trips_per_day_train_valid%>%
+  mutate(day = wday(ymd))%>%
+  mutate(snow =(day < 6))
+weather_model<- lm(formula = num_trips~tmin*snow,data=snow_day)
+snow_date <- snow_day%>%
+  add_predictions(weather_model) %>%
+  mutate(split = "trips")
+
+
+ggplot(snow_date,aes(x = tmin * snow, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+
+
+
 
