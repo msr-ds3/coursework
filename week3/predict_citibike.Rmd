@@ -1,0 +1,244 @@
+---
+title: "predict_citibike"
+author: "Christopher Esquivel"
+date: '2022-06-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Get libraries and set up
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(scales)
+library(lubridate)
+library(modelr)
+
+theme_set(theme_bw())
+```
+
+Get data
+
+```{r}
+
+holidays <- read_csv("US Bank holidays")
+
+trips_per_day <- read_tsv("trips_per_day.tsv") %>% left_join(holidays, by="ymd") %>% mutate(is_holiday = as.numeric(!is.na(holiday))) %>% mutate(is_weekend = as.numeric(wday(ymd) == c(1, 7))) %>% select(-c(n, holiday))
+
+```
+
+Plot number of trips and minimum temperature
+
+```{r}
+ggplot(trips_per_day, aes(x = tmin, y = num_trips)) +
+  geom_point() +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+Get training and validation. => 90% of the data
+Testing => 10%
+```{r}
+set.seed(6)
+
+num_days <- nrow(trips_per_day)
+
+frac_train <- 0.8
+frac_validate <- 0.1
+frac_test <- 0.1
+
+num_train <- floor(num_days * frac_train)
+num_validate <- floor(num_days * frac_validate)
+num_test <- floor(num_days * frac_test)
+
+index_train <- sort(sample(seq_len(num_days), size = num_train))
+index_not_train <- setdiff(seq_len(num_days), index_train)
+index_validate <- sort(sample(index_not_train, size = num_validate))
+index_test <- setdiff(index_not_train, index_validate)
+
+df_train <- trips_per_day[index_train, ]
+df_validate <- trips_per_day[index_validate, ]
+df_test <- trips_per_day[index_test, ]
+```
+
+Create models for tmin
+
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+  model <- lm(num_trips ~ poly(tmin, k, raw = T), data = df_train)
+  
+  train_err[k] <- sqrt(mean((predict(model, df_train) - df_train$num_trips)^2))
+  
+  validate_err[k] <- sqrt(mean((predict(model, df_validate) - df_validate$num_trips)^2))
+}
+```
+
+Plot the training and validation error
+
+```{r}
+plot_data <- data.frame(K, train_err, validate_err) %>% gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) + geom_line() + scale_x_continuous(breaks=K) + xlab('Polynomial Degree') + ylab('RMSE') 
+```
+
+Do the same thing for tmax
+
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+  model <- lm(num_trips ~ poly(tmax, k, raw = T), data = df_train)
+  
+  train_err[k] <- sqrt(mean((predict(model, df_train) - df_train$num_trips)^2))
+  
+  validate_err[k] <- sqrt(mean((predict(model, df_validate) - df_validate$num_trips)^2))
+}
+```
+
+```{r}
+plot_data <- data.frame(K, train_err, validate_err) %>% gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) + geom_line() + scale_x_continuous(breaks=K) + xlab('Polynomial Degree') + ylab('RMSE') 
+```
+
+
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+  model <- lm(num_trips ~ poly(tmin, k) + tmax + prcp + snwd + is_holiday + is_weekend, data = df_train)
+  
+  train_err[k] <- sqrt(mean((predict(model, df_train) - df_train$num_trips)^2))
+  
+  validate_err[k] <- sqrt(mean((predict(model, df_validate) - df_validate$num_trips)^2))
+}
+
+
+plot_data <- data.frame(K, train_err, validate_err) %>% gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) + geom_line() + scale_x_continuous(breaks=K) + xlab('Polynomial Degree') + ylab('RMSE') 
+```
+
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+  model <- lm(num_trips ~ tmin + poly(tmax, k) + prcp + snwd + is_holiday + is_weekend, data = df_train)
+  
+  train_err[k] <- sqrt(mean((predict(model, df_train) - df_train$num_trips)^2))
+  
+  validate_err[k] <- sqrt(mean((predict(model, df_validate) - df_validate$num_trips)^2))
+}
+
+
+plot_data <- data.frame(K, train_err, validate_err) %>% gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) + geom_line() + scale_x_continuous(breaks=K) + xlab('Polynomial Degree') + ylab('RMSE') 
+```
+
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+  model <- lm(num_trips ~ tmin + tmax + poly(prcp, k) + snwd + is_holiday + is_weekend, data = df_train)
+  
+  train_err[k] <- sqrt(mean((predict(model, df_train) - df_train$num_trips)^2))
+  
+  validate_err[k] <- sqrt(mean((predict(model, df_validate) - df_validate$num_trips)^2))
+}
+
+
+plot_data <- data.frame(K, train_err, validate_err) %>% gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) + geom_line() + scale_x_continuous(breaks=K) + xlab('Polynomial Degree') + ylab('RMSE') 
+```
+
+```{r}
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+  model <- lm(num_trips ~ tmin + tmax + prcp + poly(snwd, k) + is_holiday + is_weekend, data = df_train)
+  
+  train_err[k] <- sqrt(mean((predict(model, df_train) - df_train$num_trips)^2))
+  
+  validate_err[k] <- sqrt(mean((predict(model, df_validate) - df_validate$num_trips)^2))
+}
+
+
+plot_data <- data.frame(K, train_err, validate_err) %>% gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) + geom_line() + scale_x_continuous(breaks=K) + xlab('Polynomial Degree') + ylab('RMSE') 
+```
+
+Final model
+
+```{r}
+fm_op <- lm(num_trips ~ tmin + tmax + prcp + snwd + is_holiday + is_weekend, data = df_train)
+
+summary(fm_op)
+```
+
+Get RMSE when using the training data
+
+```{r}
+
+train_err <- sqrt(mean((predict(fm_op, df_train) - df_train$num_trips)^2))
+  
+validate_err <- sqrt(mean((predict(fm_op, df_validate) - df_validate$num_trips)^2))
+
+train_err
+validate_err
+```
+
+```{r}
+fm_op <- lm(num_trips ~ tmin + tmax + prcp + snwd + is_holiday + is_weekend, data = df_train)
+
+#After being trained, check how it does when using validation data
+fm_op_validated <- df_validate %>% add_predictions(fm_op)
+
+#Plot to see how good it follows the trend seen in the validation data
+ggplot(data = fm_op_validated, mapping = aes(x = tmin, y = num_trips)) + geom_point(aes(y = num_trips)) + geom_line(aes(y = pred)) + xlab("Min Temperature") + ylab("Num trips per day")
+```
+
+```{r}
+ggplot(data = fm_op_validated) + geom_point(mapping = aes(x = pred, y = num_trips)) + geom_abline(linetype = "dashed")
+```
+
+```{r}
+date_num_trips <- ggplot(data = fm_op_validated) + geom_line(aes(x = ymd, y = pred)) + geom_point(aes(x = ymd, y = num_trips)) + xlab("date") + ylab("num trips")
+
+pred_and_actual <- ggplot(data = fm_op_validated) + geom_point(aes(x = pred, y = num_trips)) + geom_abline(linetype = "dashed")
+
+date_num_trips
+pred_and_actual
+```
+
+Time to save the model
+
+```{r}
+save(trips_per_day, df_train, df_validate, df_test, fm_op, date_num_trips, pred_and_actual, file = "predict_citibike.RData")
+```
