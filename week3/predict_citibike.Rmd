@@ -16,7 +16,18 @@ library(broom)
 
 theme_set(theme_bw())
 options(repr.plot.width=4, repr.plot.height=3)
+
 trips_per_day <- read_tsv("trips_per_day.tsv")
+
+weather <- read_csv("weather.csv")
+
+weather <- weather %>%
+mutate(ymd = DATE)
+
+trips_per_day <- inner_join(trips_per_day, weather, on = "ymd")
+
+trips_per_day <- trips_per_day %>%
+transmute(ymd, num_trips, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN)
 
 #Adding holiday data to trips per day
 holidays <- read.table('holidays', sep = ',', header = FALSE, col.names = c("row", "ymd", "holiday_name")) %>%
@@ -174,3 +185,7 @@ test_err <- sqrt(mean((predict(model, trips_per_day_test) - trips_per_day_test$n
 test_err
 ```
 Oddly enough, my test data did slightly better than my validation data. I predict that new data will have slightly more error than this and probably fall somewhere between this the validation error. I think this because these 37 points could have just been conveniently good points.
+```{r}
+save(model, file='final_model.RData')
+```
+

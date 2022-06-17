@@ -1,0 +1,52 @@
+
+testing 
+
+```{r}
+load(file = 'trips_2015.RData')
+load(file = 'final_model.RData')
+```
+
+```{r}
+
+trip_weather_2015 <- trips %>% group_by(ymd) %>% summarise(num_trips = n()) %>% inner_join(weather, by='ymd')
+
+#trip_weather_2015$tmax <- (trip_weather_2015$tmax - 32) * .5556
+```
+
+okay model time
+
+```{r}
+test_err <- sqrt(mean((predict(model, trip_weather_2015) - trip_weather_2015$num_trips)^2))
+
+test_err
+```
+well this is about  a little more than 2 times the amount, the previous was 3682.965.
+
+```{r}
+load(file = 'trips_2020.RData')
+#load(file = 'final_model.RData')
+```
+
+```{r}
+trip_weather_2020 <- trips %>% group_by(ymd) %>% summarise(num_trips = n()) %>% inner_join(weather, by='ymd')
+
+#trip_weather_2020$tmax <- (trip_weather_2020$tmax - 32) * .5556
+
+
+```
+
+```{r}
+test_err <- sqrt(mean((predict(model, trip_weather_2020) - trip_weather_2020$num_trips)^2))
+
+test_err
+```
+This is way higher than the previous. I imagine it's because COVID had everyone staying inside.
+
+
+Elissa's RMSE:
+2015: 8360.902
+2020: 35271.42
+
+I unfortunately couldn't run Elissa's version with all the table changes. 
+
+Overall the main issues i had was the loading times of the files that loaded the csv files and made the trips dataframe. The main problem I had with Elissa's code was the differences in our respective dataframes. Once the weather file was fixed, the error made a lot more sense.
