@@ -1,0 +1,127 @@
+---
+title: "test_citibike_predictions"
+author: "Sushobhan Parajuli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this exercise, we will test our model from yesterday's work. The model is saved as "model.Rdata". We will load the model first. We will also load "trips_2015.Rdata" that has trips and weather datasets for 2015.
+
+Let's load our libraries first. 
+
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+library(lubridate)
+library(weathermetrics)
+```
+
+Here we load the model and test data.
+
+```{r}
+load("model.Rdata")
+load("trips_2015.Rdata")
+```
+
+Now we join the trip and weather datasets by ymd column.
+We also group by "ymd" and count number of trips for each date.
+
+Let's name this "test_data".
+
+```{r}
+test_data <- trips %>% 
+  group_by(ymd) %>% 
+  summarize(num_trips = n())
+
+test_data <- left_join(test_data, weather, by = "ymd")
+
+test_data
+```
+
+Let's add "is_holiday" column to the test data. we will also add "is_weekend".
+First, import the [holiday](https://gist.github.com/shivaas/4758439#file-us-bank-holidays) data.
+
+```{r}
+holidays <- read_csv("us_holiday", col_names = c("row", "ymd", "holiday"))
+holidays
+```
+
+```{r}
+test_data <- test_data %>%
+  left_join(holidays, by = "ymd") %>%
+  mutate(is_holiday = as.integer(!is.na(holiday))) %>%
+  mutate(is_weekend = as.integer(wday(ymd)==c(1,7))) %>%
+  select(c(num_trips, prcp, snow, snwd, tmin, tmax, is_holiday, is_weekend))
+test_data
+```
+Now we will predict the number of trips on our test data.
+Add a column with predicted values
+
+```{r}
+test_data <- add_predictions(test_data, fm3)
+test_data
+```
+Calculate root mean square and r squared values for our test data.
+
+```{r}
+rmse_test <- sqrt(mean(predict(fm3, test_data) - test_data$num_trips)^2)
+rsq_test <- rsquare(fm3, test_data)
+rmse_test
+rsq_test
+```
+
+The root mean square for the 2015 test data is not far off from 2014's.
+But the r-squared value has decreased to 0.69 from 0.85. (The r-squared value on the test data from 2014 was 0.85) Model did not perform as expected.
+
+Now, we will run the model on 2020 dataset. The 2020 dataset should not follow the usual trend as this year we faced coronavirus pandemic. Hence we do not expect our model to predict well for 2020's data. Nevertheless, it is exciting to examine how it would perform on this unusual year. Let's dive into it.
+
+Foremost, we will load the dataset. And join the trips data and weather data. Then we add "is_holiday" and "is_weekend" columns in this dataset.
+
+Let's name this dataset "test_data_pandemic"
+
+```{r}
+load("trips_2020.Rdata")
+
+test_data_pandemic <- trips %>% 
+  group_by(ymd) %>% 
+  summarize(num_trips = n())
+
+test_data_pandemic <- left_join(test_data_pandemic, weather, by = "ymd")
+
+test_data_pandemic <- test_data_pandemic %>%
+  left_join(holidays, by = "ymd") %>%
+  mutate(is_holiday = as.integer(!is.na(holiday))) %>%
+  mutate(is_weekend = as.integer(wday(ymd)==c(1,7))) %>%
+  select(c(num_trips, prcp, snow, snwd, tmin, tmax, is_holiday, is_weekend))
+
+test_data_pandemic
+```
+
+Let's add a column with the predicted values for this unusual year.
+
+```{r}
+test_data_pandemic <- add_predictions(test_data_pandemic, fm3)
+tail(test_data_pandemic)
+```
+
+We can see that over the years the number of trips per day have increased a lot. Even during the pandemic the actual number of trips is above the predicted. Some of the assumptions could be:
+  Over the years number of bikes and riders have increased such the least actual trip number is higher than the predicted, 
+  People started using citibikes to commute often during the pandemic as other means of transportation like subway was halted.
+  
+Now let's examine the root square mean error and r-squared value when we ran our modle on this pandemic data.
+
+```{r}
+rmse_test_pandemic <- sqrt(mean(predict(fm3, test_data_pandemic) - test_data_pandemic$num_trips)^2)
+rsq_test_pandemic <- rsquare(fm3, test_data_pandemic)
+rmse_test_pandemic
+rsq_test_pandemic
+```
+
+We can conclude that the model we chose after trainig it on 2014's data was not relevant for 2020's data. The model performed poorly as the r-squared value is just 0.37. On 2015's data the model performed satisfactorily. We need more research on what factors affect the trips to what extent.  
+
+In order to have a more robust model I would consider the number of new bikes that are being added every year and inflate the prediction with certain factor that is based in this addition of new bikes. I would also not rely on models built during an usual time to test on unusual time. 
