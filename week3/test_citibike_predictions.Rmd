@@ -1,0 +1,83 @@
+---
+title: "test_citibike_predictions"
+author: "Daniel"
+date: '2022-06-17'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(tidyverse)
+library(scales)
+library(modelr)
+library(lubridate)
+library(broom)
+library(dplyr)
+
+theme_set(theme_bw())
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+##Read in Data and Join the two DF's
+```{r load in trips Data and Weather data}
+
+load('trips_2015.RData') 
+load('mymodel.RData') 
+#head(weather)
+#head(model4)
+
+#join data 
+trips_per_day_2015 <- inner_join(trips, weather, on = "ymd")
+trips_per_day_2015 <- trips_per_day_2015 %>% mutate(day = wday(ymd), weekday = (day < 6)) %>% mutate(actual_rain = (prcp >= 0.5)) %>% group_by(ymd, tmin, day, weekday, actual_rain ) %>% summarize(num_trips = n())
+
+
+
+trips_per_day_2015 <- trips_per_day_2015 %>% add_predictions(model4) 
+head(trips_per_day_2015, 100)
+```
+
+
+
+## Compute RMSE between 2015 actual and predicted Data
+```{r compute RMSE}
+
+model4
+
+RMSE <- sqrt(mean((predict(model4, trips_per_day_2015) - trips_per_day_2015$num_trips)^2))
+RMSE    # 11455.72
+
+```
+
+
+##Do the same for 2020 data
+```{r}
+
+load('trips_2020.RData') 
+load('mymodel.RData') 
+#head(weather)
+#head(model4)
+
+#join data 
+trips_per_day_2020 <- inner_join(trips, weather, on = "ymd")
+trips_per_day_2020 <- trips_per_day_2020 %>% mutate(day = wday(ymd), weekday = (day < 6)) %>% mutate(actual_rain = (prcp >= 0.5)) %>% group_by(ymd, tmin, day, weekday, actual_rain ) %>% summarize(num_trips = n())
+
+
+
+trips_per_day_2020 <- trips_per_day_2020 %>% add_predictions(model4) 
+head(trips_per_day_2020, 100)
+```
+
+
+
+## Compute RMSE between 2020 actual and predicted Data
+```{r compute RMSE}
+
+model4
+
+RMSE <- sqrt(mean((predict(model4, trips_per_day_2020) - trips_per_day_2020$num_trips)^2))
+RMSE    # 35567.6
+```
+
+
+## 2014 performed best with an RSME of 4634.632, 2015 had an RMSE of 11455.72, and 2020 even worse at 35567.6. We needed to alter the original tsv file bc it had conflicting data with what weather data we had in the other file (shoutout Shoshana) and the download_trips_2020.sh script needed to be updated to bc the address of the 2020 csv files were named differently. They also already had .csv in their name so that needed to be changed. When loading in the files, you needed to alter it so that it wouldnt load in even the csv's we'd downloaded with 2015 data. We have yet to swap as we both need to go, but hopefully we'll swap models saturday night and I'll update the file. Cheeers!

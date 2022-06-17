@@ -22,9 +22,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r read in data }
 
-trips_per_day <- read_tsv('trips_per_day.tsv') %>% mutate(day = wday(ymd), weekday = (day < 6)) %>% mutate(actual_rain = (prcp >= 0.5))
-head(trips_per_day)
+#trips_per_day <- read_tsv('trips_per_day.tsv') %>% mutate(day = wday(ymd), weekday = (day < 6)) %>% mutate(actual_rain = (prcp >= 0.5))
+#head(trips_per_day)
 
+#weather_new <- read_csv('weather.csv')
+trips_per_day <- read_tsv("trips_per_day.tsv")
+
+weather <- read_csv("weather.csv")
+
+weather <- weather %>%
+  mutate(ymd = DATE)
+
+trips_per_day <- inner_join(trips_per_day, weather, on = "ymd")
+
+trips_per_day <- trips_per_day %>% transmute(ymd, num_trips, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN) %>% mutate(day = wday(ymd), weekday = (day < 6)) %>% mutate(actual_rain = (prcp >= 0.5))
+head(trips_per_day)
 ```
 
 ## Split up Data into training and test set (90/10 split)
@@ -119,8 +131,6 @@ ggplot(plot_data2, aes(x = K, y = error, color = split)) +
   xlab('Polynomial Degree') +
   ylab('RMSE')
 
-
-
 #=============== by day
 
 K <- 1:8
@@ -190,7 +200,7 @@ validate_err4
 
 ```{r model data}
 
-#-------------tmin version
+#------------- tmin version
 model <- lm(num_trips ~ poly(tmin, k, raw = T), data = trips_per_day_train)
 
 
@@ -301,7 +311,11 @@ ggplot(plot_data4, aes(x = pred, y = num_trips)) +
   xlab('Predicted Values') +
   ylab('Actual Values')
 
+save(model4, file = 'mymodel.RData')
 
+
+RMSE <- sqrt(mean((predict(model4, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+RMSE  # 4634.632
 ```
 
 ##ignore the bottom part
