@@ -1,0 +1,274 @@
+
+---
+Setup 
+```{r}
+library(tidyverse)
+library(scales)
+
+library(modelr)
+options(na.action = na.warn)
+
+library(broom)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+Loading in the data 
+```{r}
+trips_per_day <- read_tsv('trips_per_day.tsv', show_col_types = FALSE)
+```
+
+Plot the number of trips taken as a function of the minimum temperature on each day
+```{r}
+ggplot(trips_per_day, aes(x = tmin, y = num_trips)) +
+  geom_point() +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+
+Split data into 90% for training/validation and 10% test set.
+```{r}
+set.seed(42)
+
+num_days <- nrow(trips_per_day)
+frac_trainval <- 0.9
+num_trainval <- floor(num_days * frac_trainval)
+
+# randomly sample rows for the training and validation set 
+ndx <- sample(1:num_days, num_trainval, replace=F)
+
+# used to fit the model
+trips_per_day_trainval <- trips_per_day[ndx, ]
+
+# used to evaluate the fit
+trips_per_day_test <- trips_per_day[-ndx, ]
+```
+
+
+K-fold cross-validation
+
+Now we'll try fitting different polynomials to this data, and use K-fold cross-validation to find the polynomial degree that generalizes best to held out data.
+
+First we'll shuffle the data by sampling row numbers without replacement, then we'll assign each row to a fold.
+
+Now we'll loop through each polynomial degree, as before, but add an inner loop over folds to compute the average validation error
+```{r}
+set.seed(42)
+num_folds <- 5
+num_days <- nrow(trips_per_day_trainval)
+
+ndx <- sample(1:num_days, num_trainval, replace=F)
+
+trips_per_day_trainval <- trips_per_day_trainval[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips_per_day_trainval)
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+avg_train_err <- c()
+for (k in K) {
+
+# do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  train_err <- c()
+
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_trainval, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data= trips_per_day_train)
+
+
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_trainval, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    # evaluate on the training data
+    train_err[f] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  }
+
+# compute the average validation error across folds
+# and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  avg_train_err[k] <- mean(train_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+ 
+
+}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+
+#ERRORS
+plot_data <- data.frame(K, avg_train_err, avg_validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+#MODEL
+model <- lm(num_trips ~ poly(tmin, 5, raw = T), data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+
+
+
+At this point we found that the best polynomial degree, which has the lowest RMSE on validation data, is 8.
+
+Build different models creatively:
+1. Weekdays vs weekends and holidays 
+a. Join holidays table and trips_per_day_trainval. If that day is a holiday or weekend day, boolean = 0 in col holiday.
+```{r}
+library(lubridate)
+holidays <- read.table(file = "holidays.csv", sep = ',', header = FALSE, col.names = c("row", "ymd", "holiday_name")) %>% select(ymd) %>% mutate(ymd = as.Date(ymd), is_holiday = "Holiday")
+trips <- right_join(holidays, trips_per_day_trainval, "ymd") %>% 
+  mutate(is_holiday= ifelse(is.na(is_holiday), "Not_holiday", is_holiday))%>%
+  mutate(is_weekend = ifelse(wday(ymd, week_start = 1) > 5, "Weekend", "Weekday"))%>% 
+  mutate(weather = ifelse(prcp > 0, "Raining", "Good_weather")) %>% 
+  mutate(weather = ifelse(snwd > 0, "Snowing", weather))
+
+View(trips)
+```
+
+```{r}
+trips_per_day_trainval <- trips
+set.seed(42)
+num_folds <- 5
+num_days <- nrow(trips_per_day_trainval)
+
+ndx <- sample(1:num_days, num_trainval, replace=F)
+
+trips_per_day_trainval <- trips_per_day_trainval[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips_per_day_trainval)
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+avg_train_err <- c()
+for (k in K) {
+
+# do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  train_err <- c()
+
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_trainval, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T) + is_weekend + is_holiday +  weather, data= trips_per_day_train)
+
+
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_trainval, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    # evaluate on the training data
+    train_err[f] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  }
+
+# compute the average validation error across folds
+# and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  avg_train_err[k] <- mean(train_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+ 
+
+}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+
+#ERRORS
+plot_data <- data.frame(K, avg_train_err, avg_validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+#MODEL
+model <- lm(num_trips ~ poly(tmin, 5, raw = T) + is_weekend + is_holiday + weather, data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous() +
+  facet_grid(is_weekend ~ is_holiday ~ weather) 
+
+
+```
+Lowest error was 3950
+
+Evaluate
+```{r}
+#MODEL
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous() +
+  facet_grid(is_weekend ~ is_holiday ~ weather) 
+
+
+ggplot(plot_data, aes(x = pred, y = num_trips)) +
+  geom_point(aes(color = ymd)) +
+  xlab('Prediction') +
+  ylab('Actual Trips') +
+  scale_y_continuous() 
+
+
+```
+
