@@ -1,0 +1,339 @@
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+
+trips <- read_tsv("trips_per_day.tsv")
+holiday <- read_csv("US Bank holidays", col_names = c("row_number", "ymd", "title"))
+
+trips <- left_join(trips, holiday, by = "ymd") %>% mutate(holiday = !is.na(title)) %>% mutate(holiday = as.integer(holiday))
+
+#checking if holiday the day before as a feature 
+
+```
+
+#Split data into randomly selected training, validation, and test sets with 90% of data for training and validating 10% for testing
+```{r}
+set.seed(42)
+
+num_days <- nrow(trips)
+train_percent <- 0.9
+num_train <- floor(num_days * train_percent) 
+
+#checking effect of day of week
+library(lubridate)
+trips$day_of_week <- wday(trips$ymd)
+#1 is Sunday
+trips <- trips %>% mutate(weekday = day_of_week > 1 & day_of_week < 7) %>%
+  mutate(substantial_prec = as.integer(prcp > 0.7))
+
+sample_train <- sample(1:num_days, num_train, replace = F)
+
+trips_train <- trips[sample_train, ]
+trips_validate <- trips[-sample_train, ]
+
+```
+
+#Using min temperature to predict number of trips taken that day trying different polynomial degrees
+#Cross validation
+```{r}
+#tmin
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+   # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_train) - trips_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+  
+}
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+model <- lm(num_trips ~ poly(tmin, 4, raw = T), data = trips_train)
+
+trips_train <- trips_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_validate <- trips_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_train, trips_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+#precip
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+   # fit on the training data
+    model <- lm(num_trips ~ poly(substantial_prec, k, raw = T), data=trips_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_train) - trips_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+  
+}
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+model <- lm(num_trips ~ poly(substantial_prec, 4, raw = T), data = trips_train)
+
+trips_train <- trips_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_validate <- trips_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_train, trips_validate)
+
+ggplot(plot_data, aes(x = substantial_prec, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Substantial Precipitation') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+```
+
+#K-fold Cross-validation
+```{r}
+set.seed(42)
+num_folds <- 5
+num_days <- nrow(trips)
+
+ndx <- sample(1:num_days, num_train, replace=F)
+
+trips <- trips[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips)
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_train <- filter(trips, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_train)
+
+    # evaluate on the validation data
+    trips_validate <- filter(trips, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+
+#precipitation
+set.seed(42)
+num_folds <- 5
+num_days <- nrow(trips)
+
+ndx <- sample(1:num_days, num_train, replace=F)
+
+trips <- trips[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips)
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_train <- filter(trips, fold != f)
+    model <- lm(num_trips ~ poly(substantial_prec, k, raw = T), data=trips_train)
+
+    # evaluate on the validation data
+    trips_validate <- filter(trips, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+#Using different features
+```{r}
+#tmax and tmin
+lm.fit1 <- lm(num_trips ~ tmax*tmin, data = trips_train)
+summary(lm.fit1)
+```
+
+```{r}
+#non-linear transformtation with degree 4 with tmax and tmin
+lm.fit2 <- lm(num_trips ~ I(tmax^4) + I(tmin^4), data = trips_train)
+summary(lm.fit2)
+```
+
+```{r}
+#adding prcp
+lm.fit3 <- lm(num_trips ~ I(tmin^4) + I(tmax^4) + I(snwd^4) + I(snow^4), data = trips_train)
+summary(lm.fit3)
+```
+
+```{r}
+
+lm.fit4 <- lm(num_trips ~ day_of_week, data = trips_train)
+summary(lm.fit4)
+```
+
+```{r}
+lm.fit6 <- lm(num_trips ~ I(tmin^4) + I(tmax^4) + I(prcp^4) + I(snwd^4) + I(snow^4) + I(day_of_week^4), data = trips_train)
+summary(lm.fit6)
+```
+
+```{r}
+anova(lm.fit3, lm.fit6)
+
+```
+
+```{r}
+lm.fit7 <- lm(num_trips ~ weekday, data = trips)
+summary(lm.fit7)
+```
+
+#
+```{r}
+lm.fit8 <- lm(num_trips ~ I(tmin^4) + I(tmax^4) + I(prcp^4) + I(snwd^4) + I(snow^4) + weekday, data = trips_train)
+summary(lm.fit8)
+plot(lm.fit8)
+```
+
+```{r}
+#checking different degrees
+lm.fit9a <- lm(num_trips ~ poly(tmin, 4), data = trips_train)
+summary(lm.fit9a)
+lm.fit9b <- lm(num_trips ~ poly(tmax, 4), data = trips_train)
+summary(lm.fit9b)
+lm.fit9c <- lm(num_trips ~ prcp + I(prcp^2), data  = trips_train)
+summary(lm.fit9c)
+lm.fit9d <- lm(num_trips ~ poly(snow,4), data = trips_train)
+summary(lm.fit9d)
+lm.fit9e <- lm(num_trips ~ poly(snwd,4), data = trips_train)
+summary(lm.fit9e)
+```
+
+```{r}
+lm.fit10 <- lm(num_trips ~ I(tmin^3) + I(tmax^3) + I(prcp^1) + I(snow^1) + I(snwd^2) + weekday, data = trips_train)
+summary(lm.fit10)
+```
+
+```{r}
+
+model_a <- lm(num_trips ~ I(tmin^3) + I(tmax^3) + I(prcp^1) + I(snow^1) + I(snwd^2) + weekday, data = trips_train)
+
+model_b <- lm(num_trips ~ tmin + tmax + snow + prcp + snow, data = trips_train)
+summary(model_b)
+
+model_c <- lm(num_trips ~ I(tmax^2) + sqrt(prcp) + snow + weekday + holiday, data = trips_train)
+
+trips_train <- trips_train %>%
+  add_predictions(model_c) %>%
+  mutate(split = "train")
+trips_validate <- trips_validate %>%
+  add_predictions(model_c) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_train, trips_validate)
+
+plot_data %>% ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  #geom_smooth(se = False) + 
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+#checking the weekday and weekend total trip counts
+summary_count <- trips %>% group_by(weekday) %>%
+  summarize(count = sum(num_trips))
+summary_count
+
+#second plot
+plot_data %>% ggplot(plot_data, aes(x = pred, y = num_trips)) + 
+  geom_point() + 
+  geom_abline(linetype = "dashed") + 
+  xlab("Predicted") + 
+  ylab("Actual")
+```
+
+```{r}
+pred_actual <- plot_data %>%
+  add_predictions(model_c) %>%
+  mutate(actual = num_trips)
+
+pred_actual %>%
+  summarize(rmse = sqrt(mean((pred - actual)^2)),
+            cor = cor(pred, actual),
+            cor_sq = cor^2)
+
+?save
+save()
+```
