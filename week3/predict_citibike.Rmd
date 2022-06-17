@@ -242,3 +242,31 @@ Time to save the model
 ```{r}
 save(trips_per_day, df_train, df_validate, df_test, fm_op, date_num_trips, pred_and_actual, file = "predict_citibike.RData")
 ```
+
+Testing time!
+
+```{r}
+fm_op_tested <- df_test %>% add_predictions(fm_op)
+
+rmse_test <- sqrt(mean((predict(fm_op, df_test) - df_test$num_trips)^2))
+
+rmse_test
+```
+Plot the model with the testing data
+
+```{r}
+ggplot(data = fm_op_tested) + geom_line(aes(x = ymd, y = pred)) + geom_point(aes(x = ymd, y = num_trips)) + xlab("date") + ylab("num trips")
+
+ggplot(data = fm_op_tested) + geom_point(aes(x = pred, y = num_trips)) + geom_abline(linetype = "dashed")
+```
+
+When passing in the data for testing instead of the training data.
+adjusted R-squared is 0.87
+
+```{r}
+fm_tested <- lm(num_trips ~ tmin + tmax + prcp + snwd + is_holiday + is_weekend, data = df_test)
+
+summary(fm_tested)
+```
+
+I think my model will do good when testing on new data. It is a simple model. Perhaps it will perform the same as when using the testing data. 
