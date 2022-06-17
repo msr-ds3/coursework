@@ -1,0 +1,96 @@
+---
+title: "Test Model Predictions"
+author: "Shoshana Farber"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(scales)
+library(lubridate)
+
+library(modelr)
+options(na.action = na.warn)
+
+library(broom)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+# Loading data
+
+```{r}
+load('trips_2015.RData')
+load('model_final.Rdata')
+```
+
+# Setting up Additional Variables for 2015
+
+```{r}
+trips_2015_test <- inner_join(trips, weather, on = "ymd")
+
+days_of_week <- data.frame(dow = rep(1:7), 
+                           names = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+                           type = c("Weekday", "Weekday", "Weekday", "Weekday", "Weekday", "Weekend", "Weekend"),
+                           is_weekend = c(0,0,0,0,0,1,1))
+
+trips_2015_test <- trips_2015_test %>%
+  mutate(dow = wday(ymd)) %>%
+  left_join(days_of_week, on = "dow")
+
+substantial <- trips_2015_test %>%
+  filter(prcp >= 0.5) %>%
+  mutate(is_sub = 1, precip = "Substatial")
+
+insub <- trips_2015_test %>%
+  filter(prcp < 0.5) %>%
+  mutate(is_sub = 0, precip = "Insubstantial")
+
+trips_2015_test <- bind_rows(substantial, insub)
+
+trips_2015_test <- trips_2015_test %>%
+  group_by(ymd, prcp, snwd, snow, tmax, tmin, dow, type, is_weekend, is_sub, precip) %>%
+  summarize(num_trips = n())
+```
+
+# Calculating RMSE
+
+```{r}
+trips_2015_test <- trips_2015_test %>%
+  add_predictions(model_final)
+
+RMSE <- sqrt(mean(trips_2015_test$pred - trips_2015_test$num_trips)^2)
+
+RMSE
+```
+
+```{r}
+model <- lm(num_trips ~ poly(tmin, 4, raw = T) + is_weekend + prcp + snwd, trips_2015_test)
+
+trips_2015_test <- trips_2015_test %>%
+  add_predictions(model)
+
+RMSE <- sqrt(mean(trips_2015_test$pred - trips_2015_test$num_trips)^2)
+
+RMSE
+
+trips_2015_test <- trips_2015_test %>%
+  add_predictions(model_final)
+
+RMSE <- sqrt(mean(trips_2015_test$pred - trips_2015_test$num_trips)^2)
+
+RMSE
+
+model_final
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
