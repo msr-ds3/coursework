@@ -91,7 +91,7 @@ trips_per_day_train <- trips_per_day_train%>%
 trips_per_day_valid <- trips_per_day_valid %>%
   add_predictions(model) %>%
   mutate(split = "validate")
-plot_data <- bind_rows(train_trips,validate_trips)
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_valid)
 
 ggplot(plot_data, aes(x = tmin, y = num_trips)) +
   geom_point(aes(color = split)) +
@@ -121,16 +121,6 @@ rsquare(model,trips_per_day_valid)
 rmse(model,trips_per_day_valid)
 ```
 
-```{r}
-plot_data <- bind_rows(trips_per_day_train, trips_per_day_valid)
-
-ggplot(plot_data, aes(x = pred, y = num_trips)) +
-  geom_point(aes(color = split)) +
-  geom_line(aes(y = pred)) +
-  xlab('Minimum temperature') +
-  ylab('Daily trips') +
-  scale_y_continuous()
-```
 ```{r}
 plot_data <- bind_rows(trips_per_day_train, trips_per_day_valid)
 
