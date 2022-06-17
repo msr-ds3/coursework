@@ -1,0 +1,111 @@
+#2014 Results and Test Data
+Results from Validation Data
+RMSE = 3447.48	
+R^2 = 0.8330824	
+
+Results from Test Data
+RMSE = 3574.282	
+R^2 = 0.8654721		
+
+#Testing the 2015 data
+```{r}
+#download all necessary packages
+library(tidyverse)
+library(scales)
+library(modelr)
+
+#load data files
+load("trips_2015.Rdata")
+load("model.RData")
+holiday <- read_csv("US Bank holidays", col_names = c("row_number", "ymd", "title"))
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+
+#join the datasets and summarize number of counts
+trips_summary <-trips_2015 %>% group_by(ymd) %>%
+  summarize(count = n())
+trips_2015 <- left_join(trips_summary, weather_2015, by = 'ymd')
+trips_2015 <- left_join(trips_2015, holiday, by = "ymd") %>% mutate(holiday = !is.na(title)) %>% mutate(holiday = as.integer(holiday))
+trips_2015 <- trips_2015 %>% rename(num_trips = count)
+
+#convert fahrenheit to celsius
+#library(weathermetrics)
+#trips_2015$tmax <- fahrenheit.to.celsius(trips_2015$tmax, round = 2)
+
+#adding other variables used in prediction model
+library(lubridate)
+trips_2015$day_of_week <- wday(trips_2015$ymd)
+#1 is Sunday
+trips_2015 <- trips_2015 %>% mutate(weekday = day_of_week > 1 & day_of_week < 7) %>%
+  mutate(substantial_prec = as.integer(prcp > 0.7))
+
+#test dataset is all of 2015
+trips_2015 <- trips_2015 %>%
+  add_predictions(model_c) %>%
+  mutate(split = "test")
+
+#Predictions
+pred_actual <- trips_test %>%
+  add_predictions(model_c) %>%
+  mutate(actual = num_trips)
+
+sd(trips_test$num_trips)
+
+pred_actual %>%
+  summarize(rmse = sqrt(mean((pred - actual)^2)),
+             r_sq = rsquare(model_c,trips_2015))
+```
+
+When running the 2015 data the results for RMSE were 3574.282 and the R^2 was 0.702379 which told us that our model was pretty good in predicting number of trips as it was for the year 2014. 
+
+#Testing the 2020 data
+```{r}
+#download all necessary packages
+library(tidyverse)
+library(scales)
+library(modelr)
+
+#load data
+load("trips_2020.Rdata")
+load("model.RData")
+holiday <- read_csv("US Bank holidays", col_names = c("row_number", "ymd", "title"))
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+
+#join the datasets and summarize number of counts
+trips_summary <-trips_2020 %>% group_by(ymd) %>%
+  summarize(count = n())
+trips_2020 <- left_join(trips_summary, weather_2020, by = 'ymd')
+trips_2020 <- left_join(trips_2020, holiday, by = "ymd") %>% mutate(holiday = !is.na(title)) %>% mutate(holiday = as.integer(holiday))
+trips_2020 <- trips_2020 %>% rename(num_trips = count)
+
+#adding other variables used in prediction model
+library(lubridate)
+trips_2020$day_of_week <- wday(trips_2020$ymd)
+#1 is Sunday
+trips_2020 <- trips_2020 %>% mutate(weekday = day_of_week > 1 & day_of_week < 7) %>%
+  mutate(substantial_prec = as.integer(prcp > 0.7))
+
+#test dataset is all of 2015
+trips_2020 <- trips_2020 %>%
+  add_predictions(model_c) %>%
+  mutate(split = "test")
+
+
+#Predictions
+pred_actual <- trips_2020 %>%
+  add_predictions(model_c) %>%
+  mutate(actual = num_trips)
+
+sd(trips_2020$num_trips)
+
+pred_actual %>%
+  summarize(rmse = sqrt(mean((pred - actual)^2)),
+            r_2 = rsquare(model_c,trips_2020))
+```
+
+The 2020 data produced a RMSE of 35142.22 and R^2 of 0.3558857 which shows our model was not suited for predicting the number of trips like it was for the years 2014 and 2015. Factors like Covid and laws would need to be implemented into the model for 2020 to produce better results. 
+
+The model I originally had from yesterday's data needed to be tweeked to produce better results for 2014's test data and 2015, especially after changing the temperature units.

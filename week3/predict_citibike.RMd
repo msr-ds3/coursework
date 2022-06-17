@@ -301,18 +301,30 @@ library(modelr)
 
 theme_set(theme_bw())
 options(repr.plot.width=4, repr.plot.height=3)
+###############################################
+#trips <- read_tsv("trips_per_day.tsv")
+#holiday <- read_csv("US Bank holidays", col_names = c("row_number", "ymd", "title"))
+#trips <- left_join(trips, holiday, by = "ymd") %>% mutate(holiday = !is.na(title)) %>% mutate(holiday = as.integer(holiday))
+#############################################
 
-trips <- read_tsv("trips_per_day.tsv")
+load("trips_2014.Rdata")
 holiday <- read_csv("US Bank holidays", col_names = c("row_number", "ymd", "title"))
 
+#join the datasets and summarize number of counts
+trips_summary <-trips %>% group_by(ymd) %>%
+  summarize(count = n())
+trips <- left_join(trips_summary, weather, by = 'ymd')
 trips <- left_join(trips, holiday, by = "ymd") %>% mutate(holiday = !is.na(title)) %>% mutate(holiday = as.integer(holiday))
 
-#split data
-set.seed(42)
+#Easier way than redownloading the files - by Shoshana
+#trips_per_day <- read_tsv("trips_per_day.tsv")
+#weather <- read_csv("weather.csv")
+#weather <- weather %>%
+#mutate(ymd = DATE)
+#trips_per_day <- inner_join(trips_per_day, weather, on = "ymd")
+#trips_per_day <- trips_per_day %>%
+#transmute(ymd, num_trips, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN)
 
-num_days <- nrow(trips)
-train_percent <- 0.9
-num_train <- floor(num_days * train_percent) 
 
 #checking effect of day of week
 library(lubridate)
@@ -320,21 +332,64 @@ trips$day_of_week <- wday(trips$ymd)
 #1 is Sunday
 trips <- trips %>% mutate(weekday = day_of_week > 1 & day_of_week < 7) %>%
   mutate(substantial_prec = as.integer(prcp > 0.7))
+trips <- trips %>% rename(num_trips = count)
 
-sample_train <- sample(1:num_days, num_train, replace = F)
+#split data
+set.seed(42)
 
-trips_train <- trips[sample_train, ]
+#split training & validation data to 90% and 10% for testing
+num_days <- nrow(trips)
+train_valid_percent <- 0.9
+num_train_valid <- floor(num_days * train_valid_percent) 
+
+sample_train_valid <- sample(1:num_days, num_train_valid, replace = F)
+
+trips_train_valid <- trips[sample_train_valid, ]
+trips_test <- trips[-sample_train_valid, ]
+
+#split training and validation data
+train_percent <- 0.9
+num_train_valid_days <- nrow(trips_train_valid) 
+num_train <- floor(num_train_valid_days * train_percent)
+
+sample_train <- sample(1:num_train_valid_days, num_train, replace = F)
+trips_train <- trips[sample_train, ] 
 trips_validate <- trips[-sample_train, ]
 
 #chosen final model
-model_c <- lm(num_trips ~ I(tmax^2) + sqrt(prcp) + snow + weekday + holiday, data = trips_train)
+model_c <- lm(num_trips ~ tmax + sqrt(prcp) + snow + weekday + holiday, data = trips_train)
+
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+   # fit on the training data
+    model <- lm(num_trips ~ tmax + sqrt(prcp) + snow + weekday + holiday, data=trips_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_train) - trips_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+}
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
 
 trips_train <- trips_train %>%
   add_predictions(model_c) %>%
   mutate(split = "train")
+
 trips_validate <- trips_validate %>%
   add_predictions(model_c) %>%
   mutate(split = "validate")
+
 plot_data <- bind_rows(trips_train, trips_validate)
 
 plot_data %>% ggplot(aes(x = ymd, y = num_trips)) +
@@ -364,7 +419,30 @@ pred_actual <- plot_data %>%
 pred_actual %>%
   summarize(rmse = sqrt(mean((pred - actual)^2)),
             cor = cor(pred, actual),
-            cor_sq = cor^2)
+            cor_sq = cor^2, 
+            r_sq = rsquare(model_c,trips_validate))
 
 save(model_c,file = "model.RData")
 ```
+
+```{r}
+#test data
+load("model.Rdata")
+
+trips_test <- trips_test %>%
+  add_predictions(model_c) %>%
+  mutate(split = "test")
+
+pred_actual <- trips_test %>%
+  add_predictions(model_c) %>%
+  mutate(actual = num_trips)
+
+pred_actual %>%
+  summarize(rmse = sqrt(mean((pred - actual)^2)),
+            cor = cor(pred, actual),
+            cor_sq = cor^2,
+            r_sq = rsquare(model_c,trips_test))
+
+```
+
+```{}
