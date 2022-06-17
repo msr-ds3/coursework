@@ -1,0 +1,147 @@
+---
+title: "Predict Citibike"
+author: "Alexandra Roffe (Yeshiva University)"
+date: '6/17/2022'
+---
+
+```{r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(modelr)
+library(broom)
+library(lubridate)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+# Write a new file called test_citibike_predictions.Rmd that loads in the 2015 trips_2015.Rdata file and weather data along with your saved model (from yesterday's .Rdata file, and predicts the number of trips for each day.
+
+```{r}
+load("trips_2015.RData")
+load("bestmodel.RData")
+```
+
+
+# join weather and the data 
+```{r}
+test_2015 <- full_join(trips, weather) # by "ymd"
+# add a num_trips
+test_2015 <- test_2015 %>%
+  group_by(ymd) %>%
+  mutate(num_trips = n()) %>%
+  distinct(ymd, date, tmin, tmax, prcp, num_trips, snow, snwd) %>%
+  filter(year(ymd) < 2016)
+```
+
+```{r}
+test_2015 <- test_2015 %>% 
+  mutate(day_of_week = wday(ymd)) %>%
+  mutate(weekday_or_weekend = as.integer(day_of_week > 1 & day_of_week < 7)) %>% # 1 and 7 are weekends. 
+  mutate(prcp2 = as.integer(prcp > 0.7))
+
+# Adding holidays
+
+test_2015 <- left_join(test_2015, holidays, "ymd") %>%
+  mutate(holiday = is.na(title)) %>%
+  mutate(holiday1 = as.integer(holiday))
+```
+
+
+#Test:
+```{r}
+#lm.fit10()
+model <- lm.fit4#lm.fit11b
+
+trips_2015_with_pred <- test_2015 %>%
+  add_predictions(model)%>%
+  mutate(actual = as.numeric(num_trips))
+
+```
+
+lm.fit4:
+[1] 21326.79
+[1] 20915.85
+[1] 0.006293488
+[1] 3.960799e-05
+
+```{r}
+sqrt(mean((predict(model, trips_2015_with_pred) - trips_2015_with_pred$num_trips)^2))
+
+
+trips_2015_with_pred <- trips_2015_with_pred %>%
+  mutate(rmse = sqrt(mean((pred - actual)^2)))
+
+mean(as.integer(trips_2015_with_pred$rmse))
+
+#as.integer(trips_2015_with_pred$rmse),
+cor(trips_2015_with_pred$pred, trips_2015_with_pred$actual)
+cor(trips_2015_with_pred$pred, trips_2015_with_pred$actual)^2
+```
+
+
+
+
+
+```{r}
+trips_2015_with_pred %>%
+  ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = factor(weekday_or_weekend))) +
+  
+  geom_line(aes(y = pred)) +
+  #geom_smooth() +
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+```
+
+```{r}
+ggplot(plot_data, aes(x = pred, y = num_trips, color = factor(tmin))) +
+  geom_point() +
+  geom_abline(linetype = "dashed") +
+  xlab('Predicted') +
+  ylab('Actual num_trips')
+```
+
+
+
+
+# Now checking for 2020 data and Nirvi's Hypothesis:
+
+Pair up with a partner who has a different model, use their code to run their model, and evaluate the predictions it makes for 2015 and for 2020.
+
+```{r}
+load("trips_2020.RData")
+```
+
+```{r}
+Nmodel<- lm(formula = num_trips ~ poly(tmin, 4, raw = T) + snwd + prcp + snow + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+
+n_2020_pred <- full_join(trips, weather, "ymd") %>% # by "ymd"
+  group_by(ymd) %>%
+  mutate(num_trips = n()) %>%
+  
+  distinct(ymd, date, tmin, tmax, prcp, num_trips, snow, snwd) %>%
+  filter(year(ymd) == 2020) %>%
+  add_predictions(Nmodel)%>%
+  mutate(actual = as.numeric(num_trips))
+
+sqrt(mean((predict(Nmodel, n_2020_pred) - n_2020_pred$num_trips)^2))
+
+```
+
+
+
+Write up any thoughts you have about this exercise in your Rmarkdown file, ranging from how the model performed in 2014 vs. 2015 vs. 2020, challenges you faced in running it on new data, or issues that came up in running each other's code. Commit and push the file to Github when you're done.
+
+
+  I think in llb model and Nirvi's model there was definitely overestimating. The model was too dependent on the 2014. 
+  The models should have been simpler with less terms. The idea would be that some terms are dependent on other terms and this would be shown in the formula. For example maybe tmin and tmax don't both need to be there. 
+  Nirvi got a rmse of 1,375,217. 
+  My model 4 got a rmse of 14,214.
+  
+  I think there is potential for both of these to decrease and for the model to be improved. 
+  
+  I think the biggest problem was that I was loading in to .RData files that had variables of the same name. If I realized I was going to merge them, I would have tried to keep the names different. It was not a huge error but it was frustration. I didn't have problems running Nirvi's code. 
+
