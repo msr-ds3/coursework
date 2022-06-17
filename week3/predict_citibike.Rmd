@@ -1,0 +1,351 @@
+---
+title: "week3day4"
+author: "Daniel"
+date: '2022-06-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(scales)
+library(modelr)
+library(lubridate)
+library(broom)
+library(dplyr)
+
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Read in Data File
+
+```{r read in data }
+
+trips_per_day <- read_tsv('trips_per_day.tsv') %>% mutate(day = wday(ymd), weekday = (day < 6)) %>% mutate(actual_rain = (prcp >= 0.5))
+head(trips_per_day)
+
+```
+
+## Split up Data into training and test set (90/10 split)
+
+
+```{r split data }
+
+set.seed(42)
+
+num_days <- nrow(trips_per_day)
+fit_frac <- 0.9
+num_fit <- (fit_frac * num_days)
+
+sample <- sample(1:num_days, num_fit, replace = F)
+
+# 90% training/validating
+trips_per_day_fit <- trips_per_day[sample, ]
+
+# 10% test saved for later
+trips_per_day_test <- trips_per_day[-sample, ]
+
+# 80:20 split train:validate
+num_days_train <- nrow(trips_per_day_fit)
+train_frac <- 0.8
+num_train <- floor(train_frac * num_days_train)
+
+sample_train <- sample(1:num_days_train, num_train, replace = F)
+
+trips_per_day_train <- trips_per_day_fit[sample_train, ]
+
+trips_per_day_validate <- trips_per_day_fit[-sample_train, ]
+
+#------------------
+
+
+```
+
+## Fit model
+
+```{r fit model}
+
+K <- 1:8
+train_err <- c()
+validate_err <- c()
+
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data = trips_per_day_train)
+    
+     # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+}
+
+#plot reg tmin data 
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x = K, y = error, color = split)) +
+  geom_line() +
+  scale_x_continuous(breaks = K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+#============================ weekday
+
+K <- 1:8
+train_err2 <- c()
+validate_err2 <- c()
+
+for (k in K) {
+
+model2 <- lm(num_trips ~ poly(tmin, k, raw = T) * weekday, data = trips_per_day_train)
+
+train_err2[k] <- sqrt(mean((predict(model2, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  
+validate_err2[k] <- sqrt(mean((predict(model2, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+}
+
+
+plot_data2 <- data.frame(K, train_err2, validate_err2) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data2, aes(x = K, y = error, color = split)) +
+  geom_line() +
+  scale_x_continuous(breaks = K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+
+#=============== by day
+
+K <- 1:8
+train_err3 <- c()
+validate_err3 <- c()
+
+for (k in K) {
+
+model3 <- lm(num_trips ~ poly(tmin, k, raw = T) * day, data = trips_per_day_train)
+
+train_err3[k] <- sqrt(mean((predict(model3, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  
+validate_err3[k] <- sqrt(mean((predict(model3, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+}
+
+
+plot_data3 <- data.frame(K, train_err3, validate_err3) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data3, aes(x = K, y = error, color = split)) +
+  geom_line() +
+  scale_x_continuous(breaks = K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+
+#================ by rain weather
+K <- 1:8
+train_err4 <- c()
+validate_err4 <- c()
+
+for (k in K) {
+
+model4 <- lm(num_trips ~ poly(tmin, k, raw = T) * actual_rain, data = trips_per_day_train)
+
+train_err4[k] <- sqrt(mean((predict(model4, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+  
+validate_err4[k] <- sqrt(mean((predict(model4, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+}
+
+
+plot_data4 <- data.frame(K, train_err4, validate_err3) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data4, aes(x = K, y = error, color = split)) +
+  geom_line() +
+  scale_x_continuous(breaks = K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+
+
+train_err
+validate_err
+train_err2
+validate_err2
+train_err3
+validate_err3
+train_err4
+validate_err4
+
+```
+
+## Model the train data 
+
+```{r model data}
+
+#-------------tmin version
+model <- lm(num_trips ~ poly(tmin, k, raw = T), data = trips_per_day_train)
+
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred )) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+
+
+#-------------- tmin & weekend version
+
+model2 <- lm(num_trips ~ poly(tmin, k, raw = T) * weekday, trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model2) %>%
+  mutate(split = "train")
+
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model2) %>%
+  mutate(split = "validate")
+
+plot_data2 <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+plot_data2 %>% ggplot(aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+ # facet_wrap("type")+
+  xlab('Minimum temperature & Weekend') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+
+#----------------- day version
+
+model3 <- lm(num_trips ~ poly(tmin, k, raw = T) * day, trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model3) %>%
+  mutate(split = "train")
+
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model3) %>%
+  mutate(split = "validate")
+
+plot_data3 <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data3, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Min Temp & Day') +
+  ylab('Daily trips') +
+  scale_y_continuous() 
+#-------------------
+model4 <- lm(num_trips ~ poly(tmin, k, raw = T) * actual_rain, trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model4) %>%
+  mutate(split = "train")
+
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model4) %>%
+  mutate(split = "validate")
+
+plot_data4 <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data4, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Min Temp & Rain') +
+  ylab('Daily trips') +
+  scale_y_continuous() 
+
+
+```
+
+## 4th One has the least error so we will use that one 
+
+```{r  best fit model plots}
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model4) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model4) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Date') +
+  ylab('Number of Trips') 
+
+
+ggplot(plot_data4, aes(x = pred, y = num_trips)) +
+  geom_point(aes(color = ymd)) + 
+  geom_abline() + 
+  xlab('Predicted Values') +
+  ylab('Actual Values')
+
+
+```
+
+##ignore the bottom part
+
+```{r other best fit models }
+
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Date') +
+  ylab('Number of Trips') 
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model2) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model2) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Date') +
+  ylab('Number of Trips') 
+
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model3) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model3) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+ggplot(plot_data, aes(x = ymd, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Date') +
+  ylab('Number of Trips') 
+```
