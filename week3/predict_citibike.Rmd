@@ -111,7 +111,7 @@ trips_train_dow <- trips_per_day_train %>%
   mutate(dow = wday(ymd))
 
 trips_validate_dow <- trips_per_day_validate %>% 
-  mutate(dow= wday(ymd))
+  mutate(dow = wday(ymd))
 
 days_of_week <- data.frame(dow = rep(1:7), 
                            names = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
@@ -186,10 +186,10 @@ holiday <- holiday %>%
 # train
 trips_train_dow <- left_join(trips_train_dow, holiday, on = "ymd") 
 
-is_it_holiday <- trips_train$is_holiday %>%
+is_it_holiday <- trips_train_dow$is_holiday %>%
   replace_na(0)
 
-trips_train_dow <- trips_train %>%
+trips_train_dow <- trips_train_dow %>%
   mutate(type2 = what_type, is_holiday = is_it_holiday)
 
 # validate
@@ -376,5 +376,46 @@ save(model_final, file = 'model_final.Rdata')
 # Test
 
 ```{r}
+test <- trips_per_day_test %>%
+  mutate(dow = wday(ymd)) %>%
+  left_join(days_of_week) %>%
+  left_join(holiday)
 
+is_it_holiday <- test$is_holiday %>%
+  replace_na(0)
+  
+test <- test %>%
+  mutate(is_holiday = is_it_holiday)
+
+test <- test %>%
+  add_predictions(model_final)
+
+substantial <- test %>%
+  filter(prcp >= 0.5) %>%
+  mutate(is_sub = 1, precip = "Substatial")
+
+insub <- test %>%
+  filter(prcp < 0.5) %>%
+  mutate(is_sub = 0, precip = "Insubstantial")
+
+test <- bind_rows(substantial, insub)
+
+test %>%
+  ggplot(aes(x = tmin, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred, color = precip)) +
+  facet_wrap("type") +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous(label = comma)
+
+test %>%
+  ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred, color = precip)) +
+  facet_wrap("type") +
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous(label = comma)
+#add_predictions(model_final)
 ```
