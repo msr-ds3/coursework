@@ -1,0 +1,112 @@
+---
+title: "test_citibike_predictions"
+author: "Christopher Stewart"
+date: '2022-06-17'
+output: html_document
+---
+
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(scales)
+library(modelr)
+library(lubridate)
+library(broom)
+theme_set(theme_bw())
+
+options(repr.plot.width=4, repr.plot.height=3)
+
+
+#load
+
+load("trips_2015.RData")
+load("best_model.RData")
+
+trips_2015$weekday <- wday(trips_2015$ymd, week_start=1)
+trips_2015$weekday <- as.factor(trips_2015$weekday)
+```
+
+
+Predict the number of trips
+```{r}
+trips_test2<- trips_2015 %>%
+  add_predictions(model)
+  
+
+#trips_test2$tmax <- (trips_test2$tmax - 32) * .5556
+#trips_test2$tmin <- (trips_test2$tmin - 32) * .5556
+
+sqrt(mean((predict(model, trips_test2) - trips_test2$num_trips)^2))
+
+ggplot(trips_test2, aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred)) +
+  scale_y_continuous(label = comma) + 
+  xlab('Day') +
+  ylab('Number of Trips') 
+```
+Predict the number of trips 2020
+```{r}
+load("trips_2020.RData")
+
+trips_2020$weekday <- wday(trips_2020$ymd, week_start=1)
+trips_2020$weekday <- as.factor(trips_2020$weekday)
+
+trips_test3<- trips_2020 %>%
+  add_predictions(model)
+  
+
+#trips_test3$tmax <- (trips_test3$tmax - 32) * .5556
+#trips_test3$tmin <- (trips_test3$tmin - 32) * .5556
+
+sqrt(mean((predict(model, trips_test3) - trips_test3$num_trips)^2))
+
+
+ggplot(trips_test3, aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred)) +
+  scale_y_continuous(label = comma) + 
+  xlab('Day') +
+  ylab('Number of Trips')
+```
+
+
+
+
+Predict Elissa's 
+
+```{r}
+
+load("Elissa_model.RData")
+
+
+
+trip_elissa <- trips_2015 %>%
+  #mutate(is_holiday = !is.na(holiday)) %>%
+  mutate(sub_rain = (prcp >= 0.5)) %>%
+  mutate(day = wday(ymd), weekday = (day < 6)) %>% 
+  mutate(weekday = as.factor(weekday))
+
+
+
+#trips_test4$tmax <- (trips_test3$tmax - 32) * .5556
+#trips_test4$tmin <- (trips_test3$tmin - 32) * .5556
+
+sqrt(mean((predict(model_final, trips_elissa) - trips_elissa$num_trips)^2))
+
+
+ggplot(trips_elissa, aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred)) +
+  scale_y_continuous(label = comma) + 
+  xlab('Day') +
+  ylab('Number of Trips')
+
+```
+Code snippets were running properly but this was Elissa's RMSE on her computer. The issue was column names and types were different and it couldn't fit the Rdata files due to data frame differences. I believe my model fit well and the variability in 2020 is due to the covid 19 shutdown. 
+
+2015 = RMSE : 8360.902
+2020 = RMSE : 35271.42
+
+
