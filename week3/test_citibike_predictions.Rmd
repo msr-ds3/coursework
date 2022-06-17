@@ -17,7 +17,7 @@ theme_set(theme_bw())
 options(repr.plot.width=4, repr.plot.height=3)
 ```
 
-# Loading data
+# Loading 2015 Data
 
 ```{r}
 load('trips_2015.RData')
@@ -64,33 +64,116 @@ RMSE <- sqrt(mean(trips_2015_test$pred - trips_2015_test$num_trips)^2)
 RMSE
 ```
 
+RMSE is 4,513.226 which is very close (and even smaller actually) than the RMSE from training the model, which was a bit over 4,900. 
+
 ```{r}
-model <- lm(num_trips ~ poly(tmin, 4, raw = T) + is_weekend + prcp + snwd, trips_2015_test)
+trips_2015_test %>%
+  ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred, color = precip)) +
+  facet_wrap("type") +
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous(label = comma)
+```
 
-trips_2015_test <- trips_2015_test %>%
-  add_predictions(model)
+```{r}
+trips_2015_test %>%
+  ggplot(aes(x = pred, y = num_trips)) +
+  geom_point() +
+  geom_abline() +
+  facet_wrap("type") +
+  xlab('Predicted trips') +
+  ylab('Daily trips') +
+  scale_y_continuous(label = comma) +
+  scale_x_continuous(label = comma)
+```
 
-RMSE <- sqrt(mean(trips_2015_test$pred - trips_2015_test$num_trips)^2)
 
-RMSE
+# Loading 2020 Data
 
-trips_2015_test <- trips_2015_test %>%
+```{r}
+load('trips_2020.RData')
+load('model_final.Rdata')
+```
+
+# Setting up Additional Variables for 2020
+
+```{r}
+trips_2020_test <- inner_join(trips_2020, weather, on = "ymd")
+
+days_of_week <- data.frame(dow = rep(1:7), 
+                           names = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"),
+                           type = c("Weekday", "Weekday", "Weekday", "Weekday", "Weekday", "Weekend", "Weekend"),
+                           is_weekend = c(0,0,0,0,0,1,1))
+
+trips_2020_test <- trips_2020_test %>%
+  mutate(dow = wday(ymd)) %>%
+  left_join(days_of_week, on = "dow")
+
+substantial <- trips_2020_test %>%
+  filter(prcp >= 0.5) %>%
+  mutate(is_sub = 1, precip = "Substatial")
+
+insub <- trips_2020_test %>%
+  filter(prcp < 0.5) %>%
+  mutate(is_sub = 0, precip = "Insubstantial")
+
+trips_2020_test <- bind_rows(substantial, insub)
+
+trips_2020_test <- trips_2020_test %>%
+  group_by(ymd, prcp, snwd, snow, tmax, tmin, dow, type, is_weekend, is_sub, precip) %>%
+  summarize(num_trips = n())
+```
+
+# Calculating RMSE
+
+```{r}
+trips_2020_test <- trips_2020_test %>%
   add_predictions(model_final)
 
-RMSE <- sqrt(mean(trips_2015_test$pred - trips_2015_test$num_trips)^2)
+RMSE <- sqrt(mean(trips_2020_test$pred - trips_2020_test$num_trips)^2)
 
 RMSE
+```
 
-model_final
+The RMSE for 2020 is 30,037.47 which is much higher than the 2014 RMSE. So it does not seem that this model works for this dataset. This would probably be due to the fact that 2020 started the COVID pandemic. 
+
+RMSE is 4,513.226 which is very close (and even smaller actually) than the RMSE from training the model, which was a bit over 4,900. 
+
+```{r}
+trips_2020_test %>%
+  ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_line(aes(y = pred, color = precip)) +
+  facet_wrap("type") +
+  xlab('Date') +
+  ylab('Daily trips') +
+  scale_y_continuous(label = comma)
 ```
 
 ```{r}
-
+trips_2020_test %>%
+  ggplot(aes(x = pred, y = num_trips)) +
+  geom_point() +
+  geom_abline() +
+  facet_wrap("type") +
+  xlab('Predicted trips') +
+  ylab('Daily trips') +
+  scale_y_continuous(label = comma) +
+  scale_x_continuous(label = comma)
 ```
 
+Based on these graphs, there were substantially more daily trips in 2020 than predicted by the model. The number of trips in both sets seem to peak from around August to October, but the number of daily trips for 2020 is much higher than the number of trips in 2015 and than the predicted amount of trips based on this model. As stated above, this could be due to the COVID pandemic. If I were to hypothesize, I would say that possibly many more people opted to take citibikes rather than to travel by Uber or citibus. This could be further expanded upon by looking into and comparing Uber and citibus data to see if the increase in trips seen here correlates with a decline in Uber and citibus trips during this time. 
 
+# Further Notes
 
+The RMSE for the original 2014 dataset was a little above 4,900. The RMSE for the 2015 dataset was 4,513, which is very close, and even a little better, than the 2014 dataset. This seems to indicate that my model does perform as it should for predicting trips in this dataset. 
 
+The RMSE for the 2020 dataset is 30,037, which is much higher than both the 2014 and 2015 datasets. This would indicate that the model cannot accurately predict the daily trips for this year. This is probably due to COVID and the fact that the initial model does not factor in whether or not the date is in the middle of a pandemic. The model can only perform accurately for predicting trips under normal circumstances, and any added circumstances that differ from those of the intial model would not be reflected into the prediction. We could hypothetically set up a model with the 2020 dataset to predict citibike trips in some hypothetical future pandemic. 
 
+One of the challanges that arose during this exercise was that the initial trips_per_day dataset that we used to set up the 2014 model did not have the correct weather.csv information. Therefore, when I ran the model against the 2015 data, the RMSE was crazy high and most of my predicted trips were negative. Looking into the model, I saw that most all of the coefficients were zero. This was because the tmin column from the trips_per_day dataset was not set to the same measurement as the tmin in the weather csv. TO fix this, I joined the trips_per_day tsv with the new weather csv that Coen ordered and I transmuted the table to only include ymd and num_trips from the trips_per_day dataset and the correct weather information from the necessary columns of the new weather csv. I then reran the training to get the final model and reloaded the trips_2015.RData to use the right weather csv and the model worked to give a normal RMSE and predicted trips. 
+
+Because of the amount of time it took for debugging, my partner and I did not have time to swap and test each other's codes. 
 
 

@@ -22,6 +22,18 @@ options(repr.plot.width=4, repr.plot.height=3)
 
 ```{r}
 trips_per_day <- read_tsv("trips_per_day.tsv")
+
+# fixing the trips_per_day dataset to have the correct weather.csv information
+
+weather <- read_csv("weather.csv")
+
+weather <- weather %>%
+  mutate(ymd = DATE)
+
+trips_per_day <- inner_join(trips_per_day, weather, on = "ymd")
+
+trips_per_day <- trips_per_day %>%
+  transmute(ymd, num_trips, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN)
 ```
 
 ```{r}
