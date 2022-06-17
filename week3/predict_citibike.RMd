@@ -292,7 +292,41 @@ model_a <- lm(num_trips ~ I(tmin^3) + I(tmax^3) + I(prcp^1) + I(snow^1) + I(snwd
 
 model_b <- lm(num_trips ~ tmin + tmax + snow + prcp + snow, data = trips_train)
 summary(model_b)
+```
 
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+
+trips <- read_tsv("trips_per_day.tsv")
+holiday <- read_csv("US Bank holidays", col_names = c("row_number", "ymd", "title"))
+
+trips <- left_join(trips, holiday, by = "ymd") %>% mutate(holiday = !is.na(title)) %>% mutate(holiday = as.integer(holiday))
+
+#split data
+set.seed(42)
+
+num_days <- nrow(trips)
+train_percent <- 0.9
+num_train <- floor(num_days * train_percent) 
+
+#checking effect of day of week
+library(lubridate)
+trips$day_of_week <- wday(trips$ymd)
+#1 is Sunday
+trips <- trips %>% mutate(weekday = day_of_week > 1 & day_of_week < 7) %>%
+  mutate(substantial_prec = as.integer(prcp > 0.7))
+
+sample_train <- sample(1:num_days, num_train, replace = F)
+
+trips_train <- trips[sample_train, ]
+trips_validate <- trips[-sample_train, ]
+
+#chosen final model
 model_c <- lm(num_trips ~ I(tmax^2) + sqrt(prcp) + snow + weekday + holiday, data = trips_train)
 
 trips_train <- trips_train %>%
@@ -317,14 +351,12 @@ summary_count <- trips %>% group_by(weekday) %>%
 summary_count
 
 #second plot
-plot_data %>% ggplot(plot_data, aes(x = pred, y = num_trips)) + 
+plot_data %>% ggplot(aes(x = pred, y = num_trips)) + 
   geom_point() + 
   geom_abline(linetype = "dashed") + 
   xlab("Predicted") + 
   ylab("Actual")
-```
 
-```{r}
 pred_actual <- plot_data %>%
   add_predictions(model_c) %>%
   mutate(actual = num_trips)
@@ -334,6 +366,5 @@ pred_actual %>%
             cor = cor(pred, actual),
             cor_sq = cor^2)
 
-?save
-save()
+save.image(file = "model.RData")
 ```
