@@ -366,5 +366,5 @@ pred_actual %>%
             cor = cor(pred, actual),
             cor_sq = cor^2)
 
-save.image(file = "model.RData")
+save(model_c,file = "model.RData")
 ```
