@@ -1,0 +1,41 @@
+---
+title: "citibike predictions 2015 and 2020"
+output: html_document
+date: '2022-06-20'
+---
+
+The main challenges I faced where downloading the 2020 trips data, building the model and trying to predict the 2015 and 2020 number of trips. 
+
+For 2015 trips I found that the rmse of my model is around 7878 number of trips 
+
+Here is the code that predicts it
+
+```{r}
+#2015 sesction
+load("trips_2015.RData")
+load("best.RData")
+
+
+trip_predictions_2015 <- trips_test %>% add_predictions(model)
+rmse_2015 <- sqrt(mean((predict(model, trips_test_final) - trips_test_final$num_trips)^2))
+rmse_2015 # 7878
+
+```
+
+
+For 2020 trips I found that the rmse of my model is around 36154
+
+Here is the code that predicts it
+
+```{r}
+#2020 section 
+load("trips_2020.RData")
+
+
+trip_predictions_2020 <- trips_test_2020 %>% add_predictions(model)
+rmse_2020 <- sqrt(mean((predict(model, trip_predictions_2020) - trip_predictions_2020$num_trips_2020)^2))
+
+rmse_2020 #36154
+```
+
+What I can concluded is that my model overfit but at the same time I think that the rmse shows that since 2020 was such a different year, my model was not able to predict that (i.e. COVID) and therefore the predictions of number of trips were very off. 

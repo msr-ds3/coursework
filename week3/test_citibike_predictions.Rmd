@@ -1,0 +1,37 @@
+---
+title: "test_citibike_predictions"
+output: html_document
+date: '2022-06-17'
+---
+```{r}
+library(tidyverse)
+library(scales)
+library(lubridate)
+library(modelr)
+options(na.action = na.warn)
+
+library(broom)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+
+
+#2015 sesction
+load("trips_2015.RData")
+load("best.RData")
+
+
+trip_predictions_2015 <- trips_test %>% add_predictions(model)
+rmse_2015 <- sqrt(mean((predict(model, trip_predictions_2015) - trip_predictions_2015$num_trips)^2))
+rmse_2015 # 7878
+
+#2020 section 
+load("trips_2020.RData")
+trip_predictions_2020 <- trips_test_2020 %>% add_predictions(model)
+rmse_2020 <- sqrt(mean((predict(model, trip_predictions_2020) - trip_predictions_2020$num_trips_2020)^2))
+rmse_2020 # 36154.18
+View(trip_predictions_2020)
+```
+
+#trips_2015.Rdata
+
