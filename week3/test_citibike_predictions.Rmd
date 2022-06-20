@@ -1,0 +1,142 @@
+
+
+
+```{r setup, include = FALSE}
+knitr :: opts_chunk$set(echo= TRUE)
+
+```
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+options(na.action = na.warn)
+library(broom)
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+loading the data
+```{r}
+
+load("~/coursework/week3/fmodel.RData")
+weather <- read_csv("weather.csv")
+```
+
+Loading 2015 data from trips 
+
+
+```{r}
+trips_2015 <- load('trips_2015.RData')
+#View(trips_2015)
+trips_per_day <- trips %>% select(ymd)
+
+trips_per_day <- trips %>% 
+  group_by(ymd) %>%
+  summarize(num_trips = n())
+
+#View(trips_per_day)
+```
+
+Loading 2015 weather data 
+
+```{r}
+weather <- weather %>% filter(year(ymd) == 2015)
+
+weather <- weather %>%
+  select(ymd, prcp, snwd, snow, tmax, tmin)
+#View(weather_2015)
+  
+trips_per_day_2015 <- right_join(trips_per_day, weather_2015, "ymd")
+
+#View(trips_per_day_2015)
+```
+Loading holiday file 
+
+```{r}
+
+
+holidays <- read.table(file = "holidays.csv", sep = ',', header = FALSE, col.names = c("row", "ymd", "holiday_name")) %>% 
+  select(ymd) %>% mutate(ymd = as.Date(ymd), is_holiday = "Holiday")
+
+trips_per_day_2015 <- right_join(holidays, trips_per_day_2015, "ymd") %>% 
+  mutate(is_holiday= ifelse(is.na(is_holiday), "Not_holiday", is_holiday))%>%
+  mutate(is_weekend = ifelse(wday(ymd, week_start = 1) > 5, "Weekend", "Weekday"))%>%
+  mutate(weather = ifelse(prcp > 0, "Raining", "Good_weather")) %>% 
+  mutate(weather = ifelse(snwd > 0, "Snowing", weather))%>%
+  filter(year(ymd)== 2015)
+
+View(trips_per_day_2015)
+```
+
+RSME between 2015 and predicted data
+..
+
+```{r}
+RMSE <- sqrt(mean((predict(model, trips_per_day_2015)- trips_per_day_2015$num_trips)^2))
+RMSE
+
+#7879.248
+```
+..
+Loading 2020 trips data 
+
+```{r}
+trips_2020 <- load('trips_2020.RData')
+#View(trips_2020)
+trips_per_day_2020 <- trips %>% filter(year(ymd) == 2020)
+
+trips_per_day_2020 <- trips %>% 
+  group_by(ymd) %>%
+  summarize(num_trips = n())
+
+View(trips_per_day_2020)
+
+```
+
+
+```
+
+Loading 2020 weather data 
+
+```{r}
+weather <- weather %>% filter(year(ymd) == 2020)
+
+weather <- weather %>%
+  select(ymd, prcp, snwd, snow, tmax, tmin)
+#View(weather)
+  
+trips_per_day_2020 <- right_join(trips_per_day_2020, weather, "ymd")
+
+View(trips_per_day_2020)
+```
+Loading holiday file and merging to 2020 data 
+
+```{r}
+
+
+holidays <- read.table(file = "holidays.csv", sep = ',', header = FALSE, col.names = c("row", "ymd", "holiday_name")) %>% 
+  select(ymd) %>% mutate(ymd = as.Date(ymd), is_holiday = "Holiday")
+
+trips_per_day_2020 <- right_join(holidays, trips_per_day_2020, "ymd") %>% 
+  mutate(is_holiday= ifelse(is.na(is_holiday), "Not_holiday", is_holiday))%>%
+  mutate(is_weekend = ifelse(wday(ymd, week_start = 1) > 5, "Weekend", "Weekday"))%>%
+  mutate(weather = ifelse(prcp > 0, "Raining", "Good_weather")) %>% 
+  mutate(weather = ifelse(snwd > 0, "Snowing", weather))%>%
+  filter(year(ymd)== 2020)
+
+View(trips_per_day_2020)
+
+```
+
+
+Using the model to calculate RMSE 
+
+```{r}
+RMSE <- sqrt(mean((predict(model, trips_per_day_2020)- trips_per_day_2020$num_trips)^2))
+
+RMSE
+
+#35229.77
+```
+
+My model produced an RMSE of 3950 for 2014 data. For 2015 data, it produced an RMSE of 7879.248 but for the RMSE got very high to 35229.77 for the 2020 data. This depicts that the model was suitable for 2015 data but not very reliable for other years. 
