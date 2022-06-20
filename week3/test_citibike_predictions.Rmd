@@ -1,0 +1,57 @@
+---
+title: "test_citibike_predictions"
+author: "Christopher Esquivel"
+date: '2022-06-17'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load the model and data for 2015
+
+```{r}
+load("trips_2015.RData")
+load("predict_citibike.RData")
+```
+ 
+Get the predictions for 2015 and get RMSE
+
+```{r}
+fm_op_tested_2015 <- trips_per_day_2015 %>% add_predictions(fm_op)
+
+rmse_test <- sqrt(mean((predict(fm_op, trips_per_day_2015) - trips_per_day_2015$num_trips)^2))
+
+rmse_test
+```
+
+```{r}
+ggplot(data = fm_op_tested_2015) + geom_line(aes(x = ymd, y = pred)) + geom_point(aes(x = ymd, y = num_trips)) + xlab("date") + ylab("num trips")
+
+ggplot(data = fm_op_tested_2015) + geom_point(aes(x = pred, y = num_trips)) + geom_abline(linetype = "dashed")
+```
+
+Testing for 2020 data
+
+```{r}
+load("trips_2020.RData")
+```
+
+
+```{r}
+fm_op_tested_2020 <- trips_per_day_2020 %>% add_predictions(fm_op)
+
+rmse_test <- sqrt(mean((predict(fm_op, trips_per_day_2020) - trips_per_day_2020$num_trips)^2))
+
+rmse_test
+```
+
+```{r}
+ggplot(data = fm_op_tested_2020) + geom_line(aes(x = ymd, y = pred)) + geom_point(aes(x = ymd, y = num_trips)) + xlab("date") + ylab("num trips")
+
+ggplot(data = fm_op_tested_2020) + geom_point(aes(x = pred, y = num_trips)) + geom_abline(linetype = "dashed")
+```
+
+My model was decent with the data from 2015. However, with the 2020 data it did terrible. When plotting it, my model did not capture the trend correctly and the RMSE error is 34930. Huge difference when compared to the RMSE error with the 2015 data, which was 8333.549 (still high).
+

@@ -54,5 +54,36 @@ weather <- mutate(weather,
 weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
-save(trips, weather, file='trips.RData')
+#save(trips, weather, file='trips.RData')
+
+
+#Instructions to get the holidays data properly
+
+# download the from here: https://gist.github.com/shivaas/4758439
+
+# Manually add a new row for the name of the columns : n,ymd,holiday
+
+# Instructions to get the data frames properly
+
+trips_per_day_2015 <- trips %>% select(ymd)
+
+trips_per_day_2015 <- trips_per_day_2015 %>% group_by(ymd) %>% summarize(num_trips = n())
+
+weather_2015 <- weather %>% filter(year(ymd) == 2015)
+
+weather_2015 <- weather_2015 %>% select(prcp, snwd, snow, tmax, tmin, ymd)
+
+trips_per_day_2015 <- merge(trips_per_day_2015, weather_2015, by = "ymd")
+
+holidays <- read_csv("US Bank holidays")
+
+trips_per_day_2015 <- trips_per_day_2015 %>%
+  left_join(holidays, by = "ymd") %>%
+    mutate(is_holiday = as.numeric(!is.na(holiday))) %>%
+      mutate(is_weekend = as.numeric(wday(ymd) == c(1, 7))) %>%
+        select(-c(n, holiday))
+
+# Save data
+
+save(trips_per_day_2015, file='trips_2015.RData')
 

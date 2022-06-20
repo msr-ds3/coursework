@@ -27,7 +27,20 @@ Get data
 
 holidays <- read_csv("US Bank holidays")
 
-trips_per_day <- read_tsv("trips_per_day.tsv") %>% left_join(holidays, by="ymd") %>% mutate(is_holiday = as.numeric(!is.na(holiday))) %>% mutate(is_weekend = as.numeric(wday(ymd) == c(1, 7))) %>% select(-c(n, holiday))
+trips_per_day <- read_tsv("trips_per_day.tsv")
+
+weather <- read_csv("weather.csv")
+
+weather <- weather %>%
+mutate(ymd = DATE)
+
+trips_per_day <- inner_join(trips_per_day, weather, on = "ymd")
+
+trips_per_day <- trips_per_day %>%
+transmute(ymd, num_trips, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN)
+
+
+trips_per_day <- trips_per_day %>% left_join(holidays, by="ymd") %>% mutate(is_holiday = as.numeric(!is.na(holiday))) %>% mutate(is_weekend = as.numeric(wday(ymd) == c(1, 7))) %>% select(-c(n, holiday))
 
 ```
 
