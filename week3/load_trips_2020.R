@@ -85,6 +85,10 @@ trips_per_day_2020 <- trips_per_day_2020 %>%
       mutate(is_weekend = as.numeric(wday(ymd) == c(1, 7))) %>%
         select(-c(n, holiday))
 
+# My model for 2020 data
+
+fm_pro_2020 <- lm(num_trips ~ tmin + tmax + prcp + snwd + is_holiday + is_weekend, data = trips_per_day_2020)
+
 # Save data
 
-save(trips_per_day_2020, file='trips_2020.RData')
+save(trips_per_day_2020, fm_pro_2020, file='trips_2020.RData')

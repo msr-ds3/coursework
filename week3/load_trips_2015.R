@@ -1,5 +1,7 @@
 library(dplyr)
 library(readr)
+library(tidyverse)
+library(lubridate)
 
 # define a function to turn strings into datetimes
 parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
@@ -53,9 +55,6 @@ weather <- mutate(weather,
                   ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
 weather <- tbl_df(weather)
 
-# save data frame for easy loading in the future
-#save(trips, weather, file='trips.RData')
-
 
 #Instructions to get the holidays data properly
 
@@ -83,7 +82,10 @@ trips_per_day_2015 <- trips_per_day_2015 %>%
       mutate(is_weekend = as.numeric(wday(ymd) == c(1, 7))) %>%
         select(-c(n, holiday))
 
+
+fm_pro_2015 <- lm(num_trips ~ tmin + tmax + prcp + snwd + is_holiday + is_weekend, data = trips_per_day_2015)
+
 # Save data
 
-save(trips_per_day_2015, file='trips_2015.RData')
+save(trips_per_day_2015, fm_pro_2015, file='trips_2015.RData')
 
