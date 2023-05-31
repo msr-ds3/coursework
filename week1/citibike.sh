@@ -29,6 +29,7 @@ ike-tripdata.csv |sort | uniq -c
 cut -d, -f5 201402-citibike-tripdata.csv | wc -l
 
 # compute the average trip duration
- cut -d, -f1 201402-citibike-tripdata.csv | tr -d '"'|awk -F, '{total += $1} END {print total/NR}'
+cut -d, -f1 201402-citibike-tripdata.csv | tr -d '"'|awk -F, '{total += $1} END {print total/NR}'
 
+ 
 
