@@ -98,7 +98,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
   	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
-  * Finish by submitting a pull request with your solutions so we can review them!
+  * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
 
 <!--
