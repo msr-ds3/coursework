@@ -10,3 +10,4 @@
 *.Rdata
 *.rdata
 *.dat
+.DS_Store
