@@ -70,7 +70,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 * Any one of us should be able to run the script and get the same pairing on a given day (i.e., as long as our computers agree on the year/month/day)
 * It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
 
-<!--
 
 # Day 2
   
@@ -99,9 +98,10 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	1. `git add` and `git commit` and new files to your local repository. (Omit large data files.)
   	2. `git pull upstream master` to grab changes from this repository, and resolve any merge conflicts, commiting the final results.
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
-  * Finish by submitting a pull request with your solutions so we can review them!
+  * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
 
+<!--
 
 
 # Day 3
