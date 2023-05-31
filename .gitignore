@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .Rproj.user
 .Rhistory
 *~
@@ -12,3 +13,4 @@
 *.dat
 .DS_Store
 .RDataTmp
+*.RDataTmp
