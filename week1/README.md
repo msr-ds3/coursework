@@ -101,9 +101,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
 
-<!--
-
-
 # Day 3
 
 ## Intro to R
@@ -137,6 +134,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
+<!--
 
 
 
