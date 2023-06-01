@@ -23,14 +23,23 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 ########################################
 
 # count the number of trips (= rows in the data frame)
+summarize(trips, number_of_trips = n())
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
+#  birth_year_list <- select(trips, birth_year)
+summarize(trips, max_birth_year = max(birth_year, na.rm = TRUE))
+summarize(filter(trips, birth_year != "\\N"), min_birth_year = min(birth_year, na.rm = TRUE))
 
 # use filter and grepl to find all trips that either start or end on broadway
-
+broadway_start_or_end <- filter(trips, grepl('Broadway', start_station_name) | grepl('Broadway', end_station_name))
+view(broadway_start_or_end)
 # do the same, but find all trips that both start and end on broadway
+broadway_start_and_end <- filter(trips, grepl('Broadway', start_station_name) & grepl('Broadway', end_station_name))
+view(broadway_start_and_end)
 
 # find all unique station names
+trips %>% unique(start_station_name, incomparables = FALSE)
+summarize(trips)
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
