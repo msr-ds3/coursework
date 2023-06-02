@@ -72,12 +72,20 @@ trips %>%
   arrange(desc(count))%>%
   group_by(gender) %>%
   slice_head(n=3)
-  
-
 
 # find the day with the most trips
 # tip: first add a column for year/month/day without time of day (use as.Date or floor_date from the lubridate package)
-
+trips %>%
+  mutate(date = as.Date(starttime)) %>%
+  group_by(date) %>%
+  summarize(trips = n()) %>%
+  arrange(desc(trips)) %>%
+  head(1)
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
+
+trips %>%
+  mutate(date = as.Date(starttime)) %>%
+  group_by(hour = hour(starttime)) %>%
+  summarize(avg_trips = mean(n()))
