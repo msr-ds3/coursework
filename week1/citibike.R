@@ -30,7 +30,7 @@ nrow(trips)
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
 filter(trips, 
-  grepl(".[0-9]", birth_year)) %>% 
+  grepl("^[0-9]+$", birth_year)) %>% 
   summarize(min(birth_year), 
   max(birth_year))
 
