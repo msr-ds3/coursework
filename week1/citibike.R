@@ -6,10 +6,10 @@ library(lubridate)
 ########################################
 
 # read one month of data
-trips <- read_csv('201402-citibike-tripdata.csv')
+trips <- read_csv('201402-citibike-tripdata.csv') #, na = c("\\N") to treat \\N as NA
 
 # replace spaces in column names with underscores
-names(trips) <- gsub(' ', '_', names(trips))
+names(trips) <- gsub(' ', '_', names(trips)) 
 
 # convert dates strings to dates
 # trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
@@ -17,6 +17,7 @@ names(trips) <- gsub(' ', '_', names(trips))
 # recode gender as a factor 0->"Unknown", 1->"Male", 2->"Female"
 trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unknown","Male","Female")))
 
+## NOTE '7$' mean end with 7 in regex
 
 ########################################
 # YOUR SOLUTIONS BELOW
@@ -27,7 +28,7 @@ nrow(trips)
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
 trips %>%
-  filter(birth_year != '\\N')  %>%
+  filter(birth_year != '\\N')  %>%  # or filter(grepl("^(18|19|20)[0-9]{2}", birth_year))
   summarize(max_birthyear = max(birth_year), min_birthyear = min(birth_year))
 
 # use filter and grepl to find all trips that either start or end on broadway
@@ -62,7 +63,7 @@ trips %>%
 # find the top 3 most common station-to-station trips by gender
 trips %>%
   group_by(gender) %>%
-  count(end_station_name) %>%
+  count(start_station_name, end_station_name) %>%
   arrange(gender, desc(n)) %>%
   top_n(3)
 
@@ -78,7 +79,7 @@ trips %>%
 ## average number of trips per hour for the month
 ## group by day
 trips %>%
-  mutate(hour = format(starttime, format = "%H")) %>%
+  mutate(hour = format(starttime, format = "%H")) %>% # hour(trips$starttime)
   add_count(hour, name = "trips_by_hour") %>%
   summarize(mean_trips_per_hour = mean(trips_by_hour))
   
