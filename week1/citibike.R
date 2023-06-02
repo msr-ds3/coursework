@@ -78,8 +78,8 @@ trips %>%
 trips %>%
   mutate(date = as.Date(starttime)) %>%
   group_by(date) %>%
-  summarize(trips = n()) %>%
-  arrange(desc(trips)) %>%
+  summarize(trips_count = n()) %>%
+  arrange(desc(trips_count)) %>%
   head(1)
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
