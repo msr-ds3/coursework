@@ -11,19 +11,63 @@ theme_set(theme_bw())
 
 # load RData file output by load_trips.R
 load('trips.RData')
-
+ 
+head(trips)
+head(weather)
 
 ########################################
 # plot trip data
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+trips %>%
+  mutate(minutes = tripduration/60) %>%
+  filter(tripduration < (60 * 72)) %>%  # limit to rides under 72 hours
+  ggplot(aes(x = minutes)) +
+  geom_histogram(bins=100) +
+  labs(x = "Minutes per trip")
+
+trips %>%
+  mutate(minutes = tripduration/60) %>%
+  filter(tripduration < (60 * 72)) %>%  # limit to rides under 72 hours
+  ggplot(aes(x = minutes)) +
+  geom_density() +
+  labs(x = "Minutes per trip")
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+# Histogram of trip times by rider type
+trips %>%
+  mutate(minutes = tripduration/60) %>%
+  filter(tripduration < (60 * 72)) %>%  # limit to rides under 72 hours
+  ggplot(aes(x = minutes, fill = usertype)) +
+  geom_histogram(bins=100) +
+  labs(x = "Minutes per trip", fill = "Rider type")
 
+# Density plot of trip times by rider type
+trips %>%
+  mutate(minutes = tripduration/60) %>%
+  filter(tripduration < (60 * 72)) %>%  # limit to rides under 72 hours
+  ggplot(aes(x = minutes, fill = usertype)) +
+  geom_density() +
+  labs(x = "Minutes per trip", fill = "Rider type")
 # plot the total number of trips on each day in the dataset
+trips %>%
+  mutate(date = as.Date(starttime)) %>%
+  group_by(date) %>%
+  summarize(trips = n()) %>%
+  ggplot(aes(x = date, y = trips)) +
+  geom_line() +
+  labs(x = "Date", y = "Total trips")
+
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
+trips %>%
+  mutate(age = birth_year) %>%
+  group_by(age, gender) %>%
+  summarize(trips = n()) %>%
+  ggplot(aes(x = age, y = trips, color = gender)) +
+  geom_line() +
+  labs(x = "Age", y = "Total trips", color = "Gender")
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
