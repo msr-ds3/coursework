@@ -62,7 +62,7 @@ trips %>%
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 trips %>%
-  mutate(age = birth_year) %>%
+  mutate(age = year(ymd) - birth_year) %>%
   group_by(age, gender) %>%
   summarize(trips = n()) %>%
   ggplot(aes(x = age, y = trips, color = gender)) +
@@ -72,6 +72,7 @@ trips %>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+
 
 ########################################
 # plot weather data
