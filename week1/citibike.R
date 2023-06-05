@@ -58,6 +58,11 @@ select(trips, start_station_name, end_station_name) %>%
   arrange(desc(count)) %>%
   head(10)
 
+# OR
+
+trips %>%
+  count(start_station_name, end_station_name)
+
 # find the top 3 end stations for trips starting from each start station
 
 group_by(trips, start_station_name, end_station_name) %>%
