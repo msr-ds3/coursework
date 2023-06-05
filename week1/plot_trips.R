@@ -108,7 +108,7 @@ trips_with_weather %>%
   summarize(count=n(), tmin = tmin[1]) %>%
   ggplot(aes(x=tmin, y=count)) +
   geom_point() +
-  geom_smooth()
+  geom_smooth(method="lm")
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
@@ -150,4 +150,5 @@ trips_with_weather %>%
   summarize(mean = mean(n), sd = sd(n)) %>%
     ggplot(aes(x=hour, y=mean, color=as.factor(dow))) +
     geom_point() +
+    geom_line() +
     labs(x="Hour", y="Number of Trips")
