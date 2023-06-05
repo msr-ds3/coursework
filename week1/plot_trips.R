@@ -11,19 +11,46 @@ theme_set(theme_bw())
 
 # load RData file output by load_trips.R
 load('trips.RData')
-
+view(trips)
 
 ########################################
 # plot trip data
 ########################################
+sample <- head(trips)
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+ggplot(sample, aes(x = tripduration)) +
+  geom_histogram(bins = 20, color = 'black', fill = 'lightblue')+
+  labs(title = "Distribution of Trip Times - Histogram",
+    x = "Trip Duration (seconds)",
+    y = "Frequency")
+  
+ggplot(sample, aes(x = tripduration)) +
+  geom_density(color = 'black', fill = 'lightblue')+
+  labs(title = "Distribution of Trip Times - Density",
+     x = "Trip Duration (seconds)",
+     y = "Density")
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+trips %>%
+  filter(tripduration <= 1e4) %>%
+ggplot(aes(x = tripduration, color = usertype, fill = usertype)) +
+  geom_histogram(bins = 50, color = 'black', alpha = 0.5, position = "identity")+
+  labs(title = "Distribution of Trip Times by Rider Type - Histogram",
+     x = "Trip Duration (seconds)",
+     y = "Frequency")
+
+trips %>%
+  filter(tripduration <= 1e4) %>%
+  ggplot(aes(x = tripduration, color = usertype, fill = usertype )) +
+  geom_density(color = 'black', alpha = 0.5, position = "identity")+
+  labs(title = "Distribution of Trip Times by Rider Type - Density",
+       x = "Trip Duration (seconds)",
+       y = "Frequency")
 
 # plot the total number of trips on each day in the dataset
-
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
+
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
