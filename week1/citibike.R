@@ -56,9 +56,10 @@ trips %>%
   
 # find the top 3 end stations for trips starting from each start station
 trips %>%
-  count(end_station_name) %>%
-  arrange(desc(n)) %>%
-  head(3)
+  group_by(start_station_name) %>%
+  count(start_station_name, end_station_name) %>%
+  arrange(start_station_name, desc(n)) %>%
+  top_n(3)
 
 # find the top 3 most common station-to-station trips by gender
 trips %>%
@@ -79,13 +80,13 @@ trips %>%
 ## average number of trips per hour for the month
 ## group by day
 trips %>%
-  mutate(hour = format(starttime, format = "%H")) %>% # hour(trips$starttime)
+  mutate(hour = hour(starttime)) %>% # hour(trips$starttime) or hour = format(starttime, format = "%H")
   add_count(hour, name = "trips_by_hour") %>%
   summarize(mean_trips_per_hour = mean(trips_by_hour))
   
 # what time(s) of day tend to be peak hour(s)?
 trips %>%
-  mutate(hour = format(starttime, format = "%H")) %>%
+  mutate(hour = hour(starttime)) %>%
   count(hour) %>%
   arrange(desc(n)) %>%
   head()
