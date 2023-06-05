@@ -19,6 +19,7 @@ load('trips.RData')
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
 trips %>% mutate(trip_times=tripduration/60) %>% 
+  filter(trip_times<1e4)%>%
   ggplot(aes(x=trip_times)) +
   geom_histogram()+
   scale_x_log10()+
@@ -33,13 +34,21 @@ trips %>% mutate(trip_times=tripduration/60) %>%
 
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+#by default, geom_histogram has stack for position
 trips %>% ggplot(aes(x=tripduration/60,color=usertype,fill=usertype)) +
-  geom_histogram()+
+  geom_histogram(position="identity",alpha=0.5)+
   scale_x_log10()+
   labs(x="trip times in minutes",y="count")
 
+
+#area under the curve is 1; density gives you an idea of distribution, not the number of customers/subscribers
+trips %>%
+  group_by(usertype) %>%
+  summarize(tripdurationByUser=mean(tripduration/60))
+
 trips %>% ggplot(aes(x=tripduration/60,color=usertype,fill=usertype)) +
-  geom_density()+
+  geom_density(alpha=0.5)+
+  geom_vline(xintercept =27)+
   scale_x_log10()+
   labs(x="Trip times in minutes",y="Density")
 
@@ -53,6 +62,11 @@ trips %>% mutate(days=as.Date(starttime)) %>%
   xlab("Days")+
   ylab("Number of Trips")
   
+trips %>% 
+  group_by(ymd) %>%
+  summarize(count=n()) %>% ggplot(aes(x=ymd,y=count))+
+  geom_line()
+
 trips %>% mutate(days=as.Date(starttime)) %>%
   count(days) %>%
   ggplot(aes(x=days,y=n))+
@@ -63,7 +77,7 @@ trips %>% mutate(days=as.Date(starttime)) %>%
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 #where do null values go?
 trips %>% ggplot(aes(x=birth_year,color=gender))+
-  geom_bar()+
+  geom_bar(position="identity",alpha=0.5)+
   scale_y_log10()
   xlab("Birth Year")+
   ylab("Number of Trips")
@@ -89,6 +103,7 @@ trips %>% filter(gender=="Male" | gender=="Female") %>%
 weather %>% 
   ggplot(aes(x=date(date),y=tmin)) +
     geom_point()+
+    geom_smooth()+
     xlab("Date")+
     ylab("Min Temperature")+ theme(axis.text.x=element_text(angle=-90))
   
@@ -118,12 +133,28 @@ trips_with_weather%>%
   count(tmin)%>%
   ggplot(aes(x=tmin,y=n))+
   geom_point()+
+  geom_smooth()+
   xlab("Min Temp")+
   ylab("Number of Trips")
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
-
+mean_prcp=mean(weather$prcp)
+trips_with_weather %>%mutate(sub_prcp=prcp>=mean_prcp) %>%
+  group_by(ymd,tmin,sub_prcp) %>%
+  summarize(count=n()) %>%
+  ggplot(aes(x=tmin,y=count,color=sub_prcp))+
+  geom_point()+
+  geom_smooth()+
+  xlab("tmin")+
+  ylab("The number of trips")
+  
+trips_with_weather %>%mutate(sub_prcp=prcp>=mean_prcp) %>% 
+  group_by(sub_prcp) %>%
+  summarize(count=n()) %>%
+  ggplot(aes(x=sub_prcp,y=count,color=sub_prcp,fill=sub_prcp))+
+  geom_col()+
+  labs(x="substantial precipitation",y="number of trips")
 # add a smoothed fit on top of the previous plot, using geom_smooth
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
@@ -135,6 +166,8 @@ trips %>% group_by(date(ymd),hrs=hour(starttime)) %>%
   summarize(avg_num_trips=mean(count),std=sd(count)) %>%
   ggplot(aes(x=hrs,y=avg_num_trips))+
   geom_point()+
+  geom_smooth()+
+  geom_errorbar(aes(ymin=avg_num_trips-std,ymax=avg_num_trips+std))+
   xlab("hours")+
   ylab("Avg Num of Trips")
 
@@ -142,3 +175,29 @@ trips %>% group_by(date(ymd),hrs=hour(starttime)) %>%
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+
+trips %>%  mutate(weekdays=wday(ymd,label=TRUE))%>%
+  group_by(date(ymd),weekdays,hrs=hour(starttime)) %>%
+  summarize(count=n()) %>%
+  group_by(weekdays,hrs) %>%
+  summarize(avg_num_trips=mean(count),std=sd(count)) %>%
+  ggplot(aes(x=hrs,y=avg_num_trips,color=weekdays))+
+  geom_point()+
+  #geom_smooth()+
+  scale_y_log10()+
+  #geom_errorbar(aes(ymin=avg_num_trips-std,ymax=avg_num_trips+std))+
+  xlab("hours")+
+  ylab("Avg Num of Trips")
+
+trips %>% mutate(weekdays=wday(ymd,label=TRUE)) %>%
+  select(ymd,weekdays) %>%
+  group_by(ymd,weekdays) %>%
+  summarize(count=n()) %>%
+  group_by(weekdays)%>%
+  summarize(avg_wkd_trips=mean(count),std=sd(count)) %>%
+  ggplot(aes(x=weekdays,y=avg_wkd_trips))+
+  geom_point()+
+  geom_smooth()+
+  geom_errorbar(aes(ymin=avg_wkd_trips-std,ymax=avg_wkd_trips+std))+
+  xlab("Weekdays")+
+  ylab("Avg Number of Trips")
