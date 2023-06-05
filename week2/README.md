@@ -34,7 +34,7 @@ This week covers:
     * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
 
 
-
+<!--
 
 # Day 2
 
@@ -122,7 +122,7 @@ This week covers:
   * The [modelr](https://modelr.tidyverse.org) and [tidymodels](https://github.com/tidymodels/tidymodels) packages in R
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
-
+-->
 
 
 <!--
