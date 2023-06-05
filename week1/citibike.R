@@ -28,8 +28,8 @@ count(trips)
 summarize(trips, num_trips = n())
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
-summarize(filter(trips, grepl('[0-9]', birth_year)), min_birth_year = min(birth_year))
-summarize(trips, max_birth_year = max(birth_year))
+summarize(filter(trips, grepl('^[0-9]+$', birth_year)), min_birth_year = min(birth_year))
+summarize(trips, max_birth_yea = max(birth_year))
 
 # use filter and grepl to find all trips that either start or end on broadway
 filter(trips, grepl('Broadway', start_station_name) | grepl('Broadway', end_station_name))
