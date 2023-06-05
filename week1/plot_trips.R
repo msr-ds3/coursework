@@ -194,13 +194,25 @@ trips %>%
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 trips %>%
-  mutate(hour = hour(starttime), weekday = wday(starttime)) %>%
+  mutate(hour = hour(starttime), weekday = wday(starttime, label = TRUE)) %>%
   group_by(hour, ymd, weekday) %>%
   summarize(trips_per_hour_per_day = n()) %>%
   group_by(hour, weekday) %>%
   summarize(mean = mean(trips_per_hour_per_day), sd = sd(trips_per_hour_per_day)) %>%
-  ggplot(aes(x = hour, y = mean, color = as.factor(weekday))) +
-  geom_point() +
-  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd)) +
+  ggplot(aes(x = hour, y = mean, color = weekday)) + geom_point() +
+  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd), alpha = 0.5) +
   scale_y_continuous(label = comma) + 
-  labs(x = "Hour", y = "Number of trips")
+  labs(x = "Hour", y = "Avg number of trips", color = "Weekday")
+
+trips %>%
+  mutate(hour = hour(starttime), weekday = wday(starttime)) %>%
+  mutate(weektype = ifelse(weekday == 1 | weekday == 7, "Weekend", "Workday")) %>%
+  group_by(hour, ymd, weektype) %>%
+  summarize(trips_per_hour_per_weektype = n()) %>%
+  group_by(hour, weektype) %>%
+  summarize(mean = mean(trips_per_hour_per_weektype), sd = sd(trips_per_hour_per_weektype)) %>%
+  ggplot(aes(x = hour, y = mean, color = as.factor(weektype))) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd), alpha = 0.5) +
+  scale_y_continuous(label = comma) + 
+  labs(x = "Hour", y = "Avg number of trips", color = "Week type")
