@@ -34,7 +34,6 @@ This week covers:
     * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
 
 
-<!--
 
 # Day 2
 
@@ -56,6 +55,7 @@ This week covers:
     * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
     * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
 
+<!--
 
 
 # Day 3
