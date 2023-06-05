@@ -29,6 +29,18 @@ nrow(trips)
 min(as.numeric(trips$birth_year)[!is.na(as.numeric(trips$birth_year))])
 max(as.numeric(trips$birth_year)[!is.na(as.numeric(trips$birth_year))])
 
+
+
+trips %>% filter(!grepl('^19[0-9][0-9]', birth_year)) %>% select(birth_year) %>% count(birth_year)
+rips %>% filter(!grepl('^19[0-9]{2}', birth_year)) %>% select(birth_year) %>% count(birth_year)
+rips %>% filter(grepl('^1.*7', birth_year)) %>% select(birth_year) %>% count(birth_year)
+rips %>% filter(grepl('^1.*7$', birth_year)) %>% select(birth_year) %>% count(birth_year)
+
+grepl('^[0-9]+$',c("a1","1977","1x"))
+grepl('^(18|19|20)[0-9]{2}$',c("1899","1977","2001","2133"))
+
+
+
 # use filter and grepl to find all trips that either start or end on broadway
 filter(trips, grepl("Broadway", trips$start_station_name) | grepl("Broadway", trips$end_station_name))
 
@@ -75,7 +87,7 @@ trips %>%
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
-trips <- mutate(trips, hours =hour(trips$starttime))
+trips <- mutate(trips, hours = hour(trips$starttime))
 trips %>%
   group_by(hours) %>%
   summarize(count=n()/28) %>%

@@ -4,6 +4,7 @@
 
 # load some packages that we'll need
 library(tidyverse)
+library(lubridate)
 library(scales)
 
 # be picky about white backgrounds on our plots
@@ -18,15 +19,41 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+trips %>%
+  group_by(tripduration) %>%
+  filter(tripduration > 0, tripduration < 100000) %>%
+  summarize(count = n()) %>%
+  ggplot(aes(x=tripduration)) +
+  geom_histogram()
+
+trips %>%
+  group_by(tripduration) %>%
+  filter(tripduration > 0, tripduration < 100000) %>%
+  summarize(count = n()) %>%
+  ggplot(aes(x=tripduration)) +
+  geom_density() +
+  scale_x_continuous(label = comma) +
+  scale_y_log10(label = comma)
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+trips %>%
+  group_by(usertype) %>%
+  summarize(count = n()) %>%
+  ggplot(aes(x=count)) +
+  geom_histogram()
 
 # plot the total number of trips on each day in the dataset
 
+
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 
+
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
+
+
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
+
+
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
 ########################################

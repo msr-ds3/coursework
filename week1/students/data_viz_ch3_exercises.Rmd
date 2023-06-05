@@ -1,0 +1,66 @@
+---
+title: "Data Visualizations Textbook Chapter 3 questions"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+Section 3.3.1, exercises 1, 2, and 3
+Section 3.5.1, exercises 1 and 4
+Section 3.6.1, exercises 5 and 6
+Section 3.8.1, exercises 1 and 2
+
+# 3.3.1 E1
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue""))
+# color declaration should be outside of aesthetic but inside geom_point
+
+
+# 3.3.1 E2
+```{r}
+mpg
+```
+# Categorical: manufacturer, model, trans, drv, fl, class
+# Continuous: displ, year, cyl, cty, hwy
+
+
+# 3.3.1 E3
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = year, size = hwy, shape = manufacturer))
+```
+# Color can take continuous or categorical data
+# Size only takes continuous
+# Shape only takes categorical
+
+
+# 3.5.1 E1
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ cyl)
+```
+# Shows a subplot for each unique continuous value
+
+
+# 3.5.4 E
+
+
+
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
