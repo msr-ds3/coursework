@@ -158,7 +158,7 @@ trips_with_weather %>%
   ggplot(aes(x = hour, y = avg_trips_per_hour)) +
   geom_errorbar(aes(ymin = avg_trips_per_hour - sd_trips_per_hour, ymax = avg_trips_per_hour + sd_trips_per_hour))+
   geom_point() +
-  labs(x = "hours of the day", y = "average trips(with standard error shown)")
+  labs(x = "hours of the day", y = "average trips by hours(with standard error shown)")
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
