@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .Rproj.user
 .Rhistory
 *~
@@ -14,19 +13,3 @@
 .DS_Store
 .RDataTmp
 *.RDataTmp
-=======
-.Rproj.user
-.Rhistory
-*~
-*.zip
-.ipynb_checkpoints
-*.gz
-*.csv
-*.tsv
-*.RData
-*.Rdata
-*.rdata
-*.dat
-.DS_Store
-.RDataTmp
->>>>>>> 18502b9 (Start of day manual merge upstream master)
