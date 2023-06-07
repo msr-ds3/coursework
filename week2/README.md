@@ -147,12 +147,10 @@ This week covers:
 ## References
   * Sections 3.2 and 3.3 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression with multiple features
 
--->
 
 
 
 
-<!--
 
 # Scratch
 
@@ -246,4 +244,3 @@ The point of this exercise is to get experience in an open-ended prediction exer
 10. Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you found with cross-validation.
 11. Pair up with a partner who has a different model, run their model, and evaluate the predictions it makes for the 2015 data.
 
--->
