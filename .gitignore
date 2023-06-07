@@ -11,3 +11,5 @@
 *.rdata
 *.dat
 .DS_Store
+.RDataTmp
+*.RDataTmp
