@@ -1,0 +1,105 @@
+---
+title: "bk_exercises"
+output: html_document
+date: "2023-06-06"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(modelr)
+options(na.action = na.warn)
+```
+
+## R Statistics
+Introduction to Statistical Thinking (With R, Without Calculus) IST
+```{r linear modeling}
+ggplot(sim1, aes(x, y)) + 
+  geom_point()
+
+measure_distance=function(mod,data){
+  diff=data$y-(mod[1]+data$x*mod[2])
+  sqrt(mean(diff^2))
+}
+
+best <- optim(c(0, 0), measure_distance, data = sim1)
+best$par
+
+ggplot(sim1, aes(x, y)) + 
+  geom_point(size = 2, colour = "grey30") + 
+  geom_abline(intercept = best$par[1], slope = best$par[2])
+
+sim1_mod <- lm(y ~ x, data = sim1)
+```
+
+```{r expected value and variance}
+x=c(0,1,2,3,4,5)
+y=c(1:6)/21
+
+E_y=sum(x*y)
+E_y
+
+var=sum((x-E_y)^2*y)
+var
+```
+
+## Normal random variables
+
+1. dnorm: density of normal distribution, plug numbers into density formula;
+2. pnorm: cumulative prob
+3. qnorm: 
+```{r pressure, echo=FALSE}
+W_n1=rnorm(1,mean=560,sd=57)
+W_n2=rnorm(1,mean=630,sd=61)
+
+1-pnorm(650,560,57)
+1-pnorm(650,630,61)
+
+qnorm(0.1,560,57)
+qnorm(0.9,560,57)
+
+
+qnorm(0.1,630,61)
+qnorm(0.9,630,61)
+
+
+```
+
+Sampling distribution
+```{r}
+df=read.csv("pop2.csv")
+
+#pop mean and std
+mean(df$bmi)
+sd(df$bmi)
+
+#mean and std of samplinng distribution
+xbar=rep(0,1e5)
+
+for (i in 1:1e5){
+  df_sample=sample(df$bmi,150)
+  xbar[i]=mean(df_sample)
+}
+
+mean(xbar)
+sd(xbar)
+
+#central region
+qnorm(0.1,mean(xbar),sd(xbar))
+qnorm(0.9,mean(xbar),sd(xbar))
+
+```
+```{r}
+df_p=read_csv("magnets.csv")
+
+mean(df_p$change)
+
+df_p %>% group_by(active) %>%summarize(avg_chg=mean(change),std_chg=sd(change))
+
+
+boxplot(df_p$change[1:29])
+boxplot(df_p$change[30:50])
+
+table(df_p$change[30:50])
+
+```
+
