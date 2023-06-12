@@ -86,7 +86,6 @@ This week covers:
   * Read Sections 3.1 and 3.2 of ISRS
   * Do exercise 9.2 in IST
 
-<!--
 
 
 ## References
@@ -124,7 +123,6 @@ This week covers:
   * The [modelr](https://modelr.tidyverse.org) and [tidymodels](https://github.com/tidymodels/tidymodels) packages in R
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
--->
 
 
 <!--
