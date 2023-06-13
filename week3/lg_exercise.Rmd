@@ -1,6 +1,8 @@
 ---
 title: "lr_exercise"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 date: "2023-06-13"
 ---
 
@@ -47,7 +49,7 @@ ggplot(df_data,mapping=aes(x=heights,y=weights))+
 (b) bwt for smoker mom: 123.05-8.94=114.11
 bwt for nonsmoker mom: 123.05
 (c) there is a significant relationship because the p values is really small
-```{r exercises}
+```{r exercises6.1}
 data1=read.table(file = "babyweights.txt",header=TRUE)
 #head(data1)
 
@@ -81,7 +83,7 @@ parity(0 if the child is the first born and 1 otherwise) vs bwt
 (b)first born: 120.7
 others: 120.7-1.93
 (c) there is not a significant relationship between the avg birth weight and parity b/c p value is big
-```{r exercises}
+```{r exercises6.2}
 model1=lm(bwt~parity,data1)
 summary(model1)
 ```
@@ -92,7 +94,7 @@ gestation, parity, age, height, weight, smoke
 as the age increases, bwt decreases (not very strong relationship bc large pvalue)
 (3)diff variables may interfere
 
-```{r exercises}
+```{r exercises6.3}
 model2=lm(bwt~gestation+parity+age+height+weight+smoke,data1)
 summary(model2)
 
