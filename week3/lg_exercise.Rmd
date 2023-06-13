@@ -1,0 +1,101 @@
+---
+title: "lr_exercise"
+output: html_document
+date: "2023-06-13"
+---
+
+```{r setup, include=FALSE}
+library(scales)
+library(broom)
+library(modelr)
+library(tidyverse)
+
+options(na.action = na.warn)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+## Linear Regression 5.29
+ISRS 5.29
+```{r 5.29}
+data <- read.table(file = "body.dat.txt")
+#head(data)
+
+
+#find heights: 
+heights=data["V24"]
+
+#find weights: 
+weights=data["V23"]
+
+df_data=data.frame(heights,weights)
+names(df_data)=c("heights","weights")
+
+
+ggplot(df_data,mapping=aes(x=heights,y=weights))+
+  geom_point(color="blue",alpha=0.5)+
+  xlab("Heights(in cm)")+
+  ylab("Weights(in kg)")
+
+```
+
+## ISRS 6.1,6.2,6.3
+
+#6.1 baby weight, partI: avg birth weight vs smoke
+(a) bwt=123.05-8.94*smoke, where smoke takes the values of 0 and 1
+(b) bwt for smoker mom: 123.05-8.94=114.11
+bwt for nonsmoker mom: 123.05
+(c) there is a significant relationship because the p values is really small
+```{r exercises}
+data1=read.table(file = "babyweights.txt",header=TRUE)
+#head(data1)
+
+#duplicate the table 
+model=lm(bwt ~ smoke,data1)
+summary(model)
+
+#compute the avg birth weight for smoker and nonsmoker mom
+#check whether there is a statiscally significant relationship
+
+
+data1  %>% group_by(smoke) %>% 
+  summarize(avg_wbt=mean(bwt)) %>% 
+  filter(smoke %in% c(1,0))  %>%
+  ggplot(aes(x=smoke,y=avg_wbt))+
+  geom_col()+
+  xlab("smoke")+
+  ylab("bwt")
+
+
+data1 %>% filter(smoke %in% c(1,0))  %>%
+  ggplot(aes(x=smoke,y=bwt))+
+  geom_hline(yintercept=123.05)+
+  geom_hline(yintercept=114.11)+
+  geom_point()
+```
+#6.2
+
+parity(0 if the child is the first born and 1 otherwise) vs bwt
+(a) bwt=120.07-1.93*parity
+(b)first born: 120.7
+others: 120.7-1.93
+(c) there is not a significant relationship between the avg birth weight and parity b/c p value is big
+```{r exercises}
+model1=lm(bwt~parity,data1)
+summary(model1)
+```
+#6.3 baby weight3
+gestation, parity, age, height, weight, smoke
+(1) bwt=-80.41+0.44*gestation-3.33*parity-0.01*age+1.15*height+0.05weight-8.4smoke
+(2)as the length of preganancy in days(gestation) increases, bwt increases (significant relationship b/c small pvalue);
+as the age increases, bwt decreases (not very strong relationship bc large pvalue)
+(3)diff variables may interfere
+
+```{r exercises}
+model2=lm(bwt~gestation+parity+age+height+weight+smoke,data1)
+summary(model2)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
