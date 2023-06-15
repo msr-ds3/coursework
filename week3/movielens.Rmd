@@ -97,7 +97,7 @@ movie_rank%>%mutate(frac_ratings=cumsum(num_ratings)/sum(num_ratings))%>%
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
-ratings %>%group_by(user_id)%>%
+rating_by_users=ratings %>%group_by(user_id)%>%
   summarize(mean_ratings=mean(rating),count=n())
 ```
 
@@ -130,4 +130,47 @@ ratings %>%group_by(user_id)%>%
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+
+df=full_join(movie_rank,ratings,by="movie_id")#outer join movie_rank and ratings df
+ranks=c(10,100,500,1000,2000,3000,4000,5000,10000,12000,14000,15000)
+pops=rep(0,length(ranks))
+users_len=length(rating_by_users$user_id)
+
+j=1
+for (k in ranks){
+  df_topk=movie_rank%>%head(k)%>%select(movie_id)#top k
+  df1=df%>%filter(movie_id %in% unlist(df_topk))%>%count(user_id)#filter out movies in the topk
+  df2=rating_by_users%>% filter(user_id %in% unlist(df1$user_id))#filter out users that rate topk
+
+  pops[j]=sum(df1$n/df2$count>=0.9)/users_len
+  j=j+1
+}
+
+df_graph=data.frame(ranks,pops)
+names(df_graph)=c("ranks","pops")
+ggplot(df_graph,aes(x=ranks,y=pops))+geom_line()+
+  xlab("inventory size")+
+  ylab("percent of users satisfied")
+```
+
+
+```{r long-tail}
+j=1
+pops1=rep(0,length(ranks))
+for (k in ranks){
+  df_topk=movie_rank%>%head(k)%>%select(movie_id)#top k
+  df1=df%>%filter(movie_id %in% unlist(df_topk))%>%count(user_id)#filter out movies in the topk
+  df2=rating_by_users%>% filter(user_id %in% unlist(df1$user_id))#filter out users that rate topk
+
+  pops1[j]=sum((df1$n/df2$count)>=1)/users_len
+  j=j+1
+}
+
+df_graph=data.frame(ranks,pops,pops1)
+names(df_graph)=c("ranks","pops90","pops100")
+ggplot(df_graph,aes(x=ranks,y=pops90))+geom_line()+
+  geom_line(aes(x=ranks,y=pops100))+
+  xlab("inventory size")+
+  ylab("percent of users satisfied")
 ```
