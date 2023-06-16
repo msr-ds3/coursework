@@ -1,0 +1,61 @@
+---
+title: "babyweights"
+output: html_document
+date: "2023-06-13"
+---
+
+6.1:
+```{r 6.1, include=FALSE}
+library(scales)
+library(broom)
+library(modelr)
+library(tidyverse)
+
+theme_set(theme_bw())
+
+
+data <- read.table(file = "babyweights.txt")
+model <- lm(bwt ~ smoke, data)
+summary(model)
+tidy(model)
+
+
+## a) bwt = (-8.94*smoke) + 123.05
+## b) the estimated birth weight of babies born to smoking mothers is 8.94 ounces lower than babies born to non-smoking mothers
+    # smoking: -8.94(1) + 123.05 = 114.11
+    # non-smoking: y = -8.90(0) + 123.05 = 123.05
+## c) the p-value is <0.05 so we reject the null hypothesis, and therefore there is a statistically significant relationship
+```
+
+
+
+```{r 6.2}
+model2 <- lm(bwt ~ parity, data)
+summary(model2)
+tidy(model2)
+
+## a) bwt = (-1.93*parity) + 120.07
+## b) the estimated birth weight of non-first-born babies is 1.93 ounces lower than first-born babies
+    # first-born: -1.93(0) + 120.07 = 120.07
+    # non-first-born: -1.93(1) + 120.07 = 118.14
+## c) the p-value is >0.05 so we do not reject the null hypothesis, and therefore there is not a statistically significant relationship
+
+```
+
+
+
+```{r 6.3}
+model3 <- lm(bwt ~ parity+gestation+age+height+weight+smoke, data)
+summary(model3)
+tidy(model3)
+
+
+## a) bwt = -80.41 + (-3.33*parity) + (0.44*gestation) + (-0.01*age) + (1.15*height) + (0.05*weight) + (-8.40*smoke)
+## b) gestation: for each additional day of pregnancy, the bwt will increase by 0.44
+##    age: for each additional year of the mother's age, the bwt will decrease by 0.01
+## c) there are more variables in this model which means that parity might correlate with another variable
+## d) predicted_bwt = -80.41 + (-3.33*0) + (0.44*284) + (-0.01*27) + (1.15*62) + (0.05*100) + (-8.40*0) = 120.58
+##    --> residual = actual_bwt - predicted_bwt = 120 - 120.58 = -.058 --> the model over-predicted the bwt by 0.58
+```
+
+
