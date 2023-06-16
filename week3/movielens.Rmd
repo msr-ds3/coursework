@@ -35,6 +35,12 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings %>%
+  group_by(rating) %>%
+  ggplot(aes(x = rating)) +
+  geom_bar(bins = 10) +
+  scale_y_continuous(label = comma)
+
 ```
 
 ## Per-movie stats
@@ -42,24 +48,47 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings_by_movie <- ratings %>%
+  group_by(movie_id) %>%
+  summarise(count = n(), mean_rating = round(mean(rating), digits = 1))
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+## x is the different counts and y is the number of movies that have that same count
+ratings_by_movie %>%
+  ggplot(aes(x = count)) +
+  geom_histogram() +
+  scale_x_log10(label = comma) +
+  labs(x = "Number of ratings per movie", y = "Number of movies with that number of ratings")
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+ratings_by_movie %>%
+  ggplot(aes(x = mean_rating)) +
+  geom_density() +
+  xlab("Mean rating per movie")
 ```
 
 ```{r cdf-movie-pop}
 # rank movies by popularity (number of ratings) and compute the cdf, or fraction of all views covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
+ratings_by_movie <- ratings_by_movie %>%
+  arrange(desc(count)) %>%
+  mutate(rank = round(rank(desc(count)))) %>%
+  mutate(cdf = cumsum(count)/sum(count)) %>%
+  mutate(cumsum = cumsum(count))
 
 # plot the CDF of movie popularity
+ratings_by_movie %>%
+  ggplot(aes(x = rank, y = cdf*100)) +
+  geom_line() +
+  ylab("Cumulative popularity")
+
 ```
 
 
@@ -67,11 +96,20 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings_by_user <- ratings %>%
+  group_by(user_id) %>%
+  summarise(ratings_per_user = n(), mean_rating = round(mean(rating), digits = 1)) %>%
+  arrange(desc(ratings_per_user))
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings_by_user %>%
+  ggplot(aes(x = ratings_per_user)) +
+  geom_histogram() +
+  scale_x_log10(label = comma) +
+  labs(x = "Number of ratings per user", y = "Number of users with that number of ratings")
 ```
 
 # Anatomy of the long tail
@@ -91,4 +129,158 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+
+#############################
+## ATTEMPT 1: The Hack Job ##
+#############################
+
+num_users <- nrow(ratings_by_user)
+num_movies <- nrow(ratings_by_movie)
+
+# add rank col to ratings df
+ratings_rank <- full_join(ratings, ratings_by_movie, by="movie_id") %>%
+  select(-count, -mean_rating, -cdf)
+ratings_rank <- full_join(ratings_rank, ratings_by_user, by="user_id") %>%
+  select(-mean_rating)
+  
+p <- 0.9
+K_list <- c(10, 100, 1250, 2500, 3750, 5000, 6250, 7500, 8750, 10000, num_movies)
+K_stat <- rep(0, length(K_list))
+i <- 0
+for (K in K_list) {
+  # get the top K movies
+  # group by user and count how many movies from the top K they rated
+  # calculate their satisfaction (how many movies I had/how many movies they rated)
+  # find how many users were at least p% satisfied
+  # find how many satisfied users there were out of the total number of users.
+  K_stat[i] <- ratings_rank %>%
+    filter(rank <= K) %>%
+    group_by(user_id, ratings_per_user)  %>%
+    summarize(count = n()) %>%
+    mutate(satisfaction = count/ratings_per_user) %>%
+    unique() %>%
+    filter(satisfaction >= p) %>%  # give me only the users that were p% satisfied
+    nrow()/num_users # compute what percent of users out of the total were satisfied
+  # increment index
+  i<-i+1
+}
+
+p <- 1.0
+K_list <- c(10, 100, 1250, 2500, 3750, 5000, 6250, 7500, 8750, 10000, num_movies)
+K_stat2 <- rep(0, length(K_list))
+i <- 0
+for (K in K_list) {
+  # get the top K movies
+  # group by user and count how many movies from the top K they rated
+  # calculate their satisfaction (how many movies I had/how many movies they rated)
+  # find how many users were at least p% satisfied
+  # find how many satisfied users there were out of the total number of users.
+  K_stat2[i] <- ratings_rank %>%
+    filter(rank <= K) %>%
+    group_by(user_id, ratings_per_user)  %>%
+    summarize(count = n()) %>%
+    mutate(satisfaction = count/ratings_per_user) %>%
+    unique() %>%
+    filter(satisfaction >= p) %>%  # give me only the users that were p% satisfied
+    nrow()/num_users # compute what percent of users out of the total were satisfied
+  # increment index
+  i<-i+1
+}
+  
+K_stat_df <- data.frame(K_list, K_stat, K_stat2)
+names(K_stat_df) <- c("Inventory", "Satisfied1", "Satisfied2")
+
+K_stat_df %>%
+  ggplot(aes(x = Inventory, y = Satisfied1)) +
+  geom_line(color = 'blue') +
+  geom_line(aes(x = Inventory, y = Satisfied2), color='red') +
+  geom_vline(xintercept = 3000)
+
+##############################
+## ATTEMPT 2: The Quant Way ##
+##############################
+
+num_users <- nrow(ratings_by_user)
+ranks <- ratings_by_movie %>% select(rank)
+
+ratings_rank <- full_join(ratings, ratings_by_movie, by="movie_id") %>%
+  select(-mean_rating, -cdf)
+
+ratings_rank_cumsum <- ratings_rank %>%
+  arrange(rank) %>%
+  group_by(rank) %>%
+  summarise(count = n()) %>%
+  mutate(cum_count = cumsum(count)) %>%
+  mutate(percent_satisfied09 = cum_count/num_users)
+
+quants09 <- ratings_rank %>%
+  select(user_id, rank) %>%
+  group_by(user_id) %>%
+  mutate(quant = floor(quantile(rank, 0.9)))
+
+quants09_filter <- quants09 %>%
+  filter(rank >= quant) %>%
+  group_by(user_id, quant) %>%
+  summarize(rank = min(rank)) %>%
+  arrange(rank) %>%
+  group_by(rank, user_id, quant) %>%
+  summarise(count = n())
+
+quants09_full <- full_join(ranks, quants09_filter, by="rank") 
+quants09_full <- quants09_full %>% replace_na(list(user_id = 0, quant = 0, count = 0))
+
+quants09_cumsum <- quants09_full  %>%
+  mutate(cum_count = cumsum(count)) %>%
+  mutate(percent_satisfied09 = cum_count/num_users)
+
+# Repeat for a p percent of 100
+quants1 <- ratings_rank %>%
+  select(user_id, rank) %>%
+  group_by(user_id) %>%
+  mutate(quant = floor(quantile(rank, 1)))
+
+quants1_filter <- quants1 %>%
+  filter(rank >= quant) %>%
+  group_by(user_id, quant) %>%
+  summarize(rank = min(rank)) %>%
+  arrange(rank) %>%
+  group_by(rank, user_id, quant) %>%
+  summarise(count = n())
+
+quants1_full <- full_join(ranks, quants1_filter, by="rank") 
+quants1_full <- quants1_full %>% replace_na(list(user_id = 0, quant = 0, count = 0))
+
+quants1_cumsum <- quants1_full  %>%
+  mutate(cum_count = cumsum(count)) %>%
+  mutate(percent_satisfied1 = cum_count/num_users)
+
+# Plot the %90 data
+quants09_cumsum %>%
+  ggplot(aes(x = rank, y = percent_satisfied09)) +
+  geom_line(color = 'blue')
+
+# Plot the %100 data
+quants1_cumsum %>%
+  ggplot(aes(x = rank, y = percent_satisfied1)) +
+  geom_line(color = 'red')
+
+# # Plot both graphs together
+# quants09_prct <- quants09_cumsum %>% select(rank, percent_satisfied09)
+# quants1_prct <- quants1_cumsum %>% select(rank, percent_satisfied1)
+# quants_join <- full_join(quants09_prct, quants1_prct, by="rank")
+# quants_join %>%
+#   ggplot(aes(x = rank, y = percent_satisfied09)) +
+#   geom_line(color = 'blue') +
+#   geom_line(aes(x = rank, y = percent_satisfied1), color='red') +
+#   geom_vline(xintercept = 3000)
+
 ```
+
+
+
+
+
+
+
+
