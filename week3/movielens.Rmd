@@ -132,11 +132,27 @@ ratings %>%group_by(user_id)%>%
 # model (shown in the dashed lines).
 
 
+min(rating_by_users$count)#no need for filtering b/c the min number of ratings a usr give is 20
 df=full_join(movie_rank,ratings,by="movie_id")#outer join movie_rank and ratings df
 ranks=c(10,100,500,1000,2000,3000,4000,5000,10000,12000,14000,15000)
 pops=rep(0,length(ranks))
 users_len=length(rating_by_users$user_id)
+df_t=df %>% group_by(user_id) %>%summarize(q90=quantile(rank,0.9),q100=quantile(rank,1))
 
+df90=df_t%>%arrange(desc(q90))%>%group_by(q90)%>%summarize(cnt=n())%>%
+  summarize(inv_size=q90,cdf=cumsum(cnt)/sum(cnt))
+df90["satis"]="sat_90"
+df100=df_t%>%arrange(desc(q100))%>%group_by(q100)%>%summarize(cnt=n())%>%
+  summarize(inv_size=q100,cdf=cumsum(cnt)/sum(cnt))
+df100["satis"]="sat_100"
+
+dfs=rbind(df90,df100)
+dfs%>%ggplot(aes(x=inv_size,y=cdf,color=satis))+
+  geom_line()
+```
+#loop sol
+
+```{r long-tail efficient way using quantitle}
 df_t=df %>% group_by(user_id) %>%summarize(q90=quantile(rank,0.9),q100=quantile(rank,1))
 percents90=rep(0,length(seq(1,20000,10)))
 percents100=rep(0,length(seq(1,20000,10)))
