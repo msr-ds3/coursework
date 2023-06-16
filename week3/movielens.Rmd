@@ -115,7 +115,7 @@ ratings %>%group_by(user_id)%>%
 
 # Anatomy of the long tail
 
-```{r long-tail}
+```{r long-tail efficient way using quantitle}
 # generate the equivalent of figure 2a of this paper:
 # note: don't worry about the "null model" lines
 # just do the solid lines and dotted line (optional)
@@ -137,6 +137,28 @@ ranks=c(10,100,500,1000,2000,3000,4000,5000,10000,12000,14000,15000)
 pops=rep(0,length(ranks))
 users_len=length(rating_by_users$user_id)
 
+df_t=df %>% group_by(user_id) %>%summarize(q90=quantile(rank,0.9),q100=quantile(rank,1))
+percents90=rep(0,length(seq(1,20000,10)))
+percents100=rep(0,length(seq(1,20000,10)))
+j=1
+for (k in seq(1,20000,10)){
+  percents90[j]=unlist((df_t%>%filter(k>=q90)%>%count())[1])
+  percents100[j]=unlist((df_t%>%filter(k>=q100)%>%count())[1])
+  j=j+1
+}
+percents90=percents90/length(rating_by_users$user_id)
+percents100=percents100/length(rating_by_users$user_id)
+
+df_g=data.frame(seq(1,20000,10),percents90,percents100)
+names(df_g)=c("ranks","pers90","pers100")
+ggplot(df_g,aes(x=ranks,y=pers90))+geom_line()+
+  geom_line(aes(x=ranks,y=pers100))+
+  xlab("inventory size")+
+  ylab("percent of users satisfied")
+```
+
+brute force approach
+```{r long-tail }
 j=1
 for (k in ranks){
   df_topk=movie_rank%>%head(k)%>%select(movie_id)#top k
@@ -155,7 +177,7 @@ ggplot(df_graph,aes(x=ranks,y=pops))+geom_line()+
 ```
 
 
-```{r long-tail}
+```{r long-tail not efficient}
 j=1
 pops1=rep(0,length(ranks))
 for (k in ranks){
