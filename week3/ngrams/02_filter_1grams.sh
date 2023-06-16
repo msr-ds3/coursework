@@ -5,4 +5,4 @@
 #   then filter out rows that match using grep -E, egrep, awk, or similar
 #   write results to year_counts.tsv
 gunzip googlebooks-eng-all-1gram-20120701-1
-grep -E '^(18|19|20)[0-9]{2}' googlebooks-eng-all-1gram-20120701-1 > year_counts.tsv
+grep -E '^(18|19|20)[0-9]{2}\s.*' googlebooks-eng-all-1gram-20120701-1 > year_counts.tsv
