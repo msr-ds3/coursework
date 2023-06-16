@@ -35,10 +35,8 @@ We discussed regression with multiple features, non-linear features, and interac
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-<!--
 
-
-# Day 3
+# Day 5
 
 ## N-gram data and "Culturonomics"
 
@@ -47,7 +45,7 @@ We discussed regression with multiple features, non-linear features, and interac
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
-
+<!--
 
 # Day 4
 
