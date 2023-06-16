@@ -4,3 +4,9 @@
 #   decompress the first using gunzip, zless, zcat or similar
 #   then filter out rows that match using grep -E, egrep, awk, or similar
 #   write results to year_counts.tsv
+if [ ! -f 1gram.dat ]
+    then
+    unzip googlebooks-eng-all-1gram-20120701-1.gz && mv ml-10M100K/* .
+fi
+
+grep -E '\b(18|19|20)\d{2}\b' 1gram.dat > year_counts.tsv
