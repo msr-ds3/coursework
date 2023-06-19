@@ -1,0 +1,136 @@
+---
+title: "predict_citibike.Rmd"
+output: html_document
+date: "2023-06-19"
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(scales)
+library(tidyverse)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1
+
+Use the `trips_per_day.tsv` file that has one row for each day, the number of trips taken on that day, and the minimum temperature on that day.
+
+```{r load-trips}
+trips_per_day <- read_tsv(here('week4/trips_per_day.tsv'))
+```
+
+## Part 2
+
+Split the data into randomly selected training, validation, and test sets, with 90% of the data for training and validating the model, and 10% for a final test set (to be used once and only once towards the end of this exercise).
+
+```{r split-data}
+test_sample <- sample(nrow(trips_per_day), nrow(trips_per_day)*0.1)
+test_data <- trips_per_day[test_sample,]
+train_data <- trips_per_day[-test_sample,]
+
+set.seed(42)
+num_folds <- 5
+num_days <- nrow(train_data)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+ndx <- sample(1:num_days, num_train, replace=F)
+
+train_data <- train_data[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(train_data)
+```
+
+## Part 3
+
+Start out with the model in that notebook, which uses only the minimum temperature on each day to predict the number of trips taken that day. Try different polynomial degrees in the minimum temperature and check that you get results similar to what's in that notebook, although they likely won't be identical due to shuffling of which days end up in the train, and validation splits. Quantify your performance using root mean-squared error.
+
+```{r polynomials}
+
+# fit a model for each polynomial degree
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(train_data, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(train_data, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+## Part 4
+
+Now get creative and extend the model to improve it. You can use any features you like that are available prior to the day in question, ranging from the weather, to the time of year and day of week, to activity in previous days or weeks, but don't cheat and use features from the future (e.g., the next day's trips). You can even try adding holiday effects. You might want to look at feature distributions to get a sense of what tranformations (e.g., log or manually created factors such as weekday vs. weekend) might improve model performance. You can also interact features with each other. 
+
+```{r improve-model}
+trips_per_day %>% ggplot(aes(x = prcp, y = num_trips)) +
+  geom_point() +
+  geom_smooth()
+
+trips_per_day %>% ggplot(aes(x = snow, y = num_trips)) +
+  geom_point() +
+  geom_smooth()
+
+trips_per_day %>% ggplot(aes(x = snwd, y = num_trips)) +
+  geom_point() +
+  geom_smooth()
+
+trips_per_day %>% ggplot(aes(x = tmin, y = num_trips)) +
+  geom_point() +
+  geom_smooth()
+
+trips_per_day %>% ggplot(aes(x = tmax, y = num_trips)) +
+  geom_point() +
+  geom_smooth()
+
+train_data %>% mutate(date = ymd(date), wday = wday(date))
+
+
+```
+
+## Part 5
+
+Try a bunch of different models and ideas, documenting them in your Rmarkdown file. Inspect the models to figure out what the highly predictive features are, and see if you can prune away any negligble features that don't matter much. Report the model with the best performance on the validation data. Watch out for overfitting.
+
+```{r new-models}
+
+```
+
+## Part 6
+
+Plot your final best fit model in two different ways. First with the date on the x-axis and the number of trips on the y-axis, showing the actual values as points and predicted values as a line. Second as a plot where the x-axis is the predicted value and the y-axis is the actual value, with each point representing one day.
+
+```{r best-fit}
+
+```
