@@ -174,10 +174,12 @@ Now, for each year term, find the minimum number of years it takes for the propo
 half_lifes <- left_join(ngrams_years_totals, peaks, by=c('term'='term')) %>% 
   filter(year >= 1850, year <= 2012) %>% 
   group_by(term) %>% 
-  filter(year >= peak_year, peak_frac <= half_peak) %>% 
-  arrange(year) %>% 
-  top_n(1) %>% 
-  mutate(half_life = year - peak_year) %>% 
+  filter(year >= peak_year, prop_volume <= half_peak) %>% 
+  # arrange(year) %>% 
+  # top_n(1) %>%
+  summarise(half_year = min(year),
+            peak_year = min(peak_year)) %>% 
+  mutate(half_life = half_year - peak_year) %>%
   select(term, half_life)
 ```
 
@@ -186,7 +188,7 @@ half_lifes <- left_join(ngrams_years_totals, peaks, by=c('term'='term')) %>%
 Plot the half-life of each term over time from 1850 to 2012. Each point should represent one year term, and add a line to show the trend using `geom_smooth()`.
 
 ```{r plot-half-lifes}
-half_lifes %>% ggplot(aes(x =  term , y = half_life)) +
+half_lifes %>% ggplot(aes(x =  as.numeric(term) , y = half_life)) +
   geom_point() +
   geom_smooth()
 
