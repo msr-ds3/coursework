@@ -207,74 +207,42 @@ ranks <- ratings_by_movie %>% select(rank)
 ratings_rank <- full_join(ratings, ratings_by_movie, by="movie_id") %>%
   select(-mean_rating, -cdf)
 
-ratings_rank_cumsum <- ratings_rank %>%
-  arrange(rank) %>%
-  group_by(rank) %>%
-  summarise(count = n()) %>%
-  mutate(cum_count = cumsum(count)) %>%
-  mutate(percent_satisfied09 = cum_count/num_users)
-
 quants09 <- ratings_rank %>%
   select(user_id, rank) %>%
   group_by(user_id) %>%
-  mutate(quant = floor(quantile(rank, 0.9)))
+  summarise(quant = quantile(rank, 0.9)) %>% 
+  arrange(quant) %>%
+  group_by(quant) %>% 
+  summarise(count = n()) %>% 
+  mutate(cum_count = cumsum(count)) %>% 
+  mutate(percent_satisfied = cum_count/num_users, p = '90')
 
-quants09_filter <- quants09 %>%
-  filter(rank >= quant) %>%
-  group_by(user_id, quant) %>%
-  summarize(rank = min(rank)) %>%
-  arrange(rank) %>%
-  group_by(rank, user_id, quant) %>%
-  summarise(count = n())
-
-quants09_full <- full_join(ranks, quants09_filter, by="rank") 
-quants09_full <- quants09_full %>% replace_na(list(user_id = 0, quant = 0, count = 0))
-
-quants09_cumsum <- quants09_full  %>%
-  mutate(cum_count = cumsum(count)) %>%
-  mutate(percent_satisfied09 = cum_count/num_users)
-
-# Repeat for a p percent of 100
 quants1 <- ratings_rank %>%
   select(user_id, rank) %>%
   group_by(user_id) %>%
-  mutate(quant = floor(quantile(rank, 1)))
-
-quants1_filter <- quants1 %>%
-  filter(rank >= quant) %>%
-  group_by(user_id, quant) %>%
-  summarize(rank = min(rank)) %>%
-  arrange(rank) %>%
-  group_by(rank, user_id, quant) %>%
-  summarise(count = n())
-
-quants1_full <- full_join(ranks, quants1_filter, by="rank") 
-quants1_full <- quants1_full %>% replace_na(list(user_id = 0, quant = 0, count = 0))
-
-quants1_cumsum <- quants1_full  %>%
-  mutate(cum_count = cumsum(count)) %>%
-  mutate(percent_satisfied1 = cum_count/num_users)
+  summarise(quant = quantile(rank, 1)) %>% 
+  arrange(quant) %>%
+  group_by(quant) %>% 
+  summarise(count = n()) %>% 
+  mutate(cum_count = cumsum(count)) %>% 
+  mutate(percent_satisfied = cum_count/num_users, p = '100')
 
 # Plot the %90 data
-quants09_cumsum %>%
-  ggplot(aes(x = rank, y = percent_satisfied09)) +
+quants09 %>%
+  ggplot(aes(x = quant, y = percent_satisfied)) +
   geom_line(color = 'blue')
 
 # Plot the %100 data
-quants1_cumsum %>%
-  ggplot(aes(x = rank, y = percent_satisfied1)) +
+quants1 %>%
+  ggplot(aes(x = quant, y = percent_satisfied)) +
   geom_line(color = 'red')
 
-# # Plot both graphs together
-# quants09_prct <- quants09_cumsum %>% select(rank, percent_satisfied09)
-# quants1_prct <- quants1_cumsum %>% select(rank, percent_satisfied1)
-# quants_join <- full_join(quants09_prct, quants1_prct, by="rank")
-# quants_join %>%
-#   ggplot(aes(x = rank, y = percent_satisfied09)) +
-#   geom_line(color = 'blue') +
-#   geom_line(aes(x = rank, y = percent_satisfied1), color='red') +
-#   geom_vline(xintercept = 3000)
-
+# Plot both graphs together
+quants_join <- as.data.frame(bind_rows(quants09, quants1))
+quants_join %>%
+  ggplot(aes(x = quant, y = percent_satisfied*100, color = p)) +
+  geom_line() +
+  labs(x = 'Rank', y = 'Percent Users Satisfied', color = 'Satisfaction level')
 ```
 
 

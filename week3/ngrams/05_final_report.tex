@@ -1,0 +1,655 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={MSD Homework 2, Problem 3},
+  pdfauthor={Sara Goldberger (Yeshiva University Stern College)},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{MSD Homework 2, Problem 3}
+\author{Sara Goldberger (Yeshiva University Stern College)}
+\date{2023-06-19 00:25:15.135984}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\hypertarget{description}{%
+\section{Description}\label{description}}
+
+This is a template for exercise 6 in Chapter 2 of
+\href{https://www.bitbybitbook.com/en/1st-ed/observing-behavior/observing-activities/}{Bit
+By Bit: Social Research in the Digital Age} by Matt Salganik. The
+problem is reprinted here with some additional comments and structure to
+facilitate a solution.
+
+The original problem statement:
+
+\begin{quote}
+In a widely discussed paper, Michel and colleagues
+(\href{https://doi.org/10.1126/science.1199644}{2011}) analyzed the
+content of more than five million digitized books in an attempt to
+identify long-term cultural trends. The data that they used has now been
+released as the Google NGrams dataset, and so we can use the data to
+replicate and extend some of their work.
+
+In one of the many results in the paper, Michel and colleagues argued
+that we are forgetting faster and faster. For a particular year, say
+``1883,'' they calculated the proportion of 1-grams published in each
+year between 1875 and 1975 that were ``1883''. They reasoned that this
+proportion is a measure of the interest in events that happened in that
+year. In their figure 3a, they plotted the usage trajectories for three
+years: 1883, 1910, and 1950. These three years share a common pattern:
+little use before that year, then a spike, then decay. Next, to quantify
+the rate of decay for each year, Michel and colleagues calculated the
+``half-life'' of each year for all years between 1875 and 1975. In their
+figure 3a (inset), they showed that the half-life of each year is
+decreasing, and they argued that this means that we are forgetting the
+past faster and faster. They used Version 1 of the English language
+corpus, but subsequently Google has released a second version of the
+corpus. Please read all the parts of the question before you begin
+coding.
+
+This activity will give you practice writing reusable code, interpreting
+results, and data wrangling (such as working with awkward files and
+handling missing data). This activity will also help you get up and
+running with a rich and interesting dataset.
+\end{quote}
+
+The full paper can be found
+\href{https://aidenlab.org/papers/Science.Culturomics.pdf}{here}, and
+this is the original figure 3a that you're going to replicate:
+
+\begin{quote}
+\includegraphics{michel_fig_3a.png}
+\end{quote}
+
+\hypertarget{part-a}{%
+\section{Part A}\label{part-a}}
+
+\begin{quote}
+Get the raw data from the
+\href{http://storage.googleapis.com/books/ngrams/books/datasetsv2.html}{Google
+Books NGram Viewer website}. In particular, you should use version 2 of
+the English language corpus, which was released on July 1, 2012.
+Uncompressed, this file is 1.4GB.
+\end{quote}
+
+\hypertarget{get-and-clean-the-raw-data}{%
+\subsection{Get and clean the raw
+data}\label{get-and-clean-the-raw-data}}
+
+Edit the \texttt{01\_download\_1grams.sh} file to download the
+\texttt{googlebooks-eng-all-1gram-20120701-1.gz} file and the
+\texttt{02\_filter\_1grams.sh} file to filter the original 1gram file to
+only lines where the ngram matches a year (output to a file named
+\texttt{year\_counts.tsv}).
+
+Then edit the \texttt{03\_download\_totals.sh} file to down the
+\texttt{googlebooks-eng-all-totalcounts-20120701.txt} and file and the
+\texttt{04\_reformat\_totals.sh} file to reformat the total counts file
+to a valid csv (output to a file named \texttt{total\_counts.csv}).
+
+\hypertarget{load-the-cleaned-data}{%
+\subsection{Load the cleaned data}\label{load-the-cleaned-data}}
+
+Load in the \texttt{year\_counts.tsv} and \texttt{total\_counts.csv}
+files. Use the \texttt{here()} function around the filename to keep
+things portable.Give the columns of \texttt{year\_counts.tsv} the names
+\texttt{term}, \texttt{year}, \texttt{volume}, and \texttt{book\_count}.
+Give the columns of \texttt{total\_counts.csv} the names \texttt{year},
+\texttt{total\_volume}, \texttt{page\_count}, and \texttt{book\_count}.
+Note that column order in these files may not match the examples in the
+documentation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_counts }\OtherTok{\textless{}{-}} \FunctionTok{read\_tsv}\NormalTok{(}\StringTok{\textquotesingle{}year\_counts.tsv\textquotesingle{}}\NormalTok{, }
+                   \AttributeTok{col\_names =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}term\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}year\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}volume\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}book\_count\_year\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 53393 Columns: 4
+## -- Column specification --------------------------------------------------------
+## Delimiter: "\t"
+## dbl (4): term, year, volume, book_count_year
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{total\_counts }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{\textquotesingle{}total\_counts.csv\textquotesingle{}}\NormalTok{, }
+                   \AttributeTok{col\_names =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}year\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}total\_volume\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}page\_count\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}book\_count\_total\textquotesingle{}}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 425 Columns: 4
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl (4): year, total_volume, page_count, book_count_total
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# change the term variable into a character}
+\NormalTok{year\_counts[}\StringTok{\textquotesingle{}term\textquotesingle{}}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{as.character}\NormalTok{(year\_counts}\SpecialCharTok{$}\NormalTok{term)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{your-written-answer}{%
+\subsection{Your written answer}\label{your-written-answer}}
+
+Add a line below using Rmarkdown's inline syntax to print the total
+number of lines in each dataframe you've created.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{nrow}\NormalTok{(year\_counts)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 53393
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{nrow}\NormalTok{(total\_counts)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 425
+\end{verbatim}
+
+\hypertarget{part-b}{%
+\section{Part B}\label{part-b}}
+
+\begin{quote}
+Recreate the main part of figure 3a of Michel et al.~(2011). To recreate
+this figure, you will need two files: the one you downloaded in part (a)
+and the ``total counts'' file, which you can use to convert the raw
+counts into proportions. Note that the total counts file has a structure
+that may make it a bit hard to read in. Does version 2 of the NGram data
+produce similar results to those presented in Michel et al.~(2011),
+which are based on version 1 data?
+\end{quote}
+
+\hypertarget{join-ngram-year-counts-and-totals}{%
+\subsection{Join ngram year counts and
+totals}\label{join-ngram-year-counts-and-totals}}
+
+Join the raw year term counts with the total counts and divide to get a
+proportion of mentions for each term normalized by the total counts for
+each year.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total }\OtherTok{\textless{}{-}} \FunctionTok{full\_join}\NormalTok{(year\_counts, total\_counts, }\AttributeTok{by=}\StringTok{\textquotesingle{}year\textquotesingle{}}\NormalTok{)}
+\NormalTok{year\_total }\OtherTok{\textless{}{-}}\NormalTok{ year\_total }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(term) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{cprop =}\NormalTok{ volume}\SpecialCharTok{/}\NormalTok{total\_volume) }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{plot-the-main-figure-3a}{%
+\subsection{Plot the main figure 3a}\label{plot-the-main-figure-3a}}
+
+Plot the proportion of mentions for the terms ``1883'', ``1910'', and
+``1950'' over time from 1850 to 2012, as in the main figure 3a of the
+original paper. Use the \texttt{percent} function from the
+\texttt{scales} package for a readable y axis. Each term should have a
+different color, it's nice if these match the original paper but not
+strictly necessary.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"1883"}\SpecialCharTok{|}\NormalTok{term }\SpecialCharTok{==} \StringTok{"1910"}\SpecialCharTok{|}\NormalTok{term }\SpecialCharTok{==} \StringTok{"1950"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textless{}=} \DecValTok{2012} \SpecialCharTok{\&}\NormalTok{ year }\SpecialCharTok{\textgreater{}=} \DecValTok{1850}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ cprop, }\AttributeTok{color =}\NormalTok{ term)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}green\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{\textquotesingle{}Year\textquotesingle{}}\NormalTok{, }\AttributeTok{y =} \StringTok{\textquotesingle{}Frequency\textquotesingle{}}\NormalTok{, }\AttributeTok{color =} \StringTok{\textquotesingle{}Ngram\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{05_final_report_files/figure-latex/plot-proportion-over-time-1.pdf}
+
+\hypertarget{your-written-answer-1}{%
+\subsection{Your written answer}\label{your-written-answer-1}}
+
+Write up your answer to Part B here. A: Version 2 of the NGram data does
+produce similar results to those presented in Michel et al.~(2011),
+which are based on version 1 data.
+
+\hypertarget{part-c}{%
+\section{Part C}\label{part-c}}
+
+\begin{quote}
+Now check your graph against the graph created by the
+\href{https://books.google.com/ngrams/}{NGram Viewer}.
+\end{quote}
+
+\hypertarget{compare-to-the-ngram-viewer}{%
+\subsection{Compare to the NGram
+Viewer}\label{compare-to-the-ngram-viewer}}
+
+Go to the ngram viewer, enter the terms ``1883'', ``1910'', and ``1950''
+and take a screenshot.
+
+\hypertarget{your-written-answer-2}{%
+\subsection{Your written answer}\label{your-written-answer-2}}
+
+Add your screenshot for Part C below this line using the
+\texttt{!{[}{]}(figure\_filename.png)} syntax and comment on
+similarities / differences. \includegraphics{google_ngram.png} A: The
+graphs have generally the same shape, although Google smoothed theirs
+out.
+
+\hypertarget{part-d}{%
+\section{Part D}\label{part-d}}
+
+\begin{quote}
+Recreate figure 3a (main figure), but change the y-axis to be the raw
+mention count (not the rate of mentions).
+\end{quote}
+
+\hypertarget{plot-the-main-figure-3a-with-raw-counts}{%
+\subsection{Plot the main figure 3a with raw
+counts}\label{plot-the-main-figure-3a-with-raw-counts}}
+
+Plot the raw counts for the terms ``1883'', ``1910'', and ``1950'' over
+time from 1850 to 2012. Use the \texttt{comma} function from the
+\texttt{scales} package for a readable y axis. The colors for each term
+should match your last plot, and it's nice if these match the original
+paper but not strictly necessary.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"1883"}\SpecialCharTok{|}\NormalTok{term }\SpecialCharTok{==} \StringTok{"1910"}\SpecialCharTok{|}\NormalTok{term }\SpecialCharTok{==} \StringTok{"1950"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textless{}=} \DecValTok{2012} \SpecialCharTok{\&}\NormalTok{ year }\SpecialCharTok{\textgreater{}=} \DecValTok{1850}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ volume, }\AttributeTok{color =}\NormalTok{ term)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{label =}\NormalTok{ comma) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}blue\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}green\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{\textquotesingle{}Year\textquotesingle{}}\NormalTok{, }\AttributeTok{y =} \StringTok{\textquotesingle{}Count\textquotesingle{}}\NormalTok{, }\AttributeTok{color =} \StringTok{\textquotesingle{}Ngram\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{05_final_report_files/figure-latex/plot-raw-mentions-over-time-1.pdf}
+
+\hypertarget{part-e}{%
+\section{Part E}\label{part-e}}
+
+\begin{quote}
+Does the difference between (b) and (d) lead you to reevaluate any of
+the results of Michel et al.~(2011). Why or why not?
+\end{quote}
+
+As part of answering this question, make an additional plot.
+
+\hypertarget{plot-the-totals}{%
+\subsection{Plot the totals}\label{plot-the-totals}}
+
+Plot the total counts for each year over time, from 1850 to 2012. Use
+the \texttt{comma} function from the \texttt{scales} package for a
+readable y axis. There should be only one line on this plot (not three).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{==} \StringTok{"1883"}\SpecialCharTok{|}\NormalTok{term }\SpecialCharTok{==} \StringTok{"1910"}\SpecialCharTok{|}\NormalTok{term }\SpecialCharTok{==} \StringTok{"1950"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textless{}=} \DecValTok{2012} \SpecialCharTok{\&}\NormalTok{ year }\SpecialCharTok{\textgreater{}=} \DecValTok{1850}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ year, }\AttributeTok{y =}\NormalTok{ total\_volume)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{label =}\NormalTok{ comma) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{\textquotesingle{}Year\textquotesingle{}}\NormalTok{, }\AttributeTok{y =} \StringTok{\textquotesingle{}Total Count\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{05_final_report_files/figure-latex/plot-totals-1.pdf}
+
+\hypertarget{your-written-answer-3}{%
+\subsection{Your written answer}\label{your-written-answer-3}}
+
+Write up your answer to Part E here. A: The plots from b and d are
+generally the same shape, but ``1950'' actually has much larger counts
+than the other two terms, which is not depicted as well in plot b.
+Additionally, the above plot shows that the total count actually went up
+with time, while plots b and d go down with time. This would lead me to
+reevaluate the results of Michel et al.~(2011)
+
+\hypertarget{part-f}{%
+\section{Part F}\label{part-f}}
+
+\begin{quote}
+Now, using the proportion of mentions, replicate the inset of figure 3a.
+That is, for each year between 1875 and 1975, calculate the half-life of
+that year. The half-life is defined to be the number of years that pass
+before the proportion of mentions reaches half its peak value. Note that
+Michel et al.~(2011) do something more complicated to estimate the
+half-life---see section III.6 of the Supporting Online Information---but
+they claim that both approaches produce similar results. Does version 2
+of the NGram data produce similar results to those presented in Michel
+et al.~(2011), which are based on version 1 data? (Hint: Don't be
+surprised if it doesn't.)
+\end{quote}
+
+\hypertarget{compute-peak-mentions}{%
+\subsection{Compute peak mentions}\label{compute-peak-mentions}}
+
+For each year term, find the year where its proportion of mentions peaks
+(hits its highest value). Store this in an intermediate dataframe.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Filter to get the terms of each year between 1875 and 1975}
+\NormalTok{year\_total\_select }\OtherTok{\textless{}{-}}\NormalTok{ year\_total }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{grepl}\NormalTok{(}\StringTok{\textquotesingle{}187[5{-}9]|18[8{-}9][0{-}9]|19[0{-}6][0{-}9]|197[0{-}5]\textquotesingle{}}\NormalTok{, term)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textless{}=} \DecValTok{2012} \SpecialCharTok{\&}\NormalTok{ year }\SpecialCharTok{\textgreater{}=} \DecValTok{1850}\NormalTok{)}
+
+\CommentTok{\# Get the max cprop for each term, making sure to keep the year column}
+\NormalTok{year\_total\_max }\OtherTok{\textless{}{-}}\NormalTok{ year\_total\_select }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(term) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(cprop }\SpecialCharTok{==} \FunctionTok{max}\NormalTok{(cprop)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(term, year, cprop)}
+\FunctionTok{colnames}\NormalTok{(year\_total\_max)}\OtherTok{\textless{}{-}}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}term\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}peak\_year\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}peak\_cprop\textquotesingle{}}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(year\_total\_max)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 3
+## # Groups:   term [6]
+##   term  peak_year peak_cprop
+##   <chr>     <dbl>      <dbl>
+## 1 1875       1876  0.0000459
+## 2 1876       1877  0.0000482
+## 3 1877       1879  0.0000473
+## 4 1878       1879  0.0000543
+## 5 1879       1880  0.0000448
+## 6 1880       1881  0.0000536
+\end{verbatim}
+
+\hypertarget{compute-half-lifes}{%
+\subsection{Compute half-lifes}\label{compute-half-lifes}}
+
+Now, for each year term, find the minimum number of years it takes for
+the proportion of mentions to decline from its peak value to half its
+peak value. Store this in an intermediate data frame.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Join the df of our selected terms with the df of the peak cprop and year for each term}
+\NormalTok{year\_total\_max\_full }\OtherTok{\textless{}{-}} \FunctionTok{left\_join}\NormalTok{(year\_total\_select, year\_total\_max, }\AttributeTok{by=}\StringTok{\textquotesingle{}term\textquotesingle{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(term, year, cprop, peak\_year, peak\_cprop)}
+
+\CommentTok{\# Filter out years that are before the peak year}
+\NormalTok{year\_total\_max\_filter }\OtherTok{\textless{}{-}}\NormalTok{ year\_total\_max\_full }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\textgreater{}}\NormalTok{ peak\_year)}
+
+\CommentTok{\# Group by term}
+\CommentTok{\# Calculate the absolute difference of each cprop and its term\textquotesingle{}s peak\_cprop}
+\CommentTok{\# Keep only the rows that have the smallest difference}
+\CommentTok{\# Subtract the max cprop year from the half cprop year to get the min years}
+\NormalTok{year\_total\_half }\OtherTok{\textless{}{-}}\NormalTok{ year\_total\_max\_filter }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(term) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{half\_max\_diff =} \FunctionTok{abs}\NormalTok{(peak\_cprop}\SpecialCharTok{/}\DecValTok{2} \SpecialCharTok{{-}}\NormalTok{ cprop)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(half\_max\_diff }\SpecialCharTok{==} \FunctionTok{min}\NormalTok{(half\_max\_diff)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{half\_year =}\NormalTok{ year}\SpecialCharTok{{-}}\NormalTok{peak\_year)}
+\FunctionTok{head}\NormalTok{(year\_total\_half)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 2
+##   term  half_year
+##   <chr>     <dbl>
+## 1 1875         12
+## 2 1876          9
+## 3 1877          9
+## 4 1878          6
+## 5 1879          7
+## 6 1880         11
+\end{verbatim}
+
+\hypertarget{plot-the-inset-of-figure-3a}{%
+\subsection{Plot the inset of figure
+3a}\label{plot-the-inset-of-figure-3a}}
+
+Plot the half-life of each term over time from 1850 to 2012. Each point
+should represent one year term, and add a line to show the trend using
+\texttt{geom\_smooth()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total\_half }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{as.numeric}\NormalTok{(term), }\AttributeTok{y =}\NormalTok{ half\_year)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{\textquotesingle{}Year Term\textquotesingle{}}\NormalTok{, }\AttributeTok{y =} \StringTok{\textquotesingle{}Half{-}life (yrs)\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+\end{verbatim}
+
+\includegraphics{05_final_report_files/figure-latex/plot-half-lifes-1.pdf}
+
+\hypertarget{your-written-answer-4}{%
+\subsection{Your written answer}\label{your-written-answer-4}}
+
+Write up your answer to Part F here. A: Version 2 of the NGram data
+produces a similarly shaped trend line as the one in Michel et
+al.~(2011), but the slope is straighter.
+
+\hypertarget{part-g}{%
+\section{Part G}\label{part-g}}
+
+\begin{quote}
+Were there any years that were outliers such as years that were
+forgotten particularly quickly or particularly slowly? Briefly speculate
+about possible reasons for that pattern and explain how you identified
+the outliers.
+\end{quote}
+
+\hypertarget{your-written-answer-5}{%
+\subsection{Your written answer}\label{your-written-answer-5}}
+
+Write up your answer to Part G here. Include code that shows the years
+with the smallest and largest half-lifes.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(year\_total\_half)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      term             half_year    
+##  Length:101         Min.   : 4.00  
+##  Class :character   1st Qu.: 9.00  
+##  Mode  :character   Median :10.00  
+##                     Mean   :10.95  
+##                     3rd Qu.:12.00  
+##                     Max.   :28.00
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total\_half }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(half\_year)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 101 x 2
+##    term  half_year
+##    <chr>     <dbl>
+##  1 1917          4
+##  2 1918          4
+##  3 1942          4
+##  4 1883          5
+##  5 1878          6
+##  6 1881          6
+##  7 1935          6
+##  8 1879          7
+##  9 1892          7
+## 10 1915          7
+## # i 91 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{year\_total\_half }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(half\_year))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 101 x 2
+##    term  half_year
+##    <chr>     <dbl>
+##  1 1900         28
+##  2 1902         19
+##  3 1910         19
+##  4 1889         18
+##  5 1905         18
+##  6 1893         17
+##  7 1904         17
+##  8 1909         17
+##  9 1890         16
+## 10 1896         16
+## # i 91 more rows
+\end{verbatim}
+
+A: The average half-life of the version 2 data was 11 years. The term
+year 1900 was forgotten much slower than any other years, at 28 years.
+This might just be because people were referring to the 1900th century
+more than specific 1900 dates. 1917, 1918, and 1942 were all forgotten
+really fast, in 4 years. The Spanish flu pandemic lasted from 1918 to
+1919, and 1919 was forgotten after only 7 years. Perhaps 1917 and 1918
+were forgotten faster because so much more happened in 1919 with the
+pandemic. During 1917 and 1918 was the end of World War I, so maybe
+there wasn't much time to write many books.
+
+\hypertarget{makefile}{%
+\section{Makefile}\label{makefile}}
+
+Edit the \texttt{Makefile} in this directory to execute the full set of
+scripts that download the data, clean it, and produce this report. This
+must be turned in with your assignment such that running \texttt{make}
+on the command line produces the final report as a pdf file.
+
+\end{document}
