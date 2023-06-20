@@ -191,8 +191,9 @@ power.prop.test(p1=0.08, p2=0.12, sig.level=0.05, power=0.80, alternative="one.s
 run_experiment <- function(pa, pb, n, alpha) {
   na <- sum(rbinom(n, 1, pa))
   nb <- sum(rbinom(n, 1, pb))
+  #run the test to see how often you reject
   test <- prop.test(x = c(na, nb), n = c(n, n), alternative="greater", conf.level = alpha)
-  test$p.value < alpha
+  test$p.value < alpha 
 }
 
 compute_power <- function(pa, pb, n, alpha, r = 1000) {
