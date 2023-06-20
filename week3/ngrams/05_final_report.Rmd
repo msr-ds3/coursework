@@ -233,7 +233,6 @@ half_lifes %>%
 
 Write up your answer to Part F here.
 
-
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
@@ -241,8 +240,6 @@ Write up your answer to Part F here.
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
-
-
 
 # Makefile
 

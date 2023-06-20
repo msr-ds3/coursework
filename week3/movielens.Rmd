@@ -162,6 +162,8 @@ ratings_10 <- left_join(ratings_10, ratings_by_movie, by = "movie_id")
 
 rank_user <- ratings_10 %>%
   transmute(user_id, rank)
+rank_user_movie <- ratings_10 %>%
+  transmute(user_id, movie_id, rank)
 
 # group by the userID and calculate at which level (rank) the user will be 100% satisfied [i.e. the highest rank, meaning the lowest popularity level] 
 # and at which level (rank) the user will be 90% satisfied [i.e. the rank that is at the 90th percentile of the users movie ranks]
@@ -170,6 +172,10 @@ user_satisfaction <- rank_user %>%
   group_by(user_id) %>%
   summarize(satisfied_100 = max(rank), satisfied_90 = quantile(rank, 0.9))
   # arrange(desc(satisfied_100))
+user_satisfaction <- rank_user_movie %>%
+  group_by(user_id) %>%
+  summarize(satisfied_100 = max(rank), satisfied_90 = quantile(rank, 0.9)) %>%
+  arrange(desc(satisfied_100))
 
 # now we want to group by the rank level at which the users will be satisfied 100%
 # then count those levels
@@ -180,6 +186,7 @@ count_satisfaction_100 <- user_satisfaction %>%
   group_by(satisfied_100) %>%
   summarize(count = n()) %>%
   arrange(satisfied_100) %>%
+  # arrange(count) %>%
   mutate(cumsum(count), sum(count), percent_satisfied = cumsum(count) / sum(count))
   
 
@@ -200,5 +207,11 @@ ggplot() +
   labs(title = "MovieLens",
       x = "Inventory Size",
       y = "Percent of Users Satisfied")
+  # arrange(count) %>%
+  mutate(cumsum(count), sum(count), percent_satisfied = cumsum(count) / sum(count))
+
+ggplot() +
+  geom_line(aes(x = satisfied_100, y = percent_satisfied), data = count_satisfaction_100) +
+  geom_line(aes(x = satisfied_90, y = percent_satisfied), data = count_satisfaction_90)
 
 ```
