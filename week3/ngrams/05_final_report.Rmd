@@ -209,23 +209,6 @@ half_lifes %>%
   geom_point() +
   geom_smooth()
 
-# half_life_all_years <- proportion %>% 
-#   filter(year >= 1850 & year <= 2012) %>% 
-#   filter(term >= 1875 & term <= 1975) %>% 
-#   group_by(term) %>% 
-#   mutate(peak_proportion = max(prop)) %>% 
-#   filter(proportion_of_total <= peak_prop/2 & year > term) %>%
-#   filter(year == min(year)) %>% 
-#   mutate(half_life = year-term) %>% 
-#   arrange(term)
-# 
-# half_life_all_years %>% 
-#   ggplot(aes(x = term, y = half_life)) +
-#   geom_point() +
-#   geom_smooth()
-
-
-           
   
 ```
 
