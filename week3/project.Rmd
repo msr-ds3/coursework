@@ -1,0 +1,33 @@
+---
+title: "Project"
+author: "Alex Huey"
+date: "2023-06-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(scales)
+library(tidyverse)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Figure 1
+
+```{r fig-1}
+
+#df <- read_csv(gzfile('data/city_day_agg_cleaned.csv.gz'))
+
+world_map <- map_data("world")
+
+ggplot() +
+  geom_polygon(data = world_map,
+               aes(x = long, y = lat, group = group),
+               fill = "lightgray", color = "white")
+
+```
+
