@@ -33,9 +33,9 @@ test_data <- trips_per_day[test_sample,]
 train_data <- trips_per_day[-test_sample,]
 
 set.seed(42)
-num_folds <- 5
+num_folds <- 10
 num_days <- nrow(train_data)
-frac_train <- 0.8
+frac_train <- 0.9
 num_train <- floor(num_days * frac_train)
 
 ndx <- sample(1:num_days, num_train, replace=F)
@@ -125,6 +125,42 @@ Try a bunch of different models and ideas, documenting them in your Rmarkdown fi
 
 ```{r new-models}
 
+#1 - 5014 / var(trips_per_day_train$num_trips)
+
+#model <- lm(num_trips ~ tmin + prcp, data=trips_per_day_train)
+
+#model <- lm(num_trips ~ tmin * prcp, data=trips_per_day_train)
+
+#model <- lm(num_trips ~ tmin * I(prcp > 0), data=trips_per_day_train)
+
+# model <- lm(num_trips ~ poly(tmin, 3, raw = T) + 
+#             I(prcp > 0 | snwd > 0 | snow > 0), 
+#             data=trips_per_day_train)
+
+# model <- lm(num_trips ~ poly(tmin + I(prcp > 0 | snwd > 0 | snow > 0), 3, raw = T), data=trips_per_day_train)
+
+# model <- lm(num_trips ~ I(prcp > 0 | snwd > 0 | snow > 0)*tmin + poly(tmin, 3, raw = T), data=trips_per_day_train)
+
+# model <- lm(num_trips ~ prcp*tmin + snwd*tmin + snow*tmin + poly(tmin, 3, raw = T), data=trips_per_day_train)
+
+model <- lm(num_trips ~ I(prcp>0)*tmin + I(snwd>0)*tmin + I(snow>0)*tmin + poly(tmin, 3, raw = T), data=trips_per_day_train)
+summary(model)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred, linetype = prcp > 0 | snwd > 0 | snow > 0)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
 ```
 
 ## Part 6
@@ -132,5 +168,28 @@ Try a bunch of different models and ideas, documenting them in your Rmarkdown fi
 Plot your final best fit model in two different ways. First with the date on the x-axis and the number of trips on the y-axis, showing the actual values as points and predicted values as a line. Second as a plot where the x-axis is the predicted value and the y-axis is the actual value, with each point representing one day.
 
 ```{r best-fit}
+model <- lm(num_trips ~ I(prcp > 0 | snwd > 0 | snow > 0)*tmin + poly(tmin, 3, raw = T), data=trips_per_day_train)
+summary(model)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred, linetype = prcp > 0 | snwd > 0 | snow > 0)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+ggplot(plot_data, aes(x = pred, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  xlab('Predicted Value') +
+  ylab('Daily trips') +
+  scale_y_continuous()
 
 ```
