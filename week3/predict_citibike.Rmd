@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 Use the `trips_per_day.tsv` file that has one row for each day, the number of trips taken on that day, and the minimum temperature on that day.
 
 ```{r load-trips}
-trips_per_day <- read_tsv(here('week4/trips_per_day.tsv'))
+trips_per_day <- read_tsv(here('week3/trips_per_day.tsv'))
 ```
 
 ## Part 2
@@ -191,5 +191,7 @@ ggplot(plot_data, aes(x = pred, y = num_trips)) +
   xlab('Predicted Value') +
   ylab('Daily trips') +
   scale_y_continuous()
+
+save(model, file='model.RData')
 
 ```
