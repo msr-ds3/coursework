@@ -44,7 +44,7 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 # https://www.ncei.noaa.gov/orders/cdo/2992179.csv
 # ordered from
 # http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
-weather <- read.table('weather.csv', header=T, sep=',')
+weather <- read.table('weather_2015.csv', header=T, sep=',')
 
 # extract just a few columns, lowercase column names, and parse dates
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
