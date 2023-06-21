@@ -76,8 +76,8 @@ year_counts <- read_tsv('year_counts.tsv',
 total_counts <- read_csv('total_counts.csv', 
                    col_names = c('year', 'total_volume', 'page_count', 'book_count_total'))
 
-# change the term variable into a character
-year_counts['term'] <- as.character(year_counts$term)
+# change the term variable into a factor
+year_counts['term'] <- as.factor(year_counts$term)
 ```
 
 ## Your written answer
@@ -115,7 +115,7 @@ Each term should have a different color, it's nice if these match the original p
 
 ```{r plot-proportion-over-time}
 year_total %>%
-  filter(term == "1883"|term == "1910"|term == "1950") %>% 
+  filter(term == '1883'|term == '1910'|term == '1950') %>% 
   filter(year <= 2012 & year >= 1850) %>% 
   ggplot(aes(x = year, y = cprop, color = term)) +
   geom_line() +
@@ -139,7 +139,9 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 ## Your written answer
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-![](google_ngram.png) A: The graphs have generally the same shape, although Google smoothed theirs out.
+
+![](google_ngram.png)
+A: The graphs have generally the same shape, although Google smoothed theirs out.
 
 # Part D
 
@@ -207,7 +209,7 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
-# Filter to get the terms of each year between 1875 and 1975
+# Filter to get the terms of each year between 1875 and 1975, for the years between 2012 and 1850
 year_total_select <- year_total %>%
   filter(grepl('187[5-9]|18[8-9][0-9]|19[0-6][0-9]|197[0-5]', term)) %>% 
   filter(year <= 2012 & year >= 1850)
@@ -215,7 +217,9 @@ year_total_select <- year_total %>%
 # Get the max cprop for each term, making sure to keep the year column
 year_total_max <- year_total_select %>%
   group_by(term) %>% 
-  filter(cprop == max(cprop)) %>% 
+  #filter(cprop == max(cprop)) %>% # if two rows both have the max cprop for a group, we will get two rows back!
+  arrange(term, desc(cprop), year) %>% # this is safer. Ascending term, descending cprop, and the first max cprop year
+  top_n(1) %>% 
   select(term, year, cprop)
 colnames(year_total_max)<-c('term', 'peak_year', 'peak_cprop')
 head(year_total_max)
@@ -240,9 +244,12 @@ year_total_max_filter <- year_total_max_full %>%
 # Keep only the rows that have the smallest difference
 # Subtract the max cprop year from the half cprop year to get the min years
 year_total_half <- year_total_max_filter %>%
-  group_by(term) %>% 
-  mutate(half_max_diff = abs(peak_cprop/2 - cprop)) %>% 
-  filter(half_max_diff == min(half_max_diff)) %>% 
+  group_by(term) %>%
+  #filter(cprop <= peak_cprop/2) %>% 
+  filter(cprop - peak_cprop/2 <= 0) %>%
+  group_by(term) %>%
+  arrange(term, desc(cprop)) %>%
+  slice_head() %>% 
   summarise(half_year = year-peak_year)
 head(year_total_half)
 ```
@@ -253,10 +260,17 @@ Plot the half-life of each term over time from 1850 to 2012.
 Each point should represent one year term, and add a line to show the trend using `geom_smooth()`.
 
 ```{r plot-half-lifes}
+year_total_point_select <- year_total_half %>% filter(term == "1883"|term == "1910"|term == "1950")
+
 year_total_half %>% 
   ggplot(aes(x = as.numeric(term), y = half_year)) +
-  geom_point() +
   geom_smooth() +
+  geom_point() +
+  # scale_color_manual(name = "term",
+  #                    values = c("1883" = "blue",
+  #                               "1910" = "green",
+  #                               "1950" = "red"),
+  #                    labels = c("1883", "1910", "1950")) +
   labs(x = 'Year Term', y = 'Half-life (yrs)')
 ```
 
@@ -279,15 +293,18 @@ Include code that shows the years with the smallest and largest half-lifes.
 summary(year_total_half)
 year_total_half %>% arrange(half_year)
 year_total_half %>% arrange(desc(half_year))
+year_total_half %>% filter(grepl('194[0-6]', term))
+
 ```
 
 A: The average half-life of the version 2 data was 11 years.
-The term year 1900 was forgotten much slower than any other years, at 28 years.
+The term year 1900 was forgotten much slower than any other years, at 26 years.
 This might just be because people were referring to the 1900th century more than specific 1900 dates.
-1917, 1918, and 1942 were all forgotten really fast, in 4 years.
+1917, 1918, and 1942 were all forgotten really fast, in 5, 5, and 4 years, respectively.
 The Spanish flu pandemic lasted from 1918 to 1919, and 1919 was forgotten after only 7 years.
 Perhaps 1917 and 1918 were forgotten faster because so much more happened in 1919 with the pandemic.
 During 1917 and 1918 was the end of World War I, so maybe there wasn't much time to write many books.
+Maybe 1942 was overshadowed by the years before and after.
 
 # Makefile
 
