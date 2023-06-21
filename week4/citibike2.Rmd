@@ -129,6 +129,7 @@ validation_set_approach(trips_per_day,0.9)
 ## K-fold cross_validation
 
 ```{r k-fold validation}
+trips_per_day=trips_per_day%>%mutate(month=month(as.Date(ymd),label=TRUE))
 
 k_fold_validation=function(num_folds,df){
 
@@ -148,7 +149,7 @@ k_fold_validation=function(num_folds,df){
     for (f in 1:num_folds) {
       # fit on the training data
       data_train <- filter(df, fold != f)
-      model <- lm(num_trips ~ poly(tmin, k, raw = T)+I(prcp==0), data=data_train)
+      model <- lm(num_trips ~ poly(tmin, k, raw = T)+I(prcp==0)+I(snwd==0)*I(snow==0)+month, data=data_train)
   
       # evaluate on the validation data
       data_validate <- filter(df, fold == f)
@@ -295,14 +296,16 @@ models=c(as.formula(num_trips~poly(tmin,4)),
          as.formula(num_trips ~ poly(tmin, 4, raw = T)+weekends_or_not),
          as.formula(num_trips ~ poly(tmin, 4, raw = T)+I(snwd==0)),
          as.formula(num_trips ~ poly(tmin, 7, raw = T)+I(snwd==0)*I(snow==0)),
-         as.formula(num_trips ~ poly(tmin, 5, raw = T)+I(prcp==0))
+         as.formula(num_trips ~ poly(tmin, 5, raw = T)+I(prcp==0)),
+         as.formula(num_trips ~ poly(tmin, 4, raw=T)+I(prcp==0)+weekends_or_not+I(snwd==0)*I(snow==0)+month)
                     )
 
+num_folds=5
 df=trips_per_day%>%
     mutate(fold=(row_number()%%num_folds+1))
 avg_validate_err <- c()
 se_validate_err <- c()
-num_folds=5
+
 k=1
 for (model in models) {
   # do k-fold cross-validation within each value of k
@@ -324,8 +327,8 @@ for (model in models) {
   k=k+1
 }
 # plot the validate error, highlighting the value of k with the lowest average error
-plot_data <- data.frame(1:6, avg_validate_err, se_validate_err)
-ggplot(plot_data, aes(x=X1.6, y=avg_validate_err)) +
+plot_data <- data.frame(1:7, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=X1.7, y=avg_validate_err)) +
   geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
                       ymax=avg_validate_err + se_validate_err,
                       color=avg_validate_err == min(avg_validate_err))) +
