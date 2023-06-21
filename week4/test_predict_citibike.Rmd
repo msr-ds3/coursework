@@ -1,0 +1,16 @@
+---
+title: "test_predict_citibike"
+output: html_document
+date: "2023-06-21"
+---
+
+```{r model}
+load("trips_per_day_2015.Rdata")
+load("predict_citibike.Rdata")
+
+# model <- lm(num_trips ~ poly(tmin, 4, raw = T) * I(prcp > 0) + is_weekend, trips_per_day)
+
+rmse(model, trips_per_day_2015)
+
+```
+
