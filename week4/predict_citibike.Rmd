@@ -544,13 +544,16 @@ model_list <- c("num_trips ~ I(prcp > avg_prcp)*tmin + I(prcp > hlfsdup_prcp)*tm
 kfold_model_test(model_list)
 ```
 
-My exploration is complete! Below is my final model, and it is looking great! My RMSE is now just above 3100 and I have super high R-squared and adjusted R-squared values of around 93%!
+My exploration is complete! Below is my final model, and it is looking great! My RMSE is now just above 2800 and I have super high R-squared and adjusted R-squared values of around 92%!
 
 ```{r final-model}
-model <- lm(num_trips ~ I(prcp > avg_prcp)*tmin + I(prcp > hlfsdup_prcp)*tmax + 
+model <- lm(num_trips ~ I(prcp > 0.15)*tmin + I(prcp > 0.36)*tmax + 
               snwd*tmin + snow*tmin + snow*snwd + holiday + weektype + 
               poly(month, 4, raw=T) + poly(tmax, 4, raw=T) + poly(tmin, 4, raw=T),
-            data=trips_per_day_model)
+            data=trips_per_day)
+
+rmse(model, trips_per_day)  # 2835.046
+
 summary(model)
 ```
 
@@ -563,21 +566,17 @@ summary(model)
 Plot the actual data as points and predicted values as a line.
 
 ```{r plot-data}
-trips_train <- trips_per_day_train %>%
-  add_predictions(model) %>%
-  mutate(split = "train")
-trips_validate <- trips_per_day_validate %>%
-  add_predictions(model) %>%
-  mutate(split = "validate")
-plot_data <- bind_rows(trips_train, trips_validate)
-
-plot_data %>% 
+plot_2014 <- trips_per_day %>%
+  add_predictions(model) %>% 
   ggplot(aes(x = ymd, y = num_trips)) +
-  geom_point(aes(color = split)) +
+  geom_point() +
   geom_smooth(aes(y = pred), se=F) +
-  xlab('Date') +
-  ylab('Daily trips') +
+  labs(x = 'Date', y = 'Daily trips') +
   scale_y_continuous()
+
+plot_2014
+
+save(model, plot_2014, file = 'predict_citibike.Rdata')
 ```
 
 ## Plot the correlation
@@ -588,10 +587,10 @@ Plot the correlation between the predicted values and the actual values.
 trips_model <- trips_per_day_model %>%
   add_predictions(model)
 
-plot_data %>% 
+trips_model %>% 
   ggplot(aes(x = num_trips, y = pred)) +
   geom_point() +
-  geom_abline(color = 'navy') + 
+  geom_abline(color = 'blue') + 
   labs(x = 'Actual', y = 'Predicted') +
   scale_y_continuous()
 ```

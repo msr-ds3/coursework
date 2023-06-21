@@ -1,0 +1,58 @@
+---
+title: "Test Citibike Prediction"
+author: "Sara Goldberger"
+date: "2023-06-21"
+output: pdf_document
+---
+
+Load libraries
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(scales)
+
+theme_set(theme_bw())
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Load and Modify the Data
+
+Load in 2015 Citibike data, 2015 weather data, and my predictive model.
+```{r load-trips-weather-holidays}
+load('trips_per_day_2015.Rdata')
+load('predict_citibike.Rdata')
+```
+
+Add in holidays, weektype, and month
+```{r add-holidays-weektype-month}
+holidays <- read_delim('US_holidays_2015.txt', delim=,)
+
+trips_per_day_2015 <- trips_per_day_2015 %>% 
+  mutate(holiday = (ymd %in% holidays$ymd)) %>% 
+  replace_na(list(holiday=F)) %>% 
+  mutate(month = month(ymd, label = T), tmax = tmax/10, tmin = tmin/10, day = weekdays(ymd)) %>% 
+  mutate(weektype = ifelse(day=="Saturday"|day=="Sunday", "Weekend", "Weekday")) %>% 
+  select(-day)
+```
+
+# Plot the RMSE
+
+Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you found with cross-validation on the 2014 data.
+```{r}
+pred <- predict(model, trips_per_day_2015)
+sort(pred) %>% head(10)
+#sqrt(mean((predict(model, trips_per_day_2015) - trips_per_day_2015$num_trips)^2))
+rmse(model, trips_per_day_2015)
+
+trips_per_day_2015 %>%
+  add_predictions(model) %>% 
+  ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  geom_smooth(aes(y = pred), se=F) +
+  labs(x = 'Date', y = 'Daily trips') +
+  scale_y_continuous()
+
+plot_2014
+```
+
