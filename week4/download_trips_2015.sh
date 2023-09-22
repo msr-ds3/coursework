@@ -40,7 +40,7 @@ cd $DATA_DIR
 
 # loop over each year/month
 
-for year in 2014
+for year in 2015
 
 do
 
