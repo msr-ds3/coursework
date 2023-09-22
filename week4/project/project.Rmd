@@ -1,0 +1,28 @@
+---
+title: "Project"
+author: "Alex Huey"
+date: "2023-06-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(scales)
+library(tidyverse)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data
+
+```{r read-data}
+city_day_agg_cleaned <- read.csv(here('week4/project/data/city_day_agg_cleaned.csv'))
+country_day_agg_cleaned <- read.csv(here('week4/project/data/country_day_agg_cleaned.csv'))
+
+city_and_country <- inner_join(city_day_agg_cleaned, country_day_agg_cleaned, by="countryCode")
+
+```
+

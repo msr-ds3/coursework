@@ -1,0 +1,55 @@
+---
+title: "test_citibike_predictions.Rmd"
+author: "Alex Huey"
+date: "2023-06-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(here)
+library(scales)
+library(tidyverse)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Testing
+
+Write a new file called test_citibike_predictions.Rmd that loads in the 2015 `trips_2015.Rdata` file and weather data along with your saved model (from yesterday's .Rdata file, and predicts the number of trips for each day.
+
+Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you found with cross-validation on the 2014 data.
+
+```{r testing}
+load('trips_2015.RData')
+load('model.RData')
+
+trips_with_weather <- inner_join(trips, weather, by="ymd")
+
+trips_with_weather <- trips_with_weather %>% mutate(tmin = tmin/10, tmax = tmax/10)
+
+set.seed(42)
+num_folds <- 10
+num_days <- nrow(trips_with_weather)
+frac_train <- 0.9
+num_train <- floor(num_days * frac_train)
+
+ndx <- sample(1:num_days, num_train, replace=F)
+
+train_data <- train_data[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validate <- trips_per_day_validate %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validate)
+
+summary(model)
+rmse(model, plot_data)
+
+```
