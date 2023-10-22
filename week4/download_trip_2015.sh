@@ -19,7 +19,7 @@ DATA_DIR=.
 cd $DATA_DIR
 
 # loop over each year/month
-for year in 2014
+for year in 2015
 do
     # note: remove '#' in line below to download all months
     for month in 02 01 03 04 05 06 07 08 09 10 11 12

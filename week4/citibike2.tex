@@ -1,0 +1,558 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={citibike2},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{citibike2}
+\author{}
+\date{\vspace{-2.5em}2023-06-20}
+
+\begin{document}
+\maketitle
+
+\hypertarget{read-the-file}{%
+\subsection{Read the File}\label{read-the-file}}
+
+Split the data into randomly selected training, validation, and test
+sets, with 90\% of the data for training and validating the model, and
+10\% for a final test set (to be used once and only once towards the end
+of this exercise).
+
+trips\_per\_day only contains 90\% of data and 10\% of data(test data)
+will be provided later for the final check.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\OtherTok{=}\FunctionTok{read.table}\NormalTok{(}\AttributeTok{file=}\StringTok{"trips\_per\_day.tsv"}\NormalTok{,}\AttributeTok{sep=}\StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{,}\AttributeTok{header=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{head}\NormalTok{(trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          ymd num_trips     date prcp snwd snow tmax tmin
+## 1 2014-01-01      6059 20140101 0.00  0.0  0.0  3.3  2.4
+## 2 2014-01-02      8600 20140102 0.33  0.0  3.1  3.3  1.8
+## 3 2014-01-03      1144 20140103 0.29  5.9  3.3  1.8  0.9
+## 4 2014-01-04      2292 20140104 0.00  5.9  0.0  2.9  0.8
+## 5 2014-01-05      2678 20140105 0.14  3.9  0.0  4.0  2.7
+## 6 2014-01-06      9510 20140106 0.36  1.2  0.0  5.5  1.9
+\end{verbatim}
+
+\hypertarget{single-validate-validation-set-approach}{%
+\subsection{Single validate: validation set
+approach}\label{single-validate-validation-set-approach}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#you need to modify the formula accordingly}
+\NormalTok{plotting\_model}\OtherTok{=}\ControlFlowTok{function}\NormalTok{(data\_train,data\_validate,form)\{}
+\NormalTok{  model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(form, }\AttributeTok{data =}\NormalTok{ data\_train)}
+  
+\NormalTok{  data\_train}\OtherTok{=}\NormalTok{data\_train}\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{add\_predictions}\NormalTok{(model) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{split =} \StringTok{"train"}\NormalTok{)}
+\NormalTok{  data\_validate}\OtherTok{=}\NormalTok{data\_validate}\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{add\_predictions}\NormalTok{(model) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{split =} \StringTok{"validate"}\NormalTok{)}
+\NormalTok{  plot\_data}\OtherTok{=}\FunctionTok{bind\_rows}\NormalTok{(data\_train, data\_validate)}
+  
+  
+  \FunctionTok{ggplot}\NormalTok{(plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ tmin, }\AttributeTok{y =}\NormalTok{ num\_trips)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{color =}\NormalTok{ split)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y =}\NormalTok{ pred)) }\SpecialCharTok{+}
+    \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Minimum temperature\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}Daily trips\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_continuous}\NormalTok{()}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+
+\NormalTok{validation\_set\_approach}\OtherTok{=}\ControlFlowTok{function}\NormalTok{(df,training\_prop)\{}
+\NormalTok{  num\_rows}\OtherTok{=}\FunctionTok{nrow}\NormalTok{(df)}
+\NormalTok{  num\_training}\OtherTok{=}\FunctionTok{floor}\NormalTok{(training\_prop}\SpecialCharTok{*}\NormalTok{num\_rows)}
+  
+\NormalTok{  ndx}\OtherTok{=}\FunctionTok{sample}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_rows,num\_training,}\AttributeTok{replace=}\NormalTok{F)}
+\NormalTok{  data\_training}\OtherTok{=}\NormalTok{df[ndx,]}\CommentTok{\#my training data}
+\NormalTok{  data\_validating}\OtherTok{=}\NormalTok{df[}\SpecialCharTok{{-}}\NormalTok{ndx,]}\CommentTok{\#my validation data}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(data\_training))}
+  \FunctionTok{print}\NormalTok{(}\FunctionTok{nrow}\NormalTok{(data\_validating))}
+  
+  \CommentTok{\# fit a model for each polynomial degree}
+\NormalTok{  K }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{:}\DecValTok{8}
+\NormalTok{  train\_err }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  validate\_err }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in}\NormalTok{ K)\{}
+    \CommentTok{\# fit on the training data; you need to modify the formula accordingly}
+\NormalTok{    model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, k, }\AttributeTok{raw =}\NormalTok{ T), }\AttributeTok{data=}\NormalTok{data\_training)}
+    
+    \CommentTok{\# evaluate on the training data}
+\NormalTok{    train\_err[k] }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{mean}\NormalTok{((}\FunctionTok{predict}\NormalTok{(model, data\_training) }\SpecialCharTok{{-}}\NormalTok{ data\_training}\SpecialCharTok{$}\NormalTok{num\_trips)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))}
+
+    \CommentTok{\# evaluate on the validate data}
+\NormalTok{    validate\_err[k] }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{mean}\NormalTok{((}\FunctionTok{predict}\NormalTok{(model, data\_validating) }\SpecialCharTok{{-}}\NormalTok{ data\_validating}\SpecialCharTok{$}\NormalTok{num\_trips)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))}
+\NormalTok{  \}}
+  
+\NormalTok{  plot\_data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(K, train\_err, validate\_err) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{gather}\NormalTok{(}\StringTok{"split"}\NormalTok{, }\StringTok{"error"}\NormalTok{, }\SpecialCharTok{{-}}\NormalTok{K)}
+  
+  \FunctionTok{ggplot}\NormalTok{(plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{K, }\AttributeTok{y=}\NormalTok{error, }\AttributeTok{color=}\NormalTok{split)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks=}\NormalTok{K) }\SpecialCharTok{+}
+    \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Polynomial Degree\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}RMSE\textquotesingle{}}\NormalTok{)}
+  
+  \CommentTok{\#choose the best model}
+\NormalTok{  form}\OtherTok{=}\NormalTok{num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, }\DecValTok{5}\NormalTok{, }\AttributeTok{raw =}\NormalTok{ T)}
+  \FunctionTok{plotting\_model}\NormalTok{(data\_training,data\_validating,form )}
+  
+\NormalTok{\}}
+
+\FunctionTok{validation\_set\_approach}\NormalTok{(trips\_per\_day,}\FloatTok{0.9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 328
+## [1] 37
+\end{verbatim}
+
+\includegraphics{citibike2_files/figure-latex/validation set approach-1.pdf}
+
+\hypertarget{k-fold-cross_validation}{%
+\subsection{K-fold cross\_validation}\label{k-fold-cross_validation}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{k\_fold\_validation}\OtherTok{=}\ControlFlowTok{function}\NormalTok{(num\_folds,df)\{}
+
+\NormalTok{  num\_rows}\OtherTok{=}\FunctionTok{nrow}\NormalTok{(df)}
+\NormalTok{  df}\OtherTok{=}\NormalTok{df}\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{fold=}\NormalTok{(}\FunctionTok{row\_number}\NormalTok{()}\SpecialCharTok{\%\%}\NormalTok{num\_folds}\SpecialCharTok{+}\DecValTok{1}\NormalTok{))}
+  \CommentTok{\#head(dfn)}
+  
+  
+  \CommentTok{\# fit a model for each polynomial degree}
+\NormalTok{  K }\OtherTok{\textless{}{-}} \DecValTok{1}\SpecialCharTok{:}\DecValTok{8}
+\NormalTok{  avg\_validate\_err }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+\NormalTok{  se\_validate\_err }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in}\NormalTok{ K) \{}
+    \CommentTok{\# do k{-}fold cross{-}validation within each value of k}
+\NormalTok{    validate\_err }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{()}
+    \ControlFlowTok{for}\NormalTok{ (f }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{num\_folds) \{}
+      \CommentTok{\# fit on the training data}
+\NormalTok{      data\_train }\OtherTok{\textless{}{-}} \FunctionTok{filter}\NormalTok{(df, fold }\SpecialCharTok{!=}\NormalTok{ f)}
+\NormalTok{      model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, k, }\AttributeTok{raw =}\NormalTok{ T)}\SpecialCharTok{+}\FunctionTok{I}\NormalTok{(prcp}\SpecialCharTok{==}\DecValTok{0}\NormalTok{), }\AttributeTok{data=}\NormalTok{data\_train)}
+  
+      \CommentTok{\# evaluate on the validation data}
+\NormalTok{      data\_validate }\OtherTok{\textless{}{-}} \FunctionTok{filter}\NormalTok{(df, fold }\SpecialCharTok{==}\NormalTok{ f)}
+\NormalTok{      validate\_err[f] }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{mean}\NormalTok{((}\FunctionTok{predict}\NormalTok{(model, data\_validate) }\SpecialCharTok{{-}}\NormalTok{ data\_validate}\SpecialCharTok{$}\NormalTok{num\_trips)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))}
+\NormalTok{    \}}
+  
+    \CommentTok{\# compute the average validation error across folds}
+    \CommentTok{\# and the standard error on this estimate}
+\NormalTok{    avg\_validate\_err[k] }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(validate\_err)}
+\NormalTok{    se\_validate\_err[k] }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(validate\_err) }\SpecialCharTok{/} \FunctionTok{sqrt}\NormalTok{(num\_folds)}
+\NormalTok{  \}}
+  \CommentTok{\# plot the validate error, highlighting the value of k with the lowest average error}
+\NormalTok{  plot\_data }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(K, avg\_validate\_err, se\_validate\_err)}
+  \FunctionTok{ggplot}\NormalTok{(plot\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{K, }\AttributeTok{y=}\NormalTok{avg\_validate\_err)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_pointrange}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{ymin=}\NormalTok{avg\_validate\_err }\SpecialCharTok{{-}}\NormalTok{ se\_validate\_err,}
+                        \AttributeTok{ymax=}\NormalTok{avg\_validate\_err }\SpecialCharTok{+}\NormalTok{ se\_validate\_err,}
+                        \AttributeTok{color=}\NormalTok{avg\_validate\_err }\SpecialCharTok{==} \FunctionTok{min}\NormalTok{(avg\_validate\_err))) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{color =} \StringTok{"red"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{12}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{"none"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{xlab}\NormalTok{(}\StringTok{\textquotesingle{}Polynomial Degree\textquotesingle{}}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ylab}\NormalTok{(}\StringTok{\textquotesingle{}RMSE on validation data\textquotesingle{}}\NormalTok{)}
+\NormalTok{\}}
+\FunctionTok{k\_fold\_validation}\NormalTok{(}\DecValTok{5}\NormalTok{,trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/k-fold validation-1.pdf}
+
+\hypertarget{different-models}{%
+\subsection{Different models}\label{different-models}}
+
+uses only the minimum temperature on each day to predict the number of
+trips taken that day
+
+\begin{verbatim}
+## [1] 5539.137
+\end{verbatim}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{citibike2_files/figure-latex/tmin only-1.pdf} \#\#\#
+model2: let us also factor in the effects of weekdays
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model2}\OtherTok{=}\FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, }\DecValTok{4}\NormalTok{, }\AttributeTok{raw =}\NormalTok{ T)}\SpecialCharTok{+}\NormalTok{days, }\AttributeTok{data=}\NormalTok{trips\_per\_day)}
+\FunctionTok{rmse}\NormalTok{(model2,trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5108.488
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(model2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 11 x 5
+##    term                    estimate std.error statistic  p.value
+##    <chr>                      <dbl>     <dbl>     <dbl>    <dbl>
+##  1 (Intercept)                162.     4422.     0.0367 9.71e- 1
+##  2 poly(tmin, 4, raw = T)1   9110.     5759.     1.58   1.15e- 1
+##  3 poly(tmin, 4, raw = T)2  -4196.     2500.    -1.68   9.42e- 2
+##  4 poly(tmin, 4, raw = T)3   1082.      435.     2.49   1.33e- 2
+##  5 poly(tmin, 4, raw = T)4    -82.5      26.2   -3.15   1.76e- 3
+##  6 days.L                     110.      723.     0.152  8.79e- 1
+##  7 days.Q                   -5214.      728.    -7.16   4.72e-12
+##  8 days.C                      14.8     720.     0.0206 9.84e- 1
+##  9 days^4                   -2323.      719.    -3.23   1.36e- 3
+## 10 days^5                    -437.      721.    -0.606  5.45e- 1
+## 11 days^6                    -181.      717.    -0.252  8.01e- 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_predictions}\NormalTok{(model2)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{pred,}\AttributeTok{y=}\NormalTok{num\_trips,}\AttributeTok{color=}\NormalTok{days))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{geom\_abline}\NormalTok{(}\AttributeTok{linetype=}\StringTok{"dashed"}\NormalTok{)}\SpecialCharTok{+}
+  \CommentTok{\#facet\_wrap(\textasciitilde{}days)+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"predicted"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Actual"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_predictions}\NormalTok{(model2)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{tmin,}\AttributeTok{y=}\NormalTok{num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{pred))}\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{days)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"tmin"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Num of Trips"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/unnamed-chunk-1-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(days)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{avg\_num\_trips=}\FunctionTok{mean}\NormalTok{(num\_trips),}\AttributeTok{sd=}\FunctionTok{sd}\NormalTok{(num\_trips),}\AttributeTok{count=}\FunctionTok{n}\NormalTok{())}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{days,}\AttributeTok{y=}\NormalTok{avg\_num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/unnamed-chunk-1-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{days,}\AttributeTok{y=}\NormalTok{num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/unnamed-chunk-1-4.pdf}
+
+according to the model summary and summary table, it seems better that
+we just differentiate between weekends and weekdays. there are less
+number of trips that occur on weekends.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\OtherTok{=}\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}\FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekends\_or\_not=}\NormalTok{(days }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Sat"}\NormalTok{,}\StringTok{"Sun"}\NormalTok{)))}
+\NormalTok{model3}\OtherTok{=}\FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, }\DecValTok{4}\NormalTok{, }\AttributeTok{raw =}\NormalTok{ T)}\SpecialCharTok{+}\NormalTok{weekends\_or\_not, }\AttributeTok{data=}\NormalTok{trips\_per\_day)}
+\FunctionTok{rmse}\NormalTok{(model3,trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5111.56
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(model3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 5
+##   term                    estimate std.error statistic  p.value
+##   <chr>                      <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)               1722.     4360.      0.395 6.93e- 1
+## 2 poly(tmin, 4, raw = T)1   8882.     5688.      1.56  1.19e- 1
+## 3 poly(tmin, 4, raw = T)2  -4112.     2470.     -1.66  9.68e- 2
+## 4 poly(tmin, 4, raw = T)3   1070.      430.      2.49  1.32e- 2
+## 5 poly(tmin, 4, raw = T)4    -81.9      25.9    -3.17  1.66e- 3
+## 6 weekends_or_notTRUE      -4775.      604.     -7.91  3.21e-14
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_predictions}\NormalTok{(model3)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{tmin,}\AttributeTok{y=}\NormalTok{num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{pred,}\AttributeTok{linetype=}\NormalTok{weekends\_or\_not))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/weekdays and weekends-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\#facet\_wrap(\textasciitilde{}weekends\_or\_not)}
+
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(weekends\_or\_not)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{weekends\_or\_not,}\AttributeTok{y=}\NormalTok{num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/weekdays and weekends-2.pdf}
+\#\#\#model3:l let us consider the effects of snwd
+
+when there is no snow on the round, people tend to bike more
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{snwd,}\AttributeTok{y=}\NormalTok{num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/snwd-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model4}\OtherTok{=}\FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, }\DecValTok{4}\NormalTok{, }\AttributeTok{raw =}\NormalTok{ T)}\SpecialCharTok{+}\FunctionTok{I}\NormalTok{(snwd}\SpecialCharTok{==}\DecValTok{0}\NormalTok{),}\AttributeTok{data=}\NormalTok{trips\_per\_day)}
+\FunctionTok{rmse}\NormalTok{(model4,trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5448.965
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(model4)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 5
+##   term                    estimate std.error statistic  p.value
+##   <chr>                      <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)                128.     4684.     0.0274 0.978   
+## 2 poly(tmin, 4, raw = T)1  10461.     6113.     1.71   0.0879  
+## 3 poly(tmin, 4, raw = T)2  -5608.     2683.    -2.09   0.0373  
+## 4 poly(tmin, 4, raw = T)3   1355.      468.     2.90   0.00397 
+## 5 poly(tmin, 4, raw = T)4    -98.1      28.1   -3.49   0.000540
+## 6 I(snwd == 0)TRUE          3795.     1096.     3.46   0.000603
+\end{verbatim}
+
+let us also consider snow if it is snowing, people prob do not want to
+bike also, snow and snwd seems to interact
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(trips\_per\_day}\SpecialCharTok{$}\NormalTok{snow[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{364}\NormalTok{],trips\_per\_day}\SpecialCharTok{$}\NormalTok{snwd[}\DecValTok{2}\SpecialCharTok{:}\DecValTok{365}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.4702212
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model5}\OtherTok{=}\FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, }\DecValTok{7}\NormalTok{, }\AttributeTok{raw =}\NormalTok{ T)}\SpecialCharTok{+}\FunctionTok{I}\NormalTok{(snwd}\SpecialCharTok{==}\DecValTok{0}\NormalTok{)}\SpecialCharTok{*}\FunctionTok{I}\NormalTok{(snow}\SpecialCharTok{==}\DecValTok{0}\NormalTok{),}\AttributeTok{data=}\NormalTok{trips\_per\_day)}
+\FunctionTok{rmse}\NormalTok{(model5,trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5336.689
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tidy}\NormalTok{(model5)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 11 x 5
+##    term                               estimate std.error statistic p.value
+##    <chr>                                 <dbl>     <dbl>     <dbl>   <dbl>
+##  1 (Intercept)                          357.    15683.      0.0227 0.982  
+##  2 poly(tmin, 7, raw = T)1           -10142.    46978.     -0.216  0.829  
+##  3 poly(tmin, 7, raw = T)2            26124.    51332.      0.509  0.611  
+##  4 poly(tmin, 7, raw = T)3           -18998.    27692.     -0.686  0.493  
+##  5 poly(tmin, 7, raw = T)4             6364.     8166.      0.779  0.436  
+##  6 poly(tmin, 7, raw = T)5            -1075.     1339.     -0.803  0.423  
+##  7 poly(tmin, 7, raw = T)6               89.6     114.      0.783  0.434  
+##  8 poly(tmin, 7, raw = T)7               -2.95      3.98   -0.742  0.458  
+##  9 I(snwd == 0)TRUE                    2604.     3135.      0.831  0.407  
+## 10 I(snow == 0)TRUE                    4591.     1756.      2.61   0.00931
+## 11 I(snwd == 0)TRUE:I(snow == 0)TRUE    810.     3349.      0.242  0.809
+\end{verbatim}
+
+\#\#model4: let us consider prcp when there is precipitation, people
+would bike less
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model6}\OtherTok{=}\NormalTok{model }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(num\_trips }\SpecialCharTok{\textasciitilde{}} \FunctionTok{poly}\NormalTok{(tmin, }\DecValTok{5}\NormalTok{, }\AttributeTok{raw =}\NormalTok{ T)}\SpecialCharTok{+}\FunctionTok{I}\NormalTok{(prcp}\SpecialCharTok{==}\DecValTok{0}\NormalTok{), }\AttributeTok{data=}\NormalTok{trips\_per\_day)}
+\FunctionTok{rmse}\NormalTok{(model6,trips\_per\_day)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4696.22
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trips\_per\_day}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{rain\_or\_not=}\NormalTok{prcp}\SpecialCharTok{==}\DecValTok{0}\NormalTok{)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{add\_predictions}\NormalTok{(model6)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{tmin,}\AttributeTok{y=}\NormalTok{num\_trips))}\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{pred,}\AttributeTok{linetype=}\NormalTok{rain\_or\_not))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{citibike2_files/figure-latex/prcp-1.pdf}
+
+of all the models I have come up so far, the best one is lm(num\_trips
+\textasciitilde{} poly(tmin, 5, raw = T)+I(prcp==0)
+
+\end{document}

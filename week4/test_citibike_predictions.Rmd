@@ -1,0 +1,75 @@
+---
+title: "test_citibike_predictions.Rmd"
+output: html_document
+date: "2023-06-21"
+---
+
+```{r setup, include=FALSE}
+load('trips.RData')
+```
+
+## Data manipulation
+
+```{r data}
+trips_per_day=trips %>% 
+  mutate(date=as.Date(starttime))%>%
+  group_by(date)%>%
+  summarize(num_trips=n())
+
+weather=weather%>%
+  mutate(date=as.Date(date))
+
+trips_per_day=inner_join(trips_per_day,weather,by="date")
+```
+
+## test my models
+
+```{r tmin+prcp+weekends, echo=FALSE}
+
+trips_per_day=trips_per_day%>%
+  mutate(days=wday(date,label=TRUE))%>%
+  mutate(weekends_or_not=(days %in% c("Sat","Sun")))
+
+#consider the effects of prcp and weekends
+model1=lm(num_trips ~ poly(tmin, 5, raw = T)+I(prcp==0)+weekends_or_not,data=trips_per_day)
+#rmse(model1,trips_per_day)
+
+trips_per_day%>%
+  add_predictions(model1)%>%
+  summarize(rmse=sqrt(mean((pred-num_trips)^2)),
+                          cor=cor(pred,num_trips),
+                          cor_sq=cor^2)
+```
+
+
+```{r tmin only, echo=FALSE}
+model2=lm(num_trips~poly(tmin,4),data=trips_per_day)
+rmse(model2,trips_per_day)
+```
+
+
+```{r tmin+prcp+weekend+snow, echo=FALSE}
+model3=lm(num_trips ~ poly(tmin, 5, raw = T)+I(prcp==0)+weekends_or_not+I(snwd==0)*I(snow==0), data=trips_per_day)
+#rmse(model3,trips_per_day)
+
+trips_per_day%>%
+  add_predictions(model3)%>%
+  summarize(rmse=sqrt(mean((pred-num_trips)^2)),
+                          cor=cor(pred,num_trips),
+                          cor_sq=cor^2)
+```
+
+
+```{r tmin+prcp+weekend+snow, echo=FALSE}
+trips_per_day=trips_per_day%>%mutate(month=month(date,label=TRUE))
+model4=lm(num_trips ~ poly(tmin, 4, raw = T)+I(prcp==0)+weekends_or_not+I(snwd==0)*I(snow==0)+month, data=trips_per_day)
+#rmse(model3,trips_per_day)
+
+trips_per_day%>%
+  add_predictions(model4)%>%
+  summarize(rmse=sqrt(mean((pred-num_trips)^2)),
+                          cor=cor(pred,num_trips),
+                          cor_sq=cor^2)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
