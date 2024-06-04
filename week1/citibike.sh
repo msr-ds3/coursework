@@ -22,3 +22,5 @@ cut -d, -f5 201402* | grep '[0-9].*&.*[0-9]' | sort | uniq | wc -l
 
 # compute the average trip duration
 cut -d, -f1 201402* | awk '{SUM+=$1; TOTAL+=1} END {print SUM/TOTAL}'
+# complete the trip variance with only 3 variablea
+cut -d, -f1 201402* | awk '{SUM+=$1; TOTAL+=1; SQUARE_SUM+=$1*$1} END {print SQUARE_SUM/TOTAL - (SUM/TOTAL)*(SUM/TOTAL)}'
