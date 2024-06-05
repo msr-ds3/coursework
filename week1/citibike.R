@@ -26,13 +26,12 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 
 nrow(trips)
 
+#find the earliest and latest birth years (see help for max and min to deal with NAs)
 trips %>%
   mutate(birth_year = ifelse(birth_year == "\\N", NA, birth_year)) %>%
   filter(!is.na(as.numeric(birth_year))) %>%
   summarize(earliest_birth_year = min(as.numeric(birth_year)), 
             latest_birth_year = max(as.numeric(birth_year)))%>%View()
-
-#mutate(formatted_birth_yer = as.numeric(birth_year))%>%
 
 # use filter and grepl to find all trips that either start or end on broadway
 trips%>%
