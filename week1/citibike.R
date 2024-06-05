@@ -99,3 +99,10 @@ trips |>
     summarize(mean_num_trips=mean(num_trips)) |>
     arrange(desc(mean_num_trips))
     
+trips |>
+    gather("type", "time", starttime, stoptime) |>
+    mutate(rider_change=ifelse(type=="starttime", 1, -1)) |>
+    arrange(time) |>
+    mutate(rider_total=cumsum(rider_change)) |>
+    arrange(desc(rider_total)) |>
+    slice_head(n=1)
