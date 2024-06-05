@@ -300,7 +300,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
   * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
-<!--
+
 
 # Day 3
 
@@ -308,18 +308,19 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 
   * See the [Data Wrangling in R](https://speakerdeck.com/jhofman/modeling-social-data-lecture-3-data-manipulation-in-r) slides
   * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
-  * Do the free portion of [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r), chapters 1, 2, and 3
-  * See chapters 1, 2, and 4 of [R for Data Science](http://r4ds.had.co.nz) for background on using R and Rstudio (chapter numbers correspond to the online edition)
+  * See the intro and Chapters 2 and 4 of the 2nd edition of [R for Data Science](https://r4ds.hadley.nz) for background on using R and Rstudio (chapter numbers correspond to the online edition)
+  * See also Chapter 3 of the 2nd edition for the basics of dplyr
 
 ## R counting exercises
   * Use the [musical pairs script](students/musical_pairs.sh) to determine your programming partner each day
   * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
-  * Read chapter 5 of [R for Data Science](http://r4ds.had.co.nz) and do the following exercises:
+  * Do the following exercises from Chapter 5 of the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
     * Section [5.2.4](https://r4ds.had.co.nz/transform.html#exercises-8), exercises 1 and 3
     * Section [5.5.2](https://r4ds.had.co.nz/transform.html#exercises-11), exercise 2
     * Section [5.7.1](https://r4ds.had.co.nz/transform.html#exercises-13), exercise 3
 
 ## Learn more
+  * Do the free portion of [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r), chapters 1, 2, and 3
   * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
     * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
@@ -334,6 +335,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
+
+<!--
 
 # Day 4
 
