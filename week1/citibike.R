@@ -43,9 +43,10 @@ trips |>
 #trips |> 
 #   reframe(unique_stations=unique(start_station_name))
 trips |> 
-    group_by(start_station_name) |> 
+    gather("trip_type", "station_name", start_station_name, end_station_name) |>
+    group_by(station_name) |> 
     filter(row_number() == 1) |> 
-    select(start_station_name)
+    select(station_name)
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
