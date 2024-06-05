@@ -49,25 +49,29 @@ trips |>
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
-trips |> group_by(gender) |> 
+trips |> 
+    group_by(gender) |> 
     summarize(num_trips=n(), average_trip_time=mean(tripduration) / 60, 
             trip_standard_deviation=sd(tripduration) / 60)
 
 # find the 10 most frequent station-to-station trips
-trips |> group_by(start_station_name, end_station_name) |>
+trips |> 
+    group_by(start_station_name, end_station_name) |>
     summarize(num_stations=n()) |>
     arrange(desc(num_stations)) |>
     head(10)
 
 # find the top 3 end stations for trips starting from each start station
-trips |> group_by(start_station_name, end_station_name) |>
+trips |> 
+    group_by(start_station_name, end_station_name) |>
     summarize(num_stations=n()) |>
     group_by(start_station_name) |>
     arrange(start_station_name, desc(num_stations)) |>
     filter(row_number() <= 3)
   
 # find the top 3 most common station-to-station trips by gender
-trips |> group_by(start_station_name, end_station_name, gender) |>
+trips |> 
+    group_by(start_station_name, end_station_name, gender) |>
     summarize(num_trips=n()) |>
     group_by(gender) |>
     arrange(gender, desc(num_trips)) |>
@@ -75,7 +79,8 @@ trips |> group_by(start_station_name, end_station_name, gender) |>
 
 # find the day with the most trips
 # tip: first add a column for year/month/day without time of day (use as.Date or floor_date from the lubridate package)
-trips |> mutate(trip_date=as.Date(starttime, format="%Y-%m-%d")) |> 
+trips |> 
+    mutate(trip_date=as.Date(starttime, format="%Y-%m-%d")) |> 
     group_by(trip_date) |>
     summarize(num_trips=n()) |>
     arrange(desc(num_trips)) |>
