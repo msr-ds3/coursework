@@ -1,0 +1,24 @@
+total 1.3G
+drwxrwxrwx 1 root root 4.0K Jun  4 13:49 .
+drwxrwxrwx 1 root root 4.0K Jun  3 14:18 ..
+-rwxrwxrwx 1 root root   54 Jun  4 12:01 .gitignore
+drwxrwxrwx 1 root root 4.0K Feb 21 23:57 2014-citibike-tripdata
+-rwxrwxrwx 1 root root  48M Feb 21 23:49 201401-citibike-tripdata.csv
+-rwxrwxrwx 1 root root  36M Feb 21 23:49 201402-citibike-tripdata.csv
+-rwxrwxrwx 1 root root  69M Feb 21 23:49 201403-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 106M Feb 21 23:49 201404-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 136M Feb 21 23:49 201405-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 148M Feb 21 23:50 201406-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 153M Feb 21 23:50 201407-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 152M Feb 21 23:51 201408-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 149M Feb 21 23:51 201409-citibike-tripdata.csv
+-rwxrwxrwx 1 root root 131M Feb 21 23:51 201410-citibike-tripdata.csv
+-rwxrwxrwx 1 root root  84M Feb 21 23:52 201411-citibike-tripdata.csv
+-rwxrwxrwx 1 root root  63M Feb 21 23:52 201412-citibike-tripdata.csv
+-rwxrwxrwx 1 root root  13K Jun  4 12:01 README.md
+drwxrwxrwx 1 root root 4.0K Jun  4 13:44 __MACOSX
+-rwxrwxrwx 1 root root  530 Jun  4 12:01 citibike.sh
+-rwxrwxrwx 1 root root  947 Jun  4 12:01 download_trips.sh
+-rwxrwxrwx 1 root root    0 Jun  4 13:49 files
+-rwxrwxrwx 1 root root  39K Jun  4 12:01 intro_command_line.ipynb
+drwxrwxrwx 1 root root 4.0K Jun  4 13:28 students
