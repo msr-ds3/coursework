@@ -7,10 +7,12 @@ cut -d, -f4 201402-citibike-tripdata.csv | sort | uniq | wc
 # count the number of unique bikes
 cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq | wc
 # count the number of trips per day
+
 # 1st solution
 cut -d, -f2 201402-citibike-tripdata.csv | grep -o "[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" | sort | uniq -c
 #2nd solution
 cut -d, -f2 201402-citibike-tripdata.csv | cut -d" " -f1 | sort | uniq -c
+
 # find the day with the most rides
 cut -d, -f2 201402-citibike-tripdata.csv | grep -o "[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}" | uniq -c | sort | tail -n1
 # find the day with the fewest rides
