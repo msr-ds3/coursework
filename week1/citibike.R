@@ -26,34 +26,42 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 summarize(trips, count_trips = n())
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
-filter(trips, birth_year != "\\N") %>% 
+trips %>%
+filter(birth_year != "\\N") %>% 
   summarize(min_birth_year = min(birth_year), max_birth_year = max(birth_year))
 
 # use filter and grepl to find all trips that either start or end on broadway
-filter(trips, grepl("Broadway", start_station_name) | grepl("Broadway", end_station_name))
+trips %>%
+filter(grepl("Broadway", start_station_name) | grepl("Broadway", end_station_name))
 
 # do the same, but find all trips that both start and end on broadway
-filter(trips, grepl("Broadway", start_station_name), grepl("Broadway", end_station_name)) 
+trips %>%
+filter(grepl("Broadway", start_station_name), grepl("Broadway", end_station_name)) 
 
 # find all unique station names
-group_by(trips, start_station_name) %>%
+trips %>%
+gather("triptype", "stations", start_station_name, end_station_name) %>%
+group_by(stations) %>%
   filter(row_number() == 1) %>%
-  select(start_station_name)
+  select(stations)
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
-group_by(trips, gender) %>% 
+trips %>%
+group_by( gender) %>% 
   summarize(num_trips = n(), avg_trip_time=mean(tripduration)/60, std_deviation_trip_times=sd(tripduration)/60)
 
 # find the 10 most frequent station-to-station trips
-group_by(trips, start_station_name, end_station_name) %>%
+trips %>%
+group_by(start_station_name, end_station_name) %>%
   summarize(num_stations=n()) %>%
   arrange(desc(num_stations)) %>%
   head(10)
  
 
 # find the top 3 end stations for trips starting from each start station
-group_by(trips, start_station_name, end_station_name) %>%
+trips %>%
+group_by(start_station_name, end_station_name) %>%
   summarize(num_stations = n()) %>%
   group_by(start_station_name) %>%
   arrange(start_station_name, desc(num_stations)) %>%
@@ -61,7 +69,8 @@ group_by(trips, start_station_name, end_station_name) %>%
   
 
 # find the top 3 most common station-to-station trips by gender
-group_by(trips, gender, start_station_name, end_station_name) %>%
+trips %>%
+group_by(gender, start_station_name, end_station_name) %>%
   summarize(num_stations=n()) %>%
   group_by(gender) %>%
   arrange(gender, desc(num_stations)) %>%
@@ -71,7 +80,8 @@ group_by(trips, gender, start_station_name, end_station_name) %>%
 
 # find the day with the most trips
 # tip: first add a column for year/month/day without time of day (use as.Date or floor_date from the lubridate package)
-mutate(trips, trip_date=as.Date(starttime, format="%y-%m-%d")) %>%
+trips %>%
+mutate(trip_date=as.Date(starttime, format="%y-%m-%d")) %>%
   group_by(trip_date) %>%
   summarize(num_trips = n()) %>%
   arrange(desc(num_trips)) %>%
@@ -79,7 +89,8 @@ mutate(trips, trip_date=as.Date(starttime, format="%y-%m-%d")) %>%
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
-mutate(trips, trip_day=format(starttime, "%y-%m-%d"), trip_time=format(starttime, "%H")) %>%
+trips %>%
+mutate(trip_day=format(starttime, "%y-%m-%d"), trip_time=format(starttime, "%H")) %>%
   group_by(trip_day, trip_time) %>%
   summarize(num_trips = n()) %>%
   group_by(trip_time) %>%
