@@ -58,7 +58,7 @@ trips |>
     mutate(age=year(ymd) - birth_year) |>
     group_by(age, gender) |>
     summarize(num_trips=n()) |>
-    spread(gender, num_trips) |> 
+    pivot_wider(names_from=gender, values_from=num_trips) |> 
     mutate(gender_ratio=Male/Female) |>
     ggplot(aes(age, gender_ratio)) +
     geom_point()
@@ -74,7 +74,7 @@ weather |>
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 weather |>
-    gather("type", "temp", tmax, tmin) |>
+    pivot_longer(c(tmax, tmin), names_to="type", values_to="temp", ) |>
     ggplot(aes(x=ymd, y=temp, color=type)) +
     geom_line()
     
@@ -120,10 +120,9 @@ trips_with_weather |>
     summarize(hour_trips=n()) |>
     group_by(hour) |>
     summarize(mean_trips=mean(hour_trips), std_trips=sd(hour_trips)) |>
-    gather("type", "value", mean_trips, std_trips) |>
-    ggplot(aes(x=hour, y=value)) +
+    ggplot(aes(x=hour, y=mean_trips)) +
     geom_line() +
-    facet_wrap(~ type)
+    geom_ribbon(aes(ymin = mean_trips - std_trips, ymax = mean_trips + std_trips), alpha = 0.25)
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
@@ -133,7 +132,6 @@ trips_with_weather |>
     summarize(hour_trips=n()) |>
     group_by(hour, day_of_week) |>
     summarize(mean_trips=mean(hour_trips), std_trips=sd(hour_trips)) |>
-    gather("type", "value", mean_trips, std_trips) |>
-    ggplot(aes(x=hour, y=value, color=day_of_week)) +
+    ggplot(aes(x=hour, y=mean_trips, color=day_of_week)) +
     geom_line() +
-    facet_wrap(~ type)
+    geom_ribbon(aes(ymin = mean_trips - std_trips, ymax = mean_trips + std_trips, fill = day_of_week), alpha = 0.25)
