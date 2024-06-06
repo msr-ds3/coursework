@@ -16,14 +16,14 @@ trips <- data.frame()
 for (csv in csvs) {
   print(csv)
   tmp <- read_csv(csv, na='\\N')
-
+  
   # the date format changed to something ugly in 2014-09 which read_csv doesn't recognize as a datetime,
   # so manually convert the date from a string to a datetime
   if (typeof(tmp$starttime) == "character")
     tmp <- mutate(tmp,
                   starttime=parse_datetime(starttime, "%m/%d/%Y %H:%M"),
                   stoptime=parse_datetime(stoptime, "%m/%d/%Y %H:%M"))
-
+  
   trips <- rbind(trips, tmp)
 }
 
@@ -55,4 +55,3 @@ weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
-
