@@ -1,6 +1,8 @@
 library(dplyr)
 library(readr)
 
+setwd("C:/Users/buka/Documents/coursework/week1")
+
 # define a function to turn strings into datetimes
 parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
   as.POSIXct(as.character(s), format=format)

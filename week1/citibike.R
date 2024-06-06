@@ -95,9 +95,6 @@ trips %>%
 trips %>%
   mutate(hour = hour(starttime)) %>%
   group_by(hour) %>%
-  summarize(count = n(), count/24) %>%
+  summarize(average_trips = n()/28) %>% # 28 for feb 2014
   View
-
 # 12pm - 7pm, aka rush hours
-
-

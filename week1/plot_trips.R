@@ -5,6 +5,8 @@
 # load some packages that we'll need
 library(tidyverse)
 library(scales)
+library(ggplot2)
+setwd("C:/Users/buka/Documents/coursework/week1")
 
 # be picky about white backgrounds on our plots
 theme_set(theme_bw())
@@ -18,12 +20,41 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+View(trips)
+
+trips %>%
+  group_by(ymd) %>%
+  ggplot( mapping = aes(x = starttime) ) +
+  geom_histogram()
+
+trips %>%
+  group_by(ymd) %>%
+  ggplot( mapping = aes(x = starttime) ) +
+  geom_density()
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+trips %>%
+  group_by(ymd) %>%
+  ggplot( mapping = aes(x = starttime) ) +
+  geom_histogram( aes(color = usertype) )
+
+trips %>%
+  group_by(ymd) %>%
+  ggplot( mapping = aes(x = starttime) ) +
+  geom_density( aes(color = usertype) )
+
 
 # plot the total number of trips on each day in the dataset
+trips %>%
+  group_by(ymd) %>%
+  ggplot( aes(ymd) ) +
+  geom_histogram( bins = 365 )
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
+trips %>%
+  group_by( birth_year ) %>%
+  ggplot( aes(x=birth_year) ) +
+  geom_histogram( stat="count", aes(color=gender) )
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
@@ -33,6 +64,9 @@ load('trips.RData')
 # plot weather data
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
+weather %>%
+  ggplot( aes(ymd, tmin) ) +
+  geom_line()
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
