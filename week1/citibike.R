@@ -23,7 +23,11 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 ########################################
 
 # count the number of trips (= rows in the data frame)
-nrow(trips)
+# old answer: nrow(trips)
+# new answer:
+trips %>%
+  summarise(count = n())
+
 # answer: 224736
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
 latest_year <- max(trips$birth_year)
@@ -88,11 +92,10 @@ trips %>%
 
 # find the top 3 most common station-to-station trips by gender
 trips %>% 
-  # group_by(gender) %>%
   group_by(gender, start_station_name, end_station_name) %>%
   summarise(count = n()) %>%
-  arrange(desc(count)) %>%
   group_by(gender) %>%
+  arrange(desc(count)) %>%
   slice_head(n=3)
 
 # find the day with the most trips
