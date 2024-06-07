@@ -1,0 +1,149 @@
+---
+title: "day5_rmarkdown_assignment"
+output: html_document
+date: "2024-06-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+# Copy from Assignment
+---
+title: "Diamond sizes"
+date: 2016-08-25
+output: html_document
+---
+
+```{r setup, include = FALSE}
+library(ggplot2)
+library(dplyr)
+
+smaller <- diamonds %>% 
+  filter(carat <= 2.5)
+```
+
+We have data about `r nrow(diamonds)` diamonds. Only 
+`r nrow(diamonds) - nrow(smaller)` are larger than
+2.5 carats. The distribution of the remainder is shown
+below:
+
+```{r, echo = FALSE}
+smaller %>% 
+  ggplot(aes(carat)) + 
+  geom_freqpoly(binwidth = 0.01)
+```
+As shown in the graph, there are huge spikes in count near 0.25 carat, 0.70 carat, and 1 carat. 
+There are also regular ups and downs with the count. This probably means that there are generally more popular carat variaties than others
+
+
+Below we can see how diamonds vary by cut, colour, and clarity.
+
+```{r = cut}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+
+diamonds |> 
+  group_by(cut) |> 
+  summarise(count = n()) |> 
+  ggplot(aes(x=cut, y=count)) + 
+  geom_bar(stat = "identity")
+
+
+# Alternate graph
+smaller |> 
+  ggplot(aes(x = carat)) +
+  geom_histogram(color = "red", size = 3, alpha = 0.7) + 
+  labs(
+    title = "Cut-Carat Comparison",
+    x = "Carat size",
+    y = "Count"
+  ) +
+  facet_wrap(~ cut)
+theme_minimal()
+  
+```
+First, we get how many diamonds there are for each cut. Then, we plot a bar plot based on the type of cut for the x axis and amount for the y axis. 
+
+Based on the bar graph, we can see that most diamonds are of the "ideal" cut, whereas the fewest diamonds are of the "fair" cut. The data suggests that most diamonds of high quality cuts cuts.
+
+The alternate graph shows the carat sizes for each type of cut. From the data, we find that for the ideal cut, most diamonds are of the <0.5 carat size. Other conclusions can be made for the other cuts.
+
+```{r}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+
+diamonds |> 
+  group_by(color) |> 
+  summarise(count = n()) |> 
+  ggplot(aes(x=color, y=count)) + 
+  geom_bar(stat = "identity")
+
+# Alternate graph
+smaller |> 
+  ggplot(aes(x = carat)) +
+  geom_histogram(color = "red", size = 3, alpha = 0.7) + 
+  labs(
+    title = "Color-Carat Comparison",
+    x = "Carat size",
+    y = "Count"
+  ) +
+  facet_wrap(~ color)
+```
+Based on the bar graph, we can see that most diamonds are of the color "G", whereas the fewest diamonds are of the color "J". However, There are no one dominant color for diamonds.
+
+The alternate graph shows the carat sizes for each type of color. From the data, we find that for the color J, most diamonds are of the <0.5 carat size. Other conclusions can be made for the other cuts.
+
+```{r}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+
+diamonds |> 
+  group_by(clarity) |> 
+  summarise(count = n()) |> 
+  ggplot(aes(x=clarity, y=count)) + 
+  geom_bar(stat = "identity")
+
+
+# Alternate graph
+smaller |> 
+  ggplot(aes(x = carat)) +
+  geom_histogram(color = "red", size = 3, alpha = 0.7) + 
+  labs(
+    title = "Clarity-Carat Comparison",
+    x = "Carat size",
+    y = "Count"
+  ) +
+  facet_wrap(~ clarity)
+```
+Based on the bar graph, we can see that most diamonds are of the "SI1" clarity, whereas the fewest diamonds are of the "I1" clarity. 
+
+The alternate graph shows the carat sizes for each type of clarity. From the data, we find that for the clarity VS2, most diamonds are of the <0.5 carat size. Other conclusions can be made for the other cuts.

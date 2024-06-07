@@ -60,11 +60,11 @@ trips |>
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 trips |> 
-  mutate(age = 2014-birth_year) |> 
+  mutate(age = 2014-birth_year) |>
   group_by(age, gender) |> 
-  summarise(num_trips = n()) |> 
+  summarise(num_trips = n()) |>
   pivot_wider(names_from = gender, values_from = num_trips) |> 
-  mutate(male_to_female_ratio = Male/Female) |> 
+  mutate(male_to_female_ratio = Male/Female) |>
   ggplot(aes(x = age, y = male_to_female_ratio)) +
   geom_point()
 
