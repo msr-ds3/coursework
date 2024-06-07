@@ -87,6 +87,15 @@ trips %>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>%
+  mutate(age = 2014 - birth_year) %>%
+  group_by(gender, age) %>%
+  summarise(count = n()) %>%
+  pivot_wider( names_from = gender, values_from = count) %>%
+  mutate(ratio = Male / Female) %>%
+  ggplot(aes(x = age, y= ratio)) +
+  geom_point()
+
 
 ########################################
 # plot weather data
@@ -100,6 +109,11 @@ weather %>%
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+
+weather %>%
+  pivot_longer(names_to = "type", values_to = "value", c(tmin, tmax)) %>% 
+  ggplot(aes(x = ymd, y = value, color = type)) +
+  geom_point()
 
 ########################################
 # plot trip and weather data
