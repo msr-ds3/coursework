@@ -138,3 +138,5 @@ trips_with_weather %>%
   geom_ribbon( aes(ymin = avg - sd, ymax = avg + sd), fill = "lightblue") +
   geom_line() + 
   facet_wrap( ~wd )
+
+table2 %>% View
