@@ -134,7 +134,7 @@ trips_with_weather %>%
 # hint: use the wday() function from the lubridate package
 trips_with_weather %>%
   mutate( hour = hour(starttime), wd = wday(starttime, TRUE)) %>%
-  group_by( hour ) %>%
+  group_by( hour, wd ) %>%
   summarise( avg = n()/365, sd = sqrt( cumsum( (n()-avg) * (n()-avg) ) / 7779880 ) ) %>% # ! change to not hard code
   ggplot( aes(hour, avg) ) +
   geom_ribbon( aes(ymin = avg - sd, ymax = avg + sd), fill = "lightblue") +
