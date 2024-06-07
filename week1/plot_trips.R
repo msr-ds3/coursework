@@ -81,14 +81,29 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
+trips_with_weather %>%
+  group_by(ymd) %>%
+  summarise( min_ = min(tmin), c = n() ) %>%
+  ggplot( aes(min_, c) ) +
+  geom_point()
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
+trips_with_weather %>%
+  mutate( big_prec = prcp >= 1 ) %>%
+  group_by(ymd) %>%
+  summarise( min_ = min(tmin), c = n(), big_prec ) %>%
+  ggplot( aes(min_, c) ) +
+  geom_point() +
+  facet_wrap( ~ big_prec ) # inf loop ? or just big ?
+  
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
+  geom_smooth()
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
+
 
 # plot the above
 
