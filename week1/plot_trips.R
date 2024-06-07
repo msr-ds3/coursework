@@ -21,7 +21,7 @@ load('trips.RData')
 trips |> 
   filter(tripduration <= 3600) |> 
   ggplot(aes(x = tripduration)) +
-  geom_histogram(bins = 100) +
+  geom_histogram() +
   scale_y_continuous(label = comma)
 trips |> 
   filter(tripduration <= 3600) |> 
@@ -32,13 +32,15 @@ trips |>
 trips |> 
   filter(tripduration <= 3600) |> 
   ggplot(aes(x = tripduration, color = usertype, fill = usertype)) +
-  geom_histogram(bins = 100) +
-  scale_y_continuous(label = comma)
+  geom_histogram() +
+  scale_y_continuous(label = comma) +
+  facet_wrap(~ usertype)
 trips |> 
   filter(tripduration <= 3600) |> 
   ggplot(aes(x = tripduration, color = usertype, fill = usertype)) +
   geom_density() +
-  scale_y_continuous(label = comma)
+  scale_y_continuous(label = comma) +
+  facet_wrap(~ usertype)
 # plot the total number of trips on each day in the dataset
 trips |> 
   mutate(days = date(starttime)) |> 
@@ -47,6 +49,7 @@ trips |>
   ggplot(aes(x = days, y = num_of_rides)) +
   geom_point() +
   geom_line()
+
   
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 
@@ -58,7 +61,6 @@ trips |>
   geom_point() +
   coord_cartesian(ylim = c(0,300000)) +
   scale_y_continuous(labels = comma)
-
 
   
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
@@ -96,7 +98,7 @@ trips_with_weather |>
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
 trips_with_weather |> 
-  mutate(sub_prcp = if_else(prcp >= .59, "T", "F")) |> 
+  mutate(sub_prcp = prcp > .2) |> 
   group_by(ymd, sub_prcp) |> 
   summarise(num_of_trips = n(),
             min_temp = min(tmin)) |> 
@@ -105,7 +107,7 @@ trips_with_weather |>
   
 # add a smoothed fit on top of the previous plot, using geom_smooth
 trips_with_weather |> 
-  mutate(sub_prcp = if_else(prcp >= .59, "T", "F")) |> 
+  mutate(sub_prcp = prcp > .2) |> 
   group_by(ymd, sub_prcp) |> 
   summarise(num_of_trips = n(),
             min_temp = min(tmin)) |> 
@@ -131,35 +133,25 @@ trips_with_weather |>
   summarise(avg_trips_taken = mean(trips_taken),
             sd_trips_taken = sd(trips_taken)) |> 
   ggplot(aes(x = hour, y = avg_trips_taken)) +
-  geom_point()
+  geom_ribbon(aes(ymin = avg_trips_taken - sd_trips_taken, 
+                  ymax = avg_trips_taken + sd_trips_taken), fill = "lightblue", alpha = 0.3) +
+  geom_line(color = "blue")
 
-trips_with_weather |> 
-  mutate(hour = hour(starttime)) |>
-  group_by(ymd, hour) |> 
-  summarise(trips_taken = n()) |> 
-  group_by(hour) |> 
-  summarise(avg_trips_taken = mean(trips_taken),
-            sd_trips_taken = sd(trips_taken)) |> 
-  ggplot(aes(x = hour, y = sd_trips_taken)) +
-  geom_point()
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
   trips_with_weather |> 
-    mutate(hour = hour(starttime), day_of_week = wday(starttime)) |>
+    mutate(hour = hour(starttime), day_of_week = wday(starttime, label = TRUE)) |>
     group_by(ymd, hour, day_of_week) |> 
-    summarise(trips_taken = n()) |> 
+    summarise(trips_taken = n(),
+              .groups = 'drop') |> 
     group_by(hour, day_of_week) |> 
     summarise(avg_trips_taken = mean(trips_taken),
-              sd_trips_taken = sd(trips_taken)) |> 
-    ggplot(aes(x = hour, y = avg_trips_taken, color = as.factor(day_of_week))) +
-    geom_point() 
-  trips_with_weather |> 
-    mutate(hour = hour(starttime), day_of_week = wday(starttime)) |>
-    group_by(ymd, hour, day_of_week) |> 
-    summarise(trips_taken = n()) |> 
-    group_by(hour, day_of_week) |> 
-    summarise(avg_trips_taken = mean(trips_taken),
-              sd_trips_taken = sd(trips_taken)) |> 
-    ggplot(aes(x = hour, y = sd_trips_taken, color = as.factor(day_of_week))) +
-    geom_point()
+              sd_trips_taken = sd(trips_taken),
+              .groups = 'drop') |>
+    ggplot(aes(x = hour, y = avg_trips_taken)) +
+    geom_ribbon(aes(ymin = avg_trips_taken - sd_trips_taken, 
+                    ymax = avg_trips_taken + sd_trips_taken,
+                    fill = as.factor(day_of_week), alpha = 0.3)) +
+    geom_line(aes(color = as.factor(day_of_week))) +
+    facet_wrap(~ day_of_week)
 
