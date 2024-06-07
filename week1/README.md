@@ -369,7 +369,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
 
-
+# Day 5
 
 ## Combining and reshaping data
   * Review [combine_and_reshape_in_r.ipynb](combine_and_reshape_in_r.ipynb) on joins with dplyr and reshaping with tidyr
