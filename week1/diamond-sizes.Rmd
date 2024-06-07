@@ -10,7 +10,12 @@ library(dplyr)
 
 smaller <- diamonds %>% 
   filter(carat <= 2.5)
+
+knitr::opts_chunk$set(
+  echo = FALSE
+)
 ```
+
 
 We have data about `r nrow(diamonds)` diamonds. Only 
 `r nrow(diamonds) - nrow(smaller)` are larger than
@@ -22,3 +27,24 @@ smaller %>%
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
 ```
+
+it is interesting that how we can write text & code in the same file & <b>design the text using html like features</b>. 
+
+```{r}
+smaller |>
+  ggplot(aes(carat)) +
+  geom_freqpoly(binwidth = 0.01) +
+  facet_wrap(~ cut)
+
+smaller |>
+  ggplot(aes(carat)) +
+  geom_freqpoly(binwidth = 0.01) +
+  facet_wrap(~ color)
+
+smaller |>
+  ggplot(aes(carat)) +
+  geom_freqpoly(binwidth = 0.01) +
+  facet_wrap(~ clarity)
+
+```
+
