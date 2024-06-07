@@ -1,6 +1,8 @@
 library(dplyr)
 library(readr)
 
+setwd("C:/Users/yino/coursework/week1")
+
 # define a function to turn strings into datetimes
 parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
   as.POSIXct(as.character(s), format=format)
@@ -55,4 +57,8 @@ weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
+
+
+
+
 

@@ -19,7 +19,6 @@ load('trips.RData')
 ########################################
 
 
-
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
 
 library(ggplot2)
@@ -27,7 +26,7 @@ library(dplyr)
 
 # Assuming your data frame is named `trips`
 
-
+?diamonds
 
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
@@ -80,6 +79,13 @@ trips %>%
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
+trips %>%
+  group_by(gender, birth_year) %>%
+  summarise(total_trips = n()) %>%
+  pivot_wider(names_from = gender, values_from = total_trips) %>%
+  mutate(ratio = Male / Female) %>%
+  ggplot(aes(x = birth_year, y = ratio)) +
+  geom_line(color = "pink")
 
 ########################################
 # plot weather data
@@ -100,6 +106,13 @@ weather %>%
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 
+weather %>%
+  mutate(date = as.Date(date)) %>%
+  group_by(date) %>%
+  summarise(min_temp = min(tmin, na.rm = TRUE), max_temp = max(tmax, na.rm = TRUE)) %>%
+  pivot_longer(cols = c(min_temp, max_temp), names_to = "temperature_type", values_to = "temperature") %>%
+  ggplot(aes(x = date, y = temperature, color = temperature_type)) +
+  geom_line() 
 ########################################
 # plot trip and weather data
 ########################################
@@ -165,7 +178,7 @@ trips_with_weather %>%
     average_trips = mean(trips_per_hour),
     sd_trips = sd(trips_per_hour)
   ) %>%
-  arrange(desc(average_trips))
+  arrange(hour)
 
 # Display the results
 
