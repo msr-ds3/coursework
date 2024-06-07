@@ -6,6 +6,7 @@
 library(tidyverse)
 library(scales)
 library(ggplot2)
+library(lubridate)
 setwd("C:/Users/buka/Documents/coursework/week1")
 
 # be picky about white backgrounds on our plots
@@ -59,6 +60,16 @@ trips %>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>%
+  mutate( age = (year(now()) - birth_year) ) %>%
+  group_by( gender, age ) %>%
+  summarize(total = n() ) %>%
+  pivot_wider( names_from = gender, values_from = total ) %>%
+  mutate( male_to_female = Male/Female ) %>%
+  arrange( age ) %>%
+  ggplot( aes(x=age, y=male_to_female) ) +
+  geom_line()
+  
 
 ########################################
 # plot weather data
@@ -71,6 +82,11 @@ weather %>%
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+weather %>%
+  pivot_longer( c("tmin", "tmax"), names_to = "extrema", values_to = "temp" ) %>%
+  ggplot( aes(date, temp) ) +
+  geom_point( aes(color = extrema) )
+  
 
 ########################################
 # plot trip and weather data
@@ -92,10 +108,10 @@ trips_with_weather %>%
 trips_with_weather %>%
   mutate( big_prec = prcp >= 1 ) %>%
   group_by(ymd) %>%
-  summarise( min_ = min(tmin), c = n(), big_prec ) %>%
+  summarise( min_ = min(tmin), c = n() ) %>% # need to add big_prec here
   ggplot( aes(min_, c) ) +
   geom_point() +
-  facet_wrap( ~ big_prec ) # inf loop ? or just big ?
+  facet_wrap( ~big_prec )
   
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
@@ -103,9 +119,22 @@ trips_with_weather %>%
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
-
-
+trips_with_weather %>%
+  mutate( hour = hour(starttime) ) %>%
+  group_by( hour ) %>%
+  summarise( avg = n()/365, sd = sqrt( cumsum( (n()-avg) * (n()-avg) ) / 7779880 ) ) %>% # ! change to not hard code
 # plot the above
+  ggplot( aes(hour, avg) ) +
+  geom_ribbon( aes(ymin = avg - sd, ymax = avg + sd), fill = "lightblue") +
+  geom_line()
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+trips_with_weather %>%
+  mutate( hour = hour(starttime), wd = wday(starttime, TRUE)) %>%
+  group_by( hour ) %>%
+  summarise( avg = n()/365, sd = sqrt( cumsum( (n()-avg) * (n()-avg) ) / 7779880 ) ) %>% # ! change to not hard code
+  ggplot( aes(hour, avg) ) +
+  geom_ribbon( aes(ymin = avg - sd, ymax = avg + sd), fill = "lightblue") +
+  geom_line() + 
+  facet_wrap( ~wd )
