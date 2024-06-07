@@ -58,6 +58,18 @@ trips %>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>%
+  mutate(age = 2014 - birth_year) %>%
+  group_by(age, gender) %>%
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = gender, values_from = count ) %>% 
+  mutate( ratio = Male / Female ) %>% 
+  ggplot(aes( x = age, y =ratio))+
+  geom_point()
+
+
+  ggplot() +
+  geom_histogram(aes(x = age, color = ))
 
 ########################################
 # plot weather data
@@ -74,7 +86,13 @@ weather %>%
   geom_point(aes(x = ymd, y = tmin), color = "blue")
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
-
+weather %>% 
+  pivot_longer(
+    col = c(tmin,tmax),
+    names_to = "tmax_and_min",
+    values_to = "temp") %>% 
+  ggplot(aes(x = ymd, y = temp, color = tmax_and_min ))+
+  geom_smooth()
 ########################################
 # plot trip and weather data
 ########################################
@@ -130,10 +148,25 @@ trips_with_weather %>%
   group_by(hours) %>% # to calculate st.deviation, we grouped by hours
   summarize(avg_trips = mean(trips_taken),
             st_trips_taken= sd(trips_taken)) %>% 
+  pivot_longer(cols = c(avg_trips,st_trips_taken),
+               names_to = "avg_and_stdev",
+               values_to = "number_of_trips") %>% 
   ggplot()+
-  geom_point( aes(x = hours, y = avg_trips, color = 'blue'))+   # blue = mean
+  geom_point( aes(x = hours, y = number_of_trips, color = avg_and_stdev))   # blue = mean
   geom_point( aes(x = hours, y = st_trips_taken, color ="red")) # red = st.deviation
-
+  
+trips_with_weather %>% 
+  mutate(hours = hour(starttime)) %>% 
+  group_by(ymd, hours) %>%  # focusing on data for hours of specific day
+  summarize(trips_taken = n()) %>% 
+  group_by(hours) %>% # to calculate st.deviation, we grouped by hours
+  summarize(avg_trips = mean(trips_taken),
+            st_trips_taken= sd(trips_taken)) %>%
+  ggplot(aes(x = hours, y = avg_trips)) +
+  geom_ribbon(aes(ymin = avg_trips - st_trips_taken, 
+                  ymax = avg_trips + st_trips_taken))+
+  geom_line()
+  
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 trips_with_weather %>% 

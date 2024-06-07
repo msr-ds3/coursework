@@ -26,7 +26,12 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 nrow(trips)
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
+trips |> na_if(birth_year,"\\N") 
+
 trips |> mutate(across(birth_year,na_if,"\\N")) |> 
+  summarise(max_birth_year = max(as.numeric(birth_year), na.rm = TRUE), min_birth_year = min (as.numeric(birth_year), na.rm = TRUE))
+
+trips |>
   summarise(max_birth_year = max(as.numeric(birth_year), na.rm = TRUE), min_birth_year = min (as.numeric(birth_year), na.rm = TRUE))
 
   # min = 1997
