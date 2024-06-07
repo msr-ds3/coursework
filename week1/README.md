@@ -166,10 +166,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
 
-
-
-<!--
-
 # Day 5
 
 ## Combining and reshaping data
@@ -179,22 +175,23 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   * Finish up the Citibike plotting exercises in [plot_trips.R](plot_trips.R), including the plots that involve reshaping data
 
 ## Combining and reshaping exercises
-  * Read chapters 12 and 13 of [R for Data Science](http://r4ds.had.co.nz) on tidyr and joins
-  * Do the following exercises from [R for Data Science](http://r4ds.had.co.nz):
+  * Read chapters 5 and 19 of the 2nd edition of [R for Data Science](http://r4ds.had.co.nz) on reshaping and joins
+  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
     * Section [12.2.1](https://r4ds.had.co.nz/tidy-data.html#exercises-23), exercise 2
     * Section [12.3.3](https://r4ds.had.co.nz/tidy-data.html#exercises-24) exercises 1 and 3 
+
+## Rmarkdown
+
+  * Read Chapter 27 of the 1st edition of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
+  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
+    * Section [27.2.1](https://r4ds.had.co.nz/r-markdown.html#exercises-71), exercises 1 and 2 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
+    * Section [27.3.1](https://r4ds.had.co.nz/r-markdown.html#exercises-72) exercise 3, using [this file](diamond-sizes.Rmd)
+    * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
+
+## Learn more
+
   * Do part 1 of Datacamp's [Cleaning Data in R](https://www.datacamp.com/courses/cleaning-data-in-r) tutorial
   * Additional references:
     * The tidyr [vignette on tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
     * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
     * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
-
-## Rmarkdown
-
-  * Read Chapter 27 of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
-  * Do the following exercises:
-    * Section [27.2.1](https://r4ds.had.co.nz/r-markdown.html#exercises-71), exercises 1 and 2 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
-    * Section [27.3.1](https://r4ds.had.co.nz/r-markdown.html#exercises-72) exercise 3, using [this file](https://raw.githubusercontent.com/hadley/r4ds/master/rmarkdown/diamond-sizes.Rmd)
-    * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
-
--->
