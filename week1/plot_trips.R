@@ -38,6 +38,12 @@ trips |>
     filter(tripduration < 60*60) |>
     ggplot(aes(x=tripduration, color=usertype, fill=usertype)) +
     geom_density()
+
+trips |> 
+    filter(tripduration < 60*60) |>
+    ggplot(aes(x=tripduration)) +
+    geom_histogram() +
+    facet_wrap(~ usertype)
 # plot the total number of trips on each day in the dataset
 trips |>
     group_by(ymd) |>
@@ -50,7 +56,8 @@ trips |>
     group_by(age, gender) |>
     summarize(count=n()) |>
     ggplot(aes(x=age, y=count, color=gender)) +
-    geom_point()
+    geom_point() +
+    coord_cartesian(ylim=c(0, 300000))
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
@@ -109,7 +116,7 @@ trips_with_weather |>
     summarize(num_trips=n(), tmin=mean(tmin)) |> 
     ggplot(aes(x=tmin, y=num_trips, color=sig_prcp)) +
     geom_point() +
-    geom_smooth()
+    geom_smooth(method="lm")
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
@@ -132,6 +139,7 @@ trips_with_weather |>
     summarize(hour_trips=n()) |>
     group_by(hour, day_of_week) |>
     summarize(mean_trips=mean(hour_trips), std_trips=sd(hour_trips)) |>
-    ggplot(aes(x=hour, y=mean_trips, color=day_of_week)) +
+    ggplot(aes(x=hour, y=mean_trips)) +
     geom_line() +
-    geom_ribbon(aes(ymin = mean_trips - std_trips, ymax = mean_trips + std_trips, fill = day_of_week), alpha = 0.25)
+    geom_ribbon(aes(ymin = mean_trips - std_trips, ymax = mean_trips + std_trips, fill = day_of_week), alpha = 0.25) +
+    facet_wrap(~ day_of_week)
