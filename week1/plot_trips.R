@@ -32,12 +32,14 @@ trips |>
 trips |> 
   filter(tripduration < 3600) |>
   ggplot(aes(x = tripduration, color = usertype, fill = usertype)) +
-  geom_histogram()
+  geom_histogram() +
+  facet_wrap(~ usertype)
 
 trips |> 
   filter(tripduration < 3600) |>
   ggplot(aes(x = tripduration, color = usertype, fill = usertype)) +
-  geom_density()
+  geom_density() +
+  facet_wrap(~ usertype)
 
 # plot the total number of trips on each day in the dataset
 trips |> 
@@ -122,7 +124,7 @@ trips_with_weather |>
   summarise(num_trips = n(),tmin = mean(tmin)) |> 
   ggplot(aes(x = tmin, y = num_trips, color = sig_prcp)) +
   geom_point() + 
-  geom_smooth()
+  geom_smooth(method = "lm")
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
@@ -155,4 +157,5 @@ trips_with_weather |>
   summarise(avg_num_trips = mean(num_trips), std_trips = sd(num_trips)) |> 
   ggplot(aes(x = hour, y = avg_num_trips, color = day_of_week)) +
   geom_line(aes(color = day_of_week)) +
-  geom_ribbon(aes(ymin = avg_num_trips - std_trips, ymax = avg_num_trips + std_trips, fill = day_of_week), alpha = 0.25)
+  geom_ribbon(aes(ymin = avg_num_trips - std_trips, ymax = avg_num_trips + std_trips, fill = day_of_week), alpha = 0.25) +
+  facet_wrap(~ day_of_week)
