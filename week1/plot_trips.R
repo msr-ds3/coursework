@@ -66,6 +66,15 @@ trips |>
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips |> 
+  mutate(age = 2014 - birth_year) |> 
+  select(age, gender) |> 
+  group_by(age, gender) |> 
+  summarise(num_trips = n()) |> 
+  pivot_wider(names_from = gender, values_from = num_trips) |> 
+  mutate(male_female_ratio = Male/Female) |> View()
+  ggplot(aes(x = age, y = male_female_ratio)) +
+  geom_point()
 
 ########################################
 # plot weather data
@@ -78,6 +87,13 @@ weather |>
 
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+weather |> 
+  select(ymd, tmin, tmax) |>
+  pivot_longer(names_to = "min_max", values_to = "temp", -ymd) |> 
+  group_by(ymd) |> 
+  ggplot(aes(x = ymd, y = temp, color = min_max)) +
+  geom_point()
+  
 
 ########################################
 # plot trip and weather data
@@ -134,7 +150,8 @@ trips_with_weather |>
             sd_trips_taken = sd(trips_taken)) |> 
   ggplot(aes(x = hour, y = avg_trips_taken)) +
   geom_ribbon(aes(ymin = avg_trips_taken - sd_trips_taken, 
-                  ymax = avg_trips_taken + sd_trips_taken), fill = "lightblue", alpha = 0.3) +
+                  ymax = avg_trips_taken + sd_trips_taken), 
+              fill = "lightblue", alpha = 0.3) +
   geom_line(color = "blue")
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
