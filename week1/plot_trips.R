@@ -139,3 +139,4 @@ trips_with_weather %>%
   geom_line() + 
   facet_wrap( ~wd )
 
+table2 %>% View
