@@ -21,8 +21,8 @@ load('trips.RData')
 
 # all duration
 trips %>%
-  ggplot() +
-  geom_histogram(aes(x = tripduration/60), bins= 20)+
+  ggplot(aes(x = tripduration/60)) +
+  geom_histogram( bins= 20)+
   scale_x_log10(label = comma)+
   scale_y_log10(label = comma) + 
   xlab("trips length") +
@@ -31,8 +31,8 @@ trips %>%
 # less than or equal to hour
 trips %>%
   filter(tripduration <= 3600) %>%
-  ggplot() +
-  geom_histogram(aes(x = tripduration/60), bins= 20)+
+  ggplot(aes(x = tripduration/60)) +
+  geom_histogram( bins= 20)+
   scale_x_log10(label = comma)+
   scale_y_log10(label = comma) + 
   xlab("trips length") +
@@ -52,34 +52,35 @@ trips %>%
 
 # histogram with facet
 trips %>%
-  ggplot() +
-  geom_histogram(aes(x = tripduration/60, fill = usertype), bins= 20)+
+  ggplot(aes(x = tripduration/60, fill = usertype)) +
+  geom_histogram( bins= 20)+
   scale_x_log10(label = comma)+
   scale_y_log10(label = comma) + 
   xlab("trips length") +
   ylab("# trips") +
-  facet_wrap(~ usertype)
+  facet_wrap(~ usertype, scale = "free_y")
+
 
 # density plot with facet
 trips %>%
-  ggplot() +
-  geom_density(aes(x = tripduration/60, color = usertype))+
+  ggplot(aes(x = tripduration/60, color = usertype)) +
+  geom_density()+
   scale_x_log10(label = comma)+
   # scale_y_log10(label = comma) + 
   xlab("trips length") +
   ylab("# trips") +
-  facet_wrap(~ usertype)
+  facet_wrap(~ usertype, scale = "free_y")
 
 # plot the total number of trips on each day in the dataset
 trips %>%
-  ggplot()+
-  geom_histogram(aes(x = ymd)) +
+  ggplot(aes(x = ymd))+
+  geom_histogram() +
   scale_y_continuous(label = comma)
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
 trips %>%
-  ggplot()+
-  geom_histogram(aes(x = 2014 - birth_year, fill = gender)) +
+  ggplot(aes(x = 2014 - birth_year, fill = gender))+
+  geom_histogram() +
   scale_y_continuous(label = comma) +
   ylab("Age")
 
@@ -92,8 +93,8 @@ trips %>%
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
 weather %>%
-  ggplot()+
-  geom_point(aes(x=ymd, y = tmin)) 
+  ggplot(aes(x=ymd, y = tmin))+
+  geom_point() 
 
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
@@ -112,8 +113,8 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 trips_with_weather %>%
   group_by(tmin, ymd) %>%
   summarise(count = n())%>%
-  ggplot() +
-  geom_point(aes(x = tmin, y= count))
+  ggplot(aes(x = tmin, y= count)) +
+  geom_point()
   
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
@@ -121,8 +122,8 @@ trips_with_weather %>%
   mutate (sub_prcp = ifelse(prcp > mean(prcp), TRUE, FALSE)) %>% 
   group_by(tmin, ymd, sub_prcp) %>%
   summarise(count = n())%>%
-  ggplot() +
-  geom_point(aes(x = tmin, y= count)) +
+  ggplot(aes(x = tmin, y= count)) +
+  geom_point() +
   facet_wrap(~sub_prcp)
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
@@ -131,10 +132,10 @@ trips_with_weather %>%
   mutate (sub_prcp = ifelse(prcp > mean(prcp), TRUE, FALSE)) %>% 
   group_by(tmin, ymd, sub_prcp) %>%
   summarise(count = n())%>%
-  ggplot() +
-  geom_point(aes(x = tmin, y= count)) +
+  ggplot(aes(x = tmin, y= count)) +
+  geom_point() +
   facet_wrap(~sub_prcp) + 
-  geom_smooth(aes(x = tmin, y = count))
+  geom_smooth()
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
 trips_with_weather %>%
@@ -180,5 +181,9 @@ trips_with_weather %>%
   group_by(hour, day) %>%
   summarise(avg_count = mean(count), sd_count = sd(count)) %>% 
   ggplot() +
-  geom_line(aes(x = hour, y= sd_count, color= day)) +
-  facet_wrap(~ day)
+  geom_line(aes(x = hour, y= avg_count, color= "red")) +
+  geom_line(aes(x = hour, y= sd_count, color= "blue")) +
+  facet_wrap(~ day) +
+  xlab("Hour of the day")+
+  ylab("AVerage & standard deviation ")
+
