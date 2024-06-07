@@ -106,14 +106,16 @@ trips_with_weather %>%
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
 trips_with_weather %>%
+  ggplot(aes(prcp)) +
+  geom_histogram()
+
+trips_with_weather %>%
   mutate( big_prec = prcp >= 1 ) %>%
-  group_by(ymd) %>%
-  summarise( min_ = min(tmin), c = n() ) %>% # need to add big_prec here
+  group_by(ymd, big_prec) %>%
+  summarise( min_ = min(tmin), c = n() ) %>% # need to add big_prec_ here - done, do in groupby instead
   ggplot( aes(min_, c) ) +
   geom_point() +
-  facet_wrap( ~big_prec )
-  
-
+  facet_wrap( ~big_prec ) +
 # add a smoothed fit on top of the previous plot, using geom_smooth
   geom_smooth()
 
@@ -138,4 +140,3 @@ trips_with_weather %>%
   geom_ribbon( aes(ymin = avg - sd, ymax = avg + sd), fill = "lightblue") +
   geom_line() + 
   facet_wrap( ~wd )
-
