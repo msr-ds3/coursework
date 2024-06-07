@@ -1,0 +1,85 @@
+---
+title: "Diamond sizes"
+date: 2016-08-25
+output: html_document
+---
+
+```{r setup, include = FALSE}
+library(ggplot2)
+library(dplyr)
+
+smaller <- diamonds %>% 
+  filter(carat <= 2.5)
+```
+
+We have data about `r nrow(diamonds)` diamonds. Only 
+`r nrow(diamonds) - nrow(smaller)` are larger than
+2.5 carats. The distribution of the remainder is shown
+below:
+
+```{r, echo = FALSE}
+smaller %>% 
+  ggplot(aes(carat)) + 
+  geom_freqpoly(binwidth = 0.01)
+```
+```
+Practice 27.3.1
+Answers for question 3: The striking feature of this paragraph is that it spikes frequently between the carat size of 0.5 and 1. It shows that smaller diamonds are more common. 
+```
+Practice 27.4.7```
+Q1: Add a section that explores how diamond sizes vary by cut, colour, and clarity. Assume you’re writing a report for someone who doesn’t know R, and instead of setting echo = FALSE on each chunk, set a global option.
+```{r}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+
+smaller %>%
+  group_by(cut, carat) %>%
+  ggplot(aes(x = carat, y = )) +
+  geom_point(color = "red", size = 3, alpha = 0.7) +  
+  labs(
+    title = "Size ~ Cut",
+    x = "Cut",
+    y = "Size"
+  ) + 
+  theme_minimal()
+```
+```{r}
+smaller %>%
+  ggplot(aes(x = carat)) + 
+  geom_histogram(color = "red", size = 15, alpha = 0.7) +  
+  labs(
+    title = "Diamond Carat Size Variations based on Cut",
+    x = "Carat Size",
+    y = "Count"
+  ) + facet_wrap(~ cut) + 
+  theme_minimal()
+  
+```
+```{r}
+smaller %>%
+  ggplot(aes(x = carat)) + 
+  geom_histogram(color = "skyblue", size = 15, alpha = 0.7) +  
+  labs(
+    title = "Diamond Carat Size Variations based on Cut",
+    x = "Carat Size",
+    y = "Count"
+  ) + facet_wrap(~ color) + 
+  theme_minimal()
+```
+```{r}
+smaller %>%
+  ggplot(aes(x = carat)) + 
+  geom_histogram(color = "skyblue", size = 15, alpha = 0.7) +  
+  labs(
+    title = "Diamond Carat Size Variations based on Cut",
+    x = "Carat Size",
+    y = "Count"
+  ) + facet_wrap(~ clarity) + 
+  theme_minimal()
+```
+
+```
+
+

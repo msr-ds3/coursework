@@ -92,11 +92,29 @@ trips %>%
 
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
-
-
 # Calculate the ratio of male to female trips by age
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>%
+  filter(tripduration > 60) %>%
+  mutate(
+    birth_year = as.numeric(birth_year),
+    age = as.numeric(format(Sys.Date(), "%Y")) - birth_year
+  ) %>%
+  group_by(age, gender) %>%
+  summarise(n_trip = n())%>%
+  pivot_wider(names_from = gender, values_from = n_trip)%>%
+  mutate(Ratio = Male/Female)%>%
+  ggplot(aes(x = age, y = Ratio)) +
+  geom_point() +  
+  labs(
+    title = "Total Number of Trips by Age and Gender Ratio",
+    x = "Age",
+    y = "Male to Female Ratio",
+  ) +
+  scale_y_continuous(labels = comma) +  
+  theme_minimal() 
+
 
 ########################################
 # plot weather data
@@ -105,6 +123,27 @@ trips %>%
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+weather%>%
+  ggplot(aes(x= date, y = tmin)) + 
+  geom_point() + 
+  labs(title = "Minimum tempreature over days",
+       x = 'Date', 
+       y = 'Tempreature') + 
+  theme_minimal() 
+
+trips_with_weather%>%
+  group_by(date)%>%
+  summarize(min_temp = min(tmin), 
+            max_temp = max(tmax))%>%
+  pivot_longer(cols = c(min_temp, max_temp), names_to = "temperature_type", values_to = "temperature")%>%
+  ggplot(aes(x= date, y = temperature, color = temperature_type)) + 
+  geom_point() + 
+  labs(title = "Minimum and Maximum tempreature over days",
+       x = 'Date', 
+       y = 'Tempreature') + 
+  theme_minimal() 
+  
+  
 
 ########################################
 # plot trip and weather data
