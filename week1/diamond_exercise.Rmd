@@ -1,0 +1,45 @@
+---
+title: "Diamond_Exercise"
+author: "Shana Mandelbaum"
+date: "2024-06-07"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+library(ggplot2)
+library(dplyr)
+
+smaller <- diamonds %>% 
+  filter(carat <= 2.5)
+```
+
+We have data about `r nrow(diamonds)` diamonds. Only 
+`r nrow(diamonds) - nrow(smaller)` are larger than
+2.5 carats. The distribution of the remainder is shown
+below:
+
+```{r, echo = FALSE}
+smaller %>% 
+  ggplot(aes(carat)) + 
+  geom_freqpoly(binwidth = 0.01)
+```
+
+The most striking features of this frequency plot are that certain ring sizes are much more popular, for example, ~.25, .75, and 1.0 carat.
+
+```{r, echo = FALSE}
+diamonds |> 
+  ggplot(aes(x = carat)) +
+  geom_histogram(aes(group = cut, fill = cut)) +
+  facet_wrap(~ cut)
+
+diamonds |> 
+  ggplot(aes(x = carat)) +
+  geom_histogram(aes(group = color, fill = color)) +
+  facet_wrap(~ color)
+
+diamonds |> 
+  ggplot(aes(x = carat)) +
+  geom_histogram(aes(group = clarity, fill = clarity)) +
+  facet_wrap(~ clarity)
+```
+This shows that people are more likely to buy small diamonds that have better cut, clarity, and color 
