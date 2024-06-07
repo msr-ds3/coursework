@@ -23,12 +23,17 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 ########################################
 
 # count the number of trips (= rows in the data frame): 224736
-nrow(trips)
+trips%>%
+  summarize(count = n())
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
 
 # latest: 1997
-max(trips$birth_year)
+trips %>%
+  summarise(
+    min(birth_year, na.rm = TRUE),
+    max(birth_year, na.rm = TRUE)
+  )
 
 tripsWithNoNullValues <- filter(trips, birth_year >= 0)
 
@@ -60,12 +65,11 @@ trips %>%
   )
   
 # find the 10 most frequent station-to-station trips
-trips %>% 
-  group_by(start_station_id, end_station_id) %>% 
-  summarise(count = n()) %>% 
-  arrange(desc(count))
-  
-  
+trips %>%
+  group_by(start_station_id, end_station_id) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice_head(n = 10) %>%
 
 # find the top 3 end stations for trips starting from each start station
 trips %>% 
@@ -80,7 +84,8 @@ trips  %>%
   summarise(count = n()) %>% 
   arrange(desc(count))%>% 
   group_by(gender)%>% 
-  slice_head(n = 3)
+  slice_head(n = 3) %>%
+  view()
 
 # find the day with the most trips
 # tip: first add a column for year/month/day without time of day (use as.Date or floor_date from the lubridate package)
@@ -106,11 +111,12 @@ trips%>%
   mutate(hour = hour(starttime)) %>%
   group_by(hour) %>%
   summarise(count = n()) %>%
+  view()
   arrange(desc(count))%>% 
-  group_by(hour)%>% 
   summarise(average = count/28)%>% 
   arrange(desc(average))%>% 
   head(1)%>% 
   view()
-
+  
+  
 
