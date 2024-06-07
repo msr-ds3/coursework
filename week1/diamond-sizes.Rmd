@@ -8,6 +8,10 @@ output: html_document
 library(ggplot2)
 library(dplyr)
 
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+
 smaller <- diamonds %>% 
   filter(carat <= 2.5)
 ```
@@ -22,3 +26,23 @@ smaller %>%
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
 ```
+
+It's interesting how they can have R code being run within the text by using backticks. So, I can say that the standard deviation of the carats all diamonds is `r diamonds |> summarize(sd(carat))`. I also found it interesting how they hid the code so we can't see their _dirty_ secrets. Also, this is in **bold**.
+
+```{r}
+smaller %>% 
+  ggplot(aes(carat)) + 
+  geom_freqpoly(binwidth = 0.01) +
+    facet_wrap(~ cut)
+
+smaller %>% 
+  ggplot(aes(carat)) + 
+  geom_freqpoly(binwidth = 0.01) +
+    facet_wrap(~ color)
+
+smaller %>% 
+  ggplot(aes(carat)) + 
+  geom_freqpoly(binwidth = 0.01) +
+    facet_wrap(~ clarity)
+```
+
