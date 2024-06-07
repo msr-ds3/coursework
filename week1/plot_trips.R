@@ -59,7 +59,7 @@ trips %>%
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
 weather %>% 
-  ggplot(mapping =aes(x=date,y=tmin)) + geom_point()
+  ggplot(mapping =aes(x=date,y=tmin)) 
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
