@@ -4,6 +4,12 @@ date: 2016-08-25
 output: html_document
 ---
 
+```{r}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```
+
 ```{r setup, include = FALSE}
 library(ggplot2)
 library(dplyr)
@@ -22,3 +28,26 @@ smaller %>%
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
 ```
+The most striking feature of this plot is probably how the spikes continue to become further and further apart as we increase the number of carats.
+
+Plots by Cut/Color/Clarity
+
+```{r}
+smaller %>% 
+  ggplot(aes(x=carat)) + 
+  geom_histogram(aes(group=color, fill=color))
+
+```
+```{r}
+smaller %>% 
+  ggplot(aes(x=carat)) + 
+  geom_histogram(aes(group=clarity, fill=clarity))
+```
+```{r}
+smaller %>% 
+  ggplot(aes(x=carat)) + 
+  geom_histogram(aes(group=cut, fill=cut))
+
+```
+
+
