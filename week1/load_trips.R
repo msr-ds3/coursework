@@ -48,6 +48,7 @@ weather <- read.table('weather.csv', header=T, sep=',')
 
 # extract just a few columns, lowercase column names, and parse dates
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
+
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
                   ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
@@ -55,4 +56,3 @@ weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
-
