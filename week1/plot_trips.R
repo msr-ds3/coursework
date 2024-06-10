@@ -19,33 +19,38 @@ load('trips.RData')
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
 trips %>% filter(tripduration < 3600) %>% 
+  mutate(tripduration = tripduration / 60) %>% 
   ggplot(mapping = aes(x = tripduration)) + 
   scale_y_continuous(label = comma) +
   geom_histogram() +
-  xlab('Trip Duration') +
+  xlab('Trip Duration(min)') +
   ylab('Number of Trips')
 
 trips %>% filter(tripduration < 3600) %>% 
+  mutate(tripduration = tripduration / 60) %>% 
   ggplot(mapping = aes(x = tripduration)) + 
   scale_y_continuous(label = comma) +
   geom_density() +
-  xlab('Trip Duration') +
+  xlab('Trip Duration(min)') +
   ylab('Number of Trips')
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
 trips %>% filter(tripduration < 3600) %>% 
+  mutate(tripduration = tripduration / 60) %>% 
   ggplot(mapping = aes(x = tripduration, color=usertype, fill = usertype)) + 
   scale_y_continuous(label = comma) +
   geom_histogram() +
-  xlab('Trip Duration') +
+  xlab('Trip Duration(min)') +
   ylab('Number of Trips')
 
 trips %>% filter(tripduration < 3600) %>% 
+  mutate(tripduration = tripduration / 60) %>% 
   ggplot(mapping = aes(x = tripduration, color=usertype, fill = usertype)) + 
   scale_y_continuous(label = comma) +
   geom_density() +
-  xlab('Trip Duration') +
-  ylab('Number of Trips')
+  xlab('Trip Duration(min)') +
+  ylab('Number of Trips') +
+  facet_wrap(~usertype)
 
 # plot the total number of trips on each day in the dataset
 trips %>% 
@@ -70,8 +75,18 @@ trips %>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>% 
+  mutate(age = 2024 - birth_year) %>% 
+  group_by(age, gender) %>% 
+  summarize(count = n()) %>% 
+  pivot_wider(names_from = gender, values_from = count) %>% 
+  select(-Unknown) %>% 
+  filter(age < 99) %>%  
+  mutate(ratio = Male/Female) %>% 
+  ggplot(aes(x = age, y=ratio)) +
+  geom_point(aes(size=ratio))
 
-########################################
+)########################################
 # plot weather data
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
@@ -84,6 +99,11 @@ weather %>% group_by(tmin, ymd) %>% summarize(count =n()) %>%
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+weather %>% select(ymd, tmin, tmax) %>% 
+  pivot_longer(names_to="temp_type", values_to="temp", tmin:tmax) %>% 
+  group_by(ymd) %>% 
+  ggplot(aes(x=ymd, y=temp, color=temp_type)) +
+  geom_point()
 
 ########################################
 # plot trip and weather data
@@ -105,12 +125,10 @@ trips_with_weather %>%
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
-
-#---original implementation---
-# substantial <- quantile(trips_with_weather$prcp, .95) %>% unname()
+substantial <- quantile(trips_with_weather$prcp, .95) %>% unname()
 
 trips_with_weather %>%  
-  mutate(heavy_perc = ifelse(prcp >= unname(quantile(trips_with_weather$prcp, .95)), "T",
+  mutate(heavy_perc = ifelse(prcp >= substantial, "T",
                              ifelse(prcp < substantial, "F", "no")), .before = 1) %>%
   group_by(tmin, ymd, heavy_perc) %>% 
   summarize(count=n()) %>% 
