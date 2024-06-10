@@ -13,6 +13,7 @@ This week covers:
   * Review the "Estimating a proportion" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
   * Read Chapter 4 of an [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) IST and do questions 4.1 and 4.2. Feel free to execute code in the book along the way.
   * Read Chapter 6 of IST on the normal distribution and do question 6.1
+  * [Time permitting:] Read Chapter 7 of IST on sampling distributions and do exercise 7.1
 
 ## References
 * Chapter 1 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS)
