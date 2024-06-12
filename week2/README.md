@@ -49,16 +49,15 @@ This week covers:
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
   * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
 
-<!--
 
 # Day 3
+
+  * Continue working on exercises from yesterday
 
 ## Power, effect sizes, and the replication crisis
   * See this [post](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html) and the related [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) on effect sizes and the replication crisis
   * See this notebook on [statistical vs. practical significance](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistically_significant_splits.html)
   * There's also an [interactive version](https://jhofman.github.io/statisticallysignificant/), play with it and see if you understand what's going on! 
-
-
 
 
 ## References
@@ -75,6 +74,8 @@ This week covers:
   * [Interpreting Cohen's d effect size](https://rpsychologist.com/d3/cohend/)
   * [The New Statistics: Why and How](https://journals.sagepub.com/doi/pdf/10.1177/0956797613504966) by Cummings
   * A guide on [effect sizes](https://transparentstats.github.io/guidelines/effectsize.html) and related [blog post](https://transparentstatistics.org/2018/07/05/meanings-effect-size/)
+
+<!--
 
 
 # Day 4
@@ -95,15 +96,6 @@ This week covers:
   * The "Model Basics" and "Model Building" Chapters in [R for Data Science](http://r4ds.had.co.nz) (Chapters 18 and 19 in the print edition, Chapters [23](http://r4ds.had.co.nz/model-basics.html) and [24](http://r4ds.had.co.nz/model-building.html) online) 
   * The [modelr](https://modelr.tidyverse.org) and [tidymodels](https://github.com/tidymodels/tidymodels) packages in R
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
-
--->
-
-<!--
-
-
-
-
-
 
 # Day 5
 
