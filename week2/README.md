@@ -53,6 +53,7 @@ This week covers:
 # Day 3
 
   * Continue working on exercises from yesterday
+  * Read Chapters 12 and 13 of IST and do exercises 12.1 and 13.1
 
 ## Power, effect sizes, and the replication crisis
   * See this [post](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html) and the related [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) on effect sizes and the replication crisis
