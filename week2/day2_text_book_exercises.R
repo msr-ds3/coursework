@@ -182,3 +182,39 @@ var(P.hat) #0.001382094
 # Read Sections 3.1 and 3.2 of ISRS
 
 # Do exercise 9.2 in IST
+
+"
+Hypothesis Testing Steps
+1. Write down the null hypothesis
+2. Decide on a significant level
+3. Take a sample
+4. Compute a test statistic
+5. Compute p-value
+6. If p-value < sigma: reject null hypothesis
+   Else: fail to reject null hypothesis
+"
+
+mu_active <- 3.5
+sd_active <- 3
+
+mu_inactive <- 3.5
+sd_inactive <- 1.5
+
+n_active = 29
+n_inactive = 21
+
+P.hat <- rep(0,10^3)
+for(i in 1:10^3)
+{
+  X_active <- rnorm(n_active, mu_active, sd_active)
+  X_inactive <- rnorm(n_inactive, mu_inactive, sd_inactive)
+  
+  X_active_mean <- mean(X_active)
+  X_inactive_mean <- mean(X_inactive)
+  
+  X_active_variance <- var(X_active)
+  X_inactive_variance <- var(X_inactive)
+  
+  P.hat[i] <- (X_active_mean - X_inactive_mean) / sqrt(X_active_variance/n_active + X_inactive_variance/n_inactive)
+}
+quantile(P.hat, c(0.025,0.975))
