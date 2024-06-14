@@ -97,7 +97,7 @@ This week covers:
   * The [modelr](https://modelr.tidyverse.org) and [tidymodels](https://github.com/tidymodels/tidymodels) packages in R
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
-<!--
+
 
 # Day 5
 
@@ -114,7 +114,7 @@ This week covers:
 ## References
   * Sections 3.2 and 3.3 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression with multiple features
 
--->
+
 
 
 
