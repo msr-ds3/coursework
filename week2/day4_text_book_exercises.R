@@ -67,3 +67,5 @@ lm.fit <- lm(medv ~ lstat, data = Boston)
 summary(lm.fit)
 
 names(lm.fit)
+
+# continued on day 5 book
