@@ -1,0 +1,115 @@
+---
+title: "R Notebook 6/17"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+Here is where I modified your k-fold validation to include a test split.
+
+```{r}
+library(tidyverse)
+library(modelr)
+
+trips_per_day <- read_tsv('trips_per_day.tsv')
+head(trips_per_day)
+```
+
+First we make the split.
+
+```{r}
+set.seed(42)
+num_folds <- 5
+num_days <- nrow(trips_per_day)
+
+frac_train <- .8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set 
+ndx <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_train <- trips_per_day[ndx, ]
+
+# used to evaluate the fit
+trips_per_day_test <- trips_per_day[-ndx, ]
+
+trips_per_day_cross <- trips_per_day_train |>
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips_per_day_cross)
+```
+Now we train.
+```{r}
+# fit a model for each polynomial degree
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_cross, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_cross, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+```
+
+We plot the same thing from before for a visual indicator.
+```{r}
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+Now we need to get the best equation and measure it against the test data.
+```{r}
+lowest_k <- plot_data |>
+    slice_min(avg_validate_err, n=1) |>
+    pull(K)
+
+final_model <- lm(num_trips ~ poly(tmin, lowest_k, raw = T), data=trips_per_day_train)
+sqrt(mean((predict(final_model, trips_per_day_test) - trips_per_day_test$num_trips)^2))
+```
+Now we are figuring out the power of the yawn experiment. We are assuming that the true difference in probabilities is the one we were given.
+
+First I ran the numbers with the separate sample sizes, but that got two different values of power, which didn't make any sense. So then I averaged the sample size and got a single power.
+
+```{r}
+
+p1 <- 10 / 34
+p2 <- 4/16
+
+power.prop.test(n=c(34, 16), p1=p1, p2=p2, sig.level=0.05, alternative="one.sided")
+
+power.prop.test(n=25, p1=p1, p2=p2, sig.level=0.05, alternative="one.sided")
+
+power.prop.test(p1=p1, p2=p2, sig.level=0.05, alternative="one.sided", power=0.8)
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
