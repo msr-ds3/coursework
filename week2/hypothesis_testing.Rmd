@@ -1,0 +1,190 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+library(tidyverse)
+magnets <- read_csv("magnets.csv")
+magnet_f <- magnets |>
+    mutate(active=as.factor(active))
+```
+9.1.1
+Note: The first one does real only, the second one does all
+```{r}
+magnet_f |>
+    summarize(sample_avg=mean(change))
+```
+2.
+Active is a factor
+
+3.
+```{r}
+magnet_f |>
+    group_by(active) |>
+    summarize(sample_avg=mean(change))
+```
+4.
+```{r}
+magnet_f |>
+    group_by(active) |>
+    summarize(sample_sd=sd(change))
+```
+5.
+```{r}
+magnet_f |>
+    ggplot(aes(y=change, group=active)) +
+    geom_boxplot()
+```
+10.1.1.
+```{r}
+generate_sample <- function(op) {
+    tib_stats <- tibble(x=rnorm(100, 3, sqrt(2))) |>
+        summarize(sample_op=op(x))
+    tib_stats$sample_op
+}
+
+generate_stat <- function(op, generator, true_mean) {
+    
+    tibble(x = replicate(1e4, generator(op))) |>
+        summarize(expectation=mean(x), variance=var(x), bias=expectation-true_mean, mse=variance + (bias)^2)
+}
+
+generate_stat(mean, generate_sample, 3)
+generate_stat(median, generate_sample, 3)
+```
+2.
+```{r}
+generate_sample_u <- function(op) {
+    tib_stats <- tibble(x=runif(100, 0.5, 5.5)) |>
+        summarize(sample_op=op(x))
+    tib_stats$sample_op
+}
+
+generate_stat(mean, generate_sample_u, 3)
+generate_stat(median, generate_sample_u, 3)
+```
+Mean is better in both cases.
+
+2.1
+```{r}
+pop2 <- read_csv("pop2.csv") |>
+    mutate(sex=as.factor(sex), group=as.factor(group))
+
+ex2 <- read_csv("ex2.csv") |>
+    mutate(sex=as.factor(sex), group=as.factor(group))
+```
+```{r}
+ex2 |>
+    group_by(group) |>
+    summarize(num_at_level=n()) |>
+    ungroup() |>
+    mutate(ratio=num_at_level/sum(num_at_level)) |>
+    filter(group=="HIGH")
+```
+2.2
+```{r}
+pop2 |>
+    group_by(group) |>
+    summarize(num_at_level=n()) |>
+    ungroup() |>
+    mutate(ratio=num_at_level/sum(num_at_level)) |>
+    filter(group=="HIGH")
+```
+2.3-4
+```{r}
+generate_proportion <- function() {
+    ratio <- pop2 |>
+        slice_sample(n=150) |>
+        group_by(group) |>
+        summarize(num_at_level=n()) |>
+        ungroup() |>
+        mutate(ratio=num_at_level/sum(num_at_level)) |>
+        filter(group=="HIGH")
+    ratio$ratio
+}
+
+many_ratios <- tibble(x=replicate(1e4, generate_proportion()))
+simulation_tibble <- many_ratios |> summarize(expectation=mean(x), variance=var(x))
+simulation_tibble
+```
+2.5
+```{r}
+simulation_tibble |>
+    mutate(pred_var=expectation * (1 - expectation) / 150)
+    
+```
+Now I do the exercises in the next textbook.
+2.2.a
+```{r}
+people <- tribble(
+    ~alive, ~dead,  ~group,
+    #-----|--------|------
+    4,      30,      "control",
+    24,     45,      "treatment"
+) |>
+    mutate(group=as.factor(group))
+
+people |>
+    mutate(death_rate=dead / (dead + alive))
+```
+2.2.b
+Null hypothesis: death rate of treatment == death rate of control.
+Alternative hypothesis: death rate of treatment < death rate of control.
+
+I have no idea what the paragraph is asking for, so I'm skipping it.
+
+It looks like the chart means the transplant does nothing, but I don't fully understand the chart.
+
+2.6.a
+Null hypothesis: p(treatment) = p(control)
+Alt hypthesis: p(treatment) > p(control)
+
+b.
+```{r}
+p_treat <- 10 / 34
+p_control <- 4 / 16
+p_treat - p_control
+```
+c.
+
+The p-value would be about 45%, which is absolutely atrocious. There must be no link.
+
+9.2.1
+So, to find 95%
+```{r}
+test_stat <- function(mean_1, mean_2, var_1, var_2) {
+    (mean_1 - mean_2) / sqrt(var_1/29 + var_2/21)
+}
+
+avgs <- magnet_f |>
+    group_by(active) |>
+    summarize(sample_avg=mean(change), sample_var=var(change))
+
+vars <- avgs |> pull(sample_var)
+
+sd_dif <- sqrt(vars[1]/29 + vars[2]/21)
+sd_dif
+qnorm(0.025, 0, sd_dif)
+qnorm(0.975, 0, sd_dif)
+```
+I'm not sure why my answers are different from the textbook's. But they are using simulations, not real calculations, so...
+
+9.2.2
+```{r}
+averages <- avgs |> pull(sample_avg)
+vars <- avgs |> pull(sample_var)
+test_stat(averages[1], averages[2], vars[1], vars[2])
+```
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

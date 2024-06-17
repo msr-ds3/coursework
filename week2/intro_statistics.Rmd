@@ -1,0 +1,48 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.
+
+This is for doing normal stuff.
+
+```{r}
+pop2 <- read_csv("pop2.csv")
+n_samples <- 150
+```
+
+```{r}
+pop2 |>
+    summarize(mean_bmi=mean(bmi), sd_bmi=sd(bmi))
+```
+
+```{r}
+find_sample <- function(n) {
+    sample <- pop2 |>
+        slice_sample(n=n_samples) |>
+        summarize(sample_mean=mean(bmi))
+    sample$sample_mean
+}
+
+many_means = replicate(10^4, find_sample(n_samples))
+
+sample_mean = mean(many_means)
+sample_sd = sd(many_means)
+
+sample_mean
+sample_sd
+
+quantile(many_means, c(0.1, 0.9))
+
+c(qnorm(0.1, sample_mean, sample_sd), qnorm(0.9, sample_mean, sample_sd))
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

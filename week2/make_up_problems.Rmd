@@ -1,0 +1,174 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+12.1.1
+```{r}
+library(tidyverse)
+magnets <- read_csv("magnets.csv") |>
+    mutate(active=as.factor(active))
+```
+Null: X(control_after) = X(control_before)
+Alt: X(control_after) > X(control_before)
+
+12.1.2
+
+See above.
+
+12.1.3
+
+Okay, apparently we can plug everything into a t.test.
+
+
+```{r}
+# so, we need count and var of change grouped by active
+
+change <- magnets |>
+    filter(active=='"2"') |>
+    pull(change)
+
+t.test(change, mu=0)
+```
+13.1.1
+Comparison of pain before
+```{r}
+control_before <- magnets |>
+    filter(active=='"2"') |>
+    pull(score1)
+
+treat_before <- magnets |>
+    filter(active=='"1"') |>
+    pull(score1)
+
+t.test(control_before, treat_before, mu=0)
+```
+Not rejecting
+
+13.1.2
+
+```{r}
+var.test(control_before, treat_before, ratio=1)
+```
+Not rejecting
+
+13.1.3-4
+```{r}
+control_after <- magnets |>
+    filter(active=='"2"') |>
+    pull(score2)
+
+treat_after <- magnets |>
+    filter(active=='"1"') |>
+    pull(score2)
+
+t.test(control_after, treat_after, mu=0)
+var.test(control_after, treat_after, ratio=1)
+```
+Reject null for both
+
+5.20
+
+```{r}
+height_R = 0.67
+height_b1 <-9.41 * height_R / 10.37
+height_b0 <- height_b1 * -108.2 + 171.14
+height_R2 <- height_R^2
+
+linear_model <- function(girth) {
+    height_b1 * girth + height_b0
+}
+
+sample_pred <- linear_model(100)
+
+resid <- 160 - sample_pred
+```
+
+6 centimeters shorter than predicted
+
+f) No, because children have different proportions, and this model wasn't trained on them.
+
+5.29
+
+Positive correlation between height and weight
+
+```{r}
+model_weight <- function(height) {
+    -105.0113 + 1.0176 * height
+}
+```
+
+So, you gain about a kilogram for each centimeter of height, and the model breaks down for midgets.
+
+p-value is 0, so definitely correlation.
+
+```{r}
+0.72^2
+```
+R^2 means that your height predicts about half of your weight. The other half would come from factors such as genetics, diet, exercise, etc.
+
+```{r}
+library(modelr)
+
+height_stats <- read.table('body.dat.txt') |> 
+    rename(height=V24, weight=V23)
+
+height_line <- lm(weight ~ height + 1, height_stats)
+summary(height_line)
+
+height_stats |>
+    data_grid(height) |>
+    add_predictions(height_line) |>
+    ggplot(aes(x=height, y=pred)) +
+    geom_line()
+
+height_stats |>
+    ggplot(aes(x=height, y=weight)) +
+    geom_point(alpha=0.1)
+
+height_stats |>
+    add_predictions(height_line) |>
+    ggplot(aes(x=height, y=pred)) +
+    geom_line() +
+    geom_point(aes(y=weight), alpha=0.2, size=4)
+
+```
+6.1
+```{r}
+baby_data <- read.table("babyweights.txt")
+smoke_line <- lm(bwt ~ smoke, baby_data)
+summary(smoke_line)
+```
+Babies with smokers have a weight of 114. Without it, they have 123. This is definitely statistically significant.
+
+```{r}
+parity_line <- lm(bwt ~ parity, baby_data)
+summary(parity_line)
+```
+It seems that firstborns have an average weight of 120, while later children have an average weight of 118. But this is not statistically significant.
+
+```{r}
+baby_line <- lm(bwt ~ parity + smoke + age + gestation + height + weight, baby_data)
+summary(baby_line)
+```
+It seems that the longer you gestate, the heavier the baby, which is completely shocking.
+While older mothers make very slightly lighter babies, but the latter isn't significant.
+
+It seems that parity matters only in relationship to other variables, but if you can't first split on those, it means nothing.
+
+```{r}
+120 - predict(baby_line, baby_data |>
+                  slice_head(n=1))
+
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
