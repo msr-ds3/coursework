@@ -35,6 +35,12 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+
+ratings |>
+  group_by(rating) |>
+  
+  ggplot(aes(x= rating)) +
+  geom_histogram(binwidth = 0.25)
 ```
 
 ## Per-movie stats
@@ -42,16 +48,37 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+
+ratings |>
+  group_by(movie_id) |>
+  summarise(count = n(), mean(rating)) |> view()
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+
+ratings |>
+  group_by(movie_id) |> 
+  ggplot(aes(x= movie_id)) +
+  geom_histogram() +
+  scale_x_log10()
+
+
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+ratings |>
+  group_by(movie_id) |>
+  summarise(avg = mean(rating)) |> 
+  ggplot(aes(x= avg)) +
+  geom_density(fill = 'black') +
+  xlab('Mean Rating by Movie') +
+  ylab('Density')
+
 ```
 
 ```{r cdf-movie-pop}
@@ -59,7 +86,24 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+movie_by_popularity <- ratings |>
+  group_by(movie_id) |>
+  summarise(count = n(), mean(rating)) |> 
+  ungroup() |>
+  mutate(rank = rank(desc(count))) |>
+  arrange(rank)
+
+movie_by_popularity_cdf <- 
+  movie_by_popularity |> 
+  mutate(cdf = cumsum(count)/ sum(count))
+
 # plot the CDF of movie popularity
+movie_by_popularity_cdf |> 
+  ggplot(aes(x = rank, y = cdf)) +
+  geom_line() +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+  
+
 ```
 
 
@@ -67,11 +111,22 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings_by_user <-  ratings |>
+  group_by(user_id) |>
+  summarise(count = n(), avg = mean(rating))
+
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+
+ratings_by_user |>
+  group_by(user_id) |> 
+  ggplot(aes(x= user_id)) +
+  geom_histogram() +
+  scale_x_log10()
+
 ```
 
 # Anatomy of the long tail
@@ -82,6 +137,7 @@ head(ratings) %>% kable()
 # just do the solid lines and dotted line (optional)
 # https://5harad.com/papers/long_tail.pdf
 
+
 # Specifically, for the subset of users who rated at least 10 movies,
 # produce a plot that shows the fraction of users satisfied (vertical
 # axis) as a function of inventory size (horizontal axis). We will
@@ -91,4 +147,47 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+rating_by_rank_n_user <- full_join(ratings, movie_by_popularity)
+
+satisfy_user <- 
+  rating_by_rank_n_user |>
+  group_by(user_id) |>
+  summarise(satisfy_100 = max(rank), satisfy_90 = quantile(rank, 0.9, FALSE, TRUE, 3))
+
+total_users = nrow(satisfy_user)
+satisfy_user_cdf_100 <- 
+  satisfy_user |> 
+  group_by(satisfy_100) |>
+  summarise(number_satisfy = n()) |> 
+  mutate(cdf_100 = cumsum(number_satisfy)/ total_users) |> view()
+
+# plot the CDF
+satisfy_user_cdf_100 |> 
+  ggplot(aes(x = satisfy_100, y = cdf_100)) +
+  geom_line()
+# +
+#   scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
+satisfy_user_cdf_90 <- 
+  satisfy_user |> 
+  group_by(satisfy_90) |>
+  summarise(number_satisfy = n()) |> 
+  mutate(cdf_90 = cumsum(number_satisfy)/ total_users) |> view()
+
+# plot the CDF 
+satisfy_user_cdf_90 |> 
+  ggplot(aes(x = satisfy_90, y = cdf_90)) +
+  geom_line()
+
+
+# satisfy_user_cdf_together <- full_join(satisfy_user_cdf_100, satisfy_user_cdf_90) |> view()
+
+# plot the CDF 
+ggplot() +
+  geom_line(data = satisfy_user_cdf_100, aes(x = satisfy_100, y = cdf_100)) +
+  geom_line(data = satisfy_user_cdf_90, aes(x = satisfy_90, y = cdf_90)) +
+  xlab("Inventory Size") +
+  ylab("Percentage of user satisfied")
+
 ```
