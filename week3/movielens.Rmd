@@ -123,12 +123,6 @@ ratings %>%
 
 ```{r long-tail}
 
-ratings %>%
-  group_by(user_id) %>%
-  summarize( num_ratings = n() ) %>%
-  filter( num_ratings >= 10 ) %>%
-  ungroup()
-
 ranks <-
   ratings %>%
   group_by( movie_id ) %>%
@@ -140,23 +134,22 @@ ratings_with_rank <-
   left_join(ratings, ranks) %>%
   arrange( user_id, rank )
 
-# a dataframe with the 100% satified and 90% satisfied rank for each user
-user_sat <-
+user_sat <- # a dataframe with the 100% satisfied and 90% satisfied rank for each user
   ratings_with_rank %>%
   group_by( user_id ) %>%
-  summarize( hundred = max( rank ), ninety = rank[floor(n() * 0.9)] )
+  summarize( hundred = max( rank ), ninety = quantile(rank, 0.9, type = 3) )
 
-plot100 <- user_sat%>%
-  group_by(hundred)%>%
-  summarize(user_satisfied = n())%>%
-  arrange(desc(user_satisfied))%>%
-  mutate(inventory = row_number(), frac_user_satisfied = cumsum(user_satisfied)/sum(user_satisfied))
+plot100 <- user_sat %>%
+  group_by(hundred) %>% 
+  summarize(num_satisfied = n()) %>%
+  arrange(desc(num_satisfied)) %>%
+  mutate(inventory = row_number(), frac_user_satisfied = cumsum(num_satisfied)/sum(num_satisfied))
 
-plot90 <- user_sat%>%
-  group_by(ninety)%>%
-  summarize(user_satisfied = n())%>%
-  arrange(desc(user_satisfied))%>%
-  mutate(inventory = row_number(), frac_user_satisfied = cumsum(user_satisfied)/sum(user_satisfied))
+plot90 <- user_sat %>%
+  group_by(ninety) %>%
+  summarize(num_satisfied = n()) %>%
+  arrange(desc(num_satisfied)) %>%
+  mutate(inventory = row_number(), frac_user_satisfied = cumsum(num_satisfied)/sum(num_satisfied))
 
 ggplot() +
   geom_line( data = plot100, aes(x = inventory, y = frac_user_satisfied) ) +
@@ -180,4 +173,5 @@ ggplot() +
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
 ```
