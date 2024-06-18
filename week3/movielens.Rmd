@@ -99,7 +99,8 @@ ranked_rating <- ranked_rating |>
 ranked_rating |> 
   ggplot(aes(x=rank, y=cdf)) +
   scale_y_continuous(label = percent) +
-  geom_line()
+  geom_line() + 
+  geom_vline(aes(xintercept = 3000), linetype = "dashed")
 
 ```
 
@@ -181,6 +182,7 @@ ggplot() +
   geom_line(data=cdf_one_hundred, aes(x=one_hundred_satisfy, y=cdf_one_hundred, color="100% satisfaction")) +
   geom_line(data=cdf_ninety, aes(x=ninety_satisfy, y=cdf_ninety, color="90% satisfaction")) +
   xlab('Inventory Size') +
-  ylab('Percent of Users Satisfied')
+  ylab('Percent of Users Satisfied') + 
+  geom_vline(aes(xintercept = 3000), linetype = "dashed")
   
 ```
