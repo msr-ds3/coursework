@@ -35,6 +35,10 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings |> 
+  ggplot(aes(x = rating)) +
+  geom_histogram(bins = 20) +
+  scale_y_continuous(label = comma)
 ```
 
 ## Per-movie stats
@@ -42,16 +46,37 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings |> 
+  group_by(movie_id) |> 
+  summarise(num_ratings = n(),
+            mean_ratings = mean(rating))
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+ratings |> 
+  group_by(movie_id) |> 
+  summarise(num_ratings = n()) |> 
+  ggplot(aes(x = num_ratings)) +
+  geom_histogram() +
+  scale_x_log10()
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+ratings |> 
+  group_by(movie_id) |> 
+  summarise(mean_ratings = mean(rating)) |> 
+  ggplot(aes(x = mean_ratings)) +
+  geom_histogram()
+ratings |> 
+  group_by(movie_id) |> 
+  summarise(mean_ratings = mean(rating)) |> 
+  ggplot(aes(x = mean_ratings)) +
+  geom_density(fill = "gray", alpha = .3)
+  
 ```
 
 ```{r cdf-movie-pop}
@@ -60,6 +85,15 @@ head(ratings) %>% kable()
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
 # plot the CDF of movie popularity
+ratings |> 
+  group_by(movie_id) |> 
+  summarise(num_ratings = n()) |> 
+  arrange(desc(num_ratings)) |>
+  mutate(rank = row_number()) |>  
+  mutate(frac_ratings = cumsum(num_ratings)/sum(num_ratings)) |>
+  ggplot(aes(x = rank, y = frac_ratings)) +
+  geom_line() +
+  labs(x = "Rank", y = "Cumulative Probability")
 ```
 
 
@@ -67,11 +101,21 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings |> 
+  group_by(user_id) |> 
+  summarise(num_ratings = n(),
+            mean_ratings = mean(rating))
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings |> 
+  group_by(user_id) |> 
+  summarise(num_ratings = n()) |> 
+  ggplot(aes(x = num_ratings)) +
+  geom_histogram() +
+  scale_x_log10()
 ```
 
 # Anatomy of the long tail
@@ -91,4 +135,44 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+ratings_by_user_movie <- ratings |> 
+  group_by(user_id) |> 
+  group_by(movie_id) 
+
+movie_popularity <- ratings |> 
+  group_by(movie_id) |> 
+  summarise(num_ratings = n()) |> 
+  arrange(desc(num_ratings)) |>
+  mutate(rank = row_number())
+
+ratings_user_movie_pop <- ratings_by_user_movie |> 
+  left_join(movie_popularity) |> 
+  select(user_id, movie_id, rank)
+
+hundred <- ratings_user_movie_pop |> 
+  group_by(user_id) |> 
+  mutate(least_pop = max(rank)) |> 
+  summarise(satisfied = mean(least_pop)) |> 
+  arrange(satisfied) |>
+  group_by(satisfied) |> 
+  summarise(count_satisfied = n()) |> 
+  mutate(frac_satisfied = cumsum(count_satisfied)/sum(count_satisfied))
+
+
+ninety <- ratings_user_movie_pop |> 
+  group_by(user_id) |> 
+  arrange(rank, .by_group = TRUE) |>
+  mutate(ninety_satisfied = rank[as.integer(n()*.9)]) |>
+  summarise(satisfied = mean(ninety_satisfied)) |> 
+  arrange(satisfied) |>
+  group_by(satisfied) |> 
+  summarise(count_satisfied = n()) |> 
+  mutate(frac_satisfied = cumsum(count_satisfied)/sum(count_satisfied)) 
+
+ggplot(hundred, aes(x = satisfied, y = frac_satisfied)) +
+  geom_line() + 
+  geom_line(data = ninety) +
+  labs(x = "Inventory Size", y = "Percent of Users Satisfied")
+
 ```
