@@ -35,6 +35,12 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+
+ratings %>%
+  group_by( rating ) %>%
+  ggplot( aes(x = rating) ) +
+  geom_histogram( bins = 10 ) +
+  labs(x = "Rating", y = "Number of Ratings")
 ```
 
 ## Per-movie stats
@@ -42,16 +48,35 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+
+ratings %>%
+  group_by( movie_id ) %>%
+  summarize( count = n(), mean(rating) )
 ```
 
 ```{r dist-movie-popularity}
-# plot distribution of movie popularity (= number of ratings the movie received)
+# plot distribution of movie popularity ( = number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+
+ratings %>%
+  group_by( movie_id ) %>%
+  summarize(count = n()) %>%
+  arrange(count) %>%
+  ggplot( aes(x = count) )  +
+  geom_histogram() +
+  labs(x = "Number of Ratings", y = "Movies with that Rating") +
+  scale_x_log10()
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+ratings %>%
+  group_by( movie_id ) %>%
+  summarize( m = mean(rating) ) %>%
+  ggplot( aes( x = m ) ) +
+  geom_histogram(bins = 50)
 ```
 
 ```{r cdf-movie-pop}
@@ -59,7 +84,17 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+cumsum_by_movie <-
+  ratings %>%
+  group_by( movie_id ) %>%
+  summarize( num_ratings = n()) %>%
+  arrange( desc(num_ratings) ) %>%
+  mutate( frac = num_ratings/nrow(ratings), csum = cumsum(frac), rank = row_number() )
+  
 # plot the CDF of movie popularity
+cumsum_by_movie %>%
+  ggplot( aes(x = rank, y = csum) ) +
+  geom_line()
 ```
 
 
@@ -67,16 +102,70 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings %>%
+  group_by( user_id ) %>%
+  summarize( num_ratings = n(), avg_rating = mean(rating) )
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings %>%
+  group_by( user_id ) %>%
+  summarize( num_ratings = n() ) %>%
+  ggplot( aes(x = num_ratings) ) +
+  geom_histogram() + 
+  scale_x_log10() +
+  labs(x = "User Activity (num-ratings)", y = "Count")
 ```
 
 # Anatomy of the long tail
 
 ```{r long-tail}
+
+ratings %>%
+  group_by(user_id) %>%
+  summarize( num_ratings = n() ) %>%
+  filter( num_ratings >= 10 ) %>%
+  ungroup()
+
+ranks <-
+  ratings %>%
+  group_by( movie_id ) %>%
+  summarize( num_ratings = n()) %>%
+  arrange( desc(num_ratings) ) %>%
+  mutate( rank = row_number() )
+
+ratings_with_rank <-
+  left_join(ratings, ranks) %>%
+  arrange( user_id, rank )
+
+# a dataframe with the 100% satified and 90% satisfied rank for each user
+user_sat <-
+  ratings_with_rank %>%
+  group_by( user_id ) %>%
+  summarize( hundred = max( rank ), ninety = rank[floor(n() * 0.9)] )
+
+plot100 <- user_sat%>%
+  group_by(hundred)%>%
+  summarize(user_satisfied = n())%>%
+  arrange(desc(user_satisfied))%>%
+  mutate(inventory = row_number(), frac_user_satisfied = cumsum(user_satisfied)/sum(user_satisfied))
+
+plot90 <- user_sat%>%
+  group_by(ninety)%>%
+  summarize(user_satisfied = n())%>%
+  arrange(desc(user_satisfied))%>%
+  mutate(inventory = row_number(), frac_user_satisfied = cumsum(user_satisfied)/sum(user_satisfied))
+
+ggplot() +
+  geom_line( data = plot100, aes(x = inventory, y = frac_user_satisfied) ) +
+  geom_line( data = plot90, aes(x = inventory, y = frac_user_satisfied) ) +
+  labs(title = 'CDF of User Satisfied') +
+  xlab('Inventory') +
+  ylab('Fraction User Satisfied')
+
+
 # generate the equivalent of figure 2a of this paper:
 # note: don't worry about the "null model" lines
 # just do the solid lines and dotted line (optional)

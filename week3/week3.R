@@ -106,3 +106,8 @@ y_hat <- predict( model, trips_test )
 
 err <- sqrt( mean( (y_hat - trips_test$num_trips) ^ 2 ) )
 se <- sd(trips_test$num_trips) / sqrt(nrow(trips_test))
+
+
+cars <-read.csv("cars.csv")
+
+sd(cars$price, na.rm = T)
