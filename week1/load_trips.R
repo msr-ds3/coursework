@@ -1,7 +1,7 @@
 library(dplyr)
 library(readr)
 
-setwd("C:/Users/yino/coursework/week1")
+setwd("C:/Users/yino/coursework/week3")
 
 # define a function to turn strings into datetimes
 parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {

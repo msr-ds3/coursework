@@ -22,3 +22,337 @@ smaller %>%
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
 ```
+
+```{r}
+ magnets <- read.csv("magnets.csv")
+```
+
+```{r}
+summary(magnets)
+
+```
+```{r}
+mean(magnets$change[1:29])
+```
+
+```{r}
+mean(magnets$change[30:50])
+```
+```{r}
+sd(magnets$change[1:29])
+```
+
+```{r}
+sd(magnets$change[30:50])
+```
+```{r}
+boxplot(magnets$change[1:29])
+boxplot(magnets$change[30:50])
+```
+```{r}
+
+mu <- 3
+sig <- sqrt(2)
+X.bar <- rep(0,10^5)
+X.med <- rep(0,10^5)
+for(i in 1:10^5)
+{
+X <- rnorm(100,mu,sig)
+X.bar[i] <- mean(X)
+X.med[i] <- median(X)
+}
+
+```
+
+```{r}
+
+mean(X.bar)
+mean(X.med)
+```
+```{r}
+var(X.bar)
+var(X.med)
+```
+```{r}
+
+mu <- 0.5
+sig <- 5.5
+X.bar <- rep(0,10^5)
+X.med <- rep(0,10^5)
+for(i in 1:10^5)
+{
+X <- runif(100,mu,sig)
+X.bar[i] <- mean(X)
+X.med[i] <- median(X)
+}
+
+```
+```{r}
+mean(X.bar)
+```
+```{r}
+mean(X.med)
+```
+```{r}
+var(X.bar)
+var(X.med)
+```
+
+```{r}
+?rnorm
+```
+
+```{r}
+ ex2 <- read.csv("ex2.csv")
+```
+```{r}
+summary(ex2)
+```
+```{r}
+
+ex2 %>%
+  group_by(group) %>%
+  summarise(total = n())
+
+```
+
+```{r}
+ex2 %>%
+  group_by(group) %>%
+  summarise(total = n()) %>%
+  pivot_wider(names_from = group, values_from = total) %>%
+  mutate(ratio = HIGH / (HIGH + LOW + NORMAL))
+```
+
+```{r}
+ pop2 <- read.csv("pop2.csv")
+```
+```{r}
+summary(ex2)
+```
+
+```{r}
+
+pop2 %>%
+  group_by(group) %>%
+  summarise(total = n()) %>%
+  pivot_wider(names_from = group, values_from = total) %>%
+  mutate(ratio = HIGH / (HIGH + LOW + NORMAL))
+
+```
+```{r}
+ex2 %>%
+  group_by(group) %>%
+  summarise(total = n()) %>%
+  pivot_wider(names_from = group, values_from = total) %>%
+  mutate(ratio = HIGH / (HIGH + LOW + NORMAL))
+```
+
+```{r}
+X <- rep(0 , 10^5)
+for (i in 1:10^5){
+  X_hat <- sample(ex2$group, 150)
+  X[i] <- mean(X_hat == "HIGH")
+}
+
+mean(X)
+var(X)
+
+```
+
+
+```{r}
+run_experiment <- function(pa, pb, n, alpha) {
+  na <- sum(rbinom(n, 1, pa))
+  nb <- sum(rbinom(n, 1, pb))
+  test <- prop.test(x = c(na, nb), n = c(n, n), alternative="greater", conf.level = alpha)
+  test$p.value < alpha
+}
+
+compute_power <- function(pa, pb, n, alpha, r = 1000) {
+  mean(replicate(r, run_experiment(pa, pb, n, alpha)))
+}
+
+pa <- 0.5
+pb <- 0.6
+alpha <- 0.05
+
+N <- seq(100,1000, by = 100)
+pow <- c()
+for (n in N) {
+  pow <- c(pow, compute_power(pa, pb, n, alpha))
+}
+```
+```{r}
+ggplot(data.frame(N, pow), aes(x = N, y = pow)) +
+  geom_smooth(color = "gray") +
+  geom_point()
+```
+```{r}
+run_experiment <- function(pa, pb, n, alpha) {
+  na <- sum(rbinom(n, 1, pa))
+  nb <- sum(rbinom(n, 1, pb))
+  test <- prop.test(x = c(na, nb), n = c(n, n), alternative="greater")
+  test$p.value < alpha
+}
+
+compute_power <- function(pa, pb, n, alpha, r = 1000) {
+  mean(replicate(r, run_experiment(pa, pb, n, alpha)))
+}
+
+pa <- 0.5
+pb <- 0.6
+alpha <- 0.05
+
+N <- seq(100, 1000, by = 100)
+pow <- c()
+for (n in N) {
+  pow <- c(pow, compute_power(pa, pb, n, alpha))
+}
+
+library(ggplot2)
+ggplot(data.frame(N, pow), aes(x = N, y = pow)) +
+  geom_smooth(color = "gray") +
+  geom_point()
+
+```
+```{r}
+
+
+body <- read.table("C:/Users/Yino/coursework/week2/body.dat.txt", header = TRUE, sep = "", stringsAsFactors = FALSE)
+
+
+model <- lm(X65.6 ~ X174.0, data = body)
+
+model_summary <- summary(model)
+coefficients <- model_summary$coefficients
+
+print(coefficients)
+
+
+```
+```{r}
+baby <- read.table("C:/Users/Yino/coursework/week2/babyweights.txt", header = TRUE, sep = "", stringsAsFactors = FALSE)
+
+#6.1
+
+model_smoke <- lm(bwt ~ smoke, data = baby)
+
+summary(model_smoke)
+
+coefficients_smoke <- summary(model_smoke)$coefficients
+
+print(coefficients_smoke)
+
+#6.2
+
+model_parity <- lm(bwt ~ parity, data = baby)
+
+summary(model_parity)
+
+coefficients_parity <- summary(model_parity)$coefficients
+
+print(coefficients_parity)
+
+#6.3
+model_full <- lm(bwt ~ gestation + parity + age + height + weight + smoke, data = baby)
+
+summary(model_full)
+
+coefficients_full <- summary(model_full)$coefficients
+
+
+print(coefficients_full)
+
+
+first_observation <- baby[1, ]
+predicted_bwt_first <- predict(model_full, newdata = first_observation)
+residual_first <- first_observation$bwt - predicted_bwt_first
+print(residual_first)
+
+r_squared <- summary(model_full)$r.squared
+adjusted_r_squared <- summary(model_full)$adj.r.squared
+print(r_squared)
+print(adjusted_r_squared)
+
+
+
+```
+```{r}
+Boston <- read.csv("C:/Users/Yino/coursework/week2/Boston.csv")
+lm(medv ~ lstat + age, data = Boston)
+
+```
+```{r}
+
+library(tidyverse)
+library(scales)
+library(modelr)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+```{r}
+
+trips_per_day <- read_tsv('C:/Users/yino/coursework/week3/trips_per_day.tsv')
+head(trips_per_day)
+```
+```{r}
+
+ggplot(trips_per_day, aes(x = tmin, y = num_trips)) +
+  geom_point() +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+     
+```
+```{r}
+
+set.seed(42)
+
+num_days <- nrow(trips_per_day)
+frac_train <- 0.8
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set 
+ndx <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_train <- trips_per_day[ndx, ]
+
+# used to evaluate the fit
+trips_per_day_validate <- trips_per_day[-ndx, ]
+```
+
+```{r}
+
+# fit a model for each polynomial degree
+K <- 1:20
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+    
+    # evaluate on the training data
+    train_err[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+}
+```
+
+```{r}
+
+plot_data <- data.frame(K, train_err, validate_err) %>%
+  gather("split", "error", -K)
+
+ggplot(plot_data, aes(x=K, y=error, color=split)) +
+  geom_line() +
+  scale_x_continuous(breaks=K) +
+  xlab('Polynomial Degree') +
+  ylab('RMSE')
+```
+
