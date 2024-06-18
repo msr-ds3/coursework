@@ -1,3 +1,4 @@
+
 ---
 title: "Movielens"
 date: '`r Sys.time()`'
@@ -29,12 +30,21 @@ ratings <- read_csv('ratings.csv',
 Loaded `r format(object.size(ratings), units="Mb")` of ratings data, containing `r format(nrow(ratings), big.mark = ",")` ratings. Here's a preview:
 ```{r preview-data}
 head(ratings) %>% kable()
+ratings <- ratings |>  select(1:3)
 ```
 
 # Summary statistics
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings |> 
+  arrange(rating) |> 
+  ggplot(aes(rating)) + 
+  geom_histogram() +
+  scale_y_continuous(label = comma) +
+  xlab("Rating") +
+  ylab("Number of Ratings") +
+  ggtitle("Number of each rating given")
 ```
 
 ## Per-movie stats
@@ -42,16 +52,37 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+count_and_avg_rating <- ratings |> 
+  arrange(movie_id) |> 
+  group_by(movie_id) |> 
+  summarize(number_of_ratings = n(), avg = mean(rating))
+
+count_and_avg_rating
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+
+count_and_avg_rating |> 
+  ggplot(aes(number_of_ratings)) + 
+  geom_histogram() + 
+  scale_x_log10(label = comma) +
+  xlab("Number of Ratings") +
+  ylab("Number of movies") +
+  ggtitle("Movie popularity distribution")
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+count_and_avg_rating |> 
+  ggplot(aes(avg)) + 
+  geom_histogram() +
+  xlab("Ratings") +
+  ylab("Number of movie with rating") +
+  ggtitle("Movie mean rating distribution")
 ```
 
 ```{r cdf-movie-pop}
@@ -59,7 +90,21 @@ head(ratings) %>% kable()
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
+popularity <- count_and_avg_rating|> 
+  mutate(pop=number_of_ratings/sum(number_of_ratings), ranking=rank(-pop, ties.method="random")) |> 
+  arrange(ranking, decesnding=FALSE) |>  mutate(cumulative=cumsum(pop))
+
+popularity 
+
 # plot the CDF of movie popularity
+
+popularity |> 
+  ggplot(aes(ranking, cumulative)) + 
+  geom_line() + 
+  xlab("Ranking") + 
+  ylab("CDF (%)") +
+  ggtitle("Cumulative distribution function")
+
 ```
 
 
@@ -67,11 +112,25 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+user_movies <- ratings |> 
+  arrange(user_id) |> 
+  group_by(user_id) |> 
+  summarize(number_of_ratings = n(), avg_rating = mean(rating))
+
+user_movies
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+
+user_movies |> 
+  ggplot(aes(number_of_ratings)) + 
+  geom_histogram() +
+  scale_x_log10(label = comma) +
+  xlab("Ratings") +
+  ylab("Number of users") +
+  ggtitle("User activity distribution")
 ```
 
 # Anatomy of the long tail
@@ -91,4 +150,27 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+hundo <- ratings |> 
+  group_by(user_id) |> 
+  full_join(popularity) |> 
+  summarize(least_pop=max(ranking)) |> 
+  arrange(least_pop) |>  
+  group_by(least_pop) |>  
+  summarize(count=n()) |> mutate(perc=cumsum(count)/sum(count)) |> select(least_pop, perc)
+
+ninety <- ratings |> 
+  group_by(user_id) |> 
+  inner_join(popularity) |> 
+  summarize(nine=ceiling(quantile(ranking, .9))) |> 
+  arrange(nine) |> group_by(nine) |> summarize(count=n()) |> 
+  mutate(perc=cumsum(count)/sum(count)) 
+
+ggplot() + 
+  geom_line(aes(x=hundo$least_pop, y=hundo$perc), color="red") +
+  geom_line(aes(x=ninety$nine, y=ninety$perc), color="blue") +
+  ggtitle("The Long Tail") +
+  ylab("Satisfaction (%)") +
+  xlab("Inventory")
 ```
+
