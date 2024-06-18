@@ -13,6 +13,7 @@ output:
 library(scales)
 library(tidyverse)
 library(knitr)
+library(ggplot2)
 
 # set plot theme
 theme_set(theme_bw())
@@ -22,7 +23,7 @@ theme_set(theme_bw())
 
 Read data from the `ratings.csv` file
 ```{r load-data}
-ratings <- read_csv('ratings.csv',
+ratings <- read_csv('C:/Users/jane/Downloads/ratings.csv',
                     col_names = c('user_id','movie_id','rating','timestamp'))
 ```
 
@@ -35,6 +36,11 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings%>%
+  group_by(rating)%>%
+  ggplot(aes(x=rating)) + geom_histogram(bins = 10) + 
+  labs(title = 'Distribution of Rating values')
+
 ```
 
 ## Per-movie stats
@@ -42,16 +48,34 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings%>%
+  group_by(movie_id)%>%
+  summarize(mean_rating = mean(rating), 
+            count = n())
+
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+ratings%>%
+  group_by(movie_id)%>%
+  summarize(count = n())%>%
+  arrange(desc(count))%>%
+  ggplot(aes(x=count)) + geom_histogram() + xlab('Number of Ratings') + ylab('Number of Movies') + labs(title = 'Distribution of Movie Popularity') + scale_x_log10()
+            
+
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+
+ratings%>%
+  group_by(movie_id)%>%
+  summarize(mean_rating = mean(rating))%>%
+  ggplot(aes(x= mean_rating)) + geom_density(fill = 'grey') + xlab('Mean Ratings by Movie') + ylab('Density') + labs(title = 'Distribution of Mean Ratings by Movie') 
+
 ```
 
 ```{r cdf-movie-pop}
@@ -60,6 +84,15 @@ head(ratings) %>% kable()
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
 # plot the CDF of movie popularity
+ratings_by_movie <- ratings%>%
+  group_by(movie_id)%>%
+  summarize(num_ratings = n())%>%
+  arrange(desc(num_ratings))%>%
+  mutate(rank = row_number(), frac_ratings = cumsum(num_ratings)/sum(num_ratings))
+  
+ratings_by_movie%>%
+  ggplot(aes(x = rank, y = frac_ratings)) + geom_line() + labs(title = 'CDF of Movie Popularity') + xlab('Rank') + ylab('Fraction Ratings')
+
 ```
 
 
@@ -67,11 +100,20 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings%>%
+  group_by(user_id)%>%
+  summarize(mean_rating = mean(rating), 
+            count = n())
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings%>%
+  group_by(user_id)%>%
+  summarize(mean_rating = mean(rating), 
+            count = n())%>%
+  ggplot(aes(x = count)) + geom_histogram() + scale_x_log10() + labs(title = 'Distribution of User Activity') + xlab('Number of Ratings') + ylab('Number of Users')
 ```
 
 # Anatomy of the long tail
@@ -91,4 +133,45 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+#filtered_ratings <- ratings%>%
+   #group_by(user_id)%>%
+   #summarize(num_ratings = n())%>%
+  #filter(num_ratings >= 10)
+
+rank_by_users <- left_join(ratings_by_movie, ratings) %>%
+    select(user_id, movie_id, rank) %>%
+    arrange(user_id)
+
+#find 100%
+user_satisfaction <- rank_by_users%>%
+  group_by(user_id)%>%
+  summarize(hundred = max(rank), ninety = floor(quantile(rank, 0.9, type =3)))
+
+
+plot100_cutoff <- user_satisfaction%>%
+  group_by(hundred)%>%
+  summarize(num_satisfied = n())%>%
+  arrange(hundred)%>%
+  mutate(inventory = row_number(), frac_user_satisfied100 = cumsum(num_satisfied)/sum(num_satisfied))
+
+plot90_cutoff <- user_satisfaction%>%
+  group_by(ninety)%>%
+  summarize(num_satisfied = n())%>%
+  arrange(ninety)%>%
+  mutate(inventory = row_number(), frac_user_satisfied90 = cumsum(num_satisfied)/sum(num_satisfied))
+  
+ggplot() + 
+  geom_line(data = plot100_cutoff, aes(x = hundred, y = frac_user_satisfied100)) + 
+  geom_line(data = plot90_cutoff, aes(x = ninety, y = frac_user_satisfied90)) +
+   xlab('Inventory') + ylab('Fraction User Satisfied')
+
 ```
+
+
+
+
+
+
+
+
