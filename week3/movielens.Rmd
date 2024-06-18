@@ -139,21 +139,23 @@ user_sat <- # a dataframe with the 100% satisfied and 90% satisfied rank for eac
   group_by( user_id ) %>%
   summarize( hundred = max( rank ), ninety = quantile(rank, 0.9, type = 3) )
 
-plot100 <- user_sat %>%
+
+
+plot100_cutoff <- user_sat %>%
   group_by(hundred) %>% 
   summarize(num_satisfied = n()) %>%
-  arrange(desc(num_satisfied)) %>%
+  arrange(hundred) %>%
   mutate(inventory = row_number(), frac_user_satisfied = cumsum(num_satisfied)/sum(num_satisfied))
 
-plot90 <- user_sat %>%
+plot90_cutoff <- user_sat %>%
   group_by(ninety) %>%
   summarize(num_satisfied = n()) %>%
-  arrange(desc(num_satisfied)) %>%
+  arrange(ninety) %>%
   mutate(inventory = row_number(), frac_user_satisfied = cumsum(num_satisfied)/sum(num_satisfied))
 
 ggplot() +
-  geom_line( data = plot100, aes(x = inventory, y = frac_user_satisfied) ) +
-  geom_line( data = plot90, aes(x = inventory, y = frac_user_satisfied) ) +
+  geom_line( data = plot100_cutoff, aes(x = hundred, y = frac_user_satisfied) ) +
+  geom_line( data = plot90_cutoff, aes(x = ninety, y = frac_user_satisfied) ) +
   labs(title = 'CDF of User Satisfied') +
   xlab('Inventory') +
   ylab('Fraction User Satisfied')
