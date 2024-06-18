@@ -20,7 +20,7 @@ theme_set(theme_bw())
 
 # Load and preview data
 
-Read data from the `ratings.csv` file
+#Read data from the `ratings.csv` file
 ```{r load-data}
 ratings <- read_csv('ratings.csv',
                     col_names = c('user_id','movie_id','rating','timestamp'))
@@ -35,6 +35,11 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings %>% 
+  group_by(rating) %>% 
+  ggplot() +
+  geom_histogram(aes(x=rating)) + 
+  scale_y_continuous(label = comma)
 ```
 
 ## Per-movie stats
@@ -42,16 +47,31 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings %>%
+  group_by(movie_id) %>%
+  summarize(mean_rating = mean(rating), num_rating = n())
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+ratings %>%
+  group_by(movie_id) %>%
+  ggplot(aes(x=movie_id)) + 
+  geom_histogram() + 
+  scale_x_log10(label=comma)
+  
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+ratings %>% 
+  group_by(movie_id) %>%
+  summarize(avg_rating = mean(rating)) %>%
+  ggplot(aes(x=avg_rating)) +
+  geom_density(fill="black")
+  
 ```
 
 ```{r cdf-movie-pop}
@@ -60,6 +80,16 @@ head(ratings) %>% kable()
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
 
 # plot the CDF of movie popularity
+ratings %>%
+  group_by(movie_id) %>%
+  summarize(num_ratings = n()) %>% 
+  arrange(desc(num_ratings)) %>%
+  mutate(cum_sum = cumsum(num_ratings), percentile=cum_sum/max(cum_sum), rank = rank(desc(num_ratings))) %>%
+  ggplot(aes(x=rank, y=percentile)) + 
+  geom_line() + 
+  geom_vline(xintercept=3000, linetype=3)
+  
+  
 ```
 
 
@@ -67,11 +97,20 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings %>%
+  group_by(user_id) %>%
+  summarize(num_ratings = n(), avg_rating = mean(rating))
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings %>%
+  group_by(user_id) %>%
+  ggplot(aes(x=user_id)) %>% +
+  geom_histogram() + 
+  scale_y_continuous() +
+  scale_x_log10()
 ```
 
 # Anatomy of the long tail
@@ -91,4 +130,39 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+    
+ranks <- ratings %>%
+  group_by(movie_id) %>%
+  summarize(num_ratings = n()) %>% 
+  arrange(desc(num_ratings)) %>%
+  mutate(cum_sum = cumsum(num_ratings), percentile=cum_sum/max(cum_sum), movie_rank = rank(desc(num_ratings)))
+ 
+table_100 <- ratings %>%
+    inner_join(ranks, join_by(movie_id)) %>%
+    group_by(user_id) %>%
+    filter(n() > 10) %>%
+    summarize(max_rank = max(movie_rank)) %>%
+    arrange(max_rank) %>%
+    mutate(user_rank = rank(max_rank, ties.method="max")) %>%
+    mutate(satisfied = user_rank/max(user_rank))
+ 
+table_90 <- ratings %>%
+    inner_join(ranks, join_by(movie_id)) %>%
+    group_by(user_id) %>%
+    filter(n() > 10) %>%
+    group_by(user_id) %>%
+    arrange(movie_rank) %>%
+    mutate(row_num = row_number()) %>%
+    mutate(position = (ceiling(n() *.9))) %>%
+    filter(row_num == position) %>% 
+    arrange(movie_rank) %>%
+    subset(select=c(movie_id, movie_rank)) %>%
+    mutate(user_rank = rank(movie_rank, ties.method="max")) %>%
+    mutate(satisfied = user_rank/max(user_rank))
+
+ 
+ggplot() +
+  geom_line(data = table_90, aes(x=movie_rank, y=satisfied), colour = "red") +
+  geom_line(data = table_100, aes(x=max_rank, y=satisfied), colour = "blue")
 ```
