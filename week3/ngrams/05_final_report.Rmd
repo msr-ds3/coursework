@@ -1,7 +1,7 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Your Name (your uni)"
-date: '`r Sys.time()`'
+author: "Smriti Karki"
+date: '6/20/2024'
 output:
   html_document:
     toc: yes
@@ -12,6 +12,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+
 library(here)
 library(scales)
 library(tidyverse)
@@ -52,7 +53,11 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
-
+  totals <- read.csv("total_counts.csv", header = FALSE)
+  colnames(totals) <- c("year", "total_volume", "page_count", "book_count")
+  
+  years <- read.delim("years_count.tsv", sep="\t")
+  colnames(years) <- c("term", "year", "volume", "book_count")
 
 ```
 
