@@ -4,3 +4,5 @@
 #   decompress the first using gunzip, zless, zcat or similar
 #   then filter out rows that match using grep -E, egrep, awk, or similar
 #   write results to year_counts.tsv
+
+gunzip -c one_gram_file | grep -E '\b1[89][0-9]{2}\b|\b20[0-9]{2}\b' > year_counts.tsv
