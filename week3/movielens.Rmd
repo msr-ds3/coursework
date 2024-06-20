@@ -156,7 +156,7 @@ rating_satisfy_100 <- ratings %>%
   group_by(inventory) %>%
   summarise(num_people = n()) %>%
   arrange(inventory) %>%
-  mutate(cum_satisfy_100 = (cumsum(num_people)/ sum(num_people)))
+  mutate(cum_satisfy_100 = (cumsum(num_people)/ sum(num_people))) 
 
   
 ratings %>%
@@ -169,8 +169,9 @@ ratings %>%
   summarise(num_people = n()) %>%
   arrange(inventory) %>%
   mutate(cum_satisfy_90 = (cumsum(num_people)/ sum(num_people))) %>% 
-  full_join(rating_satisfy_100, by = "inventory") %>% 
-  pivot_longer(starts_with("cum_satis"), names_to = "satisfy_level", values_to = "percentage",     values_drop_na = T) %>%
+  full_join(rating_satisfy_100, by = "inventory") %>%
+  pivot_longer(starts_with("cum_satis"), names_to = "satisfy_level", values_to = "percentage",     values_drop_na = T) %>% 
+    view()
   ggplot(aes(x= inventory, y = percentage, color = satisfy_level)) +
   geom_line()+
   geom_vline(aes(xintercept = 3000), linetype = "dashed")+

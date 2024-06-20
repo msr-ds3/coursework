@@ -53,6 +53,19 @@ Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` fun
 
 ```{r load-counts}
 
+year_counts <- read_tsv(here("C:/Users/yino/coursework/week3/ngrams/year_counts.tsv"), col_names = c("term", "year", "volume", "book_count"))
+total_counts <- read_csv(here("C:/Users/yino/coursework/week3/ngrams/total_counts.csv"), col_names = c("year", "total_volume", "page_count", "book_count"), col_types = cols(
+  year = col_integer(),
+  total_volume = col_double(),
+  page_count = col_double(),
+  book_count = col_double()
+))
+
+# Print total number of lines
+nrow(year_counts)
+nrow(total_counts)
+
+
 
 ```
 
@@ -70,6 +83,22 @@ Join the raw year term counts with the total counts and divide to get a proporti
 
 ```{r join-years-and-totals}
 
+# integers
+year_counts$year <- as.integer(year_counts$year)
+total_counts$year <- as.integer(total_counts$year)
+
+# Check for common years between the two datasets
+common_years <- intersect(year_counts$year, total_counts$year)
+length(common_years)
+
+# Perform the inner join
+data <- year_counts %>%
+  inner_join(total_counts, by = "year") %>%
+  mutate(proportion = volume / total_volume)
+
+# Check the joined data
+head(data)
+
 
 ```
 
@@ -78,6 +107,19 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
+
+data_filtered <- data %>% 
+  filter(term %in% c("1883", "1910", "1950") & year >= 1875)
+
+ggplot(data_filtered, aes(x = year, y = proportion, color = factor(term))) +
+  geom_line() +
+  scale_y_continuous(labels = percent) +
+  scale_color_manual(values = c("1883" = "darkblue", "1910" = "darkgreen", "1950" = "red"))+
+  labs(title = "Usage Trajectories for Specific Years",
+       x = "Year",
+       y = "Frequency")+ scale_x_continuous(breaks=seq(1875,2000,by=25))
+
+
 
 ```
 
@@ -96,7 +138,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 ## Your written answer
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-
+![](3a.png)
 
 # Part D
 
@@ -108,6 +150,12 @@ Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850
 
 ```{r plot-raw-mentions-over-time}
 
+ggplot(data_filtered, aes(x = year, y = volume, color = factor(term))) +
+  geom_line() +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Raw Mentions for Specific Years",
+       x = "Year",
+       y = "Raw Mentions")
 ```
 
 # Part E
@@ -121,6 +169,13 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
+ggplot(total_counts, aes(x = year, y = total_volume)) +
+  geom_line() +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Total Counts Over Time",
+       x = "Year",
+       y = "Total Volume")
+
 
 ```
 
@@ -138,6 +193,16 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 
 ```{r compute-peaks}
 
+data <- data %>%
+  filter(year >= 1875 & year <= 1975)
+
+
+peak_mentions <- data %>%
+  group_by(term) %>%
+  summarize(peak_year = year[which.max(proportion)],
+            peak_proportion = max(proportion, na.rm = TRUE))
+
+
 ```
 
 ## Compute half-lifes
@@ -145,6 +210,26 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+
+half_lifes <- data %>%
+  inner_join(peak_mentions, by = "term") %>%
+  group_by(term) %>%
+  summarize(
+    peak_year = unique(peak_year),
+    peak_proportion = unique(peak_proportion),
+    half_life = {
+      half_year <- year[proportion <= (peak_proportion / 2) & year > peak_year]
+      if (length(half_year) > 0) {
+        min(half_year) - peak_year
+      } else {
+        NA  
+      }
+    }
+  ) %>%
+  filter(!is.na(half_life), peak_year >= 1875 & peak_year <= 1975)
+
+
+
 
 ```
 
@@ -154,6 +239,24 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
+
+clean_half_lifes <- half_lifes %>%
+  filter(is.finite(half_life))
+
+highlight_years <- c(1883, 1910, 1950)
+highlight_data <- clean_half_lifes %>% filter(peak_year %in% highlight_years)
+
+ggplot(clean_half_lifes, aes(x = peak_year, y = half_life)) +
+  geom_point(alpha = 0.5, color = "grey", size = 2) + 
+  geom_point(data = highlight_data, aes(x = peak_year, y = half_life), 
+             color = c("blue", "green", "red"), size = 4) + 
+  geom_smooth(method = "loess", span = 0.5, se = FALSE, color = "black", size = 1) + 
+  labs(title = "Half-life Over Time",
+       x = "Year",
+       y = "Half-life (yrs)") +
+  theme_minimal() +
+  ylim(0, 40) +  
+  scale_x_continuous(breaks = seq(1875, 1975, 25))  
 
 ```
 
@@ -165,9 +268,23 @@ Write up your answer to Part F here.
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
 
+
+
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+```{r}
+#  outliers
+quickly_forgotten <- clean_half_lifes %>% arrange(half_life) %>% head(5)
+slowly_forgotten <- clean_half_lifes %>% arrange(desc(half_life)) %>% head(5)
+
+quickly_forgotten
+slowly_forgotten
+
+```
+Quickly Forgotten Years might correspond to minor events. For example, years during periods of relative stability or minor political changes might be forgotten more rapidly.
+Slowly Forgotten Years: These years could correspond to major historical events that had long-lasting impacts. For example, years with significant wars or revolutions tend to have a longer-lasting impact.
 
 # Makefile
 
