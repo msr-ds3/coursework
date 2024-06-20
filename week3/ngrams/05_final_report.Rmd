@@ -53,12 +53,21 @@ Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` fun
 
 ```{r load-counts}
 
+year_counts <- read.table("year_counts.tsv", col.names = c("word", "year", "match_count", "volume_count"))
+total_counts <- read_csv("total_counts.csv", col_names = c("year", "match_count", "page_count", "volume_count"))
 
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+``` {r total-lines}
+
+year_counts %>% nrow
+total_counts %>% nrow
+
+```
+
 
 # Part B
 
@@ -70,6 +79,15 @@ Join the raw year term counts with the total counts and divide to get a proporti
 
 ```{r join-years-and-totals}
 
+year_counts %>%
+  left_join(total_counts, by = "year") %>% view
+
+word_freq <-
+  year_counts %>%
+  filter(1850 <= year & year <= 2012) %>%
+  left_join(total_counts, by = "year") %>%
+  mutate(matches = match_count.x, total_of_year = match_count.y, freq = matches / total_of_year) %>%
+  select(word, year, matches, total_of_year, freq)
 
 ```
 
@@ -79,11 +97,16 @@ Plot the proportion of mentions for the terms "1883", "1910", and "1950" over ti
 
 ```{r plot-proportion-over-time}
 
+word_freq %>%
+  filter(word == "1883" | word == "1910" | word == "1950") %>%
+  ggplot(aes(x = year, y = freq, color = as.factor(word))) +
+  geom_line() +
+  labs(x = "Year", y = "Frequency", color = "word")
 ```
 
 ## Your written answer
 
-Write up your answer to Part B here.
+Yes, our graphs produce similar results.
 
 # Part C
 
@@ -97,6 +120,8 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
+`!["freq_1883_1910_1950.png"]`
+
 
 # Part D
 
@@ -107,6 +132,13 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
+
+word_freq %>%
+  filter(word == "1883" | word == "1910" | word == "1950") %>%
+  filter(1850 <= year & year <= 2012) %>%
+  ggplot(aes(x = year, y = matches, color = as.factor(word))) +
+  geom_line() +
+  labs(x = "Year", y = "Frequency", color = "word")
 
 ```
 
@@ -122,11 +154,15 @@ Plot the total counts for each year over time, from 1850 to 2012. Use the `comma
 
 ```{r plot-totals}
 
+word_freq %>%
+  ggplot( aes(x = year, y = total_of_year) ) +
+  geom_line()
+
 ```
 
 ## Your written answer
 
-Write up your answer to Part E here.
+No, although the plots in Part B and D are different, to get the frequency we divide by the total for that year
 
 # Part F
 
@@ -138,6 +174,13 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 
 ```{r compute-peaks}
 
+peak_years <-
+  word_freq %>%
+  filter(1875 <= word & word <= 1975) %>%
+  group_by(word) %>%
+  mutate(peak_year = year[ freq == max(freq) ], peak = max(freq)) %>%
+  arrange(word)
+
 ```
 
 ## Compute half-lifes
@@ -145,6 +188,16 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+years_to_half <-
+  peak_years %>%
+  group_by(word) %>%
+  filter(year > peak_year) %>%
+  mutate( half = peak/2 ) %>%
+  filter(freq < half) %>%
+  arrange(desc(freq)) %>%
+  mutate(diff = year - peak_year) %>%
+  slice_head(n=1) %>%
+  select(word, diff)
 
 ```
 
@@ -154,6 +207,10 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
+years_to_half %>%
+  ggplot(aes(x=word, y=diff)) + 
+  geom_point(alpha = 0.4) +
+  geom_smooth(se = F)
 
 ```
 
