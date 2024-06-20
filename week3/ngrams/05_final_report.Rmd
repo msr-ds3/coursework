@@ -17,7 +17,6 @@ library(scales)
 library(tidyverse)
 
 theme_set(theme_bw())
-
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -61,7 +60,6 @@ total_counts <- read_csv(here("C:/Users/yino/coursework/week3/ngrams/total_count
   book_count = col_double()
 ))
 
-# Print total number of lines
 nrow(year_counts)
 nrow(total_counts)
 
