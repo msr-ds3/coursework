@@ -1,0 +1,199 @@
+---
+title: "Predict Citibikes"
+date: '`r Sys.time()`'
+output:
+  html_document:
+    #code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+Import packages
+```{r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(knitr)
+library(leaps)
+library(boot)
+library(lubridate)
+library(modelr)
+
+# set plot theme
+theme_set(theme_bw())
+```
+
+Load the data from the trips_per_day.tsv file
+```{r load-data}
+trips <- read_tsv('trips_per_day.tsv')
+```
+
+
+After loading the data file, preview the data frame
+```{r preview-data}
+head(trips) %>% kable()
+```
+Add additional features that may be helpful for num_trips predictions
+```{r adding features to the data frame}
+# is_weekend feature is added as a column
+# is_holiday feature is added as a column
+
+holiday_dates <- (c("0101", "0102", "0115", "0116", "0117", "0118", "0119", "0120", "0121", "0215", "0216", "0217", "0218", "0219", "0220", "0525", "0526", "0527", "0528", "0529", "0530", "0703", "0704",  "0901", "0902", "0903", "0904", "0905", "0906", "0907", "1008", "1009", "1010", "1011", "1012", "1013", "1014", "1110", "1111", "1112", "1122", "1123", "1124", "1125", "1126", "1127", "1128", "1225"))
+
+trips <- trips |> 
+  mutate(weekday = wday(ymd, label = TRUE)) |> 
+  mutate(is_weekend = as.numeric(weekday %in% c("Sat", "Sun"), 1, 0)) |> 
+  mutate(is_holiday = as.numeric(substr(date, 5, 8) %in% holiday_dates, 1, 0)) |> 
+  select(-weekday)
+
+trips
+```
+
+
+Splitting data frame into training, validation, and testing set
+```{r split data in training, validation, and test set}
+# 90% of the data for training and validating the model, and 10% for a final test set
+
+num_days <- nrow(trips)
+first_split_percent <- 0.9
+first_split <- floor(num_days * first_split_percent)
+
+# randomly sample rows for the first split
+first_split_sample <- sample(1:num_days, first_split, replace=F)
+
+# 90% treated as complete data frame we can access
+trips_tv <- trips[first_split_sample, ]
+
+# 10% used to test the fit (cannot access until the end)
+trips_test <- trips[-first_split_sample, ]
+```
+
+
+```{r split data into training and validation set}
+# 80% for training, 20% for validation
+
+num_days <- nrow(trips_tv)
+second_split_percent <- 0.8
+second_split <- floor(num_days * second_split_percent)
+
+# randomly sample rows for the second split
+second_split_sample <- sample(1:num_days, second_split, replace=F)
+
+# 80% of data used as training set
+trips_train <- trips_tv[second_split_sample, ]
+
+# 20% of data used as validation set
+trips_validate <- trips_tv[-second_split_sample, ]
+```
+
+
+Using the regsubsets() function, we can determine the best combinations of features for models using k-features.
+```{r use regsubsets to find out the best model from the base features}
+regfit_trips <- regsubsets(num_trips~.-ymd, data = trips_train)
+summary(regfit_trips)
+```
+From the combinations we determined from regsubsets() function, we ran K-folds cross validation to determine which of these models performed the best. 
+```{r run k-folds to determine best model from base features}
+# create k var models based on the method above
+
+cv.error <- rep(0, 8)
+one_var_model <- glm(num_trips ~ tmax, data = trips_train)
+cv.error[1] <- cv.glm(trips_train, one_var_model, K = 10)$delta[1]
+
+two_var_model <- glm(num_trips ~ tmax + prcp, data = trips_train)
+cv.error[2] <- cv.glm(trips_train, two_var_model, K = 10)$delta[1]
+
+three_var_model <- glm(num_trips ~ is_weekend * (tmax + prcp), data = trips_train)
+cv.error[3] <- cv.glm(trips_train, three_var_model, K = 10)$delta[1]
+
+four_var_model <- glm(num_trips ~ is_weekend * (tmax + prcp + snwd), data = trips_train)
+cv.error[4] <- cv.glm(trips_train, four_var_model, K = 10)$delta[1]
+
+five_var_model <- glm(num_trips ~ is_weekend * is_holiday * (tmax + prcp + snwd), data = trips_train)
+cv.error[5] <- cv.glm(trips_train, five_var_model, K = 10)$delta[1]
+
+six_var_model <- glm(num_trips ~ is_weekend * is_holiday * (tmax + prcp + snwd + snow), data = trips_train)
+cv.error[6] <- cv.glm(trips_train, six_var_model, K = 10)$delta[1]
+
+seven_var_model <- glm(num_trips ~ is_weekend * is_holiday * (tmax + prcp + snwd + snow + tmin), data = trips_train)
+cv.error[7] <- cv.glm(trips_train, seven_var_model, K = 10)$delta[1]
+
+eight_var_model <- glm(num_trips ~ is_weekend * is_holiday * (tmax + prcp + snwd + snow + tmin + date), data = trips_train)
+cv.error[8] <- cv.glm(trips_train, eight_var_model, K = 10)$delta[1]
+
+cv.error
+
+min(cv.error) # it seems like the 4-var method performs the best
+
+summary(four_var_model)
+predict(four_var_model, trips_validate)
+trips_validate |> 
+  ggplot(aes(x = predict(four_var_model, trips_validate), y = num_trips)) +
+  geom_point() +
+  geom_abline(linetype = "dashed")
+
+```
+
+After detemining the model that performs the best, we will run K-folds cross validation to determine how increasing the order changes performance.
+```{r run K-folds on higher order polynomials}
+four_var_model <- glm(num_trips ~ is_weekend * (tmax + prcp + snwd), data = trips_train)
+
+cv.error.10 <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(num_trips ~ is_weekend * (poly(tmax, i) + prcp + snwd), data = trips_train)
+  cv.error.10[i] <- cv.glm(trips_train, glm.fit, K = 10)$delta[1] # Run k-fold by specifiying the k value
+}
+cv.error.10
+min(cv.error.10)
+
+
+four_var_fifth_poly_model <- glm(num_trips ~ is_weekend * (poly(tmax, 5) + prcp + snwd), data = trips_train)
+
+trips_validate |> 
+  ggplot(aes(x = predict(four_var_fifth_poly_model, trips_validate), y = num_trips)) +
+  geom_point() +
+  geom_abline(linetype = "dashed")
+```
+
+Another model with the is_weekend group colored
+```{r}
+ggplot(trips_validate, aes(x = predict(four_var_fifth_poly_model, trips_validate), y = num_trips, color = is_weekend)) +
+  geom_point() +
+  geom_abline(linetype = "dashed") +
+  xlab('Predicted') +
+  ylab('Actual')
+```
+
+Plotting the best fit model:
+1. Date of the x-axis and the number of trips of the y-axis, showing the actual values as points and predicted values as a line.
+2. x-axis is the predicted value and the y-axis is the actual value, with each point representing one day
+```{r}
+final_model <- glm(num_trips ~ is_weekend * (poly(tmax, 5) + prcp + snwd), data = trips)
+trips |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=ymd, y=num_trips)) +
+    geom_point() +
+    geom_line(aes(y=pred), color="gold")
+ 
+trips |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=pred, y=num_trips)) +
+    geom_point() +
+    geom_abline(linetype = "dashed", color="gold")
+```
+
+Evaluating the model
+```{r evaluating the final model}
+evaluate_final_model <- function(model, test_data) {
+    # evaluate on the test data
+    sqrt(mean((predict(model, test_data) - test_data$num_trips)^2))
+}
+ 
+evaluate_final_model(final_model, trips_test)
+```
+We got a RMSE of 3274.788. This is not too bad.
+
+Saving the model to our folder
+```{r save the model}
+save(final_model, file="final_model.RData")
+```
