@@ -204,8 +204,8 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-half_life |> ggplot(aes(term, diff)) + 
-  geom_point() + geom_smooth(se=F) + xlab("Year (Term)") + ylab("Half Life")
+half_life |> ggplot(aes(half_year, diff)) + 
+  geom_point() + geom_smooth(se=F) + xlab("Hlaf =-life Year") + ylab("Half Life")
 ```
 
 ## Your written answer
