@@ -14,3 +14,5 @@
 .RDataTmp
 *.RDataTmp
 *googlebooks*
+week3/ngrams/one_gram_file
+week3/ngrams/total_counts_file
