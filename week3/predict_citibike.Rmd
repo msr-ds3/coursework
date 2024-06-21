@@ -1,0 +1,372 @@
+---
+title: "Predicting daily Citibike trips"
+author: "Sami"
+date: "2024-06-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(modelr)
+library(scales)
+# set plot theme
+theme_set(theme_bw())
+```
+
+```{r}
+trip_per_day <- read_tsv('trips_per_day.tsv')
+head(trip_per_day)
+```
+```{r}
+# Provided data as a character string
+data <- "1,2012-01-02,New Year Day
+2,2012-01-16,Martin Luther King Jr. Day
+3,2012-02-20,Presidents Day (Washingtons Birthday)
+4,2012-05-28,Memorial Day
+5,2012-07-04,Independence Day
+6,2012-09-03,Labor Day
+7,2012-10-08,Columbus Day
+8,2012-11-12,Veterans Day
+9,2012-11-22,Thanksgiving Day
+10,2012-12-25,Christmas Day
+11,2013-01-01,New Year Day
+12,2013-01-21,Martin Luther King Jr. Day
+13,2013-02-18,Presidents Day (Washingtons Birthday)
+14,2013-05-27,Memorial Day
+15,2013-07-04,Independence Day
+16,2013-09-02,Labor Day
+17,2013-10-14,Columbus Day
+18,2013-11-11,Veterans Day
+19,2013-11-28,Thanksgiving Day
+20,2013-12-25,Christmas Day
+21,2014-01-01,New Year Day
+22,2014-01-20,Martin Luther King Jr. Day
+23,2014-02-17,Presidents Day (Washingtons Birthday)
+24,2014-05-26,Memorial Day
+25,2014-07-04,Independence Day
+26,2014-09-01,Labor Day
+27,2014-10-13,Columbus Day
+28,2014-11-11,Veterans Day
+29,2014-11-27,Thanksgiving Day
+30,2014-12-25,Christmas Day
+31,2015-01-01,New Year Day
+32,2015-01-19,Martin Luther King Jr. Day
+33,2015-02-16,Presidents Day (Washingtons Birthday)
+34,2015-05-25,Memorial Day
+35,2015-07-03,Independence Day
+36,2015-09-07,Labor Day
+37,2015-10-12,Columbus Day
+38,2015-11-11,Veterans Day
+39,2015-11-26,Thanksgiving Day
+40,2015-12-25,Christmas Day
+41,2016-01-01,New Year Day
+42,2016-01-18,Martin Luther King Jr. Day
+43,2016-02-15,Presidents Day (Washingtons Birthday)
+44,2016-05-30,Memorial Day
+45,2016-07-04,Independence Day
+46,2016-09-05,Labor Day
+47,2016-10-10,Columbus Day
+48,2016-11-11,Veterans Day
+49,2016-11-24,Thanksgiving Day
+50,2016-12-25,Christmas Day
+51,2017-01-02,New Year Day
+52,2017-01-16,Martin Luther King Jr. Day
+53,2017-02-20,Presidents Day (Washingtons Birthday)
+54,2017-05-29,Memorial Day
+55,2017-07-04,Independence Day
+56,2017-09-04,Labor Day
+57,2017-10-09,Columbus Day
+58,2017-11-10,Veterans Day
+59,2017-11-23,Thanksgiving Day
+60,2017-12-25,Christmas Day
+61,2018-01-01,New Year Day
+62,2018-01-15,Martin Luther King Jr. Day
+63,2018-02-19,Presidents Day (Washingtons Birthday)
+64,2018-05-28,Memorial Day
+65,2018-07-04,Independence Day
+66,2018-09-03,Labor Day
+67,2018-10-08,Columbus Day
+68,2018-11-12,Veterans Day
+69,2018-11-22,Thanksgiving Day
+70,2018-12-25,Christmas Day
+71,2019-01-01,New Year Day
+72,2019-01-21,Martin Luther King Jr. Day
+73,2019-02-18,Presidents Day (Washingtons Birthday)
+74,2019-05-27,Memorial Day
+75,2019-07-04,Independence Day
+76,2019-09-02,Labor Day
+77,2019-10-14,Columbus Day
+78,2019-11-11,Veterans Day
+79,2019-11-28,Thanksgiving Day
+80,2019-12-25,Christmas Day
+81,2020-01-01,New Year Day
+82,2020-01-20,Martin Luther King Jr. Day
+83,2020-02-17,Presidents Day (Washingtons Birthday)
+84,2020-05-25,Memorial Day
+85,2020-07-03,Independence Day
+86,2020-09-07,Labor Day
+87,2020-10-12,Columbus Day
+88,2020-11-11,Veterans Day
+89,2020-11-26,Thanksgiving Day
+90,2020-12-25,Christmas Day"
+
+# Read the data into a data frame
+holiday_data <- read.csv(text = data, header = FALSE, col.names = c("serial", "date", "holiday"))
+
+# Print the data frame to verify
+print(holiday_data)
+
+# Write the data frame to a CSV file
+write.csv(holiday_data, "holidays.csv", row.names = FALSE)
+
+# Confirm that the file has been written
+cat("The holidays.csv file has been created successfully.")
+
+head(holiday_data)
+```
+
+
+```{r}
+trip_per_day_model <- 
+  trip_per_day |>
+  mutate(day_of_week = weekdays(ymd)) |>
+  mutate(is_weekend = ifelse(day_of_week %in% c("Saturday","Sunday"), TRUE, FALSE)) |>
+  mutate(is_holiday = ifelse(ymd %in% holiday_data$date, TRUE, FALSE)) |>
+  mutate(tavg = (tmax + tmin)/2) |>
+  select(ymd, num_trips, date, prcp, snwd, snow, tavg, tmax, tmin, is_weekend, is_holiday)
+```
+
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = tavg, y = num_trips)) +
+  geom_point() +
+  xlab("Average Temperature") +
+  ylab("Number of trips") +
+  ggtitle("Averge temperature vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = tmin, y = num_trips, colour = prcp>1)) +
+  geom_point() +
+  xlab("Min Temperature") +
+  ylab("Number of trips")
+  ggtitle("Min temperature vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = tmax, y = num_trips, colour = snow > 0)) +
+  geom_point() +
+  xlab("Max Temperature") +
+  ylab("Number of trips")
+  ggtitle("Max temperature vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  filter(prcp>0) |>
+  ggplot(aes(x = prcp, y = num_trips)) +
+  geom_point() +
+  xlab("PRCP") +
+  ylab("Number of trips")
+  ggtitle("PRCP vs Number of trips")
+```
+
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = ymd, y = num_trips)) +
+  geom_point() +
+  xlab("YMD") +
+  ylab("Number of trips")
+  ggtitle("YMD vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = snwd, y = num_trips)) +
+  geom_point() +
+  xlab("Snowed") +
+  ylab("Number of trips")
+  ggtitle("Snowed vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = snow, y = num_trips)) +
+  geom_point() +
+  xlab("Snow") +
+  ylab("Number of trips")
+  ggtitle("Snow vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = is_weekend, y = num_trips, colour = tavg)) +
+  geom_point() +
+  xlab("weekend") +
+  ylab("Number of trips")
+  ggtitle("days vs Number of trips")
+```
+```{r}
+trip_per_day_model |>
+  ggplot(aes(x = is_holiday, y = num_trips, colour = tavg)) +
+  geom_point() +
+  xlab("Holiday") +
+  ylab("Number of trips")
+  ggtitle("Holiday vs Number of trips")
+```
+
+
+```{r}
+# spliting
+set.seed(42)
+
+num_days <- nrow(trip_per_day_model)
+frac_test <- 0.1
+
+num_test <- floor(num_days * frac_test)
+
+# randomly sample rows for the training set 
+ndx_test <- sample(1:num_days, num_test, replace=F)
+
+# used to test the model
+trip_per_day_model_test <- trip_per_day_model[ndx_test, ]
+
+# used to the fit
+trip_per_day_model_train_val  <- trip_per_day_model[-ndx_test, ]
+
+num_folds <- 5
+
+trip_per_day_model_train_val <- trip_per_day_model_train_val %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+
+# fit a model for each polynomial degree
+# set.seed(42)
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+  
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trip_per_day_model_train <- filter(trip_per_day_model_train_val, fold != f)
+    
+    # our model 
+    
+    # ------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    
+    # model <- lm(num_trips ~ poly((tavg), k, raw = T), data=trip_per_day_model_train)
+    
+    # model <- lm(num_trips ~ poly((tmin + prcp + snwd + snow) * is_weekend, k, raw = T), data=trip_per_day_model_train)
+    
+    # model <- lm(num_trips ~ poly((ymd + tavg + prcp + snow), k, raw = T), data=trip_per_day_model_train)
+    
+    model <- lm(num_trips ~ poly((tavg), k, raw = T) * prcp + is_holiday + is_weekend, data=trip_per_day_model_train)
+
+    
+    # ----^^^^----^^^^-----------------^^^^---------------^^^^-------------------------
+    # ------------------------------------------------------------------
+    
+    
+    # evaluate on the validation data
+    trip_per_day_model_validate <- filter(trip_per_day_model_train_val, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trip_per_day_model_validate) - trip_per_day_model_validate$num_trips)^2))
+  }
+  
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+```
+
+```{r}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+```{r}
+k = 5
+
+# model_test <- lm(num_trips ~ poly((tavg), k, raw = T), data=trip_per_day_model_train)
+# model_test <- lm(num_trips ~ poly((tmin + prcp + snwd + snow) * is_weekend, k, raw = T), data=trip_per_day_model_train)
+# model_test <- lm(num_trips ~ poly((tavg + prcp + snow), k, raw = T), data=trip_per_day_model_train)
+# model_test <- lm(num_trips ~ (ymd + tavg + prcp + snow) * is_weekend, data = trip_per_day_model_train)
+
+model_test <- lm(num_trips ~ poly((tavg), k, raw = T) * prcp + is_holiday + is_weekend, data=trip_per_day_model_train_val)
+
+summary(model_test)
+
+print('----------------------- ANOVA Table -----------------------------------------------')
+anova(model_test)
+
+```
+```{r}
+# create predict vs actual result graph using validate data
+trip_per_day_model_validate |>
+  mutate(preds = predict(model_test, trip_per_day_model_validate)) |>
+  ggplot(aes(x =  preds, y = num_trips)) +
+  geom_point() +
+  geom_abline(linetype = 'dashed') +
+  xlab("Predicted")+
+  ylab("Actual")
+```
+```{r}
+trip_per_day_prediction <- trip_per_day_model_validate |>
+  mutate(preds = predict(model_test, trip_per_day_model_validate))
+  
+trip_per_day_prediction |>
+  ggplot() +
+  geom_point( aes(x = ymd, y = num_trips, colour = "red")) +
+  geom_line(aes(x = ymd, y = preds))
+  
+```
+```{r}
+save(model_test, file = "model_test.RData")
+```
+
+# Testing model on the test data
+```{r}
+
+rmse_test <- sqrt(mean((predict(model_test, trip_per_day_model_test) - trip_per_day_model_test$num_trips)^2))
+
+rmse_test
+```
+
+
+```{r}
+trip_per_day_prediction_test <- trip_per_day_model_test |>
+  mutate(preds = predict(model_test, trip_per_day_model_test))
+  
+trip_per_day_prediction_test |>
+  ggplot() +
+  geom_point( aes(x = ymd, y = num_trips, colour = "red")) +
+  geom_line(aes(x = ymd, y = preds))
+  
+```
+```{r}
+# create predict vs actual result graph using test data
+trip_per_day_prediction_test |>
+  mutate(preds = predict(model_test, trip_per_day_prediction_test)) |>
+  ggplot(aes(x =  preds, y = num_trips)) +
+  geom_point() +
+  geom_abline(linetype = 'dashed') +
+  xlab("Predicted")+
+  ylab("Actual")
+```
+
