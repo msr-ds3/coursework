@@ -1,0 +1,220 @@
+---
+title: "predict_citibike"
+output: html_document
+date: "2024-06-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(modelr)
+library(ggplot2)
+install.packages("leaps", repos = 'https://cran.rstudio.com/bin/windows/contrib/4.4/leaps_3.2.zip')
+library(leaps)
+library(boot)
+library(lubridate)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+#load tsv dataframe
+trips_per_day <- read_tsv("C:/Users/jane/Documents/GitHub/coursework/week3/trips_per_day.tsv")
+head(trips_per_day)
+```
+
+
+```{r}
+trips_per_day <- trips_per_day%>%
+  mutate(weekday = wday(ymd,label=TRUE))%>%
+  mutate(is_weekend = as.numeric(weekday%in%c('Sun', 'Sat')))%>%
+   select(-weekday)
+```
+
+
+```{r}
+holiday_data <- read.csv('holiday_data.csv')
+
+# Rename columns
+colnames(holiday_data) <- c("id", "ymd", "holiday_name")
+
+# is_weekend feature is added as a column
+holiday_dates <- (c("0101", "0102", "0115", "0116", "0117", "0118", "0119", "0120", "0121", "0215", "0216", "0217", "0218", "0219", "0220", "0525", "0526", "0527", "0528", "0529", "0530", "0703", "0704",  "0901", "0902", "0903", "0904", "0905", "0906", "0907", "1008", "1009", "1010", "1011", "1012", "1013", "1014", "1110", "1111", "1112", "1122", "1123", "1124", "1125", "1126", "1127", "1128", "1225"))
+ 
+trips_per_day <- trips_per_day |> 
+  mutate(is_holiday = as.numeric(substr(date, 5, 8) %in% holiday_dates, 1, 0))
+```
+
+
+
+```{r}
+#Splitting 90% data for training & validation, 10% for testing
+set.seed(42)
+
+# Assume trips_per_day is your data frame and it has already been loaded
+
+num_days <- nrow(trips_per_day)
+frac_train <- 0.7
+frac_validation <- 0.2
+frac_test <- 0.1
+train_size <- floor(num_days * frac_train)
+validation_size <- floor(num_days * frac_validation)
+test_size <- num_days - train_size - validation_size
+
+# Randomly sample rows for the training set
+
+train_indices <- sample(1:num_days, train_size, replace = FALSE)
+
+# Remaining indices after removing the training indices
+
+remaining_indices <- setdiff(1:num_days, train_indices)
+
+# Randomly sample rows for the validation set from the remaining indices
+
+validation_indices <- sample(remaining_indices, validation_size, replace = FALSE)
+
+# Remaining indices after removing the validation indices
+
+test_indices <- setdiff(remaining_indices, validation_indices)
+
+# Create the training, validation, and test sets
+
+trips_per_day_train <- trips_per_day[train_indices, ]
+
+trips_per_day_validation <- trips_per_day[validation_indices, ]
+
+trips_per_day_test <- trips_per_day[test_indices, ]
+
+# Check the sizes of each set to ensure correctness
+
+cat("Training set size:", nrow(trips_per_day_train), "\n")
+
+cat("Validation set size:", nrow(trips_per_day_validation), "\n")
+
+cat("Test set size:", nrow(trips_per_day_test), "\n")
+
+```
+
+
+```{r}
+regfit.full <- regsubsets(num_trips ~ ., trips_per_day_train)
+summary(regfit.full)
+```
+
+```{r}
+# create k var models based on the method above
+ 
+cv.error.8 <- rep(0, 8)
+one_var_model <- glm(num_trips ~ tmax, data = trips_per_day_train)
+cv.error.8[1] <- cv.glm(trips_per_day_train, one_var_model, K = 10)$delta[1]
+ 
+two_var_model <- glm(num_trips ~ prcp + tmax, data = trips_per_day_train)
+cv.error.8[2] <- cv.glm(trips_per_day_train, two_var_model, K = 10)$delta[1]
+ 
+three_var_model <- glm(num_trips ~is_weekend *(prcp + tmax), data = trips_per_day_train)
+cv.error.8[3] <- cv.glm(trips_per_day_train, three_var_model, K = 10)$delta[1]
+ 
+four_var_model <- glm(num_trips ~ is_weekend * is_holiday *(prcp + tmax), data = trips_per_day_train)
+cv.error.8[4] <- cv.glm(trips_per_day_train, four_var_model, K = 10)$delta[1]
+ 
+five_var_model <- glm(num_trips ~ is_weekend * is_holiday * (prcp + snwd + tmax), data = trips_per_day_train)
+cv.error.8[5] <- cv.glm(trips_per_day_train, five_var_model, K = 10)$delta[1]
+ 
+six_var_model <- glm(num_trips ~ is_weekend * is_holiday *(prcp + snwd + tmax + tmin), data = trips_per_day_train)
+cv.error.8[6] <- cv.glm(trips_per_day_train, six_var_model, K = 10)$delta[1]
+ 
+seven_var_model <- glm(num_trips ~ is_weekend * is_holiday * (date + prcp + snwd + tmax + tmin), data = trips_per_day_train)
+cv.error.8[7] <- cv.glm(trips_per_day_train, seven_var_model, K = 10)$delta[1]
+
+eight_var_model <- glm(num_trips ~ is_weekend * is_holiday *( date + prcp + snwd + snow + tmax + tmin), data = trips_per_day_train)
+
+cv.error.8[8] <- cv.glm(trips_per_day_train, eight_var_model, K = 10)$delta[1]
+
+cv.error.8
+ 
+min(cv.error.8)# it seems like the 5-var method performs the best
+
+
+#running polynomial degree on five_var_model
+ cv.error <- rep(0, 10)
+ for (i in 1:10) {
+glm.fit <- glm(num_trips ~ is_weekend * (poly(tmax, i) + prcp + snwd + tmax + is_holiday), data = trips_per_day_train )
+cv.error[i] <- cv.glm(trips_per_day_train, glm.fit)$delta[1]
+}
+cv.error
+
+#select 4th degree for five_var_model
+min(cv.error)
+
+# Selecting the fourth-degree polynomial model
+best_degree <- which.min(cv.error)  # Find the degree with the minimum cross-validation error
+formula <- as.formula(paste("num_trips ~ is_weekend * (poly(tmax, ", best_degree, ") + prcp + snwd + tmax + is_holiday)", sep = ""))
+five_var_fourth_poly_model <- glm(formula, data = trips_per_day_train)
+
+# Summary of the selected model
+summary(five_var_fourth_poly_model)
+
+
+# Predict on validation set
+predictions <- predict(five_var_fourth_poly_model, trips_per_day_validation)
+
+# Check for negative predictions
+if (any(predictions < 0)) {
+  # Adjust predictions to ensure non-negative values
+  predictions <- pmax(predictions, 0)  # Set negative predictions to zero
+}
+
+# Evaluate and plot
+rmse <- sqrt(mean((trips_per_day_validation$num_trips - predictions)^2))
+print(paste("RMSE:", rmse))
+
+```
+
+
+
+```{r}
+#Plot the final model 
+
+#Plot date on x-axis, number of trips on y-axis, actual values as points, and predicted values as line
+final_model <- glm(num_trips ~ is_weekend * (poly(tmax, 4) + prcp + snwd + tmax + is_holiday), data = trips_per_day)
+trips_per_day |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=ymd, y=num_trips)) +
+    geom_point() +
+    geom_line(aes(y=pred), color="gold")
+
+#Plot predicted vs actual values
+trips_per_day |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=pred, y=num_trips)) +
+    geom_point() +
+    geom_abline(linetype = "dashed", color="gold")
+```
+
+
+```{r}
+#Function to evaluate the final model 
+evaluate_final_model <- function(model, test_data) {
+    # evaluate on the test data
+    sqrt(mean((predict(model, test_data) - test_data$num_trips)^2))
+}
+evaluate_final_model(final_model, trips_per_day_test)
+```
+
+```{r}
+objects_to_save <- list(
+  model = five_var_fourth_poly_model,
+  validation_data = trips_per_day_validation
+)
+
+# Save the list of objects into an RData file
+save(objects_to_save, file = "model_and_data.RData")
+```
