@@ -1,0 +1,459 @@
+---
+title: "Citibike Model"
+author: "Fabio Pecora and Shimmy Greengart"
+date: "2024-06-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(modelr)
+library(here)
+
+```
+
+## R Markdown
+
+For anyone testing this, the preprocess_data function must be called on test data to add some columns, and the model you are using is called final_model. I also provided an evaluate_final_model function that you could use.
+
+First, I get the data.
+
+```{r load data}
+trips_per_day <- read_tsv(here('week3/trips_per_day.tsv'))
+head(trips_per_day)
+```
+
+Here we preprocess the data, adding more columns. It's in a function so it can easily be run on test data.
+
+```{r}
+bank_holidays <- read_csv(here('week3/4758439-a33943da19bd8512f41cd369332ee7e805eb373c/US Bank holidays (up to 2020)'), col_names=c("holidy_id", "ymd", "holiday_name"))
+preprocess_data <- function(trip_data) {
+    trip_data |>
+        left_join(bank_holidays, by="ymd") |>
+        mutate(day_of_week=wday(ymd, label=T), is_weekend=day_of_week %in% c("Sun", "Sat"), is_workday=is.na(holiday_name) & !is_weekend)
+}
+
+trips_per_day <- preprocess_data(trips_per_day)
+```
+
+
+
+## Splitting the data
+
+I split the data, using 10-fold cross validation.
+
+```{r data split}
+
+set.seed(42)
+num_folds <- 9
+num_days <- nrow(trips_per_day)
+
+frac_train <- .9
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set 
+ndx <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_train <- trips_per_day[ndx, ]
+
+# used to evaluate the fit
+trips_per_day_test <- trips_per_day[-ndx, ]
+
+trips_per_day_cross <- trips_per_day_train |>
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips_per_day_cross)
+
+```
+Here, I make a function that will be used to evaluate each model.
+
+```{r evaluation function}
+evaluate_model <- function(model_equation) {
+    # do 10-fold cross-validation
+    validate_err <- c()
+    for (f in 1:num_folds) {
+    # fit on the training data
+        trips_per_day_train <- filter(trips_per_day_cross, fold != f)
+        model <- lm(model_equation, data=trips_per_day_train)
+        
+        # evaluate on the validation data
+        trips_per_day_validate <- filter(trips_per_day_cross, fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    }
+    
+    # compute the average validation error across folds
+    # and the standard error on this estimate
+    
+    avg_validate_err <- mean(validate_err)
+    se_validate_err <- sd(validate_err) / sqrt(num_folds)
+    
+    c(avg_validate_err, se_validate_err)
+}
+```
+
+
+First, we try the different polynomial degrees only using tmin.
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmin, k, raw = T)
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:12) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+```
+
+Here, we are testing 3 different ways of figuring out if it's a weekend. First, we just try day of the week. Then, we try a boolean of weekend or not. Finally, we have a boolean workday or not, where holidays aren't workdays. The reason for this was that we didn't think we had enough holiday data to stand on its own, but thought we might be able to model it as an extended weekend.
+
+```{r}
+equation_0 <- num_trips ~ tmin
+equation_1 <- num_trips ~ tmin + day_of_week
+equation_2 <- num_trips ~ tmin + is_weekend
+equation_3 <- num_trips ~ tmin + is_workday
+
+evaluate_model(equation_0)
+evaluate_model(equation_1)
+evaluate_model(equation_2)
+evaluate_model(equation_3)
+```
+This says that looking at the weekend is clearly the best, and seeing holidays as an extended weekend is likely the right call. It seems that day of the week overfits even on k-fold cross-validation. Now we check to see if we want to change polynomial order.
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmin, k, raw = T) + is_workday
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:12) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+```
+Nope. It looks like 5 degrees is still the best. Now we check if the precipitation changes anything. We have equations with and without is_workday and with precipitation added versus multiplied.
+
+```{r}
+equation_4 = num_trips ~ tmin + prcp
+equation_5 = num_trips ~ tmin * prcp
+equation_6 = num_trips ~ tmin + prcp + is_workday
+equation_7 = num_trips ~ tmin * prcp + is_workday
+
+evaluate_model(equation_0)
+evaluate_model(equation_3)
+evaluate_model(equation_4)
+evaluate_model(equation_5)
+evaluate_model(equation_6)
+evaluate_model(equation_7)
+```
+Wow. It seems that all 3 together is much better. It looks like rain is a far better deterrant than weekend was.
+
+```{r}
+K <- 1:3
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmin, 5, raw = T) + is_workday + poly(prcp, k, raw = T)
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:12) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+
+```
+Okay. This looks like it starts overfitting almost immediately.
+
+```{r}
+trips_per_day_cross |>
+    ggplot(aes(x=prcp, y=num_trips)) +
+    geom_point() +
+    geom_smooth(method=lm, formula = y ~ poly(x, 1, raw=T)) + 
+    geom_smooth(method=lm, formula = y ~ poly(x, 2, raw=T), color="red") +
+    geom_smooth(method=lm, formula = y ~ I(32^-x), color="green")
+```
+It says 2, but I didn't trust it. It looks like a decay, so I decided to actually plot a decay (2 was chosen arbitrarily). It looks best. Let's test.
+
+```{r}
+equation_8 = num_trips ~ poly(tmin, 5, raw=T) + prcp + is_workday
+equation_9 = num_trips ~ poly(tmin, 5, raw=T) + prcp + I(prcp^2) + is_workday
+equation_10 = num_trips ~ poly(tmin, 5, raw=T) + I(2^-prcp) + is_workday
+
+evaluate_model(equation_8)
+evaluate_model(equation_9)
+evaluate_model(equation_10)
+```
+Okay, but I need a good parameter instead of 2. And they can't solve it for me because they only do linear. And I don't want something more complicated. So, I will choose some values.
+
+```{r}
+K <- 1:16
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmin, 5, raw = T) + is_workday + I(k^-prcp)
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    filter(K > 1) |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:16) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+```
+Okay, it looks like a big one gets it better. But, let's stop it at 8 because I don't trust it.
+
+Now, I'm going to look at snwd, because Fabio showed it led to improvements.
+
+```{r}
+trips_per_day_cross |>
+    ggplot(aes(x=snwd, y=num_trips)) +
+    geom_point() +
+    geom_smooth(method=lm, formula = y ~ poly(x, 1, raw=T)) + 
+    geom_smooth(method=lm, formula = y ~ poly(x, 2, raw=T), color="red") +
+    geom_smooth(method=lm, formula = y ~ I(3^-x), color="green")
+```
+Clearly, it should also have a decay. Let's see what degree.
+
+```{r}
+K <- 1:16
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmin, 5, raw = T) + is_workday + I(8^-prcp) + I(k^-snwd)
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    filter(K > 1) |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:16) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+```
+Huh. Actually, let's try polynomial.
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmin, 5, raw = T) + is_workday + I(8^-prcp) + poly(snwd, k, raw=T)
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:8) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+```
+Okay. If we use this at all, let's use it linearly. Now, test new equations.
+
+```{r}
+equation_11 <- num_trips ~ poly(tmin, 5, raw=T) + I(8^-prcp) + is_workday
+equation_12 <- num_trips ~ poly(tmin, 5, raw=T) + I(8^-prcp) + is_workday + snwd
+equation_13 <- num_trips ~ poly(tmin, 5, raw=T) + I(8^-prcp) + is_workday + I(2^-snwd)
+
+evaluate_model(equation_11)
+evaluate_model(equation_12)
+evaluate_model(equation_13)
+```
+Okay, so, 12 is better than 11, but it's within the margin of error. But it's still large, so I think we should probably take it. It's probably not overfitting because it's linear and makes sense.
+
+Let's check if tmax is relevant.
+
+```{r}
+trips_per_day_cross |>
+    ggplot(aes(x=tmax, y=num_trips)) +
+    geom_point() +
+    geom_smooth(method=lm, formula = y ~ poly(x, 1, raw=T)) + 
+    geom_smooth(method=lm, formula = y ~ poly(x, 2, raw=T), color="red")
+```
+Hmm. Okay, let's compare with and without it. I suspect that it is too correlated with tmin to make much of a difference.
+
+```{r}
+equation_14 <- num_trips ~ poly(tmin, 5, raw=T) + I(8^-prcp) + is_workday + snwd + tmax
+equation_15 <- num_trips ~ tmax * poly(tmin, 5, raw=T) + I(8^-prcp) + is_workday + snwd
+
+evaluate_model(equation_12)
+evaluate_model(equation_14)
+evaluate_model(equation_15)
+```
+Oh, wow. It makes a big difference, not even in the margin of error. Maybe it's for when people are biking home from work. But, looking at our graph above, it doesn't make sense not to have tmax.
+
+Now, I'm wondering if _tmin_ is unnecessary given the correlations.
+
+```{r}
+equation_16 <- num_trips ~ I(8^-prcp) + is_workday + snwd + tmax
+
+evaluate_model(equation_14)
+evaluate_model(equation_16)
+```
+Okay, good, they are both necessary.
+
+Before we stop, let's make sure that we aren't overfitting on tmin.
+
+```{r}
+trips_per_day_cross |>
+    ggplot(aes(x=tmax, y=num_trips)) +
+    geom_point() +
+    geom_smooth(method=lm, formula = y ~ poly(x, 1, raw=T)) + 
+    geom_smooth(method=lm, formula = y ~ poly(x, 2, raw=T), color="red") +
+    geom_smooth(method=lm, formula = y ~ poly(x, 3, raw=T), color="green") +
+    geom_smooth(method=lm, formula = y ~ poly(x, 4, raw=T), color="yellow") +
+    geom_smooth(method=lm, formula = y ~ poly(x, 5, raw=T), color="pink")
+```
+Hmm. So, they do actually seem to fit a little better. But yellow is almost indistinguishable, so let's lower the order to 4 so that it overfits less.
+
+But 1 and 2 are indistinguishable, so maybe I should give higher order tmax more of a chance.
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (k in K) {
+    equation <- num_trips ~ poly(tmax, k, raw = T) + is_workday
+    results <- evaluate_model(equation)
+    avg_validate_err[k] <- results[1]
+    se_validate_err[k] <- results[2]
+}
+
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+plot_data |>
+    ggplot(aes(x=K, y=avg_validate_err)) +
+    geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+    geom_line(color = "red") +
+    scale_x_continuous(breaks=1:12) +
+    theme(legend.position="none") +
+    xlab('Polynomial Degree') +
+    ylab('RMSE on validation data')
+```
+It claims that even down to 7 it's getting improvements, but I think we can cut it off after 4 to stop overfitting.
+
+```{r}
+equation_17 <- num_trips ~ poly(tmin, 4, raw=T) + I(8^-prcp) + is_workday + snwd + tmax
+equation_18 <- num_trips ~ poly(tmin, 5, raw=T) + I(8^-prcp) + is_workday + snwd + poly(tmax, 4, raw=T)
+equation_19 <- num_trips ~ poly(tmin, 4, raw=T) + I(8^-prcp) + is_workday + snwd + poly(tmax, 4, raw=T)
+
+evaluate_model(equation_14)
+evaluate_model(equation_17)
+evaluate_model(equation_18)
+evaluate_model(equation_19)
+```
+Hmm. This makes me think that the improvement isn't good enough to stop overfitting.
+
+Okay, Fabio already found that snow doesn't make a difference (probably because we already have prcp), but I want to check.
+
+```{r}
+trips_per_day_cross |>
+    filter(snow > 0.01)
+```
+Hmm. We only have 14 rows, and we are already looking at prcp. I don't think there is enough data to use this.
+
+Now, we are going to use our final model (equation 17) to make the plots. This is k-fold evaluation, so we are just doing the plots on all the data. The test set will still show the truth.
+
+```{r}
+final_model <- lm(equation_17, data=trips_per_day_cross)
+trips_per_day_cross |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=ymd, y=num_trips)) +
+    geom_point() +
+    geom_line(aes(y=pred), color="purple")
+
+trips_per_day_cross |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=pred, y=num_trips)) +
+    geom_point() +
+    geom_abline(linetype = "dashed", color="purple")
+```
+
+Now, it's time to save our model.
+
+```{r}
+save(final_model, file="final_model.RData")
+```
+
+Wait. We pushed. Woah. Now we can look at the top-secret test data and see if it is out to get us.
+
+```{r}
+evaluate_final_model <- function(model, test_data) {
+    # evaluate on the test data
+    sqrt(mean((predict(model, test_data) - test_data$num_trips)^2))
+}
+
+evaluate_final_model(final_model, trips_per_day_test)
+```
+Huh. It looks like we have very friendly test data. We will see how a whole year works tomorrow. I think it will do worse, since I suspect we just got lucky and didn't have a lot of hard days. But, it is also possible that the extra performance comes from having 12% more data. I think we will do better than my validation performance, but worse than my test performance.s
+
