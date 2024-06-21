@@ -33,7 +33,7 @@ This week starts with a discussion of machine learning and then involves several
   * [Why Use Make?](https://bost.ocks.org/mike/make/) by Mike Bostock
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
-<!--
+
 
 
 # Day 4
@@ -54,7 +54,7 @@ Here are the rules of the game:
 8. Commit all of your changes to git, using ``git add -f`` to add the model ``.Rdata`` file if needed, and push to your Github repository.
 9. Finally, use the model you just developed and pushed to Github to make predictions on the 10% of data you kept aside as a test set. Do this only once, and record the performance in your Rmarkdown file. Use this number to make a guess as to how your model will perform on future data (which we'll test it on!). Do you think it will do better, worse, or the same as it did on the 10% test set you used here? Write your answer in your Rmarkdown notebook. Render the notebook and push the final result to Github.
 
-
+<!--
 
 # Day 5
 
