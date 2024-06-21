@@ -1,6 +1,7 @@
 library(tidyverse)
 library(scales)
 library(modelr)
+library(lubridate)
 
 theme_set(theme_bw())
 options(repr.plot.width=4, repr.plot.height=3)
@@ -13,37 +14,62 @@ head(trips_per_day)
 
 set.seed(42)
 
+trips_per_day$isweekend <- wday(trips_per_day$ymd) %in% c(1,7)
+
 # Assume trips_per_day is your data frame and it has already been loaded
 num_days <- nrow(trips_per_day)
-frac_train <- 0.6
+frac_train <- 0.7
 frac_validation <- 0.2
-frac_test <- 0.2
+frac_test <- 0.1
 
 train_size <- floor(num_days * frac_train)
 validation_size <- floor(num_days * frac_validation)
 test_size <- num_days - train_size - validation_size
 
-# Randomly sample rows for the training set
+
 train_indices <- sample(1:num_days, train_size, replace = FALSE)
 
-# Remaining indices after removing the training indices
 remaining_indices <- setdiff(1:num_days, train_indices)
 
-# Randomly sample rows for the validation set from the remaining indices
 validation_indices <- sample(remaining_indices, validation_size, replace = FALSE)
 
-# Remaining indices after removing the validation indices
 test_indices <- setdiff(remaining_indices, validation_indices)
 
-# Create the training, validation, and test sets
 trips_per_day_train <- trips_per_day[train_indices, ]
 trips_per_day_validation <- trips_per_day[validation_indices, ]
 trips_per_day_test <- trips_per_day[test_indices, ]
 
-# Check the sizes of each set to ensure correctness
 cat("Training set size:", nrow(trips_per_day_train), "\n")
 cat("Validation set size:", nrow(trips_per_day_validation), "\n")
 cat("Test set size:", nrow(trips_per_day_test), "\n")
+
+
+
+
+
+
+
+model <- lm(num_trips ~ poly(tmin, 5, raw = T), data = trips_per_day_train)
+
+trips_per_day_train <- trips_per_day_train %>%
+  add_predictions(model) %>%
+  mutate(split = "train")
+trips_per_day_validation <- trips_per_day_validation %>%
+  add_predictions(model) %>%
+  mutate(split = "validate")
+plot_data <- bind_rows(trips_per_day_train, trips_per_day_validation)
+
+ggplot(plot_data, aes(x = tmin, y = num_trips)) +
+  geom_point(aes(color = split)) +
+  geom_line(aes(y = pred)) +
+  xlab('Minimum temperature') +
+  ylab('Daily trips') +
+  scale_y_continuous()
+
+
+
+
+
 
 set.seed(42)
 num_folds <- 5
@@ -52,7 +78,7 @@ trips_per_day_train <- trips_per_day_train %>%
   mutate(fold = (row_number() %% num_folds) + 1)
 
 # fit a model for each polynomial degree
-K <- 1:8
+K <- 1:20
 avg_validate_err <- c()
 se_validate_err <- c()
 for (k in K) {
@@ -61,7 +87,7 @@ for (k in K) {
   for (f in 1:num_folds) {
     # fit on the training data
     trips_per_day_train_new <- filter(trips_per_day_train, fold != f)
-    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train_new)
+    model <- lm(num_trips ~ poly(tmin, k, raw = TRUE) + poly(tmax, k, raw = TRUE) + prcp + snwd + snow +poly(isweekend, k, raw = TRUE), data = trips_per_day_train)
     # evaluate on the validation data
     trips_per_day_validate_new <- filter(trips_per_day_train, fold == f)
     validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate_new) - trips_per_day_validate_new$num_trips)^2))
@@ -84,8 +110,8 @@ ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
   xlab('Polynomial Degree') +
   ylab('RMSE on validation data')
 
-#Lets see what happens if we use 4th degree polynomial to plot the graph
-model <- lm(num_trips ~ poly(tmin, 4, raw = T), data = trips_per_day)
+#Lets see what happens if we use 12th degree polynomial to plot the graph
+model <- lm(num_trips ~ poly(tmin, 12, raw = TRUE) + poly(tmax, 12, raw = TRUE) + prcp + snwd + snow +poly(isweekend, 12, raw = TRUE), data = trips_per_day_train)
 
 trips_per_day_train <- trips_per_day_train %>%
   add_predictions(model) %>%

@@ -1,0 +1,278 @@
+---
+title: "predict_citibike"
+output: html_document
+date: "2024-06-21"
+---
+```{r}
+library(tidyverse)
+library(scales)
+library(modelr)
+library(lubridate)
+
+theme_set(theme_bw())
+options(repr.plot.width=4, repr.plot.height=3)
+```
+
+```{r}
+trips_per_day <- read_tsv('trips_per_day.tsv')
+head(trips_per_day)
+
+```
+We want to add more influence factor to make our model better
+
+
+```{r}
+
+trips_per_day$isweekend <- wday(trips_per_day$ymd) %in% c(1,7)
+
+# Adding holiday indicator
+trips_per_day <- trips_per_day %>%
+  mutate(holiday = ifelse(ymd %in% c('2014-01-01',
+'2014-01-20',
+'2014-02-17',
+'2014-05-26',
+'2014-07-04',
+'2014-09-01',
+'2014-10-13',
+'2014-11-11',
+'2014-11-27',
+'2014-12-25'), 1, 0))
+
+
+```
+
+
+
+
+Check the influnce factor (should we include or not?)
+
+```{r}
+
+library(leaps) 
+bestSubsets <- regsubsets(num_trips~tmin+tmax+holiday+date+ prcp+snwd+snow+isweekend+ poly(tmin,3) , data = trips_per_day)
+summary(bestSubsets)
+plot(bestSubsets, scale = "adjr2")
+```
+
+
+Split the data into train, validation, and test
+
+```{r}
+
+set.seed(42)
+# Assume trips_per_day is your data frame and it has already been loaded
+num_days <- nrow(trips_per_day)
+frac_train <- 0.6
+frac_validation <- 0.2
+frac_test <- 0.2
+
+train_size <- floor(num_days * frac_train)
+validation_size <- floor(num_days * frac_validation)
+test_size <- num_days - train_size - validation_size
+
+
+train_indices <- sample(1:num_days, train_size, replace = FALSE)
+
+remaining_indices <- setdiff(1:num_days, train_indices)
+
+validation_indices <- sample(remaining_indices, validation_size, replace = FALSE)
+
+test_indices <- setdiff(remaining_indices, validation_indices)
+
+trips_per_day_train <- trips_per_day[train_indices, ]
+trips_per_day_validation <- trips_per_day[validation_indices, ]
+trips_per_day_test <- trips_per_day[test_indices, ]
+
+cat("Training set size:", nrow(trips_per_day_train), "\n")
+cat("Validation set size:", nrow(trips_per_day_validation), "\n")
+cat("Test set size:", nrow(trips_per_day_test), "\n")
+
+
+```
+
+Do the k-fold test
+
+```{r}
+
+set.seed(42)
+num_folds <- 5
+
+
+trips_per_day_train <- trips_per_day_train %>%
+  mutate(fold = (row_number() %% num_folds) + 1) 
+# fit a model for each polynomial degree
+K <- 1:20
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train_new <- filter(trips_per_day_train, fold != f)
+    model <- lm(num_trips ~ isweekend * poly(tmin, k, raw = TRUE) + poly(tmax, k, raw = TRUE) + prcp + snwd + snow +poly(holiday, k, raw = TRUE), data = trips_per_day_train)
+    # evaluate on the validation data
+    trips_per_day_validate_new <- filter(trips_per_day_train, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate_new) - trips_per_day_validate_new$num_trips)^2))
+  }
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:25) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+
+```
+let us see the error according to the test data
+
+```{r}
+# Set seed for reproducibility
+set.seed(42)
+num_folds <- 5
+
+trips_per_day_test <- trips_per_day_test %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+# Fit a model for each polynomial degree
+K <- 1:15
+avg_test_err <- c()
+se_test_err <- c()
+
+for (k in K) {
+  test_err <- c()
+  for (f in 1:num_folds) {
+    # Fit the model on the training data
+    trips_per_day_train_new <- filter(trips_per_day_train, fold != f)
+    model <- lm(num_trips ~ isweekend * poly(tmin, k, raw = TRUE) + poly(tmax, k, raw = TRUE) + prcp + snwd + snow +poly(holiday, k, raw = TRUE), data = trips_per_day_train_new)
+    
+    # Evaluate on the test data
+    trips_per_day_test_new <- filter(trips_per_day_test, fold == f)
+    test_err[f] <- sqrt(mean((predict(model, trips_per_day_test_new) - trips_per_day_test_new$num_trips)^2))
+  }
+  
+  # Compute the average test error and the standard error on this estimate
+  avg_test_err[k] <- mean(test_err)
+  se_test_err[k] <- sd(test_err) / sqrt(num_folds)
+}
+
+# Plot the test error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_test_err, se_test_err)
+ggplot(plot_data, aes(x = K, y = avg_test_err)) +
+  geom_pointrange(aes(ymin = avg_test_err - se_test_err, ymax = avg_test_err + se_test_err, color = avg_test_err == min(avg_test_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks = 1:25) +
+  theme(legend.position = "none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on Test Data') +
+  ggtitle('Polynomial Degree vs. RMSE on Test Data')
+
+```
+
+let us see what will hapend if we have 5 degrees in validation data
+
+```{r}
+k <- 3
+model <- lm(num_trips ~ isweekend * poly(tmin, k, raw = TRUE) + poly(tmax, k, raw = TRUE) + prcp + snwd + snow +poly(holiday, k, raw = TRUE), data = trips_per_day_train)
+
+# Add predictions to the validation data
+trips_per_day_validation <- trips_per_day_validation %>%
+  add_predictions(model) %>%
+  mutate(residuals = num_trips - pred)
+
+# Create a combined influence factor for plotting
+trips_per_day_validation <- trips_per_day_validation %>%
+  mutate(influence_factor = tmin + tmax + prcp + snwd + snow + as.numeric(isweekend))
+
+# Plot the predicted vs. actual values
+ggplot(trips_per_day_validation, aes(x = influence_factor, y = num_trips)) +
+  geom_point(aes(color = "Actual")) +
+  geom_line(aes(y = pred, color = "Predicted")) +
+  xlab('Combined Influence Factor') +
+  ylab('Number of Trips') +
+  scale_y_continuous() +
+  theme_minimal() +
+  labs(title = 'Predicted vs Actual Number of Trips with 20th Degree Polynomial', color = 'Legend')
+```
+In test data lets test with the dgree that have the lowest rmse
+
+
+```{r}
+
+k <- 3
+model <- lm(num_trips ~ holiday* isweekend * poly(tmin, k, raw = TRUE) + poly(tmax, k, raw = TRUE) + prcp + snwd + snow , data = trips_per_day_train)
+
+?save
+# Add predictions to the test data
+trips_per_day_test <- trips_per_day_test %>%
+  add_predictions(model) %>%
+  mutate(residuals = num_trips - pred)
+
+# Create a combined influence factor for plotting
+trips_per_day_test <- trips_per_day_test %>%
+  mutate(influence_factor = tmin + tmax + prcp + snwd + snow + holiday+ as.numeric(isweekend))
+
+# Plot the predicted vs. actual values for the test data
+ggplot(trips_per_day_test, aes(x = influence_factor, y = num_trips)) +
+  geom_point(aes(color = "Actual")) +
+  geom_line(aes(y = pred, color = "Predicted")) +
+  xlab('Combined Influence Factor') +
+  ylab('Number of Trips') +
+  scale_y_continuous() +
+  theme_minimal() +
+  labs(title = 'Predicted vs Actual Number of Trips with 5th Degree Polynomial on Test Data', color = 'Legend')
+```
+
+
+```{r}
+# Plot the predicted vs. actual values
+ggplot(trips_per_day_test_pred, aes(x = pred, y = num_trips)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  xlab('Predicted') +
+  ylab('Actual') +
+  ggtitle('Predicted vs Actual on Test Data')
+
+# Calculate RMSE for the test dataset
+pred_actual <- trips_per_day_test %>%
+  add_predictions(model) %>%
+  mutate(actual = num_trips)
+
+rmse <- pred_actual %>%
+  summarize(rmse = sqrt(mean((pred - actual)^2)))
+
+print(rmse)
+
+summary(model)
+
+```
+```{r}
+# Load necessary libraries
+library(tidyverse)
+
+# Set the value of k
+k <- 3
+
+# Fit the model
+model <- lm(num_trips ~ holiday * isweekend * poly(tmin, k, raw = TRUE) + 
+                           poly(tmax, k, raw = TRUE) + prcp + snwd + snow, 
+            data = trips_per_day_train)
+
+# Save the model to a .RData file
+save(model, file = "best_model.RData")
+
+# Optionally print a summary of the model
+summary(model)
+
+```
+
