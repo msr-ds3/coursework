@@ -78,7 +78,7 @@ ratings %>%
 # plot the CDF of movie popularity
 
 cdf_data <- 
-  num_ratings %>% 
+  movie_popularity %>% 
   mutate(rank = rank(-count, ties.method = "random")) %>%  
   arrange(rank, descending = FALSE) %>% mutate(cdf_percentage = count/nrow(ratings)) %>% 
   mutate(cum_sum = cumsum(cdf_percentage)) 
@@ -127,8 +127,29 @@ user_activity %>%
 
 
 satisfaction <-
-  merge(ratings, cdf_data) %>% group_by(user_id) %>% summarize(max_rated = max(movie_id)) %>% view()
+  inner_join(ratings, cdf_data)
 
+hun_table <-
+satisfaction %>%  
+  group_by(user_id) %>% 
+  summarize(hun_satisfied = quantile(rank,1)) %>% 
+  group_by(hun_satisfied) %>% 
+  summarize(no_of_users =n()) %>% 
+  mutate(percent_cumsum=cumsum(no_of_users)/max(cumsum(no_of_users)))
+  
+
+ninety_table <-
+  satisfaction %>%  
+  group_by(user_id) %>% 
+  summarize(ninety_satisfied = quantile(rank,0.9, type=3)) %>% 
+  group_by(ninety_satisfied) %>% 
+  summarize(no_of_users =n()) %>% 
+  mutate(percent_ninetycumsum=cumsum(no_of_users)/max(cumsum(no_of_users)))
+
+ggplot() +
+  geom_line(data = hun_table, aes(x=hun_satisfied, y=percent_cumsum), colour = "red") + 
+  geom_line(data = ninety_table, aes(x=ninety_satisfied, y=percent_ninetycumsum), colour = "blue") +
+  labs(x = "Inventory size", y = "Percent of Users Satisfied")
 
 
 ```

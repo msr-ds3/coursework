@@ -56,14 +56,18 @@ Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` fun
   totals <- read.csv("total_counts.csv", header = FALSE)
   colnames(totals) <- c("year", "total_volume", "page_count", "book_count")
   
-  years <- read.delim("years_count.tsv", sep="\t")
+  years <- read.delim("year_counts.tsv", sep="\t")
   colnames(years) <- c("term", "year", "volume", "book_count")
 
+  totals <- na.omit(totals)
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+   totals_rows <- nrow(totals)
+   years_rows <- nrow(years)
 
 # Part B
 
@@ -75,7 +79,15 @@ Join the raw year term counts with the total counts and divide to get a proporti
 
 ```{r join-years-and-totals}
 
+years_totals<-
+years %>%  
+  group_by(year, term) %>% summarize(year_count = sum(volume)) %>% view()
+  
+proportions<-
+  totals %>% 
+  full_join(years_totals) %>% mutate(proportion = year_count/total_volume)
 
+ 
 ```
 
 ## Plot the main figure 3a
@@ -83,12 +95,19 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
+plot3a <-
+proportions %>% 
+  filter(term == "1883" | term == "1910" | term == "1950") %>% 
+  filter(year >= 1850 & year <= 2012)
 
+plot3a %>% 
+  ggplot() + geom_line(aes(x = year, y = proportion, color = as.factor(term))) + labs(x ="Year", y = "Frequency", color = "Index") + scale_y_continuous(label=label_percent(scale = 10000,suffix=""))
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+ It looks pretty similar. 
 
 # Part C
 
@@ -101,7 +120,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 ## Your written answer
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-
+  ![](Screenshot.png)
 
 # Part D
 
@@ -113,11 +132,16 @@ Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850
 
 ```{r plot-raw-mentions-over-time}
 
+plot3a %>% 
+  ggplot() + geom_line(aes(x = year, y = year_count, color = as.factor(term))) + labs(x ="Year", y = "Raw Count", color = "Index") + scale_y_continuous(label =comma)
+
+
 ```
 
 # Part E
 
 > Does the difference between (b) and (d) lead you to reevaluate any of the results of Michel et al. (2011). Why or why not?
+  
 
 As part of answering this question, make an additional plot.
 
@@ -126,12 +150,14 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+plot3a %>% 
+  ggplot() + geom_line(aes(x = year, y = total_volume, color = as.factor(term))) + labs(x ="Year", y = "Totals", color = "Index") + scale_y_continuous(label =comma)
 ```
 
 ## Your written answer
 
 Write up your answer to Part E here.
+ Yes, because the graph at (d) suggests that the y value increases over time rather than a downward trend as seen in (b).
 
 # Part F
 
@@ -142,6 +168,8 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+peakmentions <- 
+  proportions %>% group_by(term) %>% filter(year >= 1850 & year <= 2012) %>% filter(proportion == max(proportion)) %>% rename(peak_proportion = proportion, peak_year = year)
 
 ```
 
@@ -150,6 +178,13 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+half_lifes <- 
+  proportions %>% 
+  inner_join(peakmentions, join_by(term)) %>% 
+  filter(year >= 1850 & year <= 2012) %>% 
+  group_by(term) %>% 
+  filter(proportion <= peak_proportion/2 & year>peak_year) %>% 
+  summarize(half_life = min(year) - peak_year)
 
 ```
 
@@ -159,21 +194,33 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-
+half_lifes %>% 
+  ggplot(aes(x=term, y = half_life)) + geom_point() + geom_smooth() + scale_y_log10()
 ```
 
 ## Your written answer
 
 Write up your answer to Part F here.
+ No, even though they go down, there is much more fluctuations in the graph I have compared to the book.
 
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
 
+
+
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+The years 1800-1809, 1826,1813,1837,1838,1855,1856 seemed like the outliers because they deviated too much from the curve.
+  
+  half_lifes %>% distinct() %>%  arrange(half_life) %>% head
+    
+  half_lifes %>%  distinct() %>%  arrange(half_life) %>% tail
+
 
 # Makefile
 
 Edit the `Makefile` in this directory to execute the full set of scripts that download the data, clean it, and produce this report. This must be turned in with your assignment such that running `make` on the command line produces the final report as a pdf file.
+
+
