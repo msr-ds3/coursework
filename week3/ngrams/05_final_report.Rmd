@@ -52,13 +52,23 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+totals <- read.csv("total_counts.csv", header=FALSE)
+colnames(totals) <- c("year", "total_volume", "page_count", "book_count")
 
+totals <- na.omit(totals)
 
+years<-read.delim("years_count.tsv",sep="\t")
+colnames(years) <- c("term", "year", "volume", "book_count")
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+
+`r nrow(years)`
+`r nrow(totals)`
+
 
 # Part B
 
@@ -69,7 +79,11 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
+year_totals <- years |>  group_by(year, term) |> 
+  summarize(count = sum(volume)) 
 
+proportions <- totals |> full_join(year_totals) |> mutate(prop=count/total_volume) |> 
+  select(year, total_volume, term, prop, count)
 
 ```
 
@@ -78,12 +92,19 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
-
+proportions |> 
+  filter(term == "1883" | term == "1910" | term == "1950") |>
+  filter(year >= 1850 & year <= 2012) |> ggplot() + 
+   geom_line(aes(x = year, y = prop, color = as.factor(term))) +
+   xlab("Year") +
+   ylab("Proportion (%)") + 
+  scale_y_continuous(label=label_percent(scale=100, suffix="")) + 
+   guides(color = guide_legend(title = "Term"))
 ```
 
 ## Your written answer
 
-Write up your answer to Part B here.
+The overall proportions of each term tends to be similar to the ones published in the paper. However, there are some discrepancies in the proportions after the peak of each term. For example, there is a bigger local peak in the papers 1910 term around 1925 than the one in this file. 
 
 # Part C
 
@@ -97,6 +118,8 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
+![](michel_fig_3a.png)
+
 
 # Part D
 
@@ -107,6 +130,14 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
+year_totals |> 
+  filter(term == "1883" | term == "1910" | term == "1950") |>
+  filter(year >= 1850 & year <= 2012) |> ggplot() + 
+  geom_line(aes(x = year, y = count, color = as.factor(term))) +
+  scale_y_continuous(label = comma) +
+  ylab("Total Conut") +
+  xlab("Year") +
+  guides(color = guide_legend(title = "Term"))
 
 ```
 
@@ -121,12 +152,18 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+totals |> 
+  filter(year >= 1850 & year <= 2012) |> 
+  group_by(year) |> 
+  ggplot(aes(year, total_volume)) + geom_line() +
+  scale_y_continuous(label=comma) +
+  ylab("Total Conut") +
+  xlab("Year") 
 ```
 
 ## Your written answer
 
-Write up your answer to Part E here.
+The proportion of each term is decreasing as we get closer to more recent years. However, the total usage of each term increases as we move closer to more recent years. It seems to indicate that the usage of each word is growing along with all print, thereby greatly increasing the usage of words even at a cost to its proportion.
 
 # Part F
 
@@ -137,7 +174,13 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
-
+peak <- proportions |> 
+  filter (year > 1850) |> 
+  filter(term %in% 1875:1975) |> 
+  group_by(term)  |> 
+  mutate(maximum = max(prop)) |> 
+  filter(maximum == prop) |> 
+  select(term, peak_year=year)
 ```
 
 ## Compute half-lifes
@@ -145,7 +188,14 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
-
+half_life <- proportions |> 
+  filter (year > 1850) |> 
+  filter(term %in% 1875:1975) |> 
+  group_by(term) |> 
+  mutate(half = max(prop)/2) |> full_join(peak) |> filter(year > peak_year) |> 
+  mutate(minimum = abs(half - prop)) |> 
+  slice(which.min(minimum)) |> select(term, peak_year, half_year=year) |> 
+  mutate(diff = half_year - peak_year)
 ```
 
 ## Plot the inset of figure 3a
@@ -154,12 +204,13 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-
+half_life |> ggplot(aes(term, diff)) + 
+  geom_point() + geom_smooth(se=F) + xlab("Year (Term)") + ylab("Half Life")
 ```
 
 ## Your written answer
 
-Write up your answer to Part F here.
+No, their is a difference in the overall trend of the smoothed plot (I'm honestly not sure what I was plotting). The plot given in the paper shows a decline in the half life as time passes, while the plot shown above displays a normalization in the half-life of each term at around 10 years
 
 # Part G
 
@@ -167,7 +218,11 @@ Write up your answer to Part F here.
 
 ## Your written answer
 
-Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+`r half_life |> arrange(diff) |> tail()`
+`r half_life |> arrange(diff) |> head()`
+
+It seem like the years with lower half life happen around times of notable global events like the world wars or the start of the gold rush. I would assume that those years were refereed to by the notable events more often than the years it happened. Similarly, years greater half life are likely years that have notable events without a specific name, meaning people refer to the year instead of the events in that year
 
 # Makefile
 
