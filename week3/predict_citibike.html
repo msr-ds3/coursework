@@ -841,9 +841,10 @@ number (3162.115) is the number you get with the actual seed (I had
 rerun it with a different seed to check that the result didn’t change
 too much - it didn’t - and then forgot to get the seed back). But this
 is almost identical to the 3113 result we got on out cross-validation.
-So, it looks like we aren’t overfitting. It’s possible that we will do
-worse on the actual test data because it is for a full year, but we
-might not.</p>
+So, it looks like we aren’t overfitting.</p>
+<p>But, if we get a future year, I suspect we will do worse, because
+Citibike itself could have had changing popularity. If their popularity
+went up, then we will consistently underestimate, and vice versa.</p>
 </div>
 
 
