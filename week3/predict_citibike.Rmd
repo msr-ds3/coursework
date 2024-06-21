@@ -16,7 +16,7 @@ library(here)
 
 ## R Markdown
 
-For anyone testing this, the preprocess_data function must be called on test data to add some columns, and the model you are using is called final_model.
+For anyone testing this, the preprocess_data function must be called on test data to add some columns, and the model you are using is called final_model. I also provided an evaluate_final_model function that you could use.
 
 First, I get the data.
 
@@ -445,4 +445,15 @@ Now, it's time to save our model.
 save(final_model, file="final_model.RData")
 ```
 
+Wait. We pushed. Woah. Now we can look at the top-secret test data and see if it is out to get us.
+
+```{r}
+evaluate_final_model <- function(model, test_data) {
+    # evaluate on the test data
+    sqrt(mean((predict(model, test_data) - test_data$num_trips)^2))
+}
+
+evaluate_final_model(final_model, trips_per_day_test)
+```
+Huh. It looks like we have very friendly test data. We will see how a whole year works tomorrow.
 
