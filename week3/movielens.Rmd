@@ -139,8 +139,6 @@ user_sat <- # a dataframe with the 100% satisfied and 90% satisfied rank for eac
   group_by( user_id ) %>%
   summarize( hundred = max( rank ), ninety = quantile(rank, 0.9, type = 3) )
 
-
-
 plot100_cutoff <- user_sat %>%
   group_by(hundred) %>% 
   summarize(num_satisfied = n()) %>%

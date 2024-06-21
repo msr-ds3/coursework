@@ -1,0 +1,149 @@
+---
+title: "predict_citibike"
+output: html_document
+date: "2024-06-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Load the data frames
+
+```{r create-dataframes}
+setwd("C:/Users/buka/Documents/coursework/week3")
+
+trips <-
+  read_table("trips_per_day.tsv")
+
+holidays <-
+  read_csv("holidays", col_names = c("i", "ymd", "holiday")) %>%
+  select(ymd, holiday)
+
+```
+
+## Adding to data
+```{r more-variables}
+
+trips_mod <-
+  trips %>%
+  left_join(holidays) %>%
+  mutate(
+    fold = row_number() %% num_folds + 1,
+    avg_temp = tmax + tmin / 2,
+    is_weekday = ifelse(wday(ymd, week_start = 1) < 6, TRUE, FALSE),
+    is_holiday = !is.na(holiday)
+  ) %>%
+  rename(
+    snow_acc = snwd,
+    rain = prcp
+  )
+
+```
+
+## Split the data with 90% training
+```{r split-data}
+
+# set percent
+train_percent <- 0.9
+n <- nrow(trips_mod)
+num_folds <- 5
+
+# sample 90%
+training_indeces <- sample(1:n, floor(n * train_percent), replace = FALSE)
+train_set <- trips_mod[training_indeces, ]
+test_set <- trips_mod[-training_indeces, ]
+
+```
+
+
+
+## Train with K-Folds cross validation
+```{r cross-val}
+
+run_k_folds <- function(K, data, formula){ # a function to easily run multiple models
+  val_errors <- rep(0, K)
+  for(k in 1:K){
+    k_train <-
+      data %>%
+      filter( fold != k )
+    
+    # create models
+    model <- lm(formula, data = k_train)
+    
+    k_validation <-
+      data %>%
+      filter( fold == k )
+    
+    # calculate error for fold
+    val_errors[k] <- sqrt(mean( (k_validation$num_trips - predict(model, k_validation)) ^ 2 , na.rm = TRUE))
+  }
+  
+  mean_error <- mean(val_errors)
+  err <- sd(val_errors) / sqrt(K)
+  
+  
+  c(mean_error, err)
+}
+
+```
+
+## Creating model means and errors
+```{r make-models}
+means = c()
+errs = c()
+
+model_formulas <- c(
+  num_trips ~ avg_temp,
+  num_trips ~ poly(avg_temp, 5, raw = TRUE),
+  num_trips ~ avg_temp + rain + snow,
+  num_trips ~ poly(avg_temp, 4, raw=T) + snow_acc + rain + is_weekday + is_holiday,
+  num_trips ~ is_weekday * rain + snow_acc + is_holiday + avg_temp * is_weekday
+)
+
+i <- 0
+for(f in model_formulas){
+  i <- i + 1
+  
+  results <- run_k_folds(num_folds, train_set, f)
+  means[i] <- results[1]
+  errs[i] <- results[2]
+}
+plot_data <- data.frame(model = 1:i, mu = means, se = errs)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r plots}
+
+plot_data %>%
+  ggplot(aes(x = model, y = mu)) +
+  geom_pointrange(aes(ymin = mu - se, ymax = mu + se))
+
+model = lm(
+  num_trips ~ poly(avg_temp, 4, raw=T) + snow_acc + rain + is_weekday + is_holiday,
+  data = train_set
+)
+ 
+ggplot(aes(x = predict(model, train_set), y = num_trips), data = train_set) +
+  geom_point() +
+  geom_abline(linetype = "dashed") +
+  labs(x = "Predicted Number of Trips", y = "Actual Number of Trips")
+
+train_set %>%
+  ggplot() +
+  geom_point(aes(x=ymd, y=num_trips)) +
+  geom_smooth(aes(x=ymd, y=predict(model, train_set)), se = FALSE) +
+  labs(x = "Date", y = "Number of Trips")
+
+```
+
+```{r save-it}
+
+save(model, file = "best_model.RData")
+
+```

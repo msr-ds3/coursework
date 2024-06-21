@@ -120,7 +120,8 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
-`!["freq_1883_1910_1950.png"]`
+!["n-grams for 1883, 1910, and 1950 from Google"]("./freq_1883_1910_1950.png")
+
 
 
 # Part D
@@ -190,12 +191,12 @@ Now, for each year term, find the minimum number of years it takes for the propo
 ```{r compute-half-lifes}
 years_to_half <-
   peak_years %>%
-  group_by(word) %>%
-  filter(year > peak_year) %>%
   mutate( half = peak/2 ) %>%
-  filter(freq < half) %>%
+  filter(year > peak_year, freq <= half) %>%
+  group_by(word) %>%
   arrange(desc(freq)) %>%
   mutate(diff = year - peak_year) %>%
+  arrange(word) %>%
   slice_head(n=1) %>%
   select(word, diff)
 
@@ -224,7 +225,14 @@ Write up your answer to Part F here.
 
 ## Your written answer
 
-Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+The year 1900 seems to be a year that were forgotten very slowly. It was easy to identify because it is distictly above the curve at a difference of 26. This may be because 1900 was the turn of a new century.
+```{r outliers}
+
+years_to_half %>%
+  arrange(desc(diff)) %>%
+  view()
+
+```
 
 # Makefile
 
