@@ -4,3 +4,4 @@
 #   decompress the first using gunzip, zless, zcat or similar
 #   then filter out rows that match using grep -E, egrep, awk, or similar
 #   write results to year_counts.tsv
+zless googlebooks-eng-all-1gram-20120701-1.gz | grep -P '^(18|19|20)[0-9]{2}\t' > year_counts.tsv

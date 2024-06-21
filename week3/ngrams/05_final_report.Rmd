@@ -52,13 +52,18 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+year_counts <- read.csv("year_counts.tsv", header = FALSE, col.names = c("term","year","volume","book_count"), sep = "\t")
 
+total_counts <- read.csv("total_counts.csv", header = FALSE, sep = ",", col.names = c('year', 'total_volume', 'page_count', 'book_count'))
 
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+total number of row of "total_counts" is `r nrow(total_counts)`
+total number of row in "year_counts" is `r nrow(year_counts)`
 
 # Part B
 
@@ -69,7 +74,8 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
+merged_counts <- merge(year_counts, total_counts, by = 'year')
+merged_counts <- merged_counts %>% mutate( proportion = volume / total_volume)
 
 ```
 
@@ -78,12 +84,21 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
+merged_counts %>% 
+  group_by(year, term) %>% 
+  filter( year > 1850 & year <= 2012) %>%  
+  filter(term == 1883 | term == 1910 | term ==1950) %>% 
+  summarise(sum_prop = sum(proportion))%>% 
+  ggplot(aes(x = year, y = sum_prop, color = factor(term))) + 
+  geom_line(size = 1.2)
 
 ```
+
 
 ## Your written answer
 
 Write up your answer to Part B here.
+Answe: Yes, our figure illustrates quite similar figure as Michel et al. 2011
 
 # Part C
 
@@ -95,7 +110,13 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 ## Your written answer
 
-Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
+Add your screenshot for Part C below this line using the `![](screenshot.png)` syntax and comment on similarities / differences.
+
+`![](screenshot.png)`
+
+`!'screenshot.png'`
+
+
 
 
 # Part D
@@ -107,14 +128,20 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
-
+merged_counts %>% 
+  filter( year > 1850 & year <= 2012) %>%  
+  filter(term == 1883 | term == 1910 | term ==1950) %>% 
+  group_by(year, term, volume) %>%
+  summarise(volume_by_year = sum(volume))%>% 
+  ggplot(aes(x = year, y = volume_by_year, color = factor(term))) + 
+  geom_line(size = 1.2)
+  
 ```
 
 # Part E
 
 > Does the difference between (b) and (d) lead you to reevaluate any of the results of Michel et al. (2011). Why or why not?
 
-As part of answering this question, make an additional plot.
 
 ## Plot the totals
 
@@ -122,11 +149,18 @@ Plot the total counts for each year over time, from 1850 to 2012. Use the `comma
 
 ```{r plot-totals}
 
+merged_counts %>% 
+  filter( year > 1850 & year <= 2012 & (term == 1883 | term == 1910 | term ==1950)) %>% 
+  ggplot(aes(x = year, y = total_volume,)) +
+  geom_line()
+  
+  
 ```
 
 ## Your written answer
 
-Write up your answer to Part E here.
+As part of answering this question, make an additional plot.
+in Part D, total number of years mentioned in paper seemed like it is keeping its volume over the years compared to Part B where it seemed like it was decreasing. In part B, we compared to total volume of all papers. It lead me to reevaluate the results. It is true that more papers are published as year increases but does it really mean we forget the fast or are there more to remember?
 
 # Part F
 
@@ -137,6 +171,11 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+peak_year <- merged_counts %>% 
+  group_by(term) %>% 
+  mutate(max = max(proportion), max_year = year ) %>%
+  filter(max == proportion)
+
 
 ```
 
@@ -145,7 +184,11 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
-
+half_life <- left_join(
+  merged_counts, peak_year[c("max_year","term", "max")], by =c("term")) %>% 
+  group_by(term) %>%
+  mutate( year_diff = year - max_year ) %>% 
+  filter( year_diff > 0 & proportion <= max / 2) %>% filter(year_diff == min(year_diff))
 ```
 
 ## Plot the inset of figure 3a
@@ -154,6 +197,20 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
+#Mitchell Time frame
+half_life  %>% 
+  filter( year >=1900 & year <= 2000) %>% 
+  ggplot(aes(x = term, y = year_diff )) +
+  geom_point() + 
+  geom_smooth()
+
+
+half_life  %>%
+  filter( year >=1850 & year <= 2012) %>% 
+  ggplot(aes(x = term, y = year_diff )) +
+  geom_point() + 
+  geom_smooth()
+  
 
 ```
 
@@ -161,13 +218,20 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 Write up your answer to Part F here.
 
+Answer: In different time frame, the figure we came with does not match with Mitchel et al. d 
+
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
 
 ## Your written answer
+There are many outliers between 1980 and 195. Around beginning of 1900, most outliers are observed, especially with bigger half-lives.
 
-Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes. The possible explaination would be the year where the war started might cause higher half-lives.
+max half_life:
+`r max(half_life$year_diff)` 
+min half_life:
+`r min(half_life$year_diff)`
 
 # Makefile
 
