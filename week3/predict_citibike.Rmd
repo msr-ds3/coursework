@@ -455,5 +455,5 @@ evaluate_final_model <- function(model, test_data) {
 
 evaluate_final_model(final_model, trips_per_day_test)
 ```
-Huh. It looks like we have very friendly test data. We will see how a whole year works tomorrow.
+Huh. It looks like we have very friendly test data. We will see how a whole year works tomorrow. I think it will do worse, since I suspect we just got lucky and didn't have a lot of hard days. But, it is also possible that the extra performance comes from having 12% more data. I think we will do better than my validation performance, but worse than my test performance.s
 
