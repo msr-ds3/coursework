@@ -52,13 +52,23 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+year_counts <- read.csv("year_counts.tsv", header = FALSE, sep = "\t", col.names = c('term', 'year', 'volume', 'book_count'))
 
 
 ```
 
+```{r}
+total_counts <- read.csv("total_counts.csv", header = FALSE, sep = ",", col.names = c('year', 'total_volume', 'page_count', 'book_count'))
+```
+
+
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+**The 'total_counts' data frame has `r nrow(total_counts)` rows**
+
+**The 'year_counts' data frame has `r nrow(year_counts)` rows.**
 
 # Part B
 
@@ -69,21 +79,41 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
+joined_data <- full_join(total_counts, year_counts, by= "year")
+head(joined_data)
 
 ```
+
+```{r}
+joined_data <- joined_data |> 
+  mutate(proportion = volume/total_volume)
+
+```
+
 
 ## Plot the main figure 3a
 
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
-
+filtered_data_1850_2012 <- joined_data |>
+  filter(year>= 1850 & year<= 2012)
+```
+```{r}
+filtered_data_1850_2012 |> 
+  filter(term ==1883 | term == 1910| term == 1950) |>
+  group_by(year, term, proportion) |>
+  summarise(sum_prop= sum(proportion), na.rm = TRUE)  |> 
+  ggplot(aes(x = year, y = sum_prop, color = factor(term))) +
+  geom_line() +
+  ylab("Frequency")
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+
+Our replicated graph and graph from the book looks almost same only noticeable difference is our graph goes beyond year 2000 where book graph only went until year 2000 
 
 # Part C
 
@@ -95,18 +125,37 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 ## Your written answer
 
-Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
+Add your screenshot for Part C below this line using the 
+
+![](figure_ngram_viewer.png)
+
+syntax and comment on similarities / differences.
+
+Both mine & the ngram viewer graph has similar pattern but the website graph is very much smoother where mine has alots of spikes
 
 
 # Part D
 
 > Recreate figure 3a (main figure), but change the y-axis to be the raw mention count (not the rate of mentions).
 
+
+
 ## Plot the main figure 3a with raw counts
 
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
+
+filtered_data_1850_2012 |> 
+  filter(term ==1883 | term == 1910| term == 1950) |> 
+  group_by(year, term, volume) |> 
+  summarise(sum_mention= sum(volume), na.rm = TRUE)  |> 
+  ggplot(aes(x = year, y = sum_mention, color = factor(term))) +
+  geom_line() +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Mentions Over Time",
+       x = "Year",
+       y = "Sum of Mentions")
 
 ```
 
@@ -121,7 +170,16 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+filtered_data_1850_2012 |> 
+  filter(term ==1883 | term == 1910| term == 1950) |> 
+  group_by(year, term, volume) |> 
+  summarise(sum_total= sum(total_volume), na.rm = TRUE)  |> 
+  ggplot(aes(x = year, y = sum_total)) +
+  geom_line() +
+  scale_y_continuous(labels = comma) +
+  labs(title = "Mentions Over Time",
+       x = "Year",
+       y = "Sum of Mentions")
 ```
 
 ## Your written answer
@@ -137,7 +195,14 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+peaks_data <- filtered_data_1850_2012 |> 
+  # filter(term ==1883 | term == 1910| term == 1950) |>
+  group_by(term) |>
+  slice_max(proportion) 
 
+  colnames(peaks_data)[which(names(peaks_data) == "proportion")] <- "max_proportion"
+  colnames(peaks_data)[which(names(peaks_data) == "year")] <- "max_year"
+  
 ```
 
 ## Compute half-lifes
@@ -145,6 +210,14 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+half_life <- left_join (filtered_data_1850_2012, peaks_data, by = "term") |>
+  filter(proportion <= max_proportion/2 & year > max_year) |>
+  group_by(term) |>
+  slice_min(year) |>
+  mutate(min_half_life = year - max_year) |>
+  select(year, term, max_year, min_half_life )
+  
+  colnames(half_life)[which(names(half_life) == "year")] <- "half_life_year"
 
 ```
 
@@ -154,7 +227,11 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-
+half_life |>
+  ggplot(aes(x = term, y= min_half_life)) +
+  geom_point() +
+  geom_smooth(se= FALSE) 
+  
 ```
 
 ## Your written answer
@@ -168,6 +245,10 @@ Write up your answer to Part F here.
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+**smallest half life :** `r min(half_life$min_half_life)`
+
+**largest half life :** `r max(half_life$min_half_life)`
 
 # Makefile
 
