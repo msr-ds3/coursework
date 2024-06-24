@@ -1,6 +1,6 @@
 ---
 title: "Citibike Model"
-author: "Fabio Pecora and Shimmy Greengart"
+author: "Shimmy Greengart"
 date: "2024-06-21"
 output: html_document
 ---
@@ -21,14 +21,15 @@ For anyone testing this, the preprocess_data function must be called on test dat
 First, I get the data.
 
 ```{r load data}
-trips_per_day <- read_tsv(here('week3/trips_per_day.tsv'))
+trips_per_day <- read_tsv(here('C:/Users/fabio/Documents/coursework/week3/trips_per_day.tsv'))
 head(trips_per_day)
+
 ```
 
 Here we preprocess the data, adding more columns. It's in a function so it can easily be run on test data.
 
 ```{r}
-bank_holidays <- read_csv(here('week3/4758439-a33943da19bd8512f41cd369332ee7e805eb373c/US Bank holidays (up to 2020)'), col_names=c("holidy_id", "ymd", "holiday_name"))
+bank_holidays <- read_csv(here('C:/Users/fabio/Documents/coursework/week4/holidays'), col_names=c("holidy_id", "ymd", "holiday_name"))
 preprocess_data <- function(trip_data) {
     trip_data |>
         left_join(bank_holidays, by="ymd") |>
@@ -36,6 +37,7 @@ preprocess_data <- function(trip_data) {
 }
 
 trips_per_day <- preprocess_data(trips_per_day)
+head(trips_per_day)
 ```
 
 
