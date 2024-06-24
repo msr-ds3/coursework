@@ -1,0 +1,52 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(modelr)
+library(here)
+
+load("C:/Users/fabio/Documents/coursework/week4/trips_2015.RData")
+```
+
+
+
+
+
+```{r}
+bank_holidays <- read_csv(here('C:/Users/fabio/Documents/coursework/week4/holidays'), col_names=c("holidy_id", "ymd", "holiday_name"))
+head(trips)
+head(weather)
+```
+
+
+
+
+```{r}
+bank_holidays <- read_csv(here('C:/Users/fabio/Documents/coursework/week4/holidays'), col_names=c("holidy_id", "ymd", "holiday_name"))
+preprocess_data <- function(trip_data) {
+    trip_data |>
+    group_by(ymd) |>
+        summarize(num_trips = n())|>
+        left_join(bank_holidays, by="ymd") |>
+        left_join(weather, by="ymd") |>
+        mutate(day_of_week=wday(ymd, label=T), is_weekend=day_of_week %in% c("Sun", "Sat"), is_workday=is.na(holiday_name) & !is_weekend, tmin = tmin/10, tmax=tmax/10)
+    
+}
+
+trips <- preprocess_data(trips)
+head(trips)
+trips <- trips |>
+  select(-holiday_name) |>
+  select(-holidy_id)
+
+trips = trips[1:365,]
+head(trips)
+ load("~/coursework/week3/final_model.RData")
+
+ finalRmse <- sqrt(mean((predict(final_model, trips) - trips$num_trips)^2))
+
+
+```
+
+
+
