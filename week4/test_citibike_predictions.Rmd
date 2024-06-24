@@ -1,0 +1,91 @@
+---
+title: "Test Citibike Predictions"
+date: '`r Sys.time()`'
+output:
+  html_document:
+    #code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+``` {r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(knitr)
+library(leaps)
+library(boot)
+library(lubridate)
+library(modelr)
+
+# set plot theme
+theme_set(theme_bw())
+```
+
+Load in the model create on week 3 and the data frames
+``` {r load in RData}
+load("trips_2015.Rdata")
+load("../week3/final_model.Rdata")
+weather <- read_csv('weather_2015.csv')
+```
+
+Merging and cleaning the data to replicate the data frame format used during training
+```{r clean and preprare data}
+
+# Prepare 2015 trips data
+trips_2015 <- trips |> 
+  group_by(ymd) |> 
+  summarize(num_trips = n()) |> 
+  mutate(date = as.character(ymd),
+         date = gsub("-", "", date)) 
+
+# Prepare 2015 weather data
+weather_2015 <- weather |> 
+  group_by(DATE) |> 
+  select(PRCP, SNWD, SNOW, TMAX, TMIN) |> 
+  rename(ymd = DATE, prcp = PRCP, snwd = SNWD, snow = SNOW, tmax = TMAX, tmin = TMIN) |> 
+  mutate(tmax = tmax/10, tmin = tmin/10)
+
+# Join the data frames
+trips_per_day_2015 <- trips_2015 |> 
+  left_join(weather_2015, by="ymd")
+
+# Added is_weekend column
+trips_per_day_2015 <- trips_per_day_2015 |> 
+  mutate(weekday = wday(ymd, label = TRUE)) |> 
+  mutate(is_weekend = as.numeric(weekday %in% c("Sat", "Sun"), 1, 0)) |> 
+  select(-weekday)
+
+# Remove the final NA
+trips_per_day_2015 <- trips_per_day_2015[1:365,]
+```
+
+
+Evaluate the model using 2015 data
+```{r compare model with 2014 and 2015 data}
+evaluate_final_model <- function(model, test_data) {
+    # evaluate on the test data
+    sqrt(mean((predict(model, test_data) - test_data$num_trips)^2))
+}
+ 
+evaluate_final_model(final_model, trips_per_day_2015)
+```
+
+Running Partner's Model on the Data
+
+```{r running partners model}
+
+```
+
+
+
+
+Final Thoughts and Discussion:
+I got a final RMSE of 8462.532 on the 2015 data, so the model performs worse.
+Previously, we got a RMSE of 3274.788 with the 2014 data.
+
+This is most likely due to over-fitting. For my model, I used a 5th degree polynomial, while my teammate used a 4th degree. Generally, the 4th degree yielded better results for the 2015, but worse for the 2014. This leads me to believe that over-fitting is probably the main issue.
+
+Some challenges When running my partner's model...
+
+There was some challenges with cleaning and manipulating the 2015 data to put it in the same format as the 2014 data, but it wasn't too bad. 

@@ -32,6 +32,9 @@ trips <- read_tsv('trips_per_day.tsv')
 After loading the data file, preview the data frame
 ```{r preview-data}
 head(trips) %>% kable()
+
+trips |> 
+  summarize(sd(num_trips)) # standard deviation is 10,257.69
 ```
 Add additional features that may be helpful for num_trips predictions
 ```{r adding features to the data frame}
