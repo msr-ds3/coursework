@@ -1,0 +1,94 @@
+---
+title: "test_citibike_predictions"
+output: html_document
+date: "2024-06-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+load(file="trips.Rdata")
+
+trips <- trips %>%
+  group_by(ymd) %>%
+  summarize(num_trips = n())
+
+trips_with_weather <- inner_join(trips, weather, by="ymd")
+
+
+```
+
+
+```{r}
+holidays <- read_csv("Holidays")
+
+names(holidays) <- c('id','date','name')
+
+
+trips_with_weather <- 
+  trips_with_weather %>%
+  mutate(tavg = ((tmax+tmin)/2)/10)
+
+trips_with_weather <- 
+  trips_with_weather %>%
+  mutate(IsWeekday = ifelse(wday(ymd, week_start=1)< 6, TRUE, FALSE))
+
+trips_with_weather <- 
+  trips_with_weather %>%
+  mutate(IsHoliday = ifelse(ymd %in% holidays$date, TRUE, FALSE))
+
+
+load("BestModel.RData")
+
+
+
+#model = lm(num_trips ~ poly(tavg, 4, raw=T) * IsWeekday + snwd + prcp + IsHoliday + prcp * IsWeekday, data=trips_with_weather)
+
+Test_RMSE<- sqrt(mean((predict(model, trips_with_weather) - trips_with_weather$num_trips)^2))
+
+Test_RMSE
+```
+
+
+```{r}
+
+trips_with_weather_2 <- 
+  trips_with_weather %>%
+  mutate(avg_temp = (tmax/10+tmin/10)/2)
+
+trips_with_weather_2 <- 
+  trips_with_weather_2 %>%
+  mutate(is_weekend = ifelse(wday(ymd, week_start=1) >= 6, TRUE, FALSE))
+
+trips_with_weather_2 <- 
+  trips_with_weather_2 %>%
+  mutate(is_holiday = ifelse(ymd %in% holidays$date, TRUE, FALSE))
+
+
+
+load("final_model.RData")
+Test_RMSE<- sqrt(mean((predict(model4, trips_with_weather_2) - trips_with_weather_2$num_trips)^2))
+
+Test_RMSE
+```
+Loading in our model, we can see our error is higher for 2015 than 2014 by around 5000 trips. We think part of this may be because we didn't account for the fact that citibike's popularity across the board would increase, leading us to under predict a lot during a few months of the year. We also noticed differences in how temperature data was stored (we needed to divide it by 10 to match our 2014 data), giving us a large error before fixing this, to normalize to the data format to our model. 
+
+```{r}
+
+plot_data <- data.frame(predicted = predict(model, trips_with_weather), observed=trips_with_weather$num_trips, date=trips_with_weather$ymd)
+
+plot_data %>%
+  ggplot() + 
+  geom_point(aes(x=date, y=observed), color="red") +
+  geom_line(aes(x=date, y=predicted))
+```
+
