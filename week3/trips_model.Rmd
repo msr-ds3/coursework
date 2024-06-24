@@ -1,0 +1,208 @@
+---
+title: "citibike_prediction"
+output: html_document
+date: "2024-06-21"
+---
+
+Loading he necessary libraries
+
+```{r}
+library(tidyverse)
+```
+
+
+# Reading in the trips data into an R dataframe
+
+```{r loading data}
+trips<-read.delim("trips_per_day.tsv",sep="\t")
+```
+
+# Spliting the days into 90% train/validation, 10% test split
+
+```{r spliting data}
+set.seed(99)
+
+num_days <- nrow(trips)
+test <- .1
+num_test <- floor(num_days*test)
+
+
+trip_test_rows <- sample(1:num_days, num_test, replace = F)
+
+trips_test <- trips[trip_test_rows, ]
+
+trips_train <-trips[-trip_test_rows, ]
+```
+
+# Set up the k-fold cross validation splits for later use
+
+```{r k-fold}
+set.seed(1)
+num_folds <- 5
+num_days <- nrow(trips)
+
+ndx <- sample(1:num_days, num_days - num_test, replace=F)
+
+trips <- trips[ndx, ] %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips)
+```
+
+# Model #1: Simple model on that days minimum temperature
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    trips_per_day_train <- filter(trips, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+
+    trips_per_day_validate <- filter(trips, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+
+```{r}
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+# Model #2: Average temperature 
+
+```{r}
+trips_avg_temp <- trips |> mutate(avg_temp = (tmin + tmax) /2)
+```
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    trips_per_day_train <- filter(trips_avg_temp, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T) + avg_temp, data=trips_per_day_train)
+
+    trips_per_day_validate <- filter(trips_avg_temp, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+
+```{r}
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+# Model #3: Min and max temperature seperately
+
+```{r}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    trips_per_day_train <- filter(trips, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T) + poly(tmax, k, raw = T), data=trips_per_day_train)
+
+    trips_per_day_validate <- filter(trips, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+
+```{r}
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+# Model #4: Include a factor for if the day is a weekday
+
+```{r}
+trips_weekday <- trips |> 
+  mutate(weekday=wday(ymd, week_start = 1)) |> 
+  mutate(is_weekday = ifelse(weekday <= 5, 1, 
+                                ifelse(weekday > 5, 0, "no")))
+```
+
+```{r}
+K <- 1:5
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    trips_per_day_train <- filter(trips_weekday, fold != f)
+    model <- lm(num_trips ~ is_weekday * (poly(tmin, k, raw = T) + poly(tmax, k, raw = T)), data=trips_per_day_train)
+
+    trips_per_day_validate <- filter(trips_weekday, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+```
+
+
+```{r}
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```

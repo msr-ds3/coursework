@@ -1,6 +1,6 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Your Name (your uni)"
+author: "Matthew Munoz (CCNY)"
 date: '`r Sys.time()`'
 output:
   html_document:
@@ -118,7 +118,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
-![](michel_fig_3a.png)
+![](ngram_viewer_3a.png)
 
 
 # Part D
