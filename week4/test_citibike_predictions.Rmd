@@ -1,0 +1,55 @@
+---
+title: "Testing Citibike"
+author: "Shimmy Greengart"
+date: "2024-06-24"
+output: html_document
+---
+
+First, we load the data and model.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+load('trips_2015.RData')
+load('final_model.RData')
+```
+
+Now, I test the model and evaluate its RMSE.
+
+```{r}
+evaluate_final_model <- function(model, test_data) {
+    # evaluate on the test data
+    sqrt(mean((predict(model, test_data) - test_data$num_trips)^2))
+}
+
+rmse <- evaluate_final_model(final_model, trips_per_day)
+rmse
+1 - (rmse/sd(trips_per_day$num_trips))^2
+
+```
+I'm getting RMSE of 7984, compared to 3162 in 2014. But I also noticed that they stopped files after a million rows in a file. That means that we are getting upwards of a million rides in a month. So, each month is just way bigger, so we consistently underestimate how many riders they will get.
+
+```{r}
+trips_per_day |>
+    add_predictions(final_model) |>
+    ggplot(aes(x=ymd, y=num_trips)) +
+    scale_y_continuous(label=comma) +
+    geom_point() +
+    geom_line(aes(y=pred), color="purple")
+```
+Looking at this data, it seems that we are predicting things pretty well until late summer and the fall. It seems that this was when Citibike really became popular, so that's when we start doing badly.
+
+Now we test Smriti's model.
+
+```{r}
+load('model.RData')
+
+trips_per_day_smriti <- trips_per_day |>
+    mutate(tavg = (tmin + tmax) / 2, IsWeekday = !is_weekend, IsHoliday = !is.na(holiday_name))
+
+evaluate_final_model(model, trips_per_day_smriti)
+
+```
+
