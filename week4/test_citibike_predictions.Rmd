@@ -1,0 +1,19 @@
+---
+title: "citibikelast"
+author: "Smriti"
+date: "2024-06-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+load('trips_2015.RData')
+load('model.RData')
+
+evaluate_model <- function(model, test_data)
+  sqrt(mean((predict(model,test_data)- test_data$num_trips)^2))}
+evaluate_model(model,trips_per_day)
+```
+

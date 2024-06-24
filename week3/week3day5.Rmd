@@ -1,0 +1,129 @@
+---
+title: "predict_citibike"
+author: "Smriti"
+date: "2024-06-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+library(tidyverse)
+library(scales)
+library(modelr)
+
+trips_per_day <- read_tsv("trips_per_day.tsv")
+holidays <- read_csv("Holidays")
+names(holidays) <- c('id','date','name')
+
+# Splitting data
+  num_days <- nrow(trips_per_day)
+  frac_training <- 0.9
+  num_training <- floor(num_days * frac_training)
+  num_folds = 5
+
+# randomly sample rows for the training set
+  ndx <- sample(1:num_days, num_training, replace=F)
+
+# used to fit the model
+  trips_per_day_trainvalidate <- trips_per_day[ndx, ]
+
+# used to evaluate the fit
+  trips_per_day_testing <- trips_per_day[-ndx, ]
+
+trips_per_day_trainvalidate <- 
+  trips_per_day_trainvalidate %>%
+  mutate(tavg = (tmax+tmin)/2)
+ 
+trips_per_day_trainvalidate <- 
+  trips_per_day_trainvalidate %>%
+  mutate(IsWeekday = ifelse(wday(ymd, week_start=1)< 6, TRUE, FALSE))
+ 
+trips_per_day_trainvalidate <- 
+  trips_per_day_trainvalidate %>%
+  mutate(IsHoliday = ifelse(ymd %in% holidays$date, TRUE, FALSE))
+ 
+trips_per_day_trainvalidate <- 
+  trips_per_day_trainvalidate %>%
+  mutate(fold = (row_number() %% num_folds) + 1)
+ 
+# K-fold evaluation on raw data
+k_fold_evaluation <- function(formula, num_folds){
+avg_validate_err <- c()
+se_validate_err <- c()
+ 
+validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day_trainvalidate, fold != f)
+    model <- lm(formula, data=trips_per_day_train)
+ 
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_trainvalidate, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+ 
+avg_se_validate_err <- c(mean(validate_err), sd(validate_err)/sqrt(num_folds))
+}
+
+ 
+model_avg_error <- c()
+model_stand_error <- c()
+ 
+formulas <- c("num_trips ~ tavg + snwd + prcp + IsWeekday + IsHoliday", 
+              "num_trips ~ tavg + snwd + prcp + IsWeekday + IsHoliday", 
+              "num_trips ~ poly(tavg, 2, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday", 
+              "num_trips ~ poly(tavg, 3, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday", 
+              "num_trips ~ poly(tavg, 4, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday",
+              "num_trips ~ poly(tavg, 5, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday",
+              "num_trips ~ poly(tavg, 6, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday")
+ 
+i=1
+for (formula in formulas){
+  model_errors <- k_fold_evaluation(formula, 5)
+  model_avg_error[i] <- model_errors[1]
+  model_stand_error[i] <- model_errors[2]
+  i <- i+1
+}
+ 
+plot_data <- data.frame(formulas, model_avg_error, model_stand_error)
+ 
+plot_data %>%
+  ggplot(aes(x=model_avg_error, y=formulas)) +
+  geom_pointrange(aes(xmin=model_avg_error - model_stand_error,
+                      xmax=model_avg_error + model_stand_error,
+                      ))# +
+  #scale_x_discrete(labels = c(1:length(formulas)))
+ 
+ 
+#plotting
+
+model = lm(num_trips ~ poly(tavg, 4, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday,
+data = trips_per_day_trainvalidate)
+plot_data2 <- data.frame(predicted = predict(model), 
+observed = trips_per_day_trainvalidate$num_trips, date=trips_per_day_trainvalidate$ymd)
+
+plot_data2 %>% 
+  ggplot() + 
+  geom_point(aes(x=date,y = observed), color = "red") +
+  geom_line(aes(x=date,y = predicted)) 
+  
+
+
+  
+
+
+model = lm(num_trips ~ poly(tavg, 4, raw=T) + snwd + snow + prcp + IsWeekday + IsHoliday,
+data = trips_per_day_trainvalidate)
+
+plot_data3 <- data.frame(predicted = predict(model), observed = trips_per_day_trainvalidate$num_trips)
+
+plot_data3 %>% 
+  ggplot(aes(x=predicted,y = observed)) +
+  geom_point() +
+  geom_abline(intercept = 0,slope = 1, color = "red", size = 2)
+  
+  
+
+ 
+ 
