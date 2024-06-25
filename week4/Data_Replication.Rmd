@@ -1,0 +1,224 @@
+---
+title: "Data_Replication"
+output: html_document
+date: "2024-06-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+```
+
+## R Markdown
+
+Download Google Trends Data + Format
+
+Set 1 - Reporting
+Set 2 - Crime
+Set 3 - Welfare
+```{r}
+reporting_data <- read_csv("Google_Trends_Set_1.csv") 
+crime_data <- read_csv("Google_Trends_Set_2.csv") 
+welfare_data <- read_csv("Google_Trends_Set_3.csv") 
+
+
+reporting_data <- 
+  reporting_data %>% 
+  mutate(date=parse_date(Month, "%Y-%m")) %>%
+  filter(year(date) < 2020)
+
+
+crime_data <- 
+  crime_data %>% 
+  mutate(date=parse_date(Month, "%Y-%m")) %>%
+  filter(year(date) < 2020) %>%
+  filter(Num_Searches != 0)
+
+
+welfare_data <- 
+  welfare_data %>% 
+  mutate(date=parse_date(Month, "%Y-%m")) %>%
+  filter(year(date) < 2020) %>%
+  filter(Num_Searches != 0)
+
+```
+
+
+```{r}
+reporting_data <- 
+  reporting_data %>%
+  mutate(President = ifelse(year(date) < 2009, "Bush", ifelse(year(date) < 2017, "Obama", "Trump")))
+
+crime_data <- 
+  crime_data %>%
+  mutate(President = ifelse(year(date) < 2009, "Bush", ifelse(year(date) < 2017, "Obama", "Trump")))
+
+welfare_data <- 
+  welfare_data %>%
+  mutate(President = ifelse(year(date) < 2009, "Bush", ifelse(year(date) < 2017, "Obama", "Trump")))
+```
+
+
+Figure 4 Recreation
+```{r}
+reporting_data %>%
+  ggplot(aes(x=date, y=Num_Searches, color=President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=F)
+
+crime_data %>%
+  ggplot(aes(x=date, y=Num_Searches, color=President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=F)
+
+
+welfare_data %>%
+  ggplot(aes(x=date, y=Num_Searches, color=President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=F)
+  
+
+```
+Table 3 Recreation
+```{r}
+reporting_data <- 
+  reporting_data %>%
+  mutate(Is_Bush = (President=="Bush"), Is_Obama = (President=="Obama"), Is_Trump = (President=="Trump"))
+
+crime_data <- 
+  crime_data %>%
+  mutate(Is_Bush = (President=="Bush"), Is_Obama = (President=="Obama"), Is_Trump = (President=="Trump"))
+
+welfare_data <- 
+  welfare_data %>%
+  mutate(Is_Bush = (President=="Bush"), Is_Obama = (President=="Obama"), Is_Trump = (President=="Trump"))
+
+```
+
+```{r}
+library(modelsummary)
+reporting_model <- lm(Num_Searches ~ date + Is_Bush + Is_Trump + Is_Obama , data=reporting_data)
+crime_model <- lm(Num_Searches ~ date + Is_Bush + Is_Trump + Is_Obama , data=crime_data)
+welfare_model <- lm(Num_Searches ~ date + Is_Bush + Is_Trump + Is_Obama , data=welfare_data)
+
+modelsummary(list("Crime" = crime_model, "Welfare" = welfare_model, "Report"=reporting_model), output="markdown")
+
+
+
+
+```
+Compare to our previous plots (Figure 4 vs Table 3)
+Note: Dotted lines are new predictions (from table 3)
+```{r}
+reporting_data %>%
+  ggplot(aes(x=date, y=Num_Searches, color=President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=F) + 
+  geom_line(aes(y=predict(reporting_model, reporting_data), x=date), linetype="dotted")
+
+crime_data %>%
+  ggplot(aes(x=date, y=Num_Searches, color=President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=F) +
+  geom_line(aes(y=predict(crime_model, crime_data), x=date), linetype="dotted")
+
+
+welfare_data %>%
+  ggplot(aes(x=date, y=Num_Searches, color=President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se=F) +
+  geom_line(aes(y=predict(welfare_model, welfare_data), x=date), linetype="dotted")
+
+
+```
+Recreating Figures 2+3
+
+Topics 1+3 for Crime
+Topics 13 for Welfare
+```{r}
+library(stm)
+load("TopicModel.RData")
+document_topics <- make.dt(immigrFit, meta = out$meta)
+topic_terms <- t(exp(immigrFit$beta$logbeta[[1]]))
+rownames(topic_terms) <- out$vocab
+colnames(topic_terms) <- sprintf("Topic%d", 1:ncol(topic_terms))
+```
+```{r}
+
+  
+  
+```
+```{r}
+line_data <- 
+  document_topics %>%
+  group_by(time) %>%
+  summarize(line_date = max(floor_date(ymd(date), "month")))
+
+
+document_topics %>%
+  mutate(month = floor_date(ymd(date), "month")) %>%
+  group_by(month, channel, time) %>%
+  summarize(num_segments = n()) %>%
+  ggplot(aes(x=month, y=num_segments, color=channel)) +
+  geom_point() +
+  geom_smooth(aes(group=interaction(channel, time)), se=F) + 
+  scale_color_manual(values = c("magenta", "red", "blue")) + 
+  geom_vline(data=line_data, aes(xintercept = line_date), linetype = "dashed")
+  
+```
+```{r}
+#Crime Plot
+document_topics %>%
+  select(Topic1, Topic3, date, channel, time) %>%
+  mutate(month = floor_date(ymd(date), "month")) %>%
+  group_by(month, channel, time) %>%
+  summarize(prop_total = sum(Topic1, Topic3)) %>%
+  ggplot(aes(x=month, y=prop_total, color=channel)) +
+  geom_point() +
+  geom_smooth(aes(group=interaction(channel, time)), se=F) + 
+  scale_color_manual(values = c("magenta", "red", "blue")) + 
+  geom_vline(data=line_data, aes(xintercept = line_date), linetype = "dashed")
+
+
+#Welfare Plot
+document_topics %>%
+  select(Topic13, date, channel, time) %>%
+  mutate(month = floor_date(ymd(date), "month")) %>%
+  group_by(month, channel, time) %>%
+  summarize(prop_total = sum(Topic13)) %>%
+  ggplot(aes(x=month, y=prop_total, color=channel)) +
+  geom_point() +
+  geom_smooth(aes(group=interaction(channel, time)), se=F) + 
+  scale_color_manual(values = c("magenta", "red", "blue")) + 
+  geom_vline(data=line_data, aes(xintercept = line_date), linetype = "dashed")
+  
+  
+```
+Recreate Table 4
+```{r}
+Segment_Info <- 
+  document_topics %>%
+  mutate(month = floor_date(ymd(date), "month")) %>%
+  group_by(month, channel, time, trump) %>%
+  summarize(num_segments = n(), welfare_prop = sum(Topic13), crime_prop = sum(Topic1, Topic3), day_of_week = wday(date), month_of_year = month(date)) %>%
+  inner_join(reporting_data, join_by(month == date)) %>%
+  distinct()
+
+
+
+table_4_model <- lm(Num_Searches ~ num_segments + welfare_prop, crime_prop + trump, data=Segment_Info)
+
+
+modelsummary(table_4_model, output="markdown")
+
+  
+
+
+
+
+  
+  
+```
+
+
