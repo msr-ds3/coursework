@@ -289,7 +289,7 @@ trips_test <- trips_test |>
 ```
 
 ```{r}
-trips_model <- lm(num_trips ~ is_weekday * poly(tmin, k, raw = T) + poly(tmax, k, raw = T) + prcp + snwd, data=trips_per_day_train)
+trips_model <- lm(num_trips ~ is_weekday * poly(tmin, k, raw = T) + poly(tmax, k, raw = T) + prcp + snwd, data=trips_weekday)
 ```
 
 ```{r}

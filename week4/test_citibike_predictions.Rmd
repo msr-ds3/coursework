@@ -4,26 +4,31 @@ output: html_document
 date: "2024-06-24"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r loading libraries}
+library(tidyverse)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r loading data and mutating it to fit needs}
+load("~/DS3/coursework/week4/trips_2015.RData")
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+trips <- trips |> group_by(ymd) |> summarize(num_trips=n()) 
 
-```{r cars}
-summary(cars)
+weather <- weather |> select(-date) |> mutate(tmin=tmin/10, tmax=tmax/10) 
+
+trips <- trips |> inner_join(weather, by="ymd") 
 ```
 
-## Including Plots
+```{r creating a data frame that includes }
+trips_weekday <- trips |> 
+  mutate(weekday=wday(ymd, week_start = 1)) |> 
+  mutate(is_weekday = ifelse(weekday <= 5, 1, 
+                                ifelse(weekday > 5, 0, "no")))
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+sqrt(mean((predict(trips_model, trips_weekday) - trips_weekday$num_trips)^2))
+```
+
