@@ -99,3 +99,229 @@ welfare |>
   ggtitle("Welfare Trends")
 ```
 
+Replicating Table 3
+
+Crime Table
+```{r create regression lines}
+# Crime Table
+
+crime$President <- relevel(factor(crime$President), ref = "Obama")
+
+crime_regression <- lm(Trend ~ Month + President, data = crime)
+summary(crime_regression)
+
+```
+
+
+Welfare Table
+```{r create regression lines}
+# Welfare Table
+
+welfare$President <- relevel(factor(welfare$President), ref = "Obama")
+
+welfare_regression <- lm(Trend ~ Month + President, data = welfare)
+summary(welfare_regression)
+
+```
+
+
+Report Table
+```{r create regression lines}
+# Report Table
+
+reporting$President <- relevel(factor(reporting$President), ref = "Obama")
+
+reporting_regression <- lm(Trend ~ Month + President, data = reporting)
+summary(reporting_regression)
+
+```
+
+
+```{r load topic model and setup}
+# Loading the topic model for the news transcripts
+library(stm)
+load("TopicModel.RData")
+document_topics <- make.dt(immigrFit, meta = out$meta)
+topic_terms <- t(exp(immigrFit$beta$logbeta[[1]]))
+rownames(topic_terms) <- out$vocab
+colnames(topic_terms) <- sprintf("Topic%d", 1:ncol(topic_terms))
+```
+
+Replication for Figure 2
+```{r replicate figure 2}
+
+# CNN
+cnn_monthly_duration <- document_topics |> 
+  filter(channel == "cnn") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(daily_duration = sum(duration)) |> 
+  select(year_month, daily_duration, time) |> 
+  distinct()
+
+cnn_monthly_duration$year_month <- as.Date(paste0(cnn_monthly_duration$year_month, "-01"), format = "%Y-%m-%d")
+
+# FOX
+fox_monthly_duration <- document_topics |> 
+  filter(channel == "fox") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(daily_duration = sum(duration)) |> 
+  select(year_month, daily_duration, time) |> 
+  distinct()
+  
+
+fox_monthly_duration$year_month <- as.Date(paste0(fox_monthly_duration$year_month, "-01"), format = "%Y-%m-%d")
+
+# MSNBC
+msnbc_monthly_duration <- document_topics |> 
+  filter(channel == "msnbc") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(daily_duration = sum(duration)) |> 
+  select(year_month, daily_duration, time) |> 
+  distinct()
+
+msnbc_monthly_duration$year_month <- as.Date(paste0(msnbc_monthly_duration$year_month, "-01"), format = "%Y-%m-%d")
+
+combined_data <- rbind(
+  transform(cnn_monthly_duration, channel = "cnn"),
+  transform(fox_monthly_duration, channel = "fox"),
+  transform(msnbc_monthly_duration, channel = "msnbc")
+)
+
+combined_data |> 
+  ggplot(aes(x=year_month, y=daily_duration, color=channel, group = interaction(channel, time))) +
+  geom_point() +
+  geom_smooth(se = F) +
+  geom_vline(xintercept = ymd("2015-06-01"), linetype="dashed") +
+  geom_vline(xintercept = ymd("2017-01-01"), linetype="dashed") +
+  labs(
+    x = "",
+    y = "Num Monthly Immigration Segs"
+  )
+```
+
+Replication for Figure 3
+
+Crime Topic Graph
+```{r replicate figure 3 for crime data}
+
+# Topic 1 and 3 - CRIME
+
+# CNN Crime
+cnn_crime_topic <- document_topics |> 
+  filter(channel == "cnn") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(topic_one_sum = sum(Topic1), topic_three_sum = sum(Topic3)) |>
+  mutate(crime_topic = topic_one_sum + topic_three_sum) |> 
+  select(year_month, crime_topic, time) |> 
+  distinct()
+cnn_crime_topic$year_month <- as.Date(paste0(cnn_crime_topic$year_month, "-01"), format = "%Y-%m-%d")
+
+# FOX Crime
+fox_crime_topic <- document_topics |> 
+  filter(channel == "fox") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(topic_one_sum = sum(Topic1), topic_three_sum = sum(Topic3)) |>
+  mutate(crime_topic = topic_one_sum + topic_three_sum) |> 
+  select(year_month, crime_topic, time) |> 
+  distinct()
+fox_crime_topic$year_month <- as.Date(paste0(fox_crime_topic$year_month, "-01"), format = "%Y-%m-%d")
+
+# MSNBC Crime
+msnbc_crime_topic <- document_topics |> 
+  filter(channel == "msnbc") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(topic_one_sum = sum(Topic1), topic_three_sum = sum(Topic3)) |>
+  mutate(crime_topic = topic_one_sum + topic_three_sum) |> 
+  select(year_month, crime_topic, time) |> 
+  distinct()
+msnbc_crime_topic$year_month <- as.Date(paste0(msnbc_crime_topic$year_month, "-01"), format = "%Y-%m-%d")
+
+
+combined_data <- rbind(
+  transform(cnn_crime_topic, channel = "cnn"),
+  transform(fox_crime_topic, channel = "fox"),
+  transform(msnbc_crime_topic, channel = "msnbc")
+)
+
+combined_data |> 
+  ggplot(aes(x=year_month, y=crime_topic, color=channel, group = interaction(channel, time))) +
+  geom_point() +
+  geom_smooth(se = F) +
+  geom_vline(xintercept = ymd("2015-06-01"), linetype="dashed") +
+  geom_vline(xintercept = ymd("2017-01-01"), linetype="dashed") +
+  labs(
+    x = "",
+    y = "Immigrant Crime News Coverage"
+  )
+
+```
+
+Welfare Topic Graph
+```{r replicate figure 3 for welfare data}
+# Topic 13 - WELFARE
+
+# CNN Welfare
+cnn_welfare_topic <- document_topics |> 
+  filter(channel == "cnn") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(welfare_topic = sum(Topic13)) |>
+  select(year_month, welfare_topic, time) |> 
+  distinct()
+cnn_welfare_topic$year_month <- as.Date(paste0(cnn_welfare_topic$year_month, "-01"), format = "%Y-%m-%d")
+
+# FOX Welfare
+fox_welfare_topic <- document_topics |> 
+  filter(channel == "fox") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(welfare_topic = sum(Topic13)) |>
+  select(year_month, welfare_topic, time) |> 
+  distinct()
+fox_welfare_topic$year_month <- as.Date(paste0(fox_welfare_topic$year_month, "-01"), format = "%Y-%m-%d")
+
+# MSNBC Welfare
+msnbc_welfare_topic <- document_topics |> 
+  filter(channel == "msnbc") |> 
+  mutate(date = as.Date(date)) |> 
+  mutate(year_month = format(date, format = "%Y-%m")) |> 
+  group_by(year_month) |> 
+  mutate(welfare_topic = sum(Topic13)) |>
+  select(year_month, welfare_topic, time) |> 
+  distinct()
+msnbc_welfare_topic$year_month <- as.Date(paste0(msnbc_welfare_topic$year_month, "-01"), format = "%Y-%m-%d")
+
+
+combined_data <- rbind(
+  transform(cnn_welfare_topic, channel = "cnn"),
+  transform(fox_welfare_topic, channel = "fox"),
+  transform(msnbc_welfare_topic, channel = "msnbc")
+)
+
+combined_data |> 
+  ggplot(aes(x=year_month, y=welfare_topic, color=channel, group = interaction(channel, time))) +
+  geom_point() +
+  geom_smooth(se = F) +
+  geom_vline(xintercept = ymd("2015-06-01"), linetype="dashed") +
+  geom_vline(xintercept = ymd("2017-01-01"), linetype="dashed") +
+  labs(
+    x = "",
+    y = "Immigrant Welfare News Coverage"
+  )
+
+```
+
