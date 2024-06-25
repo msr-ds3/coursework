@@ -38,7 +38,7 @@ trips_per_day <- trips_per_day %>%
 '2014-11-27',
 '2014-12-25'), 1, 0))
 
-
+head(trips_per_day)
 ```
 
 
@@ -214,7 +214,7 @@ model <- lm(num_trips ~ holiday* isweekend * poly(tmin, k, raw = TRUE) + poly(tm
 
 ?save
 # Add predictions to the test data
-trips_per_day_test <- trips_per_day_test %>%
+trips_per_day_test_pred <- trips_per_day_test %>%
   add_predictions(model) %>%
   mutate(residuals = num_trips - pred)
 
@@ -261,7 +261,7 @@ summary(model)
 library(tidyverse)
 
 # Set the value of k
-k <- 3
+k <- 5
 
 # Fit the model
 model <- lm(num_trips ~ holiday * isweekend * poly(tmin, k, raw = TRUE) + 
@@ -271,7 +271,7 @@ model <- lm(num_trips ~ holiday * isweekend * poly(tmin, k, raw = TRUE) +
 # Save the model to a .RData file
 save(model, file = "best_model.RData")
 
-# Optionally print a summary of the model
+# Optionally printa summary of the model
 summary(model)
 
 ```

@@ -1,0 +1,103 @@
+---
+title: "Test Citibike Predictions"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(modelr)
+library(lubridate)  # For handling dates
+
+```
+
+```{r}
+# Load the 2015 trips and weather data
+load("trips_2015.RData")
+
+# Ensure trips and weather data are correctly loaded
+head(trips)
+head(weather)
+
+# Create the trips_per_day_2015 data frame by merging trips and weather data
+trips_per_day_2015 <- trips %>%
+  mutate(ymd = as.Date(starttime)) %>%
+  group_by(ymd) %>%
+  summarise(num_trips = n()) %>%
+  left_join(weather, by = "ymd")
+
+# Add holiday indicator
+trips_per_day_2015 <- trips_per_day_2015 %>%
+  mutate(holiday = ifelse(ymd %in% c(
+    '2015-01-01', '2015-01-19', '2015-02-16', '2015-05-25',
+    '2015-07-03', '2015-09-07', '2015-10-12', '2015-11-11',
+    '2015-11-26', '2015-12-25'), 1, 0))
+
+# Add isweekend indicator
+
+trips_per_day_2015$isweekend <- as.numeric(wday(trips_per_day_2015$ymd) %in% c(1,7))
+
+# Inspect the merged data
+head(trips_per_day_2015)
+
+
+```
+
+```{r}
+load("../week3/best_model.RData")
+
+k <- 5
+
+# Inspect the loaded model
+summary(model)
+
+```
+
+```{r}
+# Make predictions using the loaded model
+
+model <- lm(num_trips ~ holiday * isweekend * poly(tmin, k, raw = TRUE) + 
+                           poly(tmax, k, raw = TRUE) + prcp + snwd + snow, 
+            data = trips_per_day_2015)
+
+trips_per_day_2015 <- trips_per_day_2015 %>%
+  add_predictions(model, var = "pred")
+
+# Check for missing values
+missing_values <- trips_per_day_2015 %>%
+  summarize(missing_num_trips = sum(is.na(num_trips)),
+            missing_pred = sum(is.na(pred)))
+
+print(missing_values)
+
+# Inspect the first few rows with predictions
+head(trips_per_day_2015)
+
+# Compute the RMSE, ignoring any rows with missing values
+rmse <- trips_per_day_2015 %>%
+  filter(!is.na(pred) & !is.na(num_trips)) %>%
+  summarize(rmse = sqrt(mean((pred - num_trips)^2)))
+
+print(rmse)
+summary
+
+```
+```{r}
+
+ggplot(trips_per_day_2015, aes(x = num_trips, y = pred)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Predicted vs Actual Number of Trips", 
+       x = "Actual Number of Trips", 
+       y = "Predicted Number of Trips") +
+  theme_minimal()
+```
+
+## Summary and Thoughts
+
+### Model Performance in 2014 vs. 2015
+- **Data Size**: The small dataset size led to higher RMSE due to limited generalization capability.
+- **Overfitting**: The model overfitted the training data, capturing noise instead of the actual signal, resulting in poor performance on the 2015 data.
+
+### Approach to Finding the Best Model_2014
+- **Polynomial Terms**: Explored different polynomial degrees for temperature variables using `regsubsets` from the `leaps` library. Visualized the results to determine the optimal polynomial degree.
