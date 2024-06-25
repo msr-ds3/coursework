@@ -1,74 +1,181 @@
 ```{r}
 library(tidyverse)
-library(readr)
-library(lubridate)
 library(dplyr)
+library(lubridate)
+library(zoo)
 
+```
+
+```{r}
 report <- read.csv("Report.csv")
 crime <- read.csv("Crime.csv")
-welfare<- read.csv("Welfare.csv")
+welfare <- read.csv("Welfare.csv")
+```
+
+
+```{r}
+colnames(report) <- c("ym", "trends")
+colnames(crime) <- c("ym", "trends")
+colnames(welfare) <- c("ym", "trends")
+```
+
+```{r}
+add_date <- function(df) {
+  df <- df |>  
+    mutate(ymd=as.Date(paste(ym, "-01", sep=""))) |> 
+    select(ymd, trends)
+  }
+```
+
+```{r}
+report <- add_date(report) 
+crime <- add_date(crime) 
+welfare <- add_date(welfare) 
+```
+
+```{r function to add president column}
+add_pres <- function(df) {
+  bush_end <- as.Date("2009-01-20")
+  trump_start <- as.Date("2017-01-20")
+  df$president <- 
+    ifelse(df$ymd >= bush_end & df$ymd < trump_start, "obama", 
+           ifelse(df$ymd < bush_end, "bush", "trump")) 
+  return(df)
+
+}
+```
+
+```{r}
+zerosAndOnes <- function(df) {
+  df$bush <- 
+    ifelse(df$president == "bush", 1, 0) 
+  df$obama <- 
+    ifelse(df$president == "obama", 1, 0) 
+  df$trump <- 
+    ifelse(df$president == "trump", 1, 0) 
+  return(df)
+}
+```
+
+
+```{r add president column to each vector}
+report <- add_pres(report)
+crime <- add_pres(crime) 
+welfare <- add_pres(welfare)
+```
+
+
+```{r}
+zerosAndOnes(crime)
+zerosAndOnes(report)
+zerosAndOnes(welfare)
+```
+
+
+
+
+```{r}
+plot_4 <- function(df, start, end) {
+  df |>
+    ggplot(aes(x = ymd, y = trends, color = president)) +
+    geom_point(shape = 1) +
+    geom_smooth(method = "lm", se = FALSE) + 
+    ylim(start, end) +
+    xlab("Year") +
+    ylab("Google Trends")
+}
+```
+
+
+```{r immigration plot}
+plot_4(report, 30, 100)
+plot_4(crime, 0, 100)
+plot_4(welfare, 12, 100)
+```
+
+```{r}
+
+library(stm)
+
+load("TopicModel.RData")
+
+document_topics <- make.dt(immigrFit, meta = out$meta)
+
+topic_terms <- t(exp(immigrFit$beta$logbeta[[1]]))
+
+rownames(topic_terms) <- out$vocab
+
+colnames(topic_terms) <- sprintf("Topic%d", 1:ncol(topic_terms))
+
 
 ```
 
-```{r loading president and fix date}
+```{r}
 
-report <- report |>
-  mutate(Date = ymd(paste0(Date, "-01")), 
-         President = case_when(
-           between(Date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
-           between(Date, as.Date("2009-01-20"), as.Date("2017-01-20")) ~ "Obama",
-           TRUE ~ "Trump"
-         ))
 
-head(report)
 
-crime <- crime |>
-  mutate(Date = ymd(paste0(Date, "-01")), 
-         President = case_when(
-           between(Date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
-           between(Date, as.Date("2009-01-20"), as.Date("2017-01-20")) ~ "Obama",
-           TRUE ~ "Trump"
-         ))
+
+figure2 <- document_topics %>%
+   mutate(date = as.Date(date, format = "%Y-%m-%d"),
+          yearmonth = as.Date(ym(format(date, "%Y-%m")))) %>%
+   select(channel, duration, yearmonth, time) %>%
+   group_by(yearmonth, channel, time) %>%
+   summarize(total_duration = sum(duration), .groups = 'drop')
+
+# Convert the specific dates to Date objects
+date1 <- as.Date("2015-06-01")
+date2 <- as.Date("2017-01-01")
+
+ggplot(figure2, aes(x = yearmonth, y = total_duration, color = channel, group = interaction(channel, time))) +
+   geom_point() +
+   geom_vline(xintercept = as.numeric(date1), linetype = "dashed", color = "black") +
+   geom_vline(xintercept = as.numeric(date2), linetype = "dashed", color = "black") +
+   geom_smooth(se = FALSE) +
+   theme_minimal() +
+   labs(title = "Total Duration by Channel and Time",
+        x = "Year-Month",
+        y = "Total Duration") +
+   scale_color_discrete(name = "Channel") +
+   scale_linetype_discrete(name = "Time")
+
+
+
+
   
-head(crime)
-
-welfare <- welfare |>
-  mutate(Date = ymd(paste0(Date, "-01")), 
-         President = case_when(
-           between(Date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
-           between(Date, as.Date("2009-01-20"), as.Date("2017-01-20")) ~ "Obama",
-           TRUE ~ "Trump"
-         ))
-  
-head(welfare)
-
-```
-
-```{r first graph}
-report |>
-  ggplot(aes(x = Date, y = Trend, color = President)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
-
-
-```
-
-```{r second graph}
-
-welfare |>
-  ggplot(aes(x = Date, y = Trend, color = President)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
-
-```
-
-```{r third graph}
-crime |>
-  ggplot(aes(x = Date, y = Trend, color = President)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE)
 
 ```
 
 
+```{r}
+
+date1 <- as.Date("2015-06-01")
+date2 <- as.Date("2017-01-01") 
+
+figure3a <- document_topics |> 
+  mutate(date = as.Date(date, format = "%Y-%m-%d"),
+          yearmonth = as.Date(ym(format(date, "%Y-%m")))) |>
+  select(Topic1, Topic3, channel, duration, yearmonth, time) |> group_by(yearmonth, channel, time) |>
+  summarize(totalDuration=sum(duration*Topic1 + duration*Topic3)) |> arrange(totalDuration)
+ 
+figure3a |> ungroup() |> 
+  group_by(channel, time) |> 
+  ggplot(aes(x = yearmonth, y = totalDuration, color = channel, group = interaction(channel, time))) + 
+  geom_vline(xintercept = as.numeric(date1), linetype = "dashed", color = "black") +
+   geom_vline(xintercept = as.numeric(date2), linetype = "dashed", color = "black") +
+  geom_point() + geom_smooth( se=FALSE) 
+
+figure3b <- document_topics |> 
+  mutate(date = as.Date(date, format = "%Y-%m-%d"),
+          yearmonth = as.Date(ym(format(date, "%Y-%m")))) |>
+  select(Topic13, channel, duration, yearmonth, time) |> group_by(yearmonth, channel, time) |>
+  summarize(totalDuration=sum(duration*Topic13)) |> arrange(totalDuration)
+
+figure3b |> ungroup() |> 
+  group_by(channel, time) |> 
+  ggplot(aes(x = yearmonth, y = totalDuration, color = channel, group = interaction(channel, time))) + 
+  geom_vline(xintercept = as.numeric(date1), linetype = "dashed", color = "black") +
+   geom_vline(xintercept = as.numeric(date2), linetype = "dashed", color = "black") +
+  geom_point() + geom_smooth( se=FALSE) 
+
+```
 
