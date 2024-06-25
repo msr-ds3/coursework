@@ -1,0 +1,74 @@
+```{r}
+library(tidyverse)
+library(readr)
+library(lubridate)
+library(dplyr)
+
+report <- read.csv("Report.csv")
+crime <- read.csv("Crime.csv")
+welfare<- read.csv("Welfare.csv")
+
+```
+
+```{r loading president and fix date}
+
+report <- report |>
+  mutate(Date = ymd(paste0(Date, "-01")), 
+         President = case_when(
+           between(Date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
+           between(Date, as.Date("2009-01-20"), as.Date("2017-01-20")) ~ "Obama",
+           TRUE ~ "Trump"
+         ))
+
+head(report)
+
+crime <- crime |>
+  mutate(Date = ymd(paste0(Date, "-01")), 
+         President = case_when(
+           between(Date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
+           between(Date, as.Date("2009-01-20"), as.Date("2017-01-20")) ~ "Obama",
+           TRUE ~ "Trump"
+         ))
+  
+head(crime)
+
+welfare <- welfare |>
+  mutate(Date = ymd(paste0(Date, "-01")), 
+         President = case_when(
+           between(Date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
+           between(Date, as.Date("2009-01-20"), as.Date("2017-01-20")) ~ "Obama",
+           TRUE ~ "Trump"
+         ))
+  
+head(welfare)
+
+```
+
+```{r first graph}
+report |>
+  ggplot(aes(x = Date, y = Trend, color = President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+
+```
+
+```{r second graph}
+
+welfare |>
+  ggplot(aes(x = Date, y = Trend, color = President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+```{r third graph}
+crime |>
+  ggplot(aes(x = Date, y = Trend, color = President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+
+
