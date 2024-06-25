@@ -12,8 +12,19 @@ knitr::opts_chunk$set(echo = TRUE)
 load('trips_2015.RData')
 load('model.RData')
 
-evaluate_model <- function(model, test_data)
+evaluate_model <- function(model, test_data){
   sqrt(mean((predict(model,test_data)- test_data$num_trips)^2))}
 evaluate_model(model,trips_per_day)
-```
 
+
+```
+Comparing this to the predicted data, I seem to have higher RMSE. 
+
+evaluating shimmy's model:
+```{r}
+
+load('final_model.RData')
+Trips_Per_Day <-
+mutate(trips_per_day, is_workday = !IsHoliday & IsWeekday)  
+evaluate_model(final_model,Trips_Per_Day)
+```
