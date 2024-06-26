@@ -4,7 +4,7 @@ This week covers replications and extensions of [this article](https://www.cambr
 
 1. Start by reading the paper. Focus on figures 2-4, and tables 3-4. These will be the main results to replicate in the paper.
 
-2. Follow the links to the data sources that were used. The [Google Trends](https://trends.google.com/trends/) website will be necessary for Figure 4 and Table 3. Put `google_trends_report.csv`, `google_trends_crime.csv`, and `google_trends_welfare.csv` into the `/from_google_trends` directory. Explore the data in the `from_replication_files/` folder and think about how the data can be transformed to create Figures 2 and 3.
+2. Follow the links to the data sources that were used. The [Google Trends](https://trends.google.com/trends/) website will be necessary for Figure 4 and Table 3. Put `google_trends_report.csv`, `google_trends_crime.csv`, and `google_trends_welfare.csv` into the `/from_google_trends` directory. Explore the data in the `from_replication_files/` folder and think about how the data can be transformed to create Figures 2 and 3. For Table 4, first do a monthly version of the regression and then use the `gt_report_daily.csv` to do a daily version.
 
 3. Sketch out a plan for how you can use these data sets to get the results in the paper and write reproducible code to create the results in the paper. Follow the template for the [ngrams assignment](../week3/ngrams) in organizing your code. For instance, you might want a file called `01_download_google_trends.sh` to download the data for Google Trends search queries to a `data/` subdirectory in your repository. Do all of your work in your group's project repository, which you have direct read/write access to (no need to fork and issue pull requests, etc.):
 
