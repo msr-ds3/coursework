@@ -1,5 +1,5 @@
 ---
-title: "Anti-Immigration Replication Study"
+title: "Replication of \"Anti-Immigrant Rhetoric and ICE Reporting Interest: Evidence from a Large-Scale Study of Web Search Data\""
 date: '`r Sys.time()`'
 output:
   html_document:
@@ -35,7 +35,7 @@ reporting <- reporting |>
 reporting |> 
   ggplot(aes(x = Month, y = Trend, color = President)) +
   geom_point() +
-  geom_smooth(method = "lm") +
+  geom_smooth(method = "lm", se = F) +
   labs(
     x = "",
     y = "Google Trends"
@@ -63,7 +63,7 @@ crime <- crime |>
 crime |> 
   ggplot(aes(x = Month, y = Trend, color = President)) +
   geom_point() +
-  geom_smooth(method = "lm") +
+  geom_smooth(method = "lm", se = F) +
   labs(
     x = "",
     y = "Google Trends"
@@ -91,13 +91,127 @@ welfare <- welfare |>
 welfare |> 
   ggplot(aes(x = Month, y = Trend, color = President)) +
   geom_point() +
-  geom_smooth(method = "lm") +
+  geom_smooth(method = "lm", se = F) +
   labs(
     x = "",
     y = "Google Trends"
   ) +
   ggtitle("Welfare Trends")
 ```
+
+Compare to Snapshotted Google Trends data
+```{r compare to snapshotted data}
+
+# Reporting Graph
+reporting_snap <- read_csv("project/from_replication_files/google_trends_report.csv")
+
+reporting_snap <- reporting_snap |> 
+  unite("date", year, month, sep = "-")
+
+reporting_snap$date <- as.Date(paste0(reporting_snap$date, "-01"), format = "%Y-%m-%d")
+
+reporting_snap <- reporting_snap |> 
+  mutate(President = case_when(
+    between(date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
+    between(date, as.Date("2009-1-20"), as.Date("2017-1-20")) ~ "Obama",
+    TRUE ~ "Trump"
+  ))
+
+reporting_snap |> 
+  ggplot(aes(x = date, y = search, color = President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(
+    x = "",
+    y = "Google Trends"
+  ) +
+  ggtitle("Reporting Trends")
+
+
+
+# Crime Graph
+crime_snap <- read_csv("project/from_replication_files/google_trends_crime.csv")
+
+crime_snap <- crime_snap |> 
+  unite("date", year, month, sep = "-")
+
+crime_snap$date <- as.Date(paste0(crime_snap$date, "-01"), format = "%Y-%m-%d")
+
+crime_snap <- crime_snap |> 
+  mutate(President = case_when(
+    between(date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
+    between(date, as.Date("2009-1-20"), as.Date("2017-1-20")) ~ "Obama",
+    TRUE ~ "Trump"
+  ))
+
+crime_snap |> 
+  ggplot(aes(x = date, y = search, color = President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(
+    x = "",
+    y = "Google Trends"
+  ) +
+  ggtitle("Crime Trends")
+
+
+
+# Welfare Graph
+welfare_snap <- read_csv("project/from_replication_files/google_trends_welfare.csv")
+
+welfare_snap <- welfare_snap |> 
+  unite("date", year, month, sep = "-")
+
+welfare_snap$date <- as.Date(paste0(welfare_snap$date, "-01"), format = "%Y-%m-%d")
+
+welfare_snap <- welfare_snap |> 
+  mutate(President = case_when(
+    between(date, as.Date("2001-01-20"), as.Date("2009-01-20")) ~ "Bush",
+    between(date, as.Date("2009-1-20"), as.Date("2017-1-20")) ~ "Obama",
+    TRUE ~ "Trump"
+  ))
+
+welfare_snap |> 
+  ggplot(aes(x = date, y = search, color = President)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = F) +
+  labs(
+    x = "",
+    y = "Google Trends"
+  ) +
+  ggtitle("Welfare Trends")
+
+
+
+# Report Table
+
+reporting_snap$President <- relevel(factor(reporting_snap$President), ref = "Obama")
+
+reporting_snap_regression <- lm(search ~ date + President, data = reporting_snap)
+summary(reporting_snap_regression)
+
+
+
+
+# Crime Table
+
+crime_snap$President <- relevel(factor(crime_snap$President), ref = "Obama")
+
+crime_snap_regression <- lm(search ~ date + President, data = crime_snap)
+summary(crime_snap_regression)
+
+
+
+# Welfare Table
+
+welfare_snap$President <- relevel(factor(welfare_snap$President), ref = "Obama")
+
+welfare_snap_regression <- lm(search ~ date + President, data = welfare_snap)
+summary(welfare_snap_regression)
+
+```
+
+
 
 Replicating Table 3
 
@@ -323,5 +437,35 @@ combined_data |>
     y = "Immigrant Welfare News Coverage"
   )
 
+```
+
+Replicate Table 4
+```{r Replicate Table 4}
+
+# Immigration segs
+combined_data <- rbind(
+  transform(cnn_monthly_duration, channel = "cnn"),
+  transform(fox_monthly_duration, channel = "fox"),
+  transform(msnbc_monthly_duration, channel = "msnbc")
+)
+
+# Immigration + Crime Coverage
+combined_data <- rbind(
+  transform(cnn_crime_topic, channel = "cnn"),
+  transform(fox_crime_topic, channel = "fox"),
+  transform(msnbc_crime_topic, channel = "msnbc")
+)
+
+# Immigration + Welfare Coverage
+combined_data <- rbind(
+  transform(cnn_welfare_topic, channel = "cnn"),
+  transform(fox_welfare_topic, channel = "fox"),
+  transform(msnbc_welfare_topic, channel = "msnbc")
+)
+
+# Trump admin
+crime
+
+# 
 ```
 
