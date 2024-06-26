@@ -11,3 +11,7 @@ Now you're going to test the model you developed yesterday using trips from 2014
 4. Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you found with cross-validation on the 2014 data.
 5. Pair up with a partner who has a different model, use their code to run their model, and evaluate the predictions it makes for 2015.
 6. Write up any thoughts you have about this exercise in your Rmarkdown file, ranging from how the model performed in 2014 vs. 2015, challenges you faced in running it on new data, or issues that came up in running each other's code. Commit and push the file to Github when you're done.
+
+# Project
+
+See the [project folder](project/) for more details on the paper we'll replicate and extend.
