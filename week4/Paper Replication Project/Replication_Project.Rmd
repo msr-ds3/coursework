@@ -1,0 +1,328 @@
+---
+title: "Paper_Replication"
+output: html_document
+date: "2024-06-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#load in neccessary library
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(readr)
+install.packages("zoo")
+library(zoo)
+library(lubridate)
+install.packages("stargazer")
+library(stargazer)
+install.packages("broom")
+library('broom')
+library(scales)
+library(modelr)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r}
+# Import csv file and transform dataframe
+term1 <- read.csv("C:/Users/jane/Documents/GitHub/coursework/week4/Paper Replication Project/crime.csv")
+term2 <- read.csv("C:/Users/jane/Documents/GitHub/coursework/week4/Paper Replication Project/welfare.csv")
+term3 <- read.csv("C:/Users/jane/Documents/GitHub/coursework/week4/Paper Replication Project/report.csv")
+
+#combine column "month" and "year" into just "month", then remove the "year" column 
+term1$month <- paste(term1$year, term1$month, sep = "-")
+term1 <- term1[, -which(names(term1) %in% "year")]
+
+term2$month <- paste(term2$year, term2$month, sep = "-")
+term2 <- term2[, -which(names(term2) %in% "year")]
+
+term3$month <- paste(term3$year, term3$month, sep = "-")
+term3 <- term3[, -which(names(term3) %in% "year")]
+
+#change "search" to numeric value and "month" into "yearmon" value 
+term1$search <- as.numeric(term1$search)
+term1$month <- as.yearmon(term1$month)
+
+term2$search <- as.numeric(term2$search)
+term2$month <- as.yearmon(term2$month)
+
+term3$search <- as.numeric(term3$search)
+term3$month <- as.yearmon(term3$month)
+
+```
+
+
+```{r}
+# Create a dataframe with dates from April 2004 to August 2019
+pres_term_df <- data.frame(
+  month = seq(as.Date("2004-01-01"), as.Date("2019-10-01"), by = "month")
+) %>%
+  # Assign presidential terms based on dates
+  mutate(
+    presidential_term = case_when(
+      month >= as.Date("2004-01-01") & month < as.Date("2009-01-20") ~ "Bush",
+      month >= as.Date("2009-01-20") & month < as.Date("2017-01-20") ~ "Obama",
+      month >= as.Date("2017-01-20") ~ "Trump"
+    ),
+    # Format month as yearmon
+    month = as.yearmon(format(month, "%Y-%m"))
+  )
+```
+
+```{r}
+#Join 3 different term data frame with pre_term_df by "month" 
+term1 <- full_join(term1, pres_term_df, by='month')
+term2 <- full_join(term2, pres_term_df, by='month')
+term3 <- full_join(term3, pres_term_df, by='month')
+```
+
+
+```{r}
+# Plotting the data frame with filtered points
+ggplot(data = term1, aes(x = month, y = search, color = presidential_term)) +
+  geom_point() +  geom_smooth(method = 'lm', se = FALSE) +
+  labs(x = "Month", y = "Search") +
+  ggtitle('Google Trends of term "Immigrants + Crime" over the years') + 
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")  # Adjust margins (top, right, bottom, left)
+  )
+
+ggplot(data = term2, aes(x = month, y = search, color = presidential_term)) +
+  geom_point() + geom_smooth(method = 'lm', se = FALSE) +
+  labs(x = "Month", y = "Search") +
+  ggtitle('Google Trends of term "Immigrants + Welfare" over the years') + 
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")  # Adjust margins (top, right, bottom, left)
+  )
+
+ggplot(data = term3, aes(x = month, y = search, color = presidential_term)) +
+  geom_point() + geom_smooth(method = 'lm', se = FALSE) +
+  labs(x = "Month", y = "Search") + 
+  ggtitle('Google Trends of term "Immigrants + Reporting" over the years') + 
+  theme(
+    plot.margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm"))  # Adjust margins (top, right, bottom, left)
+```
+
+
+```
+The graphs produced are similar to the ones displayed in paper. 
+
+```
+
+
+
+```{r}
+#transform data to filter out 0 values and mutate new "term" column
+term1 <- term1%>%
+   filter(search != 0) %>%
+  mutate(term = 'Crime', 
+         date = date(month))
+
+term2 <- term2%>%
+   filter(search != 0) %>%
+  mutate(term = 'Welfare',
+         date = date(month))
+
+
+term3 <- term3%>%
+   filter(search != 0) %>%
+  mutate(term = 'Report',
+         date = date(month))
+
+```
+
+
+```{r}
+# Combine data
+combined_data <- bind_rows(term1, term2, term3)
+
+# Set Obama as the baseline
+combined_data$presidential_term <- relevel(factor(combined_data$presidential_term), ref = "Obama")
+
+# Define the linear model function
+run_regression <- function(data) {
+  glm(search ~ date + presidential_term, data = data)
+}
+
+# Run regression for each category
+crime_model <- run_regression(filter(combined_data, term == "Crime"))
+welfare_model <- run_regression(filter(combined_data, term == "Welfare"))
+report_model <- run_regression(filter(combined_data, term == "Report"))
+
+# Function to extract results
+extract_results <- function(model, category) {
+  tidy(model) %>%
+    filter(term %in% c("(Intercept)", "date", "presidential_termBush", "presidential_termTrump")) %>%
+    mutate(term = ifelse(term == "(Intercept)", "Constant", term)) %>%
+    select(term, estimate, std.error) %>%
+    mutate(category = category)
+}
+
+crime_results <- extract_results(crime_model, "Crime")
+welfare_results <- extract_results(welfare_model, "Welfare")
+report_results <- extract_results(report_model, "Report")
+
+# Combine all results
+all_results <- bind_rows(crime_results, welfare_results, report_results)
+
+# Format the table as required
+formatted_results <- all_results %>%
+  pivot_wider(names_from = category, values_from = c(estimate, std.error)) %>%
+  arrange(term)
+
+print(formatted_results)
+```
+
+
+```
+The table produced have the same standard error, but the estimate have a slight difference, which might be a result of different data cleaning practices (removing "0" and "NA" values)
+```
+
+
+```{r}
+#Plotting my predicted values using the model
+term1 |>
+    add_predictions(crime_model) |>
+    ggplot(aes(x=month, y=search, color = presidential_term)) +
+    geom_point() + geom_line(aes(y=pred)) +
+  labs(x = "Month", y = "Search") +
+  ggtitle('Prediction of term "Immigrants + Crime" over the years') 
+
+term2 |>
+    add_predictions(welfare_model) |>
+    ggplot(aes(x=month, y=search, color = presidential_term)) +
+    geom_point() + geom_line(aes(y=pred)) + 
+   labs(x = "Month", y = "Search") +
+  ggtitle('Prediction of term "Immigrants + Welfare" over the years') 
+
+
+term3 |>
+    add_predictions(report_model) |>
+    ggplot(aes(x=month, y=search, color = presidential_term)) +
+    geom_point()  + geom_line(aes(y=pred)) + 
+   labs(x = "Month", y = "Search") +
+  ggtitle('Prediction of term "Immigrants + Reporting" over the years')
+```
+
+
+```
+The graph Prediction of term "Immigrants + Crime" over the years looks different compared to the one in paper since it predicts number of searches under Bush's and Trump's presidential terms as slightly upward trend while the paper shows number of searches shows downward trend in Bush and Trump's term. 
+
+The graph Prediction of term "Immigrants + Welfare" over the years shows no significant upward or downward trends while the one in paper shows a negative trend during Bush term and positive trend during Trump term. 
+
+The graph Prediction of term "Immigrants + Reporting" over the years shows a slightly downward trend during Bush term while the one in the paper shows upward trend. 
+```
+
+
+
+```{r}
+#load libray and create document_topics file
+install.packages("stm")
+library(stm)
+load("C:/Users/jane/Downloads/TopicModel.RData")
+document_topics <- make.dt(immigrFit, meta = out$meta)
+topic_terms <- t(exp(immigrFit$beta$logbeta[[1]]))
+rownames(topic_terms) <- out$vocab
+colnames(topic_terms) <- sprintf("Topic%d", 1:ncol(topic_terms))
+```
+
+
+```{r}
+#transform document_topics file
+document_topics <- document_topics %>%
+  mutate(period = case_when(
+    date < as.Date("2015-06-01") ~ "Pre-Campaign",
+    date >= as.Date("2015-06-01") & date < as.Date("2017-01-01") ~ "Campaign",
+    date >= as.Date("2017-01-01") ~ "Post-Inauguration"
+  )) %>%
+  mutate(period = factor(period, levels = c("Pre-Campaign", "Campaign", "Post-Inauguration")))
+
+figure3 <- document_topics%>%
+  summarize(date = as.yearmon(date), 
+            channel, duration, period)%>%
+  group_by(date, channel, period)%>%
+  summarize(duration = sum(duration, na.rm = TRUE))%>%
+  ungroup()
+
+
+ggplot(data = figure3, aes(x = date, y = duration, color = channel)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~ period, scales = "free_x") +
+  labs(title = "Immigration News Segments Over Time", 
+       y = "Monthly Duration of Immigration Segments", x = "Date", color = "Channel") +
+ theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    legend.title = element_text(size = 11),
+    legend.text = element_text(size = 10),
+    strip.text = element_text(size = 10),
+    plot.margin = margin(20, 40, 20, 40, unit = "pt")  # Adjusting plot margins
+  ) + 
+  theme_minimal()
+    
+```
+
+
+
+
+```{r}
+
+crime_topic <- c('Topic1', 'Topic3')
+welfare_topic <- c('Topic13')
+
+document_topics$date <- as.Date(document_topics$date)
+
+# Aggregate the data by channel, month, and topic
+crime_data <- document_topics %>%
+  mutate(month = format(date, "%Y-%m")) %>%
+  group_by(month, channel, period) %>%
+  summarize(crime_segments = sum(across(all_of(crime_topic)), na.rm = TRUE)) %>%
+  ungroup()
+
+welfare_data <- document_topics %>%
+mutate(month = format(date, "%Y-%m")) %>%
+  group_by(month, channel, period) %>%
+  summarize(welfare_segments = sum(across(all_of(welfare_topic)), na.rm = TRUE)) %>%
+  ungroup()
+
+# Convert month to Date type for plots
+crime_data$month <- as.Date(paste0(crime_data$month, "-01"))
+welfare_data$month <- as.Date(paste0(welfare_data$month, "-01"))
+
+# Plot crime data
+crime_plot <- ggplot(crime_data, aes(x = month, y = crime_segments, color = channel)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~ period, scales = "free_x") +
+  labs(title = "Immigration News Segments Over Time (Crime)", 
+       y = "Total Monthly Crime Segments", x = "Date", color = "Channel") +
+  theme_minimal()
+
+ 
+# Plot welfare data
+welfare_plot <- ggplot(welfare_data, aes(x = month, y = welfare_segments, color = channel)) +
+  geom_point() +
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~ period, scales = "free_x") +
+  labs(title = "Immigration News Segments Over Time (Welfare)", 
+       y = "Total Monthly Welfare Segments", x = "Date", color = "Channel") +
+  theme_minimal()
+ 
+# Print plots
+print(crime_plot)
+print(welfare_plot)
+```
+```
+The 3 plots look similar to Figure 2 and 3 used in the paper 
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
