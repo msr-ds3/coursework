@@ -1,9 +1,10 @@
+
 # target to make the file report
 all: 05_final_report.html
-
+	@ls
 googlebooks-eng-all-1gram-20120701-1.gz: # add filenames for data and/or code this output depends on here
 	# add code to run script to download the 1grams data here
-
+	@ curl -O http://storage.googleapis.com/books/ngrams/books/googlebooks-eng-all-1gram-20120701-1.gz
 year_counts.tsv: # add filenames for data and/or code this output depends on here 
 	# add code to run script to filter the 1grams data here
 

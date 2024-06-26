@@ -1,0 +1,75 @@
+---
+title: "2015_prediction_model"
+output: html_document
+date: "2024-06-24"
+---
+
+```{r}
+setwd("C:/Users/suvedei/Documents/coursework/week4")
+load("trips_2015.Rdata")
+load("model_best.Rdata")
+```
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+
+```{r}
+#trips %>% head() %>% mutate(ymd = ymd(time)) %>% view()
+df <- trips %>%  group_by(ymd) %>% summarize( num_trips = n())
+
+data_to_test <- merge(df, weather, by = "ymd" )
+```
+
+
+#editing 2015 df to include weekdays and weekend info
+```{r} 
+data_to_test <- data_to_test %>% mutate( isweekend = (wday(ymd) %in% c(1,7)))
+data_to_test<- data_to_test %>%  mutate(date = as.character(ymd), date = gsub("-","", date), date = as.numeric(date), tmax = tmax / 10, tmin = tmin / 10)
+
+
+predict(best_model, data_to_test)
+
+```
+
+
+```{r}
+data_to_test$predicted <- predict(best_model, data_to_test) 
+
+
+data_to_test %>% ggplot(aes(x = ymd, y = predicted, color = isweekend)) +
+  geom_line()
+
+ggplot(data_to_test, aes(x = ymd, y = predicted)) +
+  geom_point()
+
+
+ggplot(data_to_test, aes(x = predicted, y = num_trips, color = isweekend)) +
+  geom_point() +
+  geom_abline(linetype = "dashed") +
+  xlab('Predicted') +
+  ylab('Actual')
+```
+
+```{r}
+error <- data_to_test %>% mutate( diff = (num_trips - predicted)^2) %>% summarize( mean(diff))
+error <- error^0.5
+print(error[1])
+```
+
+
+```{r}
+setwd("C:/Users/suvedei/Documents/coursework/week3")
+trips_2014 <- read.csv("trips_per_day.tsv", sep = "")
+trips_2014 <- trips_2014 %>% mutate( isweekend = (wday(ymd) %in% c(1,7)))
+trips_2014$predicted <- predict(best_model, trips_2014)
+
+error_2014 <- trips_2014 %>% mutate( diff = (num_trips - predicted)^2) %>% summarize( mean(diff))
+error_2014 <- error_2014^0.5
+print(error[1])
+best_model <- lm(num_trips ~ isweekend *(poly(tmax,4)+poly(date,1)+ poly(prcp,1)+poly(snwd,3)+poly(snow,2)+ poly(tmin,4)), data= trips_2014)
+
+```
