@@ -52,6 +52,7 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+
 year_counts <- read.csv("year_counts.tsv", header = FALSE, col.names = c("term","year","volume","book_count"), sep = "\t")
 
 total_counts <- read.csv("total_counts.csv", header = FALSE, sep = ",", col.names = c('year', 'total_volume', 'page_count', 'book_count'))
@@ -98,7 +99,8 @@ merged_counts %>%
 ## Your written answer
 
 Write up your answer to Part B here.
-Answe: Yes, our figure illustrates quite similar figure as Michel et al. 2011
+
+Answer: Yes, our figure illustrates quite similar figure as Michel et al. 2011
 
 # Part C
 
@@ -112,9 +114,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](screenshot.png)` syntax and comment on similarities / differences.
 
-`![](screenshot.png)`
-
-`!'screenshot.png'`
+'![Ngram Viewer Screenshot](screenshot.png)'
 
 
 
@@ -175,8 +175,6 @@ peak_year <- merged_counts %>%
   group_by(term) %>% 
   mutate(max = max(proportion), max_year = year ) %>%
   filter(max == proportion)
-
-
 ```
 
 ## Compute half-lifes
