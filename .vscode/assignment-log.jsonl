@@ -1,0 +1,10 @@
+{"ts":"2025-05-27T18:43:55.377Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:43:55.377Z"}}
+{"ts":"2025-05-27T18:44:03.618Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:44:03.618Z"}}
+{"ts":"2025-05-27T18:45:43.638Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:45:43.638Z"}}
+{"ts":"2025-05-27T18:46:39.581Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:46:39.581Z"}}
+{"ts":"2025-05-27T18:47:49.586Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:47:49.586Z"}}
+{"ts":"2025-05-27T18:49:17.055Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:49:17.055Z"}}
+{"ts":"2025-05-27T18:51:58.562Z","type":"window-blur","payload":{"blurredAt":"2025-05-27T18:51:58.562Z","windowFocusDurationMs":161507}}
+{"ts":"2025-05-27T18:52:23.335Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:52:23.335Z"}}
+{"ts":"2025-05-27T18:52:33.376Z","type":"file-open","payload":{"uri":"file:///c%3A/Users/ds3/Documents/coursework/week1/students/Dereck","initialContent":""}}
+{"ts":"2025-05-27T18:52:33.432Z","type":"file-focus","payload":{"uri":"file:///c%3A/Users/ds3/Documents/coursework/week1/students/Dereck","focusedAt":"2025-05-27T18:52:33.432Z"}}
