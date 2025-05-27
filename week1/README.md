@@ -8,40 +8,27 @@ This week covers:
 
 ## Setup
 
-Install tools: [Ubuntu on Windows](https://msdn.microsoft.com/en-us/commandline/wsl/about), GitHub for Windows, R, and RStudio
+Install tools: Visual Studio Code, Git for Windows, R
 
-### Ubuntu on Windows
-  * Open [http://aka.ms/wslstore](http://aka.ms/wslstore) and select Ubuntu on Windows
-  * If this seems like it's hanging, hit enter
-  * Create a username and password
-  * Updates all packages with `sudo apt-get update` and `sudo apt-get upgrade`
 
-### Git / GitHub for Windows
-  * Check that you have git under bash by typing `git --version` in the terminal
-  * Install [GitHub for Windows](https://desktop.github.com)
+### Visual Studio Code
+  * Install [Visual Studio Code](https://code.visualstudio.com) which will be your main text editor
+
+### Git for Windows
+  * Install [Git for Windows](https://github.com/git-guides/install-git#install-git-on-windows) using the "Git for Windows installer"
+  * Open Git Bash and check that you have git under bash by typing `git --version` in the terminal
 <!--  * Configure git to deal with line endings in a cross-platform friendly way: `git config --global core.autocrlf true` -->
+  * Do the same within Visual Studio Code
 
-### R and RStudio
+### R
   
   * Download and install R from a [CRAN mirror](https://cloud.r-project.org/)
   * Download and install [RStudio](https://www.rstudio.com/products/rstudio/download/)
   * Open RStudio and install the `tidyverse` package, which includes  `dplyr`, `ggplot2`, and more: `install.packages('tidyverse', dependencies = T)`
 
-### Text editor
-
-  * You'll need a plain text editing program
-  * If you are familiar with emacs or vim, you can install them in Ubuntu with `sudo apt-get install emacs` or `sudo apt-get install vim`
-  * Otherwise consider [Visual Studio Code](https://code.visualstudio.com), [Atom](https://atom.io), or [Sublime](http://www.sublimetext.com)
-  * Check your editor's settings for [unix-friendly line endings](https://askubuntu.com/a/1036364)
-
 ### Filesystem setup
-  * Files that you create in Ubuntu on Windows get stored in a somewhat hidden location within the Windows filesystem
-  * To make it easier to find files you work on in Ubuntu, do the following:
-    * Open a bash shell
-    * Go to your home directory: `cd ~`
-    * Create a symbolic link to your Documents folder: `ln -s /mnt/c/Users/<your name>/Documents ~/Documents` (if there's a space in your name you'll need to backslash escape it, a good tip here is to type just the first couple of letters of, say, your name, and [use tab to autocomplete it](https://tldp.org/LDP/abs/html/tabexpansion.html))
-    * Change to this directory: `cd ~/Documents`
-    * Do all of your work, including the following section, from within this folder, which you'll be able to see under "Documents" in the Windows Explorer
+  * Verify that you can see the same set of files through Git Bash and your Windows Explorer by opening Git Bash and typing `ls` and `pwd` to see the contents of your current directory and its location
+  * Navigate to Windows Explorer and see if you can find the same directory and check its contents
 
 
 ## Intro to Git(Hub)
