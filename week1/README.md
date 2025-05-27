@@ -24,8 +24,10 @@ Install tools: Visual Studio Code, Git for Windows, R
 ### R
   
   * Download and install R from a [CRAN mirror](https://cloud.r-project.org/)
+<!--
   * Download and install [RStudio](https://www.rstudio.com/products/rstudio/download/)
   * Open RStudio and install the `tidyverse` package, which includes  `dplyr`, `ggplot2`, and more: `install.packages('tidyverse', dependencies = T)`
+-->
 
 ### Filesystem setup
   * Verify that you can see the same set of files through Git Bash and your Windows Explorer by opening Git Bash and typing `ls` and `pwd` to see the contents of your current directory and its location
