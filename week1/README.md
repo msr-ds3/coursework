@@ -13,6 +13,7 @@ Install tools: Visual Studio Code, Git for Windows, R
 
 ### Visual Studio Code
   * Install [Visual Studio Code](https://code.visualstudio.com) which will be your main text editor
+  * Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions for Visual Studio Code
 
 ### Git for Windows
   * Install [Git for Windows](https://github.com/git-guides/install-git#install-git-on-windows) using the "Git for Windows installer"
