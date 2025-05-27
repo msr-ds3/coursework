@@ -1,0 +1,21 @@
+{"ts":"2025-05-27T17:54:01.390Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T17:54:01.390Z"}}
+{"ts":"2025-05-27T17:54:02.693Z","type":"window-blur","payload":{"blurredAt":"2025-05-27T17:54:02.692Z","windowFocusDurationMs":1302}}
+{"ts":"2025-05-27T17:54:05.565Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T17:54:05.565Z"}}
+{"ts":"2025-05-27T17:54:08.261Z","type":"window-blur","payload":{"blurredAt":"2025-05-27T17:54:08.261Z","windowFocusDurationMs":2696}}
+{"ts":"2025-05-27T17:54:10.139Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T17:54:10.139Z"}}
+{"ts":"2025-05-27T17:55:11.410Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T17:55:11.410Z"}}
+{"ts":"2025-05-27T17:55:12.447Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T17:55:12.447Z"}}
+{"ts":"2025-05-27T17:55:52.152Z","type":"window-blur","payload":{"blurredAt":"2025-05-27T17:55:52.152Z","windowFocusDurationMs":39705}}
+{"ts":"2025-05-27T17:56:22.469Z","type":"window-blur","payload":{"blurredAt":"2025-05-27T17:56:22.469Z"}}
+{"ts":"2025-05-27T18:01:40.964Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:01:40.963Z"}}
+{"ts":"2025-05-27T18:01:41.839Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:01:41.838Z"}}
+{"ts":"2025-05-27T18:01:50.164Z","type":"file-open","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","initialContent":""}}
+{"ts":"2025-05-27T18:01:50.165Z","type":"file-open","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","initialContent":""}}
+{"ts":"2025-05-27T18:01:50.227Z","type":"file-focus","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","focusedAt":"2025-05-27T18:01:50.227Z"}}
+{"ts":"2025-05-27T18:01:50.228Z","type":"file-focus","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","focusedAt":"2025-05-27T18:01:50.227Z"}}
+{"ts":"2025-05-27T18:02:11.006Z","type":"file-save-diff","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","savedAt":"2025-05-27T18:02:11.003Z","diff":[{"count":1,"added":true,"removed":false,"value":"Hi Ye Htut is here."}]}}
+{"ts":"2025-05-27T18:02:11.008Z","type":"file-save-diff","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","savedAt":"2025-05-27T18:02:11.007Z","diff":[{"count":1,"added":true,"removed":false,"value":"Hi Ye Htut is here."}]}}
+{"ts":"2025-05-27T18:02:11.006Z","type":"file-save","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","savedAt":"2025-05-27T18:02:11.003Z"}}
+{"ts":"2025-05-27T18:02:11.010Z","type":"file-save","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","savedAt":"2025-05-27T18:02:11.007Z"}}
+{"ts":"2025-05-27T18:02:17.786Z","type":"window-blur","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","blurredAt":"2025-05-27T18:02:17.786Z","focusDurationMs":27559,"windowFocusDurationMs":35948}}
+{"ts":"2025-05-27T18:03:21.841Z","type":"window-blur","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","blurredAt":"2025-05-27T18:03:21.841Z","focusDurationMs":91614}}
