@@ -71,6 +71,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 * It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
 
 
+<!--
 
 # Day 2
   
@@ -195,3 +196,5 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The tidyr [vignette on tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
     * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
     * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
+
+-->
