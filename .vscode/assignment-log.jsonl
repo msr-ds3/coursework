@@ -19,3 +19,5 @@
 {"ts":"2025-05-27T18:02:11.010Z","type":"file-save","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","savedAt":"2025-05-27T18:02:11.007Z"}}
 {"ts":"2025-05-27T18:02:17.786Z","type":"window-blur","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","blurredAt":"2025-05-27T18:02:17.786Z","focusDurationMs":27559,"windowFocusDurationMs":35948}}
 {"ts":"2025-05-27T18:03:21.841Z","type":"window-blur","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","blurredAt":"2025-05-27T18:03:21.841Z","focusDurationMs":91614}}
+{"ts":"2025-05-27T18:10:01.668Z","type":"window-focus","payload":{"focusedAt":"2025-05-27T18:10:01.668Z"}}
+{"ts":"2025-05-27T18:10:39.914Z","type":"window-blur","payload":{"uri":"file:///c%3A/Users/ds3/Documents/yhm-coursework/yehtut.txt","blurredAt":"2025-05-27T18:10:39.914Z","focusDurationMs":38246,"windowFocusDurationMs":38246}}
