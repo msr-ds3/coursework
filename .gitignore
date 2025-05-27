@@ -14,3 +14,4 @@
 .RDataTmp
 *.RDataTmp
 *googlebooks*
+.vscode/assignment-log.jsonl
