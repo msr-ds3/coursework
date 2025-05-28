@@ -42,6 +42,8 @@ Install tools: Visual Studio Code, Git for Windows, R
   * [Clone a copy of your forked repository](https://help.github.com/articles/cloning-a-repository/), which should be located at ``https://github.com/<yourusername>/coursework.git``, to your local machine
   * Once that's done, create a new file in the ``week1/students`` directory, ``<yourfirstname>.txt`` (e.g., ``jake.txt``)
   * Use ``git add`` to add the file to your local repository
+  * If needed, set your [git username and email](https://docs.github.com/en/get-started/git-basics/setting-your-username-in-git#setting-your-git-username-for-every-repository-on-your-computer) with ``git config --global user.name "Your Name"`` and ``git config --global user.email "you@youremail.com"``
+  * Set your [default git editor to VSCode](https://docs.github.com/en/get-started/git-basics/associating-text-editors-with-git#using-visual-studio-code-as-your-editor) using ``git config --global core.editor "code --wait"``
   * Use ``git commit`` and ``git push`` to commit and push your changes to your copy of the repository
   * Then issue a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) to send the changes back to the original course repository
   * Finally, [sync changes from the main repo](https://help.github.com/articles/syncing-a-fork/) to your fork with ``git pull upstream master`` (if your machine doesn't recognize `upstream`, do the following to create the `upstream` shortcut: `git remote add upstream https://github.com/msr-ds3/coursework.git`)
@@ -61,7 +63,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 * It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
 
 
-<!--
+
 
 # Day 2
   
@@ -92,7 +94,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
   * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
-
+<!--
 
 # Day 3
 
