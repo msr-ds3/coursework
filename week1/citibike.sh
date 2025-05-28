@@ -4,14 +4,21 @@
 #
 
 # count the number of unique stations
+cat 201402-citibike-tripdata.csv | cut -d,  -f5 | sort | uniq | wc -l
 
 # count the number of unique bikes
+cat 201402-citibike-tripdata.csv | cut -d,  -f5 | sort | uniq | wc -l
 
 # count the number of trips per day
+ cat 201402-citibike-tripdata.csv |cut -d,  -f2 | grep -o '.* ' | sort | uniq -c
 
 # find the day with the most rides
+cat 201402-citibike-tripdata.csv |cut -d,  -f2 | grep -o '^.* ' | sort | uniq -c | sort -nr | head -n1 | cut -d' 
+' -f4
 
 # find the day with the fewest rides
+cat 201402-citibike-tripdata.csv |cut -d,  -f2 | grep -o '^.* ' | sort | uniq -c | sort -bn | head -n1 | awk '{print $2} 
+
 
 # find the id of the bike with the most rides
 
