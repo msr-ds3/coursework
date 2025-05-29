@@ -94,16 +94,19 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
   * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
-<!--
 
 # Day 3
+
+## R in Visual Studio Code
+  * Install the [R extension for VSCode](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r)
+  * Install the R language server by typing the following in an R terminal: `install.packages("languageserver")`
+  * Install the `tidyverse` package, which includes  `dplyr`, `ggplot2`, and more, in an R terminal: `install.packages('tidyverse', dependencies = T)`
 
 ## Intro to R
 
   * See the [Data Wrangling in R](https://speakerdeck.com/jhofman/modeling-social-data-lecture-3-data-manipulation-in-r) slides
   * Review [intro_to_r.ipynb](intro_to_r.ipynb) for an introduction to R
-  * See the intro and Chapters 2 and 4 of the 2nd edition of [R for Data Science](https://r4ds.hadley.nz) for background on using R and Rstudio (chapter numbers correspond to the online edition)
-  * See also Chapter 3 of the 2nd edition for the basics of dplyr
+  * See Chapter 3 of the 2nd edition of [R for Data Science](https://r4ds.hadley.nz) for the basics of dplyr
 
 ## R counting exercises
   * Use the [musical pairs script](students/musical_pairs.sh) to determine your programming partner each day
@@ -130,6 +133,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
+<!--
 
 # Day 4
 
