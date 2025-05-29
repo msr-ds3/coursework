@@ -63,4 +63,5 @@ trips |> mutate(date = as.Date(starttime)) |> select(date) |> count(date, sort =
 # what time(s) of day tend to be peak hour(s)?
 
 date_hour_counts <- trips |> mutate(hour = hour(starttime)) |> mutate(date = as.Date(starttime)) |> select(date, hour) |> group_by(hour) |> count(date, hour)
-date_hour_counts |> group_by(hour) |> summarize(mean(n))
+date_hour_counts |> group_by(hour) |> summarize(avg = mean(n)) |> arrange(avg) |> tail(1)
+
