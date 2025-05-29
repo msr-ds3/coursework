@@ -6,7 +6,7 @@ library(lubridate)
 ########################################
 
 # read one month of data
-trips <- read_csv('week1/201402-citibike-tripdata.csv')
+trips <- read_csv('201402-citibike-tripdata.csv')
 
 # replace spaces in column names with underscores
 names(trips) <- gsub(' ', '_', names(trips))
@@ -65,3 +65,4 @@ trips |> select(starttime, stoptime) |> mutate(startday=floor_date(starttime, un
 
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
+trips |> mutate(hour = hour(starttime), month = month(starttime)) |> count(hour, month) |> group_by(hour) |> summarize(avg_trips = mean(n)/days_in_month(month)) |> arrange(desc(avg_trips))
