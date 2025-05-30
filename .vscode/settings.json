@@ -4,5 +4,5 @@
     },
     "github.copilot.editor.enableAutoCompletions": false,
     "github.copilot.advanced": {},
-    "chat.agent.enabled": false,
+    "chat.agent.enabled": false
 }
