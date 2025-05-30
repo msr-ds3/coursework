@@ -5,8 +5,13 @@ library(lubridate)
 # READ AND TRANSFORM THE DATA
 ########################################
 
+
+
+
 # read one month of data
-trips <- read_csv('201402-citibike-tripdata.csv')
+trips <- read_csv('./coursework/week1/201402-citibike-tripdata.csv')
+##viewing the data
+view(trips)
 
 # replace spaces in column names with underscores
 names(trips) <- gsub(' ', '_', names(trips))
@@ -23,19 +28,42 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 ########################################
 
 # count the number of trips (= rows in the data frame)
+nrow(trips)
+
 
 # find the earliest and latest birth years (see help for max and min to deal with NAs)
 
+#converting birth_year into numbers
+trips$birth_year <- as.numeric(trips$birth_year)
+max(trips$birth_year, na.rm = TRUE)
+min(trips$birth_year, na.rm = TRUE)
+
 # use filter and grepl to find all trips that either start or end on broadway
-
+filtered_df <- filter(trips, grepl("Broadway", start_station_name) | grepl("Broadway",end_station_name))
+view(filtered_df)
 # do the same, but find all trips that both start and end on broadway
-
+filtered_both_df <- filter(trips, grepl("Broadway", start_station_name) & grepl("Broadway",end_station_name))
+nrow(filtered_both_df)
 # find all unique station names
+#stupid idea nrow(distinct(trips[ ,"start_station_name"])) + nrow(distinct(trips[ ,"end_station_name"]))
+
+union(trips$start_station_name, trips$end_station_name)
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
 # do this all at once, by using summarize() with multiple arguments
+grouped_df <- trips %>%
+    group_by(gender)%>%
+    summarize(num_trips = n(),
+     average_trip = mean(tripduration)/60,
+     standard_deviation = sd(tripduration)/60)
+grouped_df
+
+
+
 
 # find the 10 most frequent station-to-station trips
+frequent_df <- trips %>%
+    arrange()
 
 # find the top 3 end stations for trips starting from each start station
 
