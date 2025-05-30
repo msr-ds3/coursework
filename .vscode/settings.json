@@ -4,5 +4,8 @@
     },
     "github.copilot.editor.enableAutoCompletions": false,
     "github.copilot.advanced": {},
-    "chat.agent.enabled": false
+    "chat.agent.enabled": false,
+    "editor.minimap.enabled": false,
+    "editor.hideCursorInOverviewRuler": true,
+    "workbench.tree.enableStickyScroll": true
 }
