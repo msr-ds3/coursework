@@ -1,0 +1,21 @@
+library(nycflights13)
+library(tidyverse)
+
+view(flights)
+#1 Had an arrival delay of two or more hours
+filter(flights, dep_delay>=2)
+
+#2 Flew to Houston (IAH or HOU)
+filter(flights, dest == "IAH" | dest == "HOU")
+
+#3 Were operated by United, American, or Delta
+filter(flights, carrier == "UA" | carrier == "AA" | carrier == "DL")
+
+#4 Departed in summer (July, August, and September)
+filter(flights, month == 7 | month == 8 | month == 9)
+
+#5 Arrived more than two hours late, but didn’t leave late
+
+
+#6 Were delayed by at least an hour, but made up over 30 minutes in flight
+#7 Departed between midnight and 6am (inclusive)
