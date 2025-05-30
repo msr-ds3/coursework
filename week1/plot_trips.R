@@ -118,8 +118,9 @@ view(trips_hours |> group_by(hour) |> summarize(mean=mean(n()), sd(n())) |> head
 #new solution
 trips_hours <- trips |> mutate(hour = hour(trips$starttime))
 trips_hours <- trips_hours |> group_by(hour,ymd) |> summarize(num_trips = n())
-view(trips_hours |> group_by(hour) |> summarize(mean= mean(num_trips), sd=sd(num_trips)))
+trips_hours <- trips_hours |> group_by(hour) |> summarize(mean= mean(num_trips), sd=sd(num_trips))
 
+ggplot(trips_hours, aes(x = hour, y=mean)) + geom_ribbon(aes(ymin=mean-sd, ymax= mean+sd), alpha=.2) + geom_line()
 # plot the above
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
