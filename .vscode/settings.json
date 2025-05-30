@@ -3,5 +3,6 @@
         "*": false
     },
     "github.copilot.editor.enableAutoCompletions": false,
-    "github.copilot.advanced": {}
+    "github.copilot.advanced": {},
+    "chat.agent.enabled": false
 }
