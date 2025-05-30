@@ -133,7 +133,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
-<!--
 
 # Day 4
 
@@ -162,6 +161,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+
+<!--
 
 # Day 5
 
