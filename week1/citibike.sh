@@ -25,6 +25,8 @@ cut -d, -f12 201402-citibike-tripdata.csv| sort | uniq -c |sort -r| head -1
 cut -d',' -f14,15 201402-citibike-tripdata.csv | tail -n +2 | sort | uniq -c| 
 
 # count the number of trips that start on cross streets that both contain numbers (e.g., "1 Ave & E 15 St", "E 39 St & 2 Ave", ...)
-awk -F, ' {sum += $1; count++} END {print sum/count}' 201402-citibike-tripdata.csv
+awk -F, 'NR > 1 {print $5}' 201402-citibike-tripdata.csv | grep '[0-9].*&.*[0-9]' | wc -l
+
+
 
 
