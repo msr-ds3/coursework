@@ -86,3 +86,9 @@ trips |>
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
 
+trips |>
+    mutate(date_only = as.Date(starttime), hour_only = format(trips$starttime, "%H")) |>
+    select(date_only, hour_only) |>
+    group_by(hour_only) |>
+    summarise(count_avg = n()/28) |>
+    arrange(desc(count_avg))
