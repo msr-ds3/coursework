@@ -40,7 +40,11 @@ trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unkn
 #2 Male    176526          814.        5021.
 #3 Female   41479          991.        7115.
 
-# find the 10 most frequent station-to-station trips View(trips |> group_by(start_station_name, end_station_name) |> summarize(count = n()) |> arrange(desc(count) |> head(n=10))
+# find the 10 most frequent station-to-station trips 
+View(trips |> group_by(start_station_name, end_station_name) |>
+       summarize(count = n()) |>
+       arrange(desc(count) |>
+       head(n=10)))
 
 # find the top 3 end stations for trips starting from each start station view( trips |> group_by(start_station_name, end_station_name) |> summarize(count = n()) |> group_by(start_station_name) |> arrange(desc(count)) |> mutate(rank = row_number()) |> filter(rank <=3))
 
