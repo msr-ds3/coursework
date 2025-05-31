@@ -2,8 +2,8 @@ library(dplyr)
 library(readr)
 
 # define a function to turn strings into datetimes
-parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
-  as.POSIXct(as.character(s), format=format)
+parse_datetime <- function(s, format = "%Y-%m-%d %H:%M:%S") {
+  as.POSIXct(as.character(s), format = format)
 }
 
 ########################################
@@ -11,30 +11,32 @@ parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
 ########################################
 
 # load each month of the trip data into one big data frame
-csvs <- Sys.glob('*-tripdata.csv')
+csvs <- Sys.glob("./week1/*-tripdata.csv")
 trips <- data.frame()
 for (csv in csvs) {
   print(csv)
-  tmp <- read_csv(csv, na='\\N')
+  tmp <- read_csv(csv, na = "\\N")
 
   # the date format changed to something ugly in 2014-09 which read_csv doesn't recognize as a datetime,
   # so manually convert the date from a string to a datetime
-  if (typeof(tmp$starttime) == "character")
+  if (typeof(tmp$starttime) == "character") {
     tmp <- mutate(tmp,
-                  starttime=parse_datetime(starttime, "%m/%d/%Y %H:%M"),
-                  stoptime=parse_datetime(stoptime, "%m/%d/%Y %H:%M"))
+      starttime = parse_datetime(starttime, "%m/%d/%Y %H:%M"),
+      stoptime = parse_datetime(stoptime, "%m/%d/%Y %H:%M")
+    )
+  }
 
   trips <- rbind(trips, tmp)
 }
 
 # replace spaces in column names with underscores
-names(trips) <- gsub(' ', '_', names(trips))
+names(trips) <- gsub(" ", "_", names(trips))
 
 # add a column for year/month/day (without time of day)
-trips <- mutate(trips, ymd=as.Date(starttime))
+trips <- mutate(trips, ymd = as.Date(starttime))
 
 # recode gender as a factor 0->"Unknown", 1->"Male", 2->"Female"
-trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown","Male","Female")))
+trips <- mutate(trips, gender = factor(gender, levels = c(0, 1, 2), labels = c("Unknown", "Male", "Female")))
 
 ########################################
 # load and clean weather data
@@ -44,15 +46,15 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 # https://www.ncei.noaa.gov/orders/cdo/2992179.csv
 # ordered from
 # http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
-weather <- read.table('weather.csv', header=T, sep=',')
+weather <- read.table("./week1/weather.csv", header = T, sep = ",")
 
 # extract just a few columns, lowercase column names, and parse dates
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
-                  ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
+  ymd = as.Date(parse_datetime(date, "%Y-%m-%d"))
+)
 weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
-save(trips, weather, file='trips.RData')
-
+save(trips, weather, file = "trips.RData")
