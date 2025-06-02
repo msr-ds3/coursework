@@ -10,7 +10,7 @@ library(scales)
 theme_set(theme_bw())
 
 # load RData file output by load_trips.R
-load('trips.RData')
+load("trips.RData")
 
 
 ########################################
@@ -22,7 +22,7 @@ library(ggplot2)
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
 trips |>
     ggplot(aes(x = tripduration)) +
-    geom_histogram(bins=30) +
+    geom_histogram(bins = 30) +
     scale_x_log10()
 
 trips |>
@@ -36,7 +36,7 @@ trips |>
 
 trips |>
     ggplot(aes(x = tripduration, color = usertype, fill = usertype)) +
-    geom_histogram(bins=30) +
+    geom_histogram(bins = 30) +
     scale_x_log10()
 
 trips |>
@@ -49,7 +49,7 @@ trips |>
 trips |>
     mutate(date = as.year(starttime)) |>
     ggplot(aes(x = date)) +
-    geom_histogram(bins=365)
+    geom_histogram(bins = 365)
 
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
@@ -58,8 +58,8 @@ trips |>
     mutate(age = year(Sys.Date()) - birth_year) |>
     group_by(gender, age) |>
     summarize(count_trip_by_age = n()) |>
-    ggplot(aes(x = age, y = count_trip_by_age, color=gender, fill=gender)) +
-    geom_area(alpha=0.8) +
+    ggplot(aes(x = age, y = count_trip_by_age, color = gender, fill = gender)) +
+    geom_area(alpha = 0.8) +
     scale_y_log10()
 
 
@@ -68,7 +68,19 @@ trips |>
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
 head(trips)
-trips |> select(gender)
+trips |> 
+    mutate(age = year(Sys.Date()) - birth_year) |>
+    select(gender, age) |>
+    group_by(age, gender) |>
+    summarize(coumt_age_gender = n()) |>
+    pivot_wider(names_from = gender, values_from = coumt_age_gender) |>
+    mutate(male_female_ratio = Male/Female) |>
+    ggplot(aes(x = age, y = male_female_ratio)) +
+    geom_point() +
+    geom_smooth(se = FALSE)
+
+
+
 
 ########################################
 # plot weather data
@@ -83,12 +95,19 @@ weather |>
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 
+weather |>
+    select(date, tmin, tmax) |>
+    pivot_longer(names_to = "min_max", values_to = "temperature", -date) |>
+    ggplot(aes(x = date, y = temperature, color = min_max, fill = min_max)) +
+    geom_point()
+
+
 ########################################
 # plot trip and weather data
 ########################################
 
 # join trips and weather
-trips_with_weather <- inner_join(trips, weather, by="ymd")
+trips_with_weather <- inner_join(trips, weather, by = "ymd")
 
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
@@ -106,7 +125,7 @@ trips_with_weather |>
 mean_prcp <- trips_with_weather |> summarize(mean_prcp = mean(prcp))
 mean_prcp <- mean_prcp$mean_prcp
 
-trips_with_weather |> 
+trips_with_weather |>
     mutate(is_subs_prcp = prcp >= mean_prcp) |>
     group_by(date, tmin, is_subs_prcp) |>
     summarize(count_trip = n()) |>
@@ -115,26 +134,24 @@ trips_with_weather |>
 
     
 
-
-
 # add a smoothed fit on top of the previous plot, using geom_smooth
 
 mean_prcp <- trips_with_weather |> summarize(mean_prcp = mean(prcp))
 mean_prcp <- mean_prcp$mean_prcp
 
-trips_with_weather |> 
+trips_with_weather |>
     mutate(is_subs_prcp = prcp >= mean_prcp) |>
     group_by(date, tmin, is_subs_prcp) |>
     summarize(count_trip = n()) |>
     ggplot(aes(x = tmin, y = count_trip, color = is_subs_prcp)) +
     geom_point() +
-    geom_smooth(method = 'lm')
+    geom_smooth(method = "lm")
 
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
 
-trips_with_weather |> 
+trips_with_weather |>
     mutate(hour = hour(starttime), date = as.Date(starttime)) |>
     group_by(date, hour) |>
     summarize(count = n()) |>
