@@ -12,7 +12,6 @@ theme_set(theme_bw())
 # load RData file output by load_trips.R
 load("trips.RData")
 
-
 ########################################
 # plot trip data
 ########################################
@@ -41,7 +40,6 @@ ggplot(trips, aes(x = tripduration, color = usertype, fill = usertype)) +
 labs(title = "Histogram of Trip Durations", x = "Trip Duration (minutes)", y = "Number of Trips")
 
 
-
 # plot the total number of trips on each day in the dataset
 # 1. Extract just the date from the starttime column
 trips %>%
@@ -61,6 +59,16 @@ trips %>%
   geom_histogram()
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
+trips1 <- trips %>%
+  mutate(age = 2025 - birth_year)
+
+# Summarize count of males and females by age
+gender_counts <- trips %>%
+  filter(gender %in% c("Male", "Female")) %>%
+  group_by(age, gender) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  tidyr::pivot_wider(names_from = gender, values_from = count) %>%
+  mutate(ratio = Male / Female)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
@@ -116,8 +124,6 @@ trips_with_weather %>%
   xlab("min_temp") +
   ylab("num_trips")
 
-
-
 # add a smoothed fit on top of the previous plot, using geom_smooth
 trips_with_weather %>%
   mutate(sub_prcp = ifelse(prcp > borderline, TRUE, FALSE)) %>%
@@ -132,7 +138,6 @@ trips_with_weather %>%
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
 library(lubridate)
-
 
 hourly_summary <- trips %>%
   mutate(
@@ -149,14 +154,31 @@ hourly_summary <- trips %>%
 
 hourly_summary
 
-
-
 # plot the above
-
-
-
-
-
+ggplot(hourly_summary, aes(x = hour, y = average)) +
+  geom_ribbon(aes(ymin = average - standDev, ymax = average + standDev), fill = "lightgray") +
+  geom_line(color = "black", size = 1) +
+  labs(
+    title = "Average Trips by Hour with Standard Deviation",
+    x = "Hour of Day",
+    y = "Average Number of Trips"
+  )
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+
+by_week <- trips %>%
+  mutate(
+    hour = hour(starttime),
+    day = as.Date(starttime),
+    weekday = wday(starttime, label = TRUE)
+  ) %>%
+  group_by(hour, weekday, day) %>%
+  summarize(trip_count = n(), .groups = "drop") %>%
+  group_by(hour, weekday) %>%
+  summarize(
+    average = mean(trip_count),
+    standDev = sd(trip_count),
+    .groups = "drop"
+  )
+by_week
