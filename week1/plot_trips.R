@@ -143,7 +143,9 @@ trips_hours_stats <- trips |>
     mutate(hour = hour(starttime)) |>
     group_by(hour, ymd) |>
     summarize(num_trips = n()) |>
-    summarize(avg_trips = mean(num_trips), std_trips = sd(num_trips))
+    summarize(avg_trips = mean(num_trips), std_trips = sd(num_trips)) |>
+    head() |>
+    View()
 
 # plot the above
 trips_hours_stats |>
@@ -154,8 +156,8 @@ trips_hours_stats |>
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 trips |>
-    mutate(day = wday(starttime)) |>
-    group_by(day, ymd) |>
+    mutate(day = wday(starttime), hour = hour(starttime)) |>
+    group_by(hour, day, ymd) |>
     summarize(num_trips = n()) |>
     summarize(avg_trips = mean(num_trips), std_trips = sd(num_trips)) |>
     View()
