@@ -3,6 +3,11 @@ title: "Diamond sizes"
 date: 2016-08-25
 output: html_document
 ---
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```
 
 ```{r setup, include = FALSE}
 library(ggplot2)
@@ -21,4 +26,33 @@ below:
 smaller %>% 
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
+```
+
+<!-- Section 27.3.1 exercise 3 -->
+
+Stricking features are that there are only `r nrow(diamonds) - nrow(smaller)`, which are larger than 2.5 carats. 
+Also, the majority of the diamonds are less than 1 carat
+
+
+
+<!-- Section 27.4.7, exercise 1 -->
+
+<!-- Graph for Cut-->
+```{r}
+diamonds %>% ggplot(aes(x = carat, color = cut, fill = cut)) + 
+geom_histogram(bins = 30)
+```
+
+
+<!-- Graph for Color-->
+```{r}
+diamonds %>% ggplot(aes(x = carat, color = color, fill = color)) + 
+geom_histogram(bins = 30)
+```
+
+
+<!-- Graph for Clarity-->
+```{r}
+diamonds %>% ggplot(aes(x = carat, color = clarity, fill = clarity)) + 
+geom_histogram(bins = 30)
 ```
