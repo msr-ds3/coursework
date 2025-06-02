@@ -21,6 +21,7 @@ Headings
 * Data Science Fellow, BreakThrough Tech AI **2023-2024**
 * Information Security Intern, Fordham University IT **2021-2024**
 
+I wanted to keep the rest of this for reference
 Lists
 ------------------------------------------------------------
 
