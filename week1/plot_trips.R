@@ -123,8 +123,8 @@ trips_with_weather |>
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
-trips_hours <- trips |> mutate(hour = hour(starttime))
-trips_hours_stats <- trips_hours |>
+trips_hours_stats <- trips |>
+    mutate(hour = hour(starttime)) |>
     group_by(hour, ymd) |>
     summarize(num_trips = n()) |>
     summarize(avg_trips = mean(num_trips), std_trips = sd(num_trips))
@@ -137,3 +137,9 @@ trips_hours_stats |>
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+trips |>
+    mutate(day = wday(starttime)) |>
+    group_by(day, ymd) |>
+    summarize(num_trips = n()) |>
+    summarize(avg_trips = mean(num_trips), std_trips = sd(num_trips)) |>
+    View()
