@@ -125,3 +125,10 @@ ggplot(trips_hours, aes(x = hour, y=mean)) + geom_ribbon(aes(ymin=mean-sd, ymax=
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+trips_wdays <- trips |> mutate(day_of_week = wday(trips$starttime))
+
+trips_wdays <- trips_wdays |> group_by(day_of_week,ymd) |> summarize(num_trips = n())
+trips_wdays <- trips_wdays |> group_by(day_of_week) |> summarize(mean= mean(num_trips), sd=sd(num_trips))
+
+ggplot(trips_wdays, aes(x = hour, y=mean)) + geom_ribbon(aes(ymin=mean-sd, ymax= mean+sd), alpha=.2) + geom_line() + facet_wrap(~day_of_week)
+
