@@ -11,20 +11,48 @@ theme_set(theme_bw())
 
 # load RData file output by load_trips.R
 load('trips.RData')
-
-
 ########################################
 # plot trip data
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+ggplot(trips, aes(x = tripduration))+
+    geom_histogram(fill = 'blue', bins = 30) + 
+    scale_x_log10(labels=comma) +
+    ylab('Number of trip per Time')
 
+    ggplot(trips, aes(x = tripduration))+
+    geom_density(fill = 'grey') + 
+    scale_x_log10(labels=comma)
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+ggplot(trips, aes(x = tripduration, , color = usertype, fill = usertype))+
+    geom_histogram(bins = 30) + 
+    scale_x_log10(labels=comma) +
+    ylab('Number of trip per Time')+
+    facet_grid( ~usertype)
+
+ggplot(trips, aes(x = tripduration, , color = usertype, fill = usertype))+
+    geom_density(fill = 'grey') + 
+    scale_x_log10(labels=comma) +
+    ylab('Number of trip per Time')+
+    facet_grid( ~usertype)
+
 
 # plot the total number of trips on each day in the dataset
 
+trips %>% mutate(date = as.Date(starttime)) %>%
+ggplot(aes(x = date))+
+    geom_histogram(fill = 'blue', bins = 30)+
+    scale_y_continuous(label = comma)+
+    scale_x_date(date_labels = "%Y-%m-%d")
+    
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
-
+trips %>% mutate(age = sys.Date() - birth_year) %>%
+ggplot(aes(x = age, color = usertype, fill = usertype))+
+    geom_histogram(bins = 30) + 
+    scale_x_log10(labels=comma) +
+    ylab()+
+    facet_grid(~usertype)
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
@@ -43,7 +71,7 @@ load('trips.RData')
 ########################################
 
 # join trips and weather
-trips_with_weather <- inner_join(trips, weather, by="ymd")
+
 
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
