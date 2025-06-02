@@ -1,0 +1,54 @@
+Text formatting 
+------------------------------------------------------------
+
+*italic*  or _italic_
+**bold**   __bold__
+`code`
+superscript^2^ and subscript~2~
+
+Headings
+------------------------------------------------------------
+
+# Sofia Cora CV
+
+## Education
+* B.S Computer Science, Fordham University Bronx NY **2021-2025**
+* HS Diploma, Sanford H Calhoun, Merrick NY **2018-2021**
+
+## Employment
+
+* Data Science Intern, Reddit Inc **2024**
+* Data Science Fellow, BreakThrough Tech AI **2023-2024**
+* Information Security Intern, Fordham University IT **2021-2024**
+
+Lists
+------------------------------------------------------------
+
+*   Bulleted list item 1
+
+*   Item 2
+
+    * Item 2a
+
+    * Item 2b
+
+1.  Numbered list item 1
+
+1.  Item 2. The numbers are incremented automatically in the output.
+
+Links and images
+------------------------------------------------------------
+
+<http://example.com>
+
+[linked phrase](http://example.com)
+
+![optional caption text](path/to/img.png)
+
+Tables 
+------------------------------------------------------------
+
+First Header  | Second Header
+------------- | -------------
+Content Cell  | Content Cell
+Content Cell  | Content Cell
