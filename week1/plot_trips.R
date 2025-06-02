@@ -11,32 +11,84 @@ theme_set(theme_bw())
 
 # load RData file output by load_trips.R
 load('trips.RData')
-
+head(trips)
 
 ########################################
 # plot trip data
-########################################
+######################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
+ggplot(trips,aes(tripduration/60))+ 
+    geom_histogram(fill= 'blue', bins = 50)+
+    scale_x_log10(labels=comma)+
+    scale_y_continuous(labels = comma)+
+    labs(x='Trip duration',
+    y= 'Frequency',
+    title = 'Histogram of trip duration in minutes')
+
+ggplot(trips,aes(tripduration/60))+ 
+    geom_density(fill= 'red')+
+    scale_x_log10(labels=comma)+
+    labs(x='Trip duration ',
+    y= 'Frequency',
+    title = 'Density plot in minutes')
+
+head(trips)
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
+ggplot(trips, aes(x = tripduration, fill=usertype))+
+    geom_histogram(bins = 40)+
+    labs(x='Trip duration')+
+    scale_x_log10(labels=comma)+
+    facet_grid(~usertype)
+
+ggplot(trips, aes(x = tripduration, fill=usertype))+
+    geom_density()+
+    labs(x='Trip duration')+
+    scale_x_log10(labels=comma)+
+    facet_grid(~usertype)
 
 # plot the total number of trips on each day in the dataset
+trips%>%
+    mutate(date = as.Date(starttime))%>%
+    ggplot(aes(x =date))+
+        geom_histogram(bins=30)+
+        scale_y_continuous(labels=comma)+
+        scale_x_date(labels = date_format("%Y-%m-%d"))
 
 # plot the total number of trips (on the y axis) by age (on the x axis) and gender (indicated with color)
+trips%>%
+    mutate(age = as.numeric(format(ymd, "%Y")) - as.numeric(birth_year)) %>%
+    ggplot(aes(age, fill = gender))+
+    geom_histogram(bins=40,alpha = 0.8)+
+    scale_y_continuous(labels = comma)
 
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
+
+
 ########################################
 # plot weather data
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
+weather%>%
+    ggplot(aes(x= ymd, y= tmin, color=tmin))+
+    geom_point()+
+    scale_color_gradient(low = "blue", high = "red") +
+    labs(
+        title="Scatterplot of min temp over each day",
+        x=  "Day",
+        y= "Minimum temperature")
+
 
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+
+
+
 
 ########################################
 # plot trip and weather data
@@ -45,11 +97,33 @@ load('trips.RData')
 # join trips and weather
 trips_with_weather <- inner_join(trips, weather, by="ymd")
 
+head(trips_with_weather)
+
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
 
+trips %>%
+  mutate(date = as.Date(starttime)) %>%
+  count(date) %>%
+  inner_join(weather, by = c("date" = "ymd")) %>%
+  ggplot(aes(x = tmin, y = n)) +
+    geom_point() +
+    labs(x = "Minimum Temperature", y = "Number of Trips", title = "Trips vs. Min Temperature")
+
+
+# trips%>%
+#     group_by(ymd)%>%
+#     summarise(num_trips = n())%>%
+#     inner_join(weather, by ='ymd') %>%
+#     ggplot(aes(x= mean(tmin),y=num_trips))+
+#         geom_point() +
+#         labs(x = "Minimum Temperature", y = "Number of Trips",
+#         title = "Trips vs. Min Temperature")
+
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
+
+
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
 
@@ -60,3 +134,16 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+by_week <- trips %>%
+    mutate(
+        hour = hour(starttime),
+        day = as.Date(starttime),
+        weekday = wday(starttime, label =TRUE)
+    )%>%
+    group_by(hour, weekday, day)%>%
+    summarise(trip_count = n(), .groups = "drop")%>%
+    summarise(
+        average = mean(trip_count),
+        standDev = sd(trip_count),
+        .groups = "drop")
+by_week
