@@ -117,6 +117,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * Section [5.7.1](https://r4ds.had.co.nz/transform.html#exercises-13), exercise 3
 
 ## Learn more
+  * See [this video tutorial](https://www.youtube.com/watch?v=9xXBDU2z_8Y) for tips for R in VSCode
   * Do the free portion of [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r), chapters 1, 2, and 3
   * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
