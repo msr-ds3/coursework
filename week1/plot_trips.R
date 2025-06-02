@@ -70,6 +70,18 @@ trips %>% mutate(age = as.numeric(format(ymd, "%Y")) - as.numeric(birth_year)) %
 
 
 
+trips_age <- trips %>% mutate(age = as.numeric(format(ymd, "%Y")) - as.numeric(birth_year))
+
+trips_age_grouped <- group_by(trips_age, age, gender)  %>% summarise(count = n())
+
+trips_age_grouped_pivoted <- pivot_wider(trips_age_grouped, names_from = gender, values_from = count)
+
+trips_age_grouped_pivoted_with_ratio <- mutate(trips_age_grouped_pivoted, ratio = Male / Female)
+
+ggplot(trips_age_grouped_pivoted_with_ratio, aes(x = age, y = ratio)) + geom_point() + scale_x_log10(label = comma) + 
+geom_smooth(se = FALSE)
+
+
 
 
 ########################################
@@ -85,6 +97,14 @@ ggplot(weather, aes(x = date, y = tmin)) + geom_point()
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+
+new_weather_pivoted <- pivot_longer(weather, cols = c(tmin, tmax), names_to = "temp_type", values_to = "Temp")
+ggplot(new_weather_pivoted, aes(x = date, y = Temp, color =temp_type )) + geom_point()  +  labs(
+    x = "Date", 
+    y = "Temp"
+)
+
+
 
 
 
