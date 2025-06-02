@@ -35,8 +35,7 @@ This week covers:
     * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
     * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
 
-<!--
-# Day 1
+# Day 2
 
 ## Sampling distributions and standard errors
   * See the [Statistical Inference & Hypothesis Testing](intro_to_stats.pptx) slides
@@ -60,6 +59,7 @@ This week covers:
     * [Variance](https://brilliant.org/wiki/variance-definition/)
 
 
+<!--
 
 
 # Day 2
