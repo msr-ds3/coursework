@@ -3,6 +3,11 @@ title: "Diamond sizes"
 date: 2016-08-25
 output: html_document
 ---
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```
 
 ```{r setup, include = FALSE}
 library(ggplot2)
@@ -21,4 +26,26 @@ below:
 smaller %>% 
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
+```
+<!-- 27.3.1 Q3--> 
+
+Striking features is the peak at 0.30 carat showing more than 25,000 diamonds. 
+Majority of diamonds are at 0.30 and 1.1 carats.
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x = carat, color = cut, fill = cut)) + 
+  geom_histogram(bins = 30)
+```
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x = carat, color = color, fill = color)) + 
+  geom_histogram(bins = 30)
+```
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x = carat, color = clarity, fill = clarity)) + 
+  geom_histogram(bins = 30)
 ```
