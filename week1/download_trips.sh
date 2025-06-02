@@ -14,8 +14,10 @@
 # (use current directory by default)
 DATA_DIR=.
 
+
 # change to the data directory
 cd $DATA_DIR
+
 
 # loop over each year/month
 for year in 2014
@@ -41,3 +43,6 @@ do
     # remove the zip file
     rm ${year}-citibike-tripdata.zip
 done
+
+
+

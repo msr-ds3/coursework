@@ -15,7 +15,42 @@ filter(flights, carrier == "UA" | carrier == "AA" | carrier == "DL")
 filter(flights, month == 7 | month == 8 | month == 9)
 
 #5 Arrived more than two hours late, but didn’t leave late
-
+view(flights)
+view(filter(flights, dep_delay == 0 &  arr_delay>=120))
 
 #6 Were delayed by at least an hour, but made up over 30 minutes in flight
+view(filter(flights, dep_delay>=60 & dep_delay-arr_delay>=30))
+
 #7 Departed between midnight and 6am (inclusive)
+view(filter(flights, dep_time == 2400 | dep_time<=6))
+
+#8 How many flights have a missing dep_time? What other variables are missing? What might these rows represent
+nrow(filter(flights, is.na(dep_time)))
+summarize_all(flights, ~sum(is.na(.)))
+
+#Compare air_time with arr_time - dep_time. What do you expect to see? What do you see? What do you need to do to fix it?
+nrow(flights)
+nrow(filter(flights,air_time == arr_time-dep_time))
+
+#What time of day should you fly if you want to avoid delays as much as possible?
+mutate(mutate(flights, hour = hour(dep_time)), time_of_day = case_when(hour >= 5 & hour <=12~ "Morning",
+hour > 12 )
+
+
+#What’s gone wrong with this code? Why are the points not blue?
+
+#ggplot(data = mpg) + 
+  #geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+
+#Which variables in mpg are categorical? Which variables are continuous? (Hint: type ?mpg to read the documentation for the dataset). How can you see this information when you run mpg?
+
+#Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables?
+
+#What happens if you facet on a continuous variable?
+
+#Take the first faceted plot in this section:
+
+#ggplot(data = mpg) + 
+#  geom_point(mapping = aes(x = displ, y = hwy)) + 
+#  facet_wrap(~ class, nrow = 2)
+#What are the advantages to using faceting instead of the colour aesthetic? What are the disadvantages? How might the balance change if you had a larger dataset?

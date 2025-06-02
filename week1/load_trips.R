@@ -11,7 +11,7 @@ parse_datetime <- function(s, format="%Y-%m-%d %H:%M:%S") {
 ########################################
 
 # load each month of the trip data into one big data frame
-csvs <- Sys.glob('*-tripdata.csv')
+csvs <- Sys.glob('./week1/*-tripdata.csv')
 trips <- data.frame()
 for (csv in csvs) {
   print(csv)
@@ -44,7 +44,7 @@ trips <- mutate(trips, gender=factor(gender, levels=c(0,1,2), labels=c("Unknown"
 # https://www.ncei.noaa.gov/orders/cdo/2992179.csv
 # ordered from
 # http://www.ncdc.noaa.gov/cdo-web/datasets/GHCND/stations/GHCND:USW00094728/detail
-weather <- read.table('weather.csv', header=T, sep=',')
+weather <- read.table('./week1/weather.csv', header=T, sep=',')
 
 # extract just a few columns, lowercase column names, and parse dates
 weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
@@ -55,4 +55,5 @@ weather <- tbl_df(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
+
 
