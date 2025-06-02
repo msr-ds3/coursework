@@ -64,7 +64,8 @@ ggplot(trips_filtered, aes(x = birth_year, color = gender, fill=gender)) +
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
-
+trips <- trips %>% mutate(date = as.Date(starttime)) %>% group_by(gender, birth_year ) %>% summarise(count= n()) %>% pivot_wider(names_from = gender, values_from = count) |> mutate(ratio = Male/Female)
+ggplot(trips, aes(x=birth_year, y=ratio)) + geom_point()
 ########################################
 # plot weather data
 ########################################
@@ -82,6 +83,13 @@ ggplot(weather, aes(x = date_column, y = tmin, color=tmin)) +
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 weather$date_column <- as.Date(weather$date, format = "%Y-%m-%d")
 trips <- trips |> mutate(date = as.Date(trips$starttime, "%m/%d/%y"))
+
+#solution...
+weather$date_column <- as.Date(weather$date, format = "%Y-%m-%d")
+ggplot(weather, aes(x=date_column, y=tmin)) + geom_point()  + scale_x_date(date_breaks= "1 month", date_labels = "%b %Y")
+
+weather_2 <- weather |> pivot_longer(cols = c(tmin, tmax), names_to = "temp_type", values_to = "temperature")
+ggplot(weather_2, aes(x=date_column, y=temperature, color=temp_type)) + geom_line() + scale_x_date(date_breaks= "1 month", date_labels = "%b %y")
 ########################################
 # plot trip and weather data
 ########################################
@@ -130,5 +138,6 @@ trips_wdays <- trips |> mutate(day_of_week = wday(trips$starttime))
 trips_wdays <- trips_wdays |> group_by(day_of_week,ymd) |> summarize(num_trips = n())
 trips_wdays <- trips_wdays |> group_by(day_of_week) |> summarize(mean= mean(num_trips), sd=sd(num_trips))
 
-ggplot(trips_wdays, aes(x = hour, y=mean)) + geom_ribbon(aes(ymin=mean-sd, ymax= mean+sd), alpha=.2) + geom_line() + facet_wrap(~day_of_week)
+ggplot(trips_wdays, aes(x = day_of_week, y=mean)) + geom_ribbon(aes(ymin=mean-sd, ymax= mean+sd), alpha=.2) + geom_line() 
+#+ facet_wrap(~day_of_week)
 

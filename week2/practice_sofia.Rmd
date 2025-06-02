@@ -1,0 +1,12 @@
+---
+title: "Practice Notebook Sofia Cora"
+date: 2025-06-02
+output: html_document
+---
+```{r setup, include = FALSE}
+library(ggplot2)
+library(dplyr)
+print('helllooooo')
+smaller <- diamonds %>% 
+  filter(carat <= 2.5)
+```
