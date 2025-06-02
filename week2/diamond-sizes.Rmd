@@ -22,3 +22,42 @@ smaller %>%
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
 ```
+
+ The striking features include:
+ - Most diamonds are around 2.8 carats
+ - Majority of diamonds are less than 1.25 carats
+
+<!-- this is comment -->
+
+
+# Section 27.4.7
+## Exercise 1
+
+Add a section that explores how diamond sizes vary by cut, colour, and clarity. 
+Assume you’re writing a report for someone who doesn’t know R, 
+and instead of setting echo = FALSE on each chunk, set a global option.
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```
+
+
+```{r}
+diamonds |>
+  ggplot(aes(x = carat, color = cut, fill = cut)) +
+  geom_histogram(bins = 30)
+```
+
+```{r}
+diamonds |>
+  ggplot(aes(x = carat, color = color, fill = color)) +
+  geom_histogram(bins = 30)
+```
+
+```{r}
+diamonds |>
+  ggplot(aes(x = carat, color = clarity, fill = clarity)) +
+  geom_histogram(bins = 30)
+```
