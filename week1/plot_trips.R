@@ -60,6 +60,18 @@ trips |>
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 
+trips |>
+    mutate(age = year(Sys.Date()) - birth_year) |>
+    select(gender, age) |>
+    group_by(age, gender) |>
+    summarize(count_gender_by_age = n()) |>
+    pivot_wider(names_from = gender, values_from = count_gender_by_age) |>
+    mutate(male_to_female = Male/Female) |>
+    ggplot(aes(x = age, y = male_to_female)) +
+    geom_point() +
+    geom_smooth(se=FALSE)
+
+
 
 
 
@@ -77,7 +89,11 @@ weather |>
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 
-
+weather |>
+    select(date, tmin, tmax) |>
+    pivot_longer(names_to = "min_max", values_to = "temperature", -date) |>
+    ggplot(aes(x = date, y = temperature, color = min_max)) +
+    geom_point()
 
 
 ########################################
