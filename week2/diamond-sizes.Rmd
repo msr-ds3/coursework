@@ -45,7 +45,7 @@ chunk, set a global option.
 
 diamonds |>
   ggplot(aes(x = carat, color = color, fill = color)) +
-  geom_histogram()
+  geom_histogram(bins = 30)
 
 ```
 
@@ -53,7 +53,7 @@ diamonds |>
 
 diamonds |>
   ggplot(aes(x = carat, color = cut, fill = cut)) +
-  geom_histogram() +
+  geom_histogram(bins = 30) +
   scale_fill_viridis_d(option = "mako", direction = -1)
 ```
 
@@ -61,6 +61,6 @@ diamonds |>
 
 diamonds |>
   ggplot(aes(x = carat, color = clarity, fill = clarity)) +
-  geom_histogram() +
+  geom_histogram(bins = 30) +
   scale_fill_viridis_d(option = "magma")
 ```
