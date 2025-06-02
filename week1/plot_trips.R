@@ -66,13 +66,20 @@ trips%>%
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
-
-
+trips %>% mutate(age = as.numeric(format(ymd, "%Y")) - as.numeric(birth_year)) %>% 
+    group_by(age, gender) %>% summarise(num_trips = n(),  .groups = "drop")%>%
+    pivot_wider(names_from = gender, values_from = num_trips) %>% mutate(male_to_female = Male/ Female) %>% 
+    ggplot( aes(age, male_to_female))+  geom_line(color = "steelblue", size = 1) +
+    geom_smooth( color = "red", linetype = "dashed") +
+    scale_x_log10()+ 
+    labs(x = "AGE", y = "Male to Female Ratio", title = "Male/Female trip ratio by Age") +
+    theme_minimal()
 
 ########################################
 # plot weather data
 ########################################
 # plot the minimum temperature (on the y axis) over each day (on the x axis)
+view(weather)
 weather%>%
     ggplot(aes(x= ymd, y= tmin, color=tmin))+
     geom_point()+
@@ -86,7 +93,14 @@ weather%>%
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+view(weather)
 
+weather %>% pivot_longer(names_to = "temp_type", values_to = "temperature", cols = c(tmin,tmax)) %>%
+    ggplot(aes(ymd, temperature, color= temp_type))+ geom_line() + scale_x_date() + labs(
+    x = "Date",
+    y = "Temperature",
+    color = "Temperature Type",
+    title = "Daily Min and Max Temperatures") 
 
 
 
@@ -102,48 +116,99 @@ head(trips_with_weather)
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
 
-trips %>%
-  mutate(date = as.Date(starttime)) %>%
-  count(date) %>%
-  inner_join(weather, by = c("date" = "ymd")) %>%
-  ggplot(aes(x = tmin, y = n)) +
-    geom_point() +
-    labs(x = "Minimum Temperature", y = "Number of Trips", title = "Trips vs. Min Temperature")
+str(weather)
+head(trips)
+trips_with_weather %>%
+    group_by(ymd,tmin)%>%
+    summarise(num_trips = n(), .groups = "drop")%>%
+    ggplot(aes(tmin, num_trips))+geom_point()
 
-
-# trips%>%
-#     group_by(ymd)%>%
-#     summarise(num_trips = n())%>%
-#     inner_join(weather, by ='ymd') %>%
-#     ggplot(aes(x= mean(tmin),y=num_trips))+
+#works only for this data frame since tmin is not different    
+# trips_by_day <- trips %>%
+#     mutate(date = as.Date(starttime)) %>%
+#     group_by(date)%>%
+#     summarise(num_trips = n())
+# weather %>%
+#     mutate(date = as.Date(date))%>%
+#     inner_join(trips_by_day,weather_by_day, by ='date') %>%
+#     ggplot(aes(x= mean(tmin),y= num_trips))+
 #         geom_point() +
 #         labs(x = "Minimum Temperature", y = "Number of Trips",
 #         title = "Trips vs. Min Temperature")
 
 # repeat this, splitting results by whether there was substantial precipitation or not
 # you'll need to decide what constitutes "substantial precipitation" and create a new T/F column to indicate this
-
+trips_with_weather %>%
+    mutate(precptf = ifelse(prcp > mean(prcp), 'T', 'F'))%>%
+    group_by(ymd,tmin, precptf)%>%
+    summarise(num_trips = n(), .groups = "drop")%>%
+    ungroup()%>%
+    ggplot(aes(tmin, num_trips))+geom_point() + 
+    labs( x = "number of trip",
+        y = "minimum temp",
+        title = "Substantial precipitation on num of trips") +
+    facet_wrap(~precptf)
+    
 
 
 # add a smoothed fit on top of the previous plot, using geom_smooth
+trips_with_weather %>%
+    mutate(precptf = ifelse(prcp > mean(prcp), 'T', 'F'))%>%
+    group_by(ymd,tmin, precptf)%>%
+    summarise(num_trips = n(), .groups = "drop")%>%
+    ungroup()%>%
+    ggplot(aes(tmin, num_trips))+geom_point() + geom_smooth()+
+    labs( x = "number of trip",
+        y = "minimum temp",
+        title = "Substantial precipitation on num of trips") +
+    facet_wrap(~precptf)
 
 # compute the average number of trips and standard deviation in number of trips by hour of the day
 # hint: use the hour() function from the lubridate package
+library(lubridate)
+
+trips_with_weather %>%
+    mutate(hour = hour(starttime),
+    date = as.Date(starttime))%>%
+    group_by(hour,date)%>%
+    summarise(num_trips = n(), .groups = "drop")%>%
+    group_by(hour)%>%
+    summarise(
+        average_trips = mean(num_trips),
+        sd_trips = sd(num_trips))
 
 # plot the above
+trips_with_weather %>%
+    mutate(hour = hour(starttime),
+    date = as.Date(starttime))%>%
+    group_by(hour,date)%>%
+    summarise(num_trips = n(), .groups = "drop")%>%
+    group_by(hour)%>%
+    summarise(
+        average_trips = mean(num_trips),
+        sd_trips = sd(num_trips)) %>%
+    ggplot( aes(hour, average_trips))+
+    geom_line(color = "red") + geom_ribbon(aes(ymin = average_trips - sd_trips, ymax = average_trips + sd_trips), alpha = 0.25)+
+     labs(
+        x = "Hour of Day",
+        y = "Average Number of Trips",
+        title = "Average Number of Trips by Hour with ±1 SD Ribbon",
+        subtitle = "Red line: Mean trips per hour; Blue ribbon: ±1 standard deviation"
+    ) +
+    theme_minimal()
+
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
-by_week <- trips %>%
+trips %>%
     mutate(
         hour = hour(starttime),
         day = as.Date(starttime),
-        weekday = wday(starttime, label =TRUE)
-    )%>%
+        weekday = wday(starttime, label =TRUE) )%>%
     group_by(hour, weekday, day)%>%
     summarise(trip_count = n(), .groups = "drop")%>%
-    summarise(
-        average = mean(trip_count),
-        standDev = sd(trip_count),
+    group_by(hour,weekday)%>%
+    summarise(average = mean(trip_count),
+        standarddev = sd(trip_count),
         .groups = "drop")
-by_week
+
