@@ -145,3 +145,14 @@ ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) +
   geom_point(position = "jitter")
 
 #jitter shows the positions where there are more observations
+
+
+#Question 2: 
+
+?geom_jitter()
+
+#The two arguments would be width and height examples: 
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_jitter(width = 0)
+
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + geom_jitter(width = 40)
