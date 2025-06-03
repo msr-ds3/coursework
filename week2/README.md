@@ -47,11 +47,11 @@ This week covers:
 ## References
 * Chapter 1 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS)
 * Interactive demos:
-    * From the [Seeing theory](http://students.brown.edu/seeing-theory/) site:
-      * [Random variables](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section1)
-      * [Basic probability](http://students.brown.edu/seeing-theory/basic-probability/index.html)
-      * [Central limit theorem](http://students.brown.edu/seeing-theory/probability-distributions/index.html#section3)
-      * [Confidence intervals](http://students.brown.edu/seeing-theory/frequentist-inference/index.html#section2)
+    * From the [Seeing theory](https://seeing-theory.brown.edu/) site:
+      * [Random variables](https://seeing-theory.brown.edu/probability-distributions/index.html#section1)
+      * [Basic probability](https://seeing-theory.brown.edu/basic-probability/index.html)
+      * [Central limit theorem](https://seeing-theory.brown.edu/probability-distributions/index.html#section3)
+      * [Confidence intervals](https://seeing-theory.brown.edu/frequentist-inference/index.html#section2)
     * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
     * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
 * Some notes on expected values and variance, with proofs of their properties
