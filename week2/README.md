@@ -54,10 +54,11 @@ This week covers:
       * [Confidence intervals](https://seeing-theory.brown.edu/frequentist-inference/index.html#section2)
     * An [interactive tutorial on sampling variability in polling](http://rocknpoll.graphics)
     * [Student t-distribution](http://rpsychologist.com/d3/tdist/)
+<!--
 * Some notes on expected values and variance, with proofs of their properties
     * [Expected value](https://brilliant.org/wiki/expected-value/), click through on "linearity of expectation" for proof
     * [Variance](https://brilliant.org/wiki/variance-definition/)
-
+-->
 
 <!--
 
