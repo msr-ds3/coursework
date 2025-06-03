@@ -48,4 +48,3 @@ view(pivot_wider(people, names_from = names, values_from = values))
 # 27.2.1 Q1
 #Ctrl shift K
 
-# 
