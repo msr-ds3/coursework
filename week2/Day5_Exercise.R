@@ -46,6 +46,6 @@ view(pivot_wider(people, names_from = names, values_from = values))
 # The same name with different age will be treated as a sep row
 
 # 27.2.1 Q1
-Ctrl shift K
+#Ctrl shift K
 
 # 
