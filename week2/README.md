@@ -70,7 +70,7 @@ This week covers:
   * Review the "Hypothesis testing" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
   * Read Chapter 9 of IST and do exercise 9.1
   * Read Chapter 10 of IST and do exercises 10.1 and 10.2
-  * Also check out the this analysis of [the color distribution of M&Ms](https://github.com/jhofman/delicious-statistics) that we discussed
+  * Also check out the this analysis of [the color distribution of M&Ms](https://github.com/jhofman/delicious-statistics)
   * Read Chapter 2 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS) and do exercises 2.2 and 2.6
   * Read Sections 3.1 and 3.2 of ISRS
   * Do exercise 9.2 in IST
