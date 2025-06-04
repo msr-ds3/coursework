@@ -60,7 +60,7 @@ This week covers:
     * [Variance](https://brilliant.org/wiki/variance-definition/)
 -->
 
-<!--
+
 
 
 # Day 2
@@ -80,6 +80,7 @@ This week covers:
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
   * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
 
+<!--
 
 # Day 3
 
