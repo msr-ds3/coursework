@@ -63,7 +63,7 @@ This week covers:
 
 
 
-# Day 2
+# Day 3
 
 ## Hypothesis testing
 
@@ -80,9 +80,8 @@ This week covers:
   * Statistics for Hackers by VanderPlas ([slides](https://speakerdeck.com/jakevdp/statistics-for-hackers), [video](https://www.youtube.com/watch?v=Iq9DzN6mvYA))
   * See section 4 of [Mindless Statistics](http://library.mpib-berlin.mpg.de/ft/gg/GG_Mindless_2004.pdf) and [this article](https://link.springer.com/article/10.1007/s10654-016-0149-3) for some warnings on misinterpretations of p-values
 
-<!--
 
-# Day 3
+# Day 4
 
   * Continue working on exercises from yesterday
   * Read Chapters 12 and 13 of IST and do exercises 12.1 and 13.1
@@ -110,7 +109,8 @@ This week covers:
 
 
 
-# Day 4
+
+# Day 5
 
 ## Regression
 
@@ -128,7 +128,7 @@ This week covers:
   * The [modelr](https://modelr.tidyverse.org) and [tidymodels](https://github.com/tidymodels/tidymodels) packages in R
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
-
+<!--
 
 # Day 5
 
