@@ -15,6 +15,15 @@ This week starts with a discussion of regression into machine learning and then 
 ## References
   * Sections 3.2 and 3.3 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression with multiple features
 
+
+<!--
+* [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
+-->
+
+<!--
+
+# Day 2
+
 ## Overfitting, generalization, and model complexity
 
 * See the [slides](https://speakerdeck.com/jhofman/modeling-social-data-lecture-8-regression-part-2) and [notebook](complexity_control.ipynb) on overfitting and cross-validation
@@ -24,12 +33,8 @@ This week starts with a discussion of regression into machine learning and then 
 
 * Think about a power analysis for the "Is yawning contagious" experiment in Exercise 2.6 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS). What's your estimate of the power from the experiment that was run? How big of an experiment would you run if you could design the experiment yourself?
 
-<!--
-* [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
--->
 
-<!--
-# Day 2
+# Day 3
 
 ## The long tail
 
@@ -39,7 +44,7 @@ This week starts with a discussion of regression into machine learning and then 
 
 
 
-# Day 3
+# Day 4
 
 ## N-gram data and "Culturonomics"
 
@@ -51,7 +56,7 @@ This week starts with a discussion of regression into machine learning and then 
 
 
 
-# Day 4
+# Day 5
 
 ## Predicting daily Citibike trips (open-ended)
 
