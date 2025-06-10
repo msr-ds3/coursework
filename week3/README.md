@@ -20,7 +20,7 @@ This week starts with a discussion of regression into machine learning and then 
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
 -->
 
-<!--
+
 
 # Day 2
 
@@ -33,6 +33,7 @@ This week starts with a discussion of regression into machine learning and then 
 
 * Think about a power analysis for the "Is yawning contagious" experiment in Exercise 2.6 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS). What's your estimate of the power from the experiment that was run? How big of an experiment would you run if you could design the experiment yourself?
 
+<!--
 
 # Day 3
 
