@@ -34,6 +34,7 @@ This week starts with a discussion of regression into machine learning and then 
 
 * Think about a power analysis for the "Is yawning contagious" experiment in Exercise 2.6 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS). What's your estimate of the power from the experiment that was run? How big of an experiment would you run if you could design the experiment yourself?
 
+-->
 
 # Day 3
 
@@ -43,7 +44,7 @@ This week starts with a discussion of regression into machine learning and then 
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-
+<!--
 
 # Day 4
 
