@@ -1,0 +1,130 @@
+---
+title: Confounding and Collinearity
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+This notebook walks through confounding and collinearity using an example involving children’s reading scores, shoe size, height, and age.
+
+## Setup
+
+First, we'll load the necessary packages and generate our fake dataset of 200 children with different ages, heights, shoe sizes, and reading scores. 
+
+```{r setup}
+library(tidyverse)
+library(broom)
+set.seed(42)
+
+# 1. Generate data
+n <- 200
+df <- tibble(
+  Age = runif(n, 6, 18),                # ages between 6 and 18 years
+  Height = 90 + 6 * Age + rnorm(n, 0, 5),   # height increases with age
+  ShoeSize = 15 + 0.4 * Height + rnorm(n, 0, 2), # shoe size correlates with height
+  ReadingScore = 30 + 5 * Age + rnorm(n, 0, 10)  # reading ability increases with age
+)
+```
+
+## 1. Exploring Raw Correlations
+
+**Next, we’ll peek at the correlations** to see how these variables vary together. (Remember, seeing a correlation doesn’t mean one thing /causes/ the other.)
+
+```{r cor-matrix}
+df %>%
+  select(Age, Height, ShoeSize, ReadingScore) %>%
+  cor() %>%
+  round(2)
+```
+
+**Then** we’ll **plot shoe size versus reading score** to visualize onne of these associations:
+
+```{r plot-shoe-reading}
+# Plot: ShoeSize vs ReadingScore
+ggplot(df, aes(x = ShoeSize, y = ReadingScore)) +
+  geom_point() +
+  labs(title = 'Reading Score vs. Shoe Size', x = 'Shoe Size', y = 'Reading Score')
+```
+
+At this point, one might (wrongly) think: “Wow, bigger shoe sizes lead to better reading!” But we haven’t accounted for age yet.
+
+---
+
+## 2. Illustrating Confounding by Age
+
+**A confounder** influences both our predictor (shoe size) and outcome (reading score). Here, **Age** might actually account for the fact that kids both have larger feet and are better readers.
+
+**First**, let’s **plot Age against ShoeSize**:
+
+```{r plot-age-shoe}
+ggplot(df, aes(x = Age, y = ShoeSize)) +
+  geom_point() +
+  labs(title = 'Shoe Size vs. Age', x = 'Age (years)', y = 'Shoe Size')
+```
+
+**Now let’s "adjust"** for Age by adding it into our regression with ShoeSize:
+
+```{r model-adjusted}
+model_adjusted <- lm(ReadingScore ~ ShoeSize + Age, data = df)
+tidy(model_adjusted)
+```
+
+You’ll see that once Age is included, the effect of ShoeSize often shrinks or vanishes. This shows how confounding can produce a **spurious correlation**.
+
+---
+
+## 3. Demonstrating Collinearity
+
+**Collinearity** can have a similar effect, but through a different mechanism. Collinearity happens when predictors correlate strongly with each other, making it hard to distinguish their individual effects. Here we've set up height and shoe size to be correlated (but it's not the case that either one causes the other, or reading scores, directly).
+
+**Let’s look** at **Height vs. ShoeSize**:
+
+```{r plot-shoe-height}
+ggplot(df, aes(x = Height, y = ShoeSize)) +
+  geom_point() +
+  labs(title = 'Height vs. Shoe Size', x = 'Height (cm)', y = 'Shoe Size')
+```
+
+**Next**, we fit a model with both ShoeSize and Height (without Age) to see the instability:
+
+```{r model-collinear}
+model_collinear <- lm(ReadingScore ~ ShoeSize + Height, data = df)
+tidy(model_collinear)
+```
+
+Notice how coefficient signs or their uncertainty can flip around—**an indicator of multicollinearity**.
+
+---
+
+## 4. Putting It All Together
+
+**Finally**, we’ll include **Age**, **Height**, and **ShoeSize** in one model:
+
+```{r model-full}
+model_full <- lm(ReadingScore ~ ShoeSize + Height + Age, data = df)
+summary(model_full)
+```
+
+**And then compare** all four approaches side by side:
+
+```{r tidy-summaries}
+bind_rows(
+  tidy(lm(ReadingScore ~ ShoeSize, df))       %>% mutate(model = '1. ShoeSize only'),
+  tidy(model_adjusted)                       %>% mutate(model = '2. + Age'),
+  tidy(model_collinear)                      %>% mutate(model = '3. ShoeSize + Height'),
+  tidy(model_full)                           %>% mutate(model = '4. Full model')
+) %>%
+  select(model, term, estimate, std.error, statistic, p.value) %>%
+  print(n = Inf)
+```
+
+You’ll find that **Age** remains the noteable predictor, while the apparent effects of height and shoe size weaken.
+
+**A word of warning**: Even when we include all of three of these predictors in our model, there could be /other/ omitted variables, so it's best to **avoid any causal conclusions**. It's hard to tease out cause and effect from observational data alone!
+
+---
+
+## Recap of Concepts
+
+1. **Confounder:** A variable (e.g., Age) that drives both predictor and outcome, misleading simple associations.
+2. **Collinearity:** When predictors (e.g., Height & ShoeSize) correlate strongly, causing unstable coefficient estimates.
+3. **Omitted Variable Bias:** Even after adjusting, unmeasured factors can still bias estimates; causal claims require rigorous design (e.g., randomization).
