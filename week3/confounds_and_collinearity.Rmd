@@ -13,6 +13,9 @@ First, we'll load the necessary packages and generate our fake dataset of 200 ch
 ```{r setup}
 library(tidyverse)
 library(broom)
+
+theme_set(theme_bw())
+
 set.seed(42)
 
 # 1. Generate data
@@ -25,18 +28,7 @@ df <- tibble(
 )
 ```
 
-## 1. Exploring Raw Correlations
-
-**Next, we’ll peek at the correlations** to see how these variables vary together. (Remember, seeing a correlation doesn’t mean one thing /causes/ the other.)
-
-```{r cor-matrix}
-df %>%
-  select(Age, Height, ShoeSize, ReadingScore) %>%
-  cor() %>%
-  round(2)
-```
-
-**Then** we’ll **plot shoe size versus reading score** to visualize onne of these associations:
+## 1. **Plot shoe size versus reading score** to visualize one of these associations:
 
 ```{r plot-shoe-reading}
 # Plot: ShoeSize vs ReadingScore
@@ -46,6 +38,13 @@ ggplot(df, aes(x = ShoeSize, y = ReadingScore)) +
 ```
 
 At this point, one might (wrongly) think: “Wow, bigger shoe sizes lead to better reading!” But we haven’t accounted for age yet.
+
+**Even looking at a simple model** shows a statistically significant relationship:
+```{r model-shoe-only}
+model_shoe_only <- lm(ReadingScore ~ ShoeSize, data = df)
+tidy(model_shoe_only)
+```
+You’ll see a positive coefficient for ShoeSize, suggesting larger shoe sizes are associated with higher reading scores. But this is misleading!
 
 ---
 
@@ -108,7 +107,7 @@ summary(model_full)
 
 ```{r tidy-summaries}
 bind_rows(
-  tidy(lm(ReadingScore ~ ShoeSize, df))       %>% mutate(model = '1. ShoeSize only'),
+  tidy(model_shoe_only)       %>% mutate(model = '1. ShoeSize only'),
   tidy(model_adjusted)                       %>% mutate(model = '2. + Age'),
   tidy(model_collinear)                      %>% mutate(model = '3. ShoeSize + Height'),
   tidy(model_full)                           %>% mutate(model = '4. Full model')
