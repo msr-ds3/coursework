@@ -44,6 +44,14 @@ This week starts with a discussion of regression into machine learning and then 
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
+# Day 4
+
+## The long tail (cont'd)
+
+* See this notebook on [confounding_and_collinearity.Rmd](confounds_and_collinearity.Rmd) (rendered [here](https://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week3/confounds_and_collinearity.html))
+* Continue working on the previous regression and generalization assignments
+* Then move on to reproducing results from "The Anatomy of the Long Tail"
+
 <!--
 
 # Day 4
