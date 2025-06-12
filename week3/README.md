@@ -20,7 +20,7 @@ This week starts with a discussion of regression into machine learning and then 
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
 -->
 
-<!--
+
 
 # Day 2
 
@@ -29,10 +29,12 @@ This week starts with a discussion of regression into machine learning and then 
 * See the [slides](https://speakerdeck.com/jhofman/modeling-social-data-lecture-8-regression-part-2) and [notebook](complexity_control.ipynb) on overfitting and cross-validation
 * Read section 5.1 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
 
+<!--
 * Start reading [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2 (you can ignore the null model in Figure 2)
 
 * Think about a power analysis for the "Is yawning contagious" experiment in Exercise 2.6 of [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS). What's your estimate of the power from the experiment that was run? How big of an experiment would you run if you could design the experiment yourself?
 
+-->
 
 # Day 3
 
@@ -42,7 +44,15 @@ This week starts with a discussion of regression into machine learning and then 
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
+# Day 4
 
+## The long tail (cont'd)
+
+* See this notebook on [confounding_and_collinearity.Rmd](confounds_and_collinearity.Rmd) (rendered [here](https://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week3/confounds_and_collinearity.html))
+* Continue working on the previous regression and generalization assignments
+* Then move on to reproducing results from "The Anatomy of the Long Tail"
+
+<!--
 
 # Day 4
 
