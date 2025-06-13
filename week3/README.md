@@ -52,9 +52,7 @@ This week starts with a discussion of regression into machine learning and then 
 * Continue working on the previous regression and generalization assignments
 * Then move on to reproducing results from "The Anatomy of the Long Tail"
 
-<!--
-
-# Day 4
+# Day 5
 
 ## N-gram data and "Culturonomics"
 
@@ -64,6 +62,7 @@ This week starts with a discussion of regression into machine learning and then 
   * [GNU Make for Reproducible Data Analysis](http://zmjones.com/make/) by Zach Jones
 
 
+<!--
 
 
 # Day 5
