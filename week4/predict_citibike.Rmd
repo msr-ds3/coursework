@@ -181,3 +181,7 @@ ggplot(validate_data_w_prediction, aes(x = num_trips, y = predicted_num_trips)) 
   theme_minimal()
 ```
 This scatter plot shows the relationship between the actual number of trips and the predicted number of trips. The red line represents the linear regression line fitted to the data.
+
+```{r}
+save(model, file = "model.RData")
+```
