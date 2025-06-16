@@ -1,0 +1,381 @@
+```{r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(knitr)
+
+# set plot theme
+theme_set(theme_bw())
+```
+
+365 rows prob one per day of 2014 column names 
+ymd, num_trips, date but in a weird format, prcp, snwd, snow, tmax, tmin
+
+snwd is the depth of snow on the ground. while snow is the amount of snow it snowed that day
+
+90% for train/validation 10% for test
+
+so this is our training and test set 90/10 split
+```{r-correct-sampling}
+
+set.seed(42)
+ 
+data <- read_tsv("trips_per_day.tsv")
+n <- nrow(data) # total rows in the data
+shuffled_indices <- sample(n) 
+ 
+ 
+n_test <- floor(0.1 * n)
+test_idx <- shuffled_indices[1:n_test]
+test_set <- data[test_idx, ]
+ 
+ 
+remaining_idx <- shuffled_indices[(n_test + 1):n]
+remaining_data <- data[remaining_idx, ]
+ 
+ 
+num_folds <- 5
+train_val_set <- remaining_data %>%
+  mutate(fold = ((row_number() - 1) %% num_folds) + 1)
+ 
+head(train_val_set)
+```
+
+k fold cross validation 5 folds
+
+```{r-kfoldcross}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=train_set)
+
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+print(min(avg_validate_err))
+```
+--rmse 5633.68
+
+plot the average MRSE for each polynomial degree using tmin as the only feature in the model for k fold cross validation
+
+```{r-kfoldcross-plot}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+okay now im just gonna try diff combinations ig
+```{r-linreg-1}
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (f in 1:num_folds) {
+# fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ tmax*snwd*prcp, data=train_set)
+
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+}
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err <- mean(validate_err)
+  se_validate_err<- sd(validate_err) / sqrt(num_folds)
+
+  print(avg_validate_err)
+
+```
+rmse -- 4736.854
+```{r-poly-t-snwd-prcp}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ poly(tmax*snwd*prcp, k, raw = T), data=train_set)
+
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+print(min(avg_validate_err))
+print(se_validate_err)
+```
+okay well that sucked RMSE -- 10120.69
+
+```{r-poly-tmin-snwd-prcp}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ poly(tmin+snwd+prcp, k, raw = T), data=train_set)
+
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+print(min(avg_validate_err))
+print(se_validate_err)
+```
+still bad tmin+snwd+prcp 7730.247
+
+okay now im gonna try to add the is_day filter
+```{r-addweekday}
+train_val_set <- train_val_set |> mutate(day_of_week = wday(ymd))
+ 
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ poly(tmax, k, raw = TRUE) + poly(snwd, k, raw = TRUE) +
+        poly(prcp, k, raw = TRUE) + day_of_week, data = train_set)
+    
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+print(min(avg_validate_err))
+```
+--minimum RSME is when k=1 4752.587 
+day_of_week   173.27     146.82   1.180  pvalue = 0.23902 
+
+so maybe day_of_week is not a good indicator at all
+
+then i did a summary for tmax*snwd*prcp +day_of_week and this is what i got...
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)     -4977.9     1406.5  -3.539 0.000477 ***
+tmax             4453.4      185.1  24.054  < 2e-16 ***
+snwd              453.5      419.2   1.082 0.280399
+prcp              875.8     2870.1   0.305 0.760504
+day_of_week       210.0      145.5   1.444 0.150036    
+tmax:snwd        -224.6      110.0  -2.042 0.042209 *
+tmax:prcp       -1171.3      480.5  -2.438 0.015460 *
+snwd:prcp       -1532.1     3196.1  -0.479 0.632087
+tmax:snwd:prcp    407.8      894.3   0.456 0.648809
+
+so basically tmax seems to be good and tmax*snwd and tmax*prcp 
+so for each unit increase in tmax, riders incr 4453.4 but if theres snow on the ground it decreases by 
+224 and if its raining then it decreases 1171
+
+```{r-tmax*snwd+tmax*prcp}
+avg_validate_err <- c()
+se_validate_err <- c()
+
+for (f in 1:num_folds) {
+# fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ tmax*snwd + tmax*prcp, data=train_set)
+
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+}
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err <- mean(validate_err)
+  se_validate_err<- sd(validate_err) / sqrt(num_folds)
+
+  print(avg_validate_err)
+```
+rmse -- 4694.503
+
+okay now im gonna try a column if its a weekend or not
+```{r-weekend-col}
+train_val_set <- train_val_set |> mutate(is_weekend = day_of_week == 1 | day_of_week == 7)
+
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend, data = train_set)
+    
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+print(avg_validate_err)
+```
+but now accounting for if its a holiday or not using the date
+```{r-holiday-slay}
+holidays <- read_csv("holidays.csv", col_names = c('row_num','ymd','holiday'))
+
+
+
+
+
+train_val_set_holiday <- left_join(train_val_set, holidays, by = "ymd")
+colnames(train_val_set_holiday)  # Do you see "holiday" here exactly?
+
+# 2. Try pulling the first few rows
+head(train_val_set_holiday$holiday)  # Does this work?
+
+# 3. Check for NAs manually
+sum(is.na(train_val_set_holiday$holiday))  # Should return how many non-holiday rows
+
+# 4. Now safely create the column
+train_val_set_holiday <- train_val_set_holiday |>
+  mutate(is_holiday = !is.na(holiday))
+```
+
+
+
+```{r-model}
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set_holiday, fold != f)
+
+    model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday, data = train_set)
+    # evaluate on the validation data
+    val_set <- filter(train_val_set_holiday, fold == f)
+
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err <- mean(validate_err)
+  se_validate_err <- sd(validate_err) / sqrt(num_folds)
+}
+print(avg_validate_err)
+```
+this is our lowest RMSE 3748.243
+
+now trying with the lag which for some reason didnt really work which i thought it did 
+```{r-lag}
+
+train_val_set <- train_val_set_holiday |> mutate(lag_1 = lag(num_trips)) |> mutate(lag_1 = replace(lag_1, is.na(lag_1), 0))
+
+avg_validate_err <- c()
+se_validate_err <- c()
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday + lag_1, data = train_set)
+    
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err<- mean(validate_err)
+  se_validate_err<- sd(validate_err) / sqrt(num_folds)
+
+print(avg_validate_err)
+```
+---rsme 3757
+
+
+```{r-squared}
+
+train_val_set <- train_val_set_holiday |> mutate(lag_1 = lag(num_trips)) |> mutate(lag_1 = replace(lag_1, is.na(lag_1), 0))
+
+avg_validate_err <- c()
+se_validate_err <- c()
+for(k in K){
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    train_set <- filter(train_val_set, fold != f)
+    model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday +poly(snow,k,raw=TRUE) + poly(tmin,k,raw=TRUE), data = train_set)
+    
+    # evaluate on the validation data
+    val_set <- filter(train_val_set, fold == f)
+
+    validate_err[f] <- sqrt(mean((predict(model, val_set) - val_set$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k]<- mean(validate_err)
+  se_validate_err[k]<- sd(validate_err) / sqrt(num_folds)
+}
+print(avg_validate_err)
+```
