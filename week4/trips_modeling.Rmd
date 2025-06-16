@@ -1,0 +1,180 @@
+---
+title: "trips_model"
+date: '`r Sys.time()`'
+output:
+  html_document:
+    #code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(knitr)
+
+# set plot theme
+theme_set(theme_bw())
+```
+
+```{r setup, include=FALSE}
+set.seed(42)
+
+
+data <- read_tsv("C:/Users/ds3/Documents/coursework/week4/trips_per_day.tsv")
+n <- nrow(data)
+shuffled_indices <- sample(n)
+
+
+n_test <- floor(0.1 * n)
+test_idx <- shuffled_indices[1:n_test]
+test_set <- data[test_idx, ]
+
+
+remaining_idx <- shuffled_indices[(n_test + 1):n]
+remaining_data <- data[remaining_idx, ]
+
+
+num_folds <- 5
+trips_per_day <- remaining_data %>%
+  mutate(fold = ((row_number() - 1) %% num_folds) + 1)
+
+head(trips_per_day)
+
+```
+
+```{r setup, include=FALSE}
+
+# fit a model for each polynomial degree
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+```
+
+```{r setup, include=FALSE}
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+
+```{r setup, include=FALSE}
+n <- nrow(trips_per_day)
+train_size <- floor(0.8 * n)
+
+# Randomly shuffle row indices
+shuffled_indices <- sample(n)
+
+# Index split
+train_indices <- shuffled_indices[1:train_size]
+validation_indices <- shuffled_indices[(train_size + 1):n]
+
+# Create the two datasets
+trips_per_day_train <- trips_per_day[train_indices, ]
+trips_per_day_validate <- trips_per_day[validation_indices, ]
+```
+
+
+
+
+```{r setup, include=FALSE}
+
+# model with features:  num_trips  prcp  snwd  snow  tmax  tmin
+model_with_all_features <- trips_per_day_train |> select(-ymd, -date, -fold)
+
+model_with_all <- lm(num_trips ~ ., data =model_with_all_features)
+model_with_all
+
+validate_err_with_all <- sqrt(mean((predict(model_with_all, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# High validation error low predictive power
+validate_err_with_all
+```
+
+
+```{r setup, include=FALSE}
+
+# model with features and interaction:  num_trips  prcp  snwd  snow  tmax  tmin
+
+
+model_with_all_interactions <- lm(num_trips ~ .^2, data = model_with_all_features)
+model_with_all_interactions
+
+
+validate_err_with_interactions_all <- sqrt(mean((predict(model_with_all_interactions, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# High validation error low predictive power
+validate_err_with_interactions_all
+```
+
+
+```{r setup, include=FALSE}
+
+# model with features and interaction with tmin:  num_trips  prcp  snwd  snow  tmax  tmin
+
+
+model_with_all_interactions_with_tmin <- model <- lm(
+  num_trips ~ prcp + snow + tmax + tmin + 
+              prcp:tmin + snwd:tmin + snow:tmin + tmax:tmin,
+  data = model_with_all_features
+)
+
+model_with_all_interactions_with_tmin
+
+
+validate_err_with_interactions_with_min_all <- sqrt(mean((predict(model_with_all_interactions_with_tmin, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# High validation error low predictive power
+validate_err_with_interactions_with_min_all
+
+```
+
+
+```{r setup, include=FALSE}
+# Fit the model on the training data with poly(., 4) and interactions with tmin
+model_with_poly4_and_linear_interactions <- lm(
+  num_trips ~ 
+   
+  data = model_with_all_features
+)
+
+# Predict on the validation set
+predictions <- predict(model_with_poly4_and_linear_interactions, trips_per_day_validate)
+
+# Compute validation RMSE
+validate_err_poly4_with_interactions <- sqrt(
+  mean((predictions - trips_per_day_validate$num_trips)^2)
+)
+
+# Print validation error
+validate_err_poly4_with_interactions
+```
