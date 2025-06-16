@@ -1,0 +1,183 @@
+---
+title: "Real-time theming with bslib and thematic"
+runtime: shiny
+author: "RStudio"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: "html_document"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(scales)
+library(modelr)
+library(readr)
+library(shiny)
+install.packages("shiny")
+
+trips_per_day <- read_tsv("C:/Users/ds3/Desktop/New folder/coursework/week3/trips_per_day.tsv")
+```
+
+Now, we will divide the dataset into training, validation, and test sets. The training set will be used to fit the model, the validation set will be used to tune the model parameters, and the test set will be used to evaluate the model's performance.
+80% of the data will be used for training, 10% for validation, and 10% for testing.
+
+### Splitting into training, validation and test sets
+
+```{r, message = FALSE}
+set.seed(42)
+
+num_days <- nrow(trips_per_day)
+
+
+# 10% for test set
+num_test <- floor(num_days * 0.1)
+test_ndx <- sample(1:num_days, num_test, replace = FALSE)
+trips_test <- trips_per_day[test_ndx, ]
+# 10% for validation set
+trips_per_day <- trips_per_day[-test_ndx, ]
+```
+
+Now, we will fit a linear regression model to the training data on different polynomial degrees and choose the one which lowest validation error.
+
+### K-fold cross-validation to choose polynomial degree
+```{r}
+library(ggplot2)
+set.seed(42)
+num_folds <- 5
+n <- nrow(trips_per_day)
+trips_per_day <- trips_per_day %>%
+  mutate(fold = sample(rep(1:num_folds, length.out = n)))
+
+head(trips_per_day)
+
+# fit a model for each polynomial degree
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+for (k in K) {
+
+  # do 5-fold cross-validation within each value of k
+  validate_err <- c()
+  for (f in 1:num_folds) {
+    # fit on the training data
+    trips_per_day_train <- filter(trips_per_day, fold != f)
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day, fold == f)
+    validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+  }
+
+  # compute the average validation error across folds
+  # and the standard error on this estimate
+  avg_validate_err[k] <- mean(validate_err)
+  se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+}
+
+# plot the validate error, highlighting the value of k with the lowest average error
+plot_data <- data.frame(K, avg_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=avg_validate_err)) +
+  geom_pointrange(aes(ymin=avg_validate_err - se_validate_err,
+                      ymax=avg_validate_err + se_validate_err,
+                      color=avg_validate_err == min(avg_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+Since, the polynomial degree with the lowest validation error is 4.
+
+### Adding new features to the dataset
+
+```{r}
+trips_per_day<-mutate(trips_per_day, day_name = weekdays(ymd), snow_high = ifelse(snwd>mean(snwd), 1,0),avg_temp = (tmin + tmax) / 2, prcp_high = ifelse(prcp > 0.15, 1, 0), 
+  month = month(ymd),
+    season = case_when(
+      month %in% c(12, 1, 2)  ~ "Winter",
+      month %in% c(3, 4, 5)   ~ "Spring",
+      month %in% c(6, 7, 8)   ~ "Summer",
+      month %in% c(9, 10, 11) ~ "Fall"
+    )
+)
+trips_per_day<-mutate(trips_per_day, day_type = ifelse(day_name %in% c("Saturday", "Sunday"), 1, 0)) %>% select(- c(day_name))
+head(trips_per_day)
+```
+
+We added new columns to the dataset:
+- `day_type`: If the day is a weekend (0) and weekday (1).
+- `snow_high`: Binary variable indicating if the snow depth is above average.
+- `avg_temp`: Average temperature for the day.
+- `prcp_high`: Binary variable indicating if the precipitation is above 0.15 inches.
+- `season`: Season of the year based on the month.
+
+### Fitting the final model with selected features on Validation data and Training data to look at the RMSE
+```{r}
+set.seed(42)
+# Number of folds
+num_folds <- 8
+n <- nrow(trips_per_day)
+ 
+# Assign fold labels
+trips_per_day <- trips_per_day %>%
+  mutate(fold = sample(rep(1:num_folds, length.out = n)))
+ 
+# Store RMSE for each fold
+validate_err <- numeric(num_folds)
+train_err <- numeric(num_folds)
+ 
+for (f in 1:num_folds) {
+  # Split data
+  train_data <- filter(trips_per_day, fold != f)
+  validate_data <- filter(trips_per_day, fold == f)
+  # Fit model with selected features
+  summary(model <- lm(num_trips ~ prcp_high + avg_temp + day_type + season*prcp, data = train_data))
+  # RMSE on training data
+  train_pred <- predict(model, train_data)
+  train_err[f] <- sqrt(mean((train_pred - train_data$num_trips)^2))
+  # RMSE on validation data
+  val_pred <- predict(model, validate_data)
+  validate_err[f] <- sqrt(mean((val_pred - validate_data$num_trips)^2))
+}
+ 
+# Summary results
+mean_train_rmse <- mean(train_err)
+mean_validate_rmse <- mean(validate_err)
+ 
+print(paste("Avg Training RMSE:", round(mean_train_rmse, 2)))
+print(paste("Avg Validation RMSE:", round(mean_validate_rmse, 2)))
+
+validate_data_w_prediction <- mutate(validate_data, predicted_num_trips = predict(model, validate_data)) 
+summary(validate_data_w_prediction)
+
+```
+
+In order to evaluate the model's performance, we will look at the RMSE on training and validation datasets. The average RMSE was 3500 trips for both the datasets. 
+
+### Visualizing the results
+````{r, echo=FALSE, message=FALSE}
+#Graph 1 for date vs predicted values  and actual values of validation data
+ggplot(validate_data_w_prediction, aes(x = ymd, y = num_trips)) +
+  geom_line(color = "blue", size = 1) +
+  geom_line(aes(y = predicted_num_trips), color = "red", size = 1, linetype = "dashed") +
+  labs(title = "Actual vs Predicted Number of Trips",
+       x = "Date",
+       y = "Number of Trips") +
+  theme_minimal()
+
+```
+
+This shows the predicted number of trips (in red) and the actual number of trips (in blue) over time. The model seems to capture the trend in the data well, although there are some discrepancies on certain days.
+
+### Graph 2 for actual vs predicted values of validation data
+`````{r, echo=FALSE, message=FALSE}
+# Graph 2 for actual vs predicted values of validation data
+ggplot(validate_data_w_prediction, aes(x = num_trips, y = predicted_num_trips)) +
+  geom_point(color = "blue", alpha = 0.5) +
+  geom_smooth(method = "lm", color = "red") +
+  labs(title = "Actual vs Predicted Number of Trips",
+       x = "Actual Number of Trips",
+       y = "Predicted Number of Trips") +
+  theme_minimal()
+```
+This scatter plot shows the relationship between the actual number of trips and the predicted number of trips. The red line represents the linear regression line fitted to the data.
