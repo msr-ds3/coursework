@@ -358,13 +358,13 @@ train_val_set <- train_val_set_holiday |> mutate(lag_1 = lag(num_trips)) |> muta
 
 avg_validate_err <- c()
 se_validate_err <- c()
-for(k in K){
+
   # do 5-fold cross-validation within each value of k
   validate_err <- c()
   for (f in 1:num_folds) {
     # fit on the training data
     train_set <- filter(train_val_set, fold != f)
-    model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday +poly(snow,k,raw=TRUE) + poly(tmin,k,raw=TRUE), data = train_set)
+    model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday +poly(snow,k+1,raw=TRUE) + poly(tmin,k,raw=TRUE), data = train_set)
     
     # evaluate on the validation data
     val_set <- filter(train_val_set, fold == f)
@@ -376,6 +376,9 @@ for(k in K){
   # and the standard error on this estimate
   avg_validate_err[k]<- mean(validate_err)
   se_validate_err[k]<- sd(validate_err) / sqrt(num_folds)
-}
+
 print(avg_validate_err)
+
+model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday +poly(snow,2,raw=TRUE) + poly(tmin,3,raw=TRUE), data = train_set)
+save(model, file="best_model.RData")
 ```
