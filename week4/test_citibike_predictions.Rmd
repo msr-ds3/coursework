@@ -1,0 +1,63 @@
+---
+title: "Real-time theming with bslib and thematic"
+runtime: shiny
+author: "RStudio"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: "html_document"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(scales)
+library(modelr)
+library(readr)
+library(shiny)
+
+trips_per_day_2015 <- read_tsv("C:/Users/ds3/Desktop/New folder/coursework/week4/trips_per_day_2015.tsv")
+weather_2015 <- read.table('C:/Users/ds3/Desktop/New folder/coursework/week4/weather_2015.csv', header=T, sep=',')
+head(trips_per_day_2015)
+head(weather_2015)
+model1 <- load("model.RData")
+model <- get(model1)
+```
+
+```{r, message = FALSE}
+weather_2015 <- weather_2015 %>%
+  mutate(DATE = as.Date(DATE, format="%Y-%m-%d"))
+trips_per_day_2015 <- inner_join(trips_per_day_2015, weather_2015, by = c("ymd" =  "DATE"))
+names(trips_per_day_2015) <- tolower(names(trips_per_day_2015))
+head(trips_per_day_2015)
+trips_per_day_2015 <- mutate(trips_per_day_2015, tmin = (tmin/10), tmax = (tmax/10))
+head(trips_per_day_2015)
+```
+
+```{r, message = FALSE}
+head(trips_per_day_2015)
+trips_per_day_2015<-mutate(trips_per_day_2015, day_name = weekdays(ymd), snow_high = ifelse(snwd>mean(snwd), 1,0),avg_temp = (tmin + tmax) / 2, prcp_high = ifelse(prcp > 0.15, 1, 0), 
+  month = month(ymd),
+    season = case_when(
+      month %in% c(12, 1, 2)  ~ "Winter",
+      month %in% c(3, 4, 5)   ~ "Spring",
+      month %in% c(6, 7, 8)   ~ "Summer",
+      month %in% c(9, 10, 11) ~ "Fall"
+    )
+)
+trips_per_day_2015<-mutate(trips_per_day_2015, day_type = ifelse(day_name %in% c("Saturday", "Sunday"), 1, 0)) %>% select(- c(day_name, name, station, tavg))
+```
+
+```{r, message = FALSE}
+summary(predict(model, trips_per_day_2015))
+test_data_w_prediction <- mutate(trips_per_day_2015, predicted_num_trips = predict(model, trips_per_day_2015)) 
+summary(test_data_w_prediction)
+sqrt(mean((test_data_w_prediction$predicted_num_trips - test_data_w_prediction$num_trips)^2))
+
+ggplot(test_data_w_prediction, aes(x = ymd, y = num_trips)) +
+  geom_line(color = "blue", size = 1) +
+  geom_line(aes(y = predicted_num_trips), color = "red", size = 1, linetype = "dashed") +
+  labs(title = "Actual vs Predicted Number of Trips on Test Data",
+       x = "Date",
+       y = "Number of Trips") +
+  theme_minimal()
+
+summary(model)
+```
