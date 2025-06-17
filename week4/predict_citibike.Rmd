@@ -184,4 +184,41 @@ This scatter plot shows the relationship between the actual number of trips and 
 
 ```{r}
 save(model, file = "model.RData")
+tmp_env <- new.env()
+load("model.RData", envir = tmp_env)
+ls(tmp_env)  # Lists all objects saved in the file
+ 
+print(tmp_env$model)
 ```
+
+
+### Preparing the test data and making predictions
+```{r}
+trips_test <- trips_test %>%
+  mutate(day_name = weekdays(ymd),
+         snow_high = ifelse(snwd > mean(snwd), 1, 0),
+         avg_temp = (tmin + tmax) / 2,
+         prcp_high = ifelse(prcp > 0.15, 1, 0),
+         month = month(ymd),
+         season = case_when(
+           month %in% c(12, 1, 2) ~ "Winter",
+           month %in% c(3, 4, 5) ~ "Spring",
+           month %in% c(6, 7, 8) ~ "Summer",
+           month %in% c(9, 10, 11) ~ "Fall"
+         ),
+         day_type = ifelse(day_name %in% c("Saturday", "Sunday"), 1, 0)) %>%
+  select(-day_name)
+head(trips_test)
+test_data_w_prediction <- mutate(trips_test, predicted_num_trips = predict(model, trips_test)) 
+summary(test_data_w_prediction)
+sqrt(mean((test_data_w_prediction$predicted_num_trips - test_data_w_prediction$num_trips)^2))
+
+ggplot(test_data_w_prediction, aes(x = ymd, y = num_trips)) +
+  geom_line(color = "blue", size = 1) +
+  geom_line(aes(y = predicted_num_trips), color = "red", size = 1, linetype = "dashed") +
+  labs(title = "Actual vs Predicted Number of Trips on Test Data",
+       x = "Date",
+       y = "Number of Trips") +
+  theme_minimal()
+```
+This plot shows the predicted number of trips (in red) and the actual number of trips (in blue) on the test data. The model seems to perform well on the test data as well, capturing the overall trend in the number of trips with RMSE of 3358.9
