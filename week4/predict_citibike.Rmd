@@ -382,3 +382,25 @@ print(avg_validate_err)
 model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday +poly(snow,2,raw=TRUE) + poly(tmin,3,raw=TRUE), data = train_set)
 save(model, file="best_model.RData")
 ```
+
+```{r-testing}
+library(Metrics) #not doing this by hand sorry
+#this is all the new features i made to the train/validation set
+
+test_set <- test_set |> mutate(day_of_week = wday(ymd))
+test_set <- test_set |> mutate(is_weekend = day_of_week == 1 | day_of_week == 7)
+test_set <- left_join(test_set, holidays, by = "ymd")
+test_set <- test_set |> mutate(is_holiday = !is.na(holiday))
+test_set <- test_set |> mutate(lag_1 = lag(num_trips)) |> mutate(lag_1 = replace(lag_1, is.na(lag_1), 0))
+
+#idk why i would need a fold column but just in case lol to make them consistent so i can intersect() ig
+num_folds <- 5
+test_set <- test_set |> mutate(fold = ((row_number() - 1) %% num_folds) + 1)
+#did intersect with train_val_set and test_set and no overlapping values :)
+
+model <- lm(num_trips ~ tmax*snwd + tmax*prcp + is_weekend + day_of_week*is_holiday, data = train_set) #this is the best performing model
+predictions <- predict(model, newdata = test_set)
+actuals <- test_set$num_trips
+rmse_value <- rmse(actuals, predictions)
+#3401.735 RMSE
+```
