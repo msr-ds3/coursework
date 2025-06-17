@@ -1,0 +1,37 @@
+```{r setup, include=FALSE}
+library(scales)
+library(tidyverse)
+library(knitr)
+library(Metrics)
+# set plot theme
+theme_set(theme_bw())
+```
+load in the  trips_per_day_2015.tsv  weather_2015.csv holiday.csv 
+
+```{r-load-data}
+model_name <- load("best_model.RData")
+model <- get(model_name)
+trips_per_day_test <- read_tsv("trips_per_day_2015.tsv")
+weather_test <- read_csv("weather_2015.csv")
+holidays_test <- read_csv("holidays.csv")
+weather_test$Date <- weather_test$DATE
+test_set <- left_join(trips_per_day_test, weather_test, by=c("ymd"="DATE"))
+test_set <- test_set |> select(ymd, num_trips, PRCP, SNWD, SNOW, TMAX, TMIN, Date)
+test_set <- test_set |> mutate(day_of_week = wday(ymd))
+test_set <- test_set |> mutate(is_weekend = day_of_week == 1 | day_of_week == 7)
+test_set <- left_join(test_set, holidays, by = "ymd")
+test_set <- test_set |> mutate(is_holiday = !is.na(holiday))
+test_set <- test_set |> mutate(lag_1 = lag(num_trips)) |> mutate(lag_1 = replace(lag_1, is.na(lag_1), 0))
+#have to rename column names slat
+test_set <- test_set %>% rename(prcp = PRCP, snwd = SNWD, snow=SNOW, tmax=TMAX, tmin=TMIN)
+test_set <- test_set[-nrow(test_set), ]
+```
+
+```{r-testing}
+predictions <- predict(model, newdata = test_set)
+
+actuals <- test_set$num_trips
+
+rmse_value <- rmse(actuals, predictions)
+#32,043,314 RMSE
+```
