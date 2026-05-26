@@ -1,4 +1,4 @@
-# MSR NYC Data Science Summer School 2025
+# MSR NYC Data Science Summer School 2026
 
 This is the shared repository for Microsoft Research NYC's 2025 Data Science Summer School (DS3). More information on the program is available [here](http://ds3.research.microsoft.com).
 

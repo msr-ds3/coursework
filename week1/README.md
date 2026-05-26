@@ -13,7 +13,6 @@ Install tools: Visual Studio Code, Git for Windows, R
 
 ### Visual Studio Code
   * Install [Visual Studio Code](https://code.visualstudio.com) which will be your main text editor
-  * Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions for Visual Studio Code
 
 ### Git for Windows
   * Install [Git for Windows](https://github.com/git-guides/install-git#install-git-on-windows) using the "Git for Windows installer"
@@ -63,6 +62,11 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 * It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
 
 
+<!--
+
+# GitHub Copilot
+
+  * Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions for Visual Studio Code
 
 
 # Day 2
@@ -162,6 +166,8 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
     * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
+
+-->
 
 <!--
 
