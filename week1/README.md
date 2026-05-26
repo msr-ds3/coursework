@@ -49,9 +49,8 @@ Install tools: Visual Studio Code, Git for Windows, R
 
 ### Learn more (optional)
   * Codecademy's [interactive introduction to git](https://www.codecademy.com/learn/learn-git)
-  * A full hour-long [introductory video](https://www.youtube.com/watch?v=U8GBXvdmHT4)
-  * More resources from GitHub available [here](https://services.github.com/resources/) and [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
-  * And here's a handy [cheatsheet](https://services.github.com/on-demand/downloads/github-git-cheat-sheet/)
+  * More resources from GitHub available [here](https://help.github.com/articles/good-resources-for-learning-git-and-github/)
+  * And here's a handy [cheatsheet](https://education.github.com/git-cheat-sheet-education.pdf)
 
 ## Extra
 
