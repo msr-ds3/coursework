@@ -13,7 +13,7 @@ cat 201402-citibike-tripdata.csv | cut -d, -f12 | sort -n | uniq | wc -l
 
 # count the number of trips per day
 cat 201402-citibike-tripdata.csv | cut -d, -f2 | cut -d' ' -f1 | sort | uniq -c
-# ANSWER: the output (29)
+# ANSWER: the output (29 results)
 
 # find the day with the most rides
 cat 201402-citibike-tripdata.csv | cut -d, -f2 | cut -d' ' -f1 | sort | uniq -c | sort -r | head -5
@@ -32,8 +32,8 @@ cat 201402-citibike-tripdata.csv | cut -d, -f14,15 | sort | uniq -c | sort
 # ANSWER: output (142 results)
 
 # count the number of trips that start on cross streets that both contain numbers (e.g., "1 Ave & E 15 St", "E 39 St & 2 Ave", ...)
-cat 201402-citibike-tripdata.csv | cut -d, -f5 | grep ".*[0-9].*&.*[0-9].*" | sort | uniq -c | sort -n
-# ANSWER: output (99 results)
+cat 201402-citibike-tripdata.csv | cut -d, -f5 | grep ".*[0-9].*&.*[0-9].*" | wc -l
+# ANSWER: 90549 trips
 
 # compute the average trip duration
 awk -F, 'BEGIN {sum = 0; trips = 0} {total += $1; trips++} END {print total/trips}' 201402-citibike-tripdata.csv
