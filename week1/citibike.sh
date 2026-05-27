@@ -3,16 +3,18 @@
 # add your solution after each of the 10 comments below
 #
 
+# I tried to make all my solutions output exactly the information that was asked for - no more
+
 # count the number of unique stations
-# cut -d, -f4,8 201402-citibike-tripdata.csv | tr , '\n' | sort | uniq | wc -l
+cut -d, -f4,8 201402-citibike-tripdata.csv | tr , '\n' | sort | uniq | wc -l
 # Answer: 331 (-2 for headers)
 
 # count the number of unique bikes
-# cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq | wc -l 
+cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq | wc -l 
 # Answer: 5700
 
 # count the number of trips per day
-# cat 201402-citibike-tripdata.csv | cut -d, -f2 | cut -d'-' -f3 | cut -d' ' -f1 | sort | uniq -c | head -n28
+cat 201402-citibike-tripdata.csv | cut -d, -f2 | cut -d'-' -f3 | cut -d' ' -f1 | sort | uniq -c | head -n28
 # Answer: 
 #   12771 01
 #   13816 02
@@ -44,25 +46,25 @@
 #    9587 28
 
 # find the day with the most rides
-# cut -d, -f2 201402-citibike-tripdata.csv | cut -d'-' -f3 | cut -d' ' -f1 | sort | uniq -c | sort -nr | head -n1 | tr ' ' '\n' | tail -n1
+cut -d, -f2 201402-citibike-tripdata.csv | cut -d'-' -f3 | cut -d' ' -f1 | sort | uniq -c | sort -nr | head -n1 | tr ' ' '\n' | tail -n1
 # Answer: 02
 
 # find the day with the fewest rides
-# cut -d, -f2 201402-citibike-tripdata.csv | cut -d'-' -f3 | cut -d' ' -f1 | sort | uniq -c | sort -nr | head -28 | sort -n | head -n1 | tr ' ' '\n' | tail -n1
+cut -d, -f2 201402-citibike-tripdata.csv | cut -d'-' -f3 | cut -d' ' -f1 | sort | uniq -c | sort -nr | head -28 | sort -n | head -n1 | tr ' ' '\n' | tail -n1
 # Answer: 13
 
 # find the id of the bike with the most rides
-# cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq -c | sort -nbr | head -n1 | tr ' ' '\n' | tail -n1
+cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq -c | sort -nbr | head -n1 | tr ' ' '\n' | tail -n1
 # Answer: 20837
 
 # count the number of rides by gender and birth year
-# cut -d, -f14,15 201402-citibike-tripdata.csv | sort -bn | uniq -c
+cut -d, -f14,15 201402-citibike-tripdata.csv | sort -bn | uniq -c
 
 # count the number of trips that start on cross streets that both contain numbers (e.g., "1 Ave & E 15 St", "E 39 St & 2 Ave", ...)
-# cut -d, -f5 201402-citibike-tripdata.csv | grep '[0-9].*&.*[0-9]' | wc -l
+cut -d, -f5 201402-citibike-tripdata.csv | grep '[0-9].*&.*[0-9]' | wc -l
 # Answer: 90549
 
 
 # compute the average trip duration
-# awk -F, '1 ~ /[0-9]*/{counts[0]++; duration[0]+=$1} END {print(duration[0]/counts[0])}' 201402-citibike-tripdata.csv
+awk -F, '1 ~ /[0-9]*/{counts[0]++; duration[0]+=$1} END {print(duration[0]/counts[0])}' 201402-citibike-tripdata.csv
 # Answer: 874.516
