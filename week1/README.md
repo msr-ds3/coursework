@@ -61,12 +61,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 * It's interesting to think about how we might avoid repeated pairs from one day to the next, but for a first cut (and maybe final cut) version of the script you can ignore that issue
 
 
-<!--
-
-# GitHub Copilot
-
-  * Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions for Visual Studio Code
-
 
 # Day 2
   
@@ -84,6 +78,10 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   * Do Codecademy's interactive [command line tutorial](https://www.codecademy.com/learn/learn-the-command-line) (the free portion)
   * See these [Introduction to Counting](https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting) slides
 
+# GitHub Copilot
+
+  * Install the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions for Visual Studio Code
+
 ## Command line exercises
   * Pull changes from the msr-ds3/coursework repo: `git pull upstream master`
   * Use the [download_trips.sh](download_trips.sh) file to download Citibike trip data by running `bash download_trips.sh` or `./download_trips.sh`
@@ -97,6 +95,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
   * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
+<!--
 
 # Day 3
 
