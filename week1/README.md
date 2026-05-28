@@ -95,7 +95,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	3. `git push origin master` to push things back up to your GitHub fork of the course repository.
   * Finish by submitting a pull request with your solutions so we can review them! (We won't merge the request, but it's a good way for the TA to provide feedback.)
 
-<!--
 
 # Day 3
 
@@ -123,19 +122,20 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   * Do the free portion of [Codecademy's introduction to R](https://www.codecademy.com/learn/learn-r), chapters 1, 2, and 3
   * References:
     * [Basic types](http://www.r-tutor.com/r-introduction/basic-data-types): (numeric, character, logical, factor)
-    * Vectors, lists, dataframes: a [one page reference](http://www.statmethods.net/input/datatypes.html) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
+    * Vectors, lists, dataframes: a [one page reference](https://www.datacamp.com/doc/r/datatypes) and [more details](https://en.wikibooks.org/wiki/R_Programming/Data_types)
 	* [Cyclismo's](http://www.cyclismo.org/tutorial/R/index.html) more extensive tutorial
-	* Rstudio's [data wrangling cheatsheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+	* Posit's [data transformation cheatsheet](https://opensource.posit.co/resources/cheatsheets/data-transformation/)
 	* The [tidyverse style guide](https://style.tidyverse.org)
 	* Hadley Wickham's [style guide](http://adv-r.had.co.nz/Style.html)
 	* The [dplyr vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html)
-	* Sean Anderson's [dplyr and pipes examples](http://seananderson.ca/2014/09/13/dplyr-intro.html) ([code](https://github.com/seananderson/dplyr-intro-2014) on github)
+	* Sean Anderson's [dplyr and pipes examples](https://github.com/seananderson/dplyr-intro-2014) on github
 
   * Tutorials:
   	* [DataCamp's introduction to R](http://datacamp.com/courses/free-introduction-to-r) tutorials (or Hadley's [Advanced R](http://adv-r.had.co.nz) if you're a pro)
-  	* [DataCamp's Data Manipulation in R](https://campus.datacamp.com/courses/dplyr-data-manipulation-r-tutorial) tutorial
+  	* [DataCamp's Data Manipulation with dplyr](https://www.datacamp.com/courses/data-manipulation-with-dplyr) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
+<!--
 
 # Day 4
 
