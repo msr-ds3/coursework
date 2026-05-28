@@ -55,8 +55,6 @@ trips %>%
 
 # find all unique station names
 trips %>% distinct(start_station_name)
-
-trips %>% 
 # ANSWER: output (329 results)
 
 # count the number of trips by gender, the average trip time by gender, and the standard deviation in trip time by gender
