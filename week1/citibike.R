@@ -155,11 +155,11 @@ Output:
 10 Canal St & Rutgers St    Henry St & Grand St      103
 """
 # find the top 3 end stations for trips starting from each start station
-trips %>% 
+trips %>%
 group_by(start_station_name, end_station_name) %>%
-summarize(count = n()) %>% 
+summarize(count = n()) %>%
 arrange(start_station_name, desc(count)) %>%
-mutate(rank = row_number()) %>% 
+mutate(rank = row_number()) %>%
 filter(rank <= 3)
 """
 Output: 
@@ -183,10 +183,10 @@ Output:
 # find the top 3 most common station-to-station trips by gender
 # Input: 
 trips %>%
-group_by(start_station_time, end_station_time, gender)
+group_by(start_station_name, end_station_name, gender) %>%
 summarize(count = n()) %>%
-arrange(gender, desc(count)) %>%
 group_by(gender) %>%
+arrange(desc(count)) %>%
 mutate(rank = row_number()) %>%
 filter(rank <= 3)
 
