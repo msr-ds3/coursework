@@ -158,36 +158,36 @@ Output:
 trips %>% 
 group_by(start_station_name, end_station_name) %>%
 summarize(count = n()) %>% 
-arrange(start_station_name, count) %>%
+arrange(start_station_name, desc(count)) %>%
 mutate(rank = row_number()) %>% 
 filter(rank <= 3)
 """
 Output: 
 # A tibble: 987 × 4
 # Groups:   start_station_name [329]
-   start_station_name end_station_name        count  rank
-   <chr>              <chr>                   <int> <int>
- 1 1 Ave & E 15 St    8 Ave & W 52 St             1     1
- 2 1 Ave & E 15 St    9 Ave & W 22 St             1     2
- 3 1 Ave & E 15 St    Ashland Pl & Hanson Pl      1     3
- 4 1 Ave & E 18 St    11 Ave & W 27 St            1     1
- 5 1 Ave & E 18 St    8 Ave & W 52 St             1     2
- 6 1 Ave & E 18 St    Allen St & Hester St        1     3
- 7 1 Ave & E 30 St    8 Ave & W 52 St             1     1
- 8 1 Ave & E 30 St    9 Ave & W 45 St             1     2
- 9 1 Ave & E 30 St    Allen St & Rivington St     1     3
-10 1 Ave & E 44 St    1 Ave & E 30 St             1     1
+   start_station_name end_station_name    count  rank
+   <chr>              <chr>               <int> <int>
+ 1 1 Ave & E 15 St    E 20 St & FDR Drive    57     1
+ 2 1 Ave & E 15 St    E 17 St & Broadway     52     2
+ 3 1 Ave & E 15 St    1 Ave & E 30 St        49     3
+ 4 1 Ave & E 18 St    E 15 St & 3 Ave        48     1
+ 5 1 Ave & E 18 St    E 17 St & Broadway     44     2
+ 6 1 Ave & E 18 St    W 21 St & 6 Ave        43     3
+ 7 1 Ave & E 30 St    W 33 St & 7 Ave        71     1
+ 8 1 Ave & E 30 St    Pershing Square N      55     2
+ 9 1 Ave & E 30 St    W 31 St & 7 Ave        46     3
+10 1 Ave & E 44 St    W 33 St & 7 Ave        39     1
 # ℹ 977 more rows
 # ℹ Use `print(n = ...)` to see more rows
 """
 # find the top 3 most common station-to-station trips by gender
 # Input: 
-trips %>% 
-group_by(start_station_name, end_station_name, gender) %>%
+trips %>%
+group_by(start_station_time, end_station_time, gender)
 summarize(count = n()) %>%
-arrange(gender, desc(count)) %>% 
-group_by(gender) %>% 
-mutate(rank = row_number()) %>% 
+arrange(gender, desc(count)) %>%
+group_by(gender) %>%
+mutate(rank = row_number()) %>%
 filter(rank <= 3)
 
 """
@@ -228,9 +228,10 @@ Output:
 # compute the average number of trips taken during each of the 24 hours of the day across the entire month
 # what time(s) of day tend to be peak hour(s)?
 # Input:
-trips %>% mutate(hours = floor_date(starttime, unit = "hour")) %>%
- group_by(hours) %>% 
- summarize(avg_no_trips_per_hour = (n()/28))
+trips %>% 
+mutate(hours = floor_date(starttime, unit = "hour")) %>%
+group_by(hours) %>% 
+summarize(avg_no_trips_per_hour = (n()/28))
 
 """
 Output:
