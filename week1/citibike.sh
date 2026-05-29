@@ -4,15 +4,15 @@
 #
 
 # count the number of unique stations
-# Input: 
-cut -d, -f5,9 201402-citibike-tripdata.csv | uniq | wc -l
+# Input:
+cut -d, -f5 201402-citibike-tripdata.csv | sort | uniq | wc -l
 
-# Output: 223435
+# Output: 330
 # count the number of unique bikes
 # Input:
-cut -d, -f12 201402-citibike-tripdata.csv | uniq | wc -l
+cut -d, -f12 201402-citibike-tripdata.csv | sort | uniq | wc -l
 
-# Output: 224734
+# Output: 5700
 # count the number of trips per day
 # Input: 
 cut -d, -f2 201402-citibike-tripdata.csv | cut -d' ' -f1 | sort -n | uniq -c 
@@ -216,8 +216,8 @@ Output: 87 1997,2
 """
 # count the number of trips that start on cross streets that both contain numbers (e.g., "1 Ave & E 15 St", "E 39 St & 2 Ave", ...)
 #Input: 
-cut -d, -f5 201402-citibike-tripdata.csv | grep '& [0-9]' | wc -l
-# Output: 76963
+cut -d, -f5 201402-citibike-tripdata.csv | grep '.*[0-9] & .*[0-9]' | wc -l
+# Output: 70238
 
 # compute the average trip duration
 # Input
