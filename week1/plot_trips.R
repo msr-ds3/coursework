@@ -22,8 +22,8 @@ load('trips.RData')
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
 trips %>%
     ggplot(aes(x=tripduration)) +
-    geom_histogram(binwidth=200) +
-    scale_y_log10(label=comma) +
+    geom_histogram(bins=200) +
+    scale_x_log10(label=comma) +
     labs(
         x="Trip Duration",
         y="Count",
@@ -32,8 +32,8 @@ trips %>%
 
 trips %>%
     ggplot(aes(x=tripduration)) +
-    geom_density() +
-    scale_y_log10(label=comma) +
+    geom_density(fill="blue") +
+    scale_x_log10(label=comma) +
     labs(
         x="Trip Duration",
         y="Count",
@@ -43,23 +43,25 @@ trips %>%
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
 trips %>%
     ggplot(aes(x=tripduration, color=usertype, fill=usertype)) + 
-    geom_histogram() +
-    scale_y_log10(label=comma) +
+    geom_histogram(bins=200) +
+    scale_x_log10(label=comma) +
     labs(
         x="Trip Duration",
         y="Count",
         title="Disribution of Trip Times by Rider Type"
-    )
+    ) +
+    facet_wrap(~ usertype)
 
 trips %>%
     ggplot(aes(x=tripduration, color=usertype, fill=usertype)) + 
     geom_density() +
-    scale_y_log10(label=comma) +
+    scale_x_log10(label=comma) +
     labs(
         x="Trip Duration",
         y="Count",
         title="Disribution of Trip Times by Rider Type"
-    )
+    ) +
+    facet_wrap(~ usertype)
 
 # plot the total number of trips on each day in the dataset
 trips %>%
@@ -119,7 +121,7 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 # plot the number of trips as a function of the minimum temperature, where each point represents a day
 # you'll need to summarize the trips and join to the weather data to do this
 trips_with_weather %>%
-    group_by(tmin) %>%
+    group_by(day=as.Date(starttime), tmin) %>%
     summarize(num_trips=n()) %>%
     ggplot(aes(x=tmin, y=num_trips)) +
     geom_point() +
@@ -140,7 +142,7 @@ trips_with_weather %>%
 
 trips_with_weather %>%
     mutate(substantial_prcp = (prcp > 0.0936)) %>%
-    group_by(tmin, substantial_prcp) %>%
+    group_by(day=as.Date(starttime),tmin, substantial_prcp) %>%
     summarize(num_trips=n()) %>%
     ggplot(aes(x=tmin, y=num_trips, color=substantial_prcp)) +
     geom_point() +
@@ -155,7 +157,7 @@ trips_with_weather %>%
 
 trips_with_weather %>%
     mutate(substantial_prcp = (prcp > 0.0936)) %>%
-    group_by(tmin, substantial_prcp) %>%
+    group_by(day=as.Date(starttime), tmin, substantial_prcp) %>%
     summarize(num_trips=n()) %>%
     ggplot(aes(x=tmin, y=num_trips, color=substantial_prcp)) +
     geom_point() +
