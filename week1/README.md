@@ -111,6 +111,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 
 ## R counting exercises
   * Use the [musical pairs script](students/musical_pairs.sh) to determine your programming partner each day
+  * Open VSCode in the coursework repository and set the working directory to week1 with `setwd('week1')`
   * Fill in solutions to the counting exercises under each comment in [citibike.R](citibike.R)
   * Do the following exercises from Chapter 5 of the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
     * Section [5.2.4](https://r4ds.had.co.nz/transform.html#exercises-8), exercises 1 and 3
@@ -135,7 +136,6 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   	* [DataCamp's Data Manipulation with dplyr](https://www.datacamp.com/courses/data-manipulation-with-dplyr) tutorial
   	* [Datacamp's Introduction to the Tidyverse](https://www.datacamp.com/courses/introduction-to-the-tidyverse) tutorial
 
-<!--
 
 # Day 4
 
@@ -159,13 +159,11 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
   * Tutorials:
     * DataCamp's [Data Visualization with ggplot2 (part 1)](https://campus.datacamp.com/courses/data-visualization-with-ggplot2-1/) tutorial
   * References:
-    * RStudio's [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
-    * Sean Anderson's [ggplot2 slides](http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code]((http://github.com/seananderson/datawranglR))) for more examples 
+    * Posit's [data visualization cheatsheet](https://opensource.posit.co/resources/cheatsheets/data-visualization/)
+    * Sean Anderson's [ggplot2 slides](https://web.archive.org/web/2024/http://seananderson.ca/courses/12-ggplot2/ggplot2_slides_with_examples.pdf) ([code](http://github.com/seananderson/datawranglR)) for more examples
     * The [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/)
-    * The [official ggplot2 docs](http://docs.ggplot2.org/current/)
+    * The [official ggplot2 docs](https://ggplot2.tidyverse.org/reference/)
     * Videos on [Visualizing Data with ggplot2](http://varianceexplained.org/RData/lessons/lesson2/)
-
--->
 
 <!--
 
