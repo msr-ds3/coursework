@@ -216,7 +216,7 @@ Output: 87 1997,2
 """
 # count the number of trips that start on cross streets that both contain numbers (e.g., "1 Ave & E 15 St", "E 39 St & 2 Ave", ...)
 #Input: 
-cut -d, -f5 201402-citibike-tripdata.csv | grep '.*[0-9] & .*[0-9]' | wc -l
+cut -d, -f5 201402-citibike-tripdata.csv | grep '[0-9].* & [0-9].*' | wc -l
 # Output: 70238
 
 # compute the average trip duration
