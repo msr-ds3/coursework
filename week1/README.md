@@ -184,7 +184,7 @@ Think about how to write a `musical_pairs.sh` script to determine your programmi
 ## Rmarkdown
 
   * Read Chapter 27 of the 1st edition of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
-  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
+  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz) (you can render to HTML instead of PDF):
     * Section [27.2.1](https://r4ds.had.co.nz/r-markdown.html#exercises-71), exercises 1 and 2 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
     * Section [27.3.1](https://r4ds.had.co.nz/r-markdown.html#exercises-72) exercise 3, using [this file](diamond-sizes.Rmd)
     * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
