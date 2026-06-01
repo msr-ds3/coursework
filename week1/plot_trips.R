@@ -32,10 +32,14 @@ trips %>%
 group_by(birth_year,gender)%>%
 summarize(count = n())%>%group_by(gender)%>%ggplot(aes(x = birth_year, y = count, fill = gender, color = gender))+ geom_line() +scale_y_log10(label = comma )
 
-
 # plot the ratio of male to female trips (on the y axis) by age (on the x axis)
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
+trips %>% filter(birth_year != is.na(birth_year)) %>% group_by(gender,birth_year)%>%
+summarize(count = n())%>%
+pivot_wider(names_from = gender,values_from = count,values_fill =  1 ) %>% 
+mutate(mtofration = Male/Female)%>%ggplot(aes(x = 2014 - birth_year , y = mtofration  )) + geom_point()
+
 
 ########################################
 # plot weather data
@@ -45,6 +49,8 @@ weather%>%mutate(day = floor_date(ymd,unit="day"))%>%ggplot(aes(x = day , y = tm
 # plot the minimum temperature and maximum temperature (on the y axis, with different colors) over each day (on the x axis)
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
+weather %>%select(date,tmin,tmax) %>% pivot_longer(names_to ="temp", values_to = "temp_values", 2:3 )%>%
+ggplot(aes(x = date, y = temp_values ))+geom_point()
 
 ########################################
 # plot trip and weather data
@@ -76,6 +82,10 @@ group_by(hour)%>%summarize (mean = mean(count),sd = sd(count))
 # plot the above
 trips_with_weather %>% mutate(hour = hour(starttime),day = floor_date(ymd,unit="day"))%>% 
 group_by(day,hour) %>% summarize (count = n())%>% 
-group_by(hour)%>%summarize (mean = mean(count),sd = sd(count))%>%ggplot(aes(x=sd,y = mean))+geom_line()
+group_by(hour)%>%summarize (mean = mean(count),sd = sd(count))%>%ggplot(aes(x=hour,y = mean))+geom_line()
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
+trips_with_weather %>% mutate(weekday = wday(starttime,label = TRUE),hour = hour(starttime),
+day = floor_date(ymd,unit="day"))%>% group_by(day,hour,weekday)%>%summarize (count= n())%>%
+group_by(hour,weekday)%>%summarize (mean = mean(count),sd = sd(count))%>%
+ggplot(aes(x=hour,y = mean))+geom_line()+facet_wrap(~weekday,scale ="free")
