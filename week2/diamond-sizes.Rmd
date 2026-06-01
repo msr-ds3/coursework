@@ -27,12 +27,57 @@ smaller %>%
 27.3.1 Exercise 3
 ---
 ---
-TODO
+The polygon's extremas are concentrated to where the carat value is lower. This indicates that the higher the carat value is, the more rare it is; in addition, the lower the carat value, the more common it is. 
 ---
 
 ---
 27.4.7 Exercise 1
 ---
+
+```{r}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+smaller %>%
+  ggplot(aes(x=cut, y=carat, fill=cut)) +
+  geom_boxplot() +
+  labs(
+    title="How Diamond Sizes Vary For Different Cuts"
+  )
+```
+
 ---
-TODO
+The different cuts all have similar minimums and maximums, however their mean and IQR all vary. The 'Fair' cut has the largest mean of 1.0 carat, while 'Ideal' has a lower mean near 0.5 carat. 
+---
+
+```{r}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+smaller %>%
+  ggplot(aes(x=color, y=carat, fill=color)) +
+  geom_boxplot() +
+  labs(
+    title="How Diamond Sizes Vary For Different Colors"
+  )
+```
+
+---
+Certain consecutive colors have similar size means, however overall the average diamond size and IQR of different colors also vary. 
+---
+
+```{r}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+smaller %>%
+  ggplot(aes(x=clarity, y=carat, fill=clarity)) +
+  geom_boxplot() +
+  labs(
+    title="How Diamond Sizes Vary For Different Clarities"
+  )
+```
+
+---
+There is a clear correlation between the average diamond sizes and the clarities. F1 clarity has the lowest diamond sizes, meanwhile I1 has the largest diamond sizes.
 ---
