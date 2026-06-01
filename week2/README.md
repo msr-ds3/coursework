@@ -41,7 +41,7 @@ This week covers:
 # Day 2
 
 ## Sampling distributions and standard errors
-  * See the [Statistical Inference](intro_to_stats.html) slides ([rendered here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/intro_to_stats.html))
+  * See the [Statistical Inference](intro_to_stats.html) slides ([rendered here](https://raw.githack.com/msr-ds3/coursework/master/week2/intro_to_stats.html))
   * Review the "Estimating a proportion" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
   * Read Chapter 4 of an [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) (IST), [pdf](https://pluto.huji.ac.il/~msby/StatThink/IntroStat.pdf) and [html](https://eleuven.github.io/statthink/) versions available online. Do questions 4.1 and 4.2 in [sampling-distributions.R](sampling-distributions.R). Feel free to execute code in the book along the way.
   * Read Chapter 6 of IST on the normal distribution and do question 6.1 in [sampling-distributions.R](sampling-distributions.R)
