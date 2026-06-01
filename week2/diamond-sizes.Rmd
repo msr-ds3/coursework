@@ -34,7 +34,7 @@ The polygon's extremas are concentrated to where the carat value is lower. This 
 27.4.7 Exercise 1
 ---
 
-```{r}
+```{r, echo=FALSE}
 knitr::opts_chunk$set(
   echo = FALSE
 )
