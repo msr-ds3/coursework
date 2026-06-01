@@ -22,3 +22,17 @@ smaller %>%
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
 ```
+
+---
+27.3.1 Exercise 3
+---
+---
+TODO
+---
+
+---
+27.4.7 Exercise 1
+---
+---
+TODO
+---

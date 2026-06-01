@@ -15,15 +15,17 @@ This week covers:
 
 ## Combining and reshaping exercises
   * Read chapters 5 and 19 of the 2nd edition of [R for Data Science](http://r4ds.had.co.nz) on reshaping and joins
-  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
+  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz) in combining-reshaping.R:
     * Section [12.2.1](https://r4ds.had.co.nz/tidy-data.html#exercises-23), exercise 2
     * Section [12.3.3](https://r4ds.had.co.nz/tidy-data.html#exercises-24) exercises 1 and 3 
 
 ## Rmarkdown
 
   * Read Chapter 27 of the 1st edition of [R for Data Science](http://r4ds.had.co.nz) on Rmarkdown
-  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz):
+  * Do the following exercises from the 1st edition of [R for Data Science](http://r4ds.had.co.nz) in diamond-sizes.Rmd:
+    * First, install pandoc here (choose the windows file ending in .msi): https://github.com/jgm/pandoc/releases/tag/3.9.0.2
     * Section [27.2.1](https://r4ds.had.co.nz/r-markdown.html#exercises-71), exercises 1 and 2 (try keyboard shortcuts: ctrl-shift-enter to run chunks, and ctrl-shift-k to knit the document)
+        * Note: If you're getting an error that you don't have pandoc installed, try closing/re-opening your VS code!
     * Section [27.3.1](https://r4ds.had.co.nz/r-markdown.html#exercises-72) exercise 3, using [this file](diamond-sizes.Rmd)
     * Section [27.4.7](https://r4ds.had.co.nz/r-markdown.html#exercises-72), exercise 1
 
