@@ -29,6 +29,9 @@ smaller %>%
 ---
 TODO
 ---
+# Frequency Polygon of Diamond Carat Weights
+> The frequency polygon is noticably left skewed, with lighter carat weights occuring most frequently.
+> The graph has a trend of immediately spiking up and down, eventually subsiding at a carat size of 2.5.
 
 ---
 27.4.7 Exercise 1
@@ -36,3 +39,15 @@ TODO
 ---
 TODO
 ---
+Add a section that explores how diamond sizes vary by cut, colour, and clarity. 
+Assume you’re writing a report for someone who doesn’t know R, and 
+instead of setting echo = FALSE on each chunk, set a global option.
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+```{r}
+smaller %>% 
+  ggplot(mapping = aes(x = cut)) + 
+  geom_bar(mapping = aes(fill = clarity)) +
+  facet_wrap(~ color)
+```

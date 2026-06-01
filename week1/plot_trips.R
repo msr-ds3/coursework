@@ -105,7 +105,7 @@ trips_with_weather <- inner_join(trips, weather, by="ymd")
 trips_with_weather %>%
 group_by(tmin, date) %>%
 summarize(trips = n()) %>%
-    ggplot(mapping = aes(x = tmin, y = trips)) +
+    ggplot(mapping = aes(x = tmin, y = trips, color = trips)) +
         geom_point()
 
 # repeat this, splitting results by whether there was substantial precipitation or not
@@ -157,7 +157,7 @@ summarize(avg = mean(count), sd = sd(count)) %>%
         geom_pointrange(aes(ymin = avg - sd, ymax = avg + sd)) +
         xlab('Hour of the Day') +
         ylab('Avg Num of Trips') 
-# plot the abov
+# plot the above
 
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
