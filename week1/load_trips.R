@@ -51,7 +51,7 @@ weather <- select(weather, DATE, PRCP, SNWD, SNOW, TMAX, TMIN)
 names(weather) <- tolower(names(weather))
 weather <- mutate(weather,
                   ymd = as.Date(parse_datetime(date, "%Y-%m-%d")))
-weather <- tbl_df(weather)
+weather <- tibble::as_tibble(weather)
 
 # save data frame for easy loading in the future
 save(trips, weather, file='trips.RData')
