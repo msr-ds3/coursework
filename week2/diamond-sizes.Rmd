@@ -1,6 +1,6 @@
 ---
 title: "Diamond sizes"
-date: 2016-08-25
+date: 2026-06-01
 output: html_document
 ---
 
@@ -20,19 +20,73 @@ below:
 ```{r, echo = FALSE}
 smaller %>% 
   ggplot(aes(carat)) + 
-  geom_freqpoly(binwidth = 0.01)
+  geom_freqpoly(binwidth = 0.01) +
+  scale_x_continuous(breaks = seq(0, 2.5, by = 0.2)) +
+  labs(x = "Carat", y = "Diamond count", title = "Frequency of carat size")
 ```
 
 ---
 27.3.1 Exercise 3
 ---
----
-TODO
+
+#### Most striking observations
+1. The diamond count peaks between 0.3 and 0.4 carats.
+2. The majority of diamonds are below 1.5 carats.
+
 ---
 
 ---
 27.4.7 Exercise 1
 ---
----
-TODO
----
+
+### Diamond Size By Cut, Colour, and Clarity
+
+#### Diamond Size By Cut
+
+```{r, echo = FALSE}
+smaller %>%
+  ggplot(aes(x = carat)) +
+  geom_freqpoly(binwidth = 0.01) +
+  facet_wrap(~ cut) +
+  labs(x = "Carat", y = "Count", title = "Carat Frequencies By Cut")
+```
+
+```{r, echo = FALSE}
+smaller %>%
+  ggplot(aes(x = cut, y = carat, fill = cut)) +
+  geom_boxplot() +
+  labs(x = "Cut", y = "Carat", title = "Carat Variations By Cut")
+```
+
+#### Diamond Size By Colour
+
+```{r, echo = FALSE}
+smaller %>%
+  ggplot(aes(x = carat)) +
+  geom_freqpoly(binwidth = 0.01) +
+  facet_wrap(~ color) +
+  labs(x = "Carat", y = "Count", title = "Carat Frequencies By Color")
+```
+
+```{r, echo = FALSE}
+smaller %>%
+  ggplot(aes(x = color, y = carat)) +
+  geom_boxplot() +
+  labs(x = "Color", y = "Carat", title = "Carat Variations By Color")
+```
+
+#### Diamond Size By Clarity
+```{r, echo = FALSE}
+smaller %>%
+  ggplot(aes(x = carat)) +
+  geom_freqpoly(binwidth = 0.01) +
+  facet_wrap(~ clarity) +
+  labs(x = "Carat", y = "Count", title = "Carat Frequencies By Clarity")
+```
+
+```{r, echo = FALSE}
+smaller %>%
+  ggplot(aes(x = clarity, y = carat)) +
+  geom_boxplot() +
+  labs(x = "Clarity", y = "Carat", title = "Carat Variations By Clarity")
+```
