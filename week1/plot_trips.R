@@ -80,7 +80,7 @@ trips %>%
 trips %>%
     mutate(age=2014-birth_year) %>%
     ggplot(aes(x=age, color=gender)) +
-    geom_bar() +
+    geom_bar(alpha=0.2) +
     labs(
         x="Age",
         y="Total trips",
