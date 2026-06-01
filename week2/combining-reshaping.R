@@ -9,9 +9,41 @@ library(tidyverse)
 #   3. Divide cases by population, and multiply by 10000.
 #   4. Store back in the appropriate place.
 
+# table2
+
+table2 %>%
+  pivot_wider(
+    names_from=type,
+    values_from=count
+  ) %>%
+  mutate(
+    rate=cases/population * 10000
+  )
+
+# table 4a+4b
+table4a_longer <- table4a %>%
+  pivot_longer(
+    2:3,
+    names_to="year",
+    values_to="cases"
+  )
+
+table4b_longer <- table4b %>%
+  pivot_longer(
+    2:3,
+    names_to="year",
+    values_to="population"
+  )
+
+left_join(table4a_longer, table4b_longer) %>%
+  mutate(
+    rate=cases/population * 10000
+  )
+
 # Which representation is easiest to work with? Which is hardest? Why?
 # Add your answer as a comment.
-
+# The first representation (with table 2) was definitely easier than working with table 4a+4b. 
+# This is because table 2 was already joined and the only thing left was to reshape the data. 
 
 ####################################################################################
 # 12.3.3 Exercise 1
@@ -26,9 +58,19 @@ stocks %>%
   pivot_wider(names_from = year, values_from = return) %>% 
   pivot_longer(`2015`:`2016`, names_to = "year", values_to = "return")
 
+
+# If pivot_longer() and pivot_wider() were symmetrical, they would result in the 
+# original dataframe when used sequentially. However, the dataframe after using both
+# pivot_longer() and pivot_wider() are slightly different. The columns are reordered,
+# and the data type of the 'year' column changed from a chr type to a dbl type. 
+
 # (Hint: look at the variable types and think about column names.)
-# pivot_longer() has a names_ptypes argument, e.g.  names_ptypes = list(year = double()). 
+# pivot_longer() has a names_ptypes argument, e.g.  names_ptypes = list(year = double()).
+stocks %>% 
+  pivot_wider(names_from = year, values_from = return) %>% 
+  pivot_longer(`2015`:`2016`, names_to = "year", values_to = "return", names_ptypes=list(year=character())) 
 # What does it do? Add your answer as a comment.
+# It helps specify the type of the column with the name. It can be used to fix the data type. 
 
 ####################################################################################
 # 12.3.3 Exercise 3
@@ -44,3 +86,26 @@ people <- tribble(
   "Jessica Cordero", "age",       37,
   "Jessica Cordero", "height",   156
 )
+
+
+people %>%
+  pivot_wider(
+    names_from=names,
+    values_from=values
+  )
+
+# There is an error message that prints "Values from `values` are not uniquely identified; output will
+# contain list-cols." This could be because certain people have multiple entries for 'age' and 'height'.
+
+# You can add a new column that differentiates between each row as a unique identifier. 
+# In this case, row_number() could work. 
+
+people %>%
+  mutate(rank=row_number()) %>%
+  pivot_wider(
+    names_from=names,
+    values_from=values
+  )
+
+# This runs and outputs a new dataframe. There are NA values for the rows this time.
+
