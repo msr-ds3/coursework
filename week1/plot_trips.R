@@ -68,13 +68,13 @@ trips %>%
 # hint: use the pivot_wider() function to reshape things to make it easier to compute this ratio
 # (you can skip this and come back to it tomorrow if we haven't covered pivot_wider() yet)
 trips %>%
-    mutate(age = 2014 - birth_year) %>%
-    filter(gender != "Unknown") %>%
-    select(age, gender) %>%
-    group_by(age, gender) %>%
-    summarize(count = n()) %>%
+    mutate(age = 2014 - birth_year) %>% # adding age field
+    filter(gender != "Unknown") %>% # filtering out unknown to keep male/femlae
+    select(age, gender) %>% # isolating age and gender so i can see what happens
+    group_by(age, gender) %>% # grouping by age and gender
+    summarize(count = n()) %>% # counting trip amounts for each age and gender
     pivot_wider(age, names_from = gender, values_from = count) %>%
-    mutate(ratio = Male / Female) %>%    
+    mutate(ratio = Male / Female)     
     ggplot(aes(x = age, y = ratio)) +
     geom_point(colour = '#6d6daf') +
     labs(x = "Age", y = "Ratio of male to female trips", title = "Age vs Ratio of male to female trips")
@@ -94,6 +94,12 @@ weather %>%
     pivot_longer(names_to = "maxmin", values_to = "ex_temp", 5:6) %>%
     ggplot(aes(x = date, y = ex_temp, colour = maxmin)) +
     geom_point() +
+    labs(x = "Date", y = "Temperature Ranges", title = "Date vs Min and Max Temperatures (colored by min/max)")
+
+weather %>%
+    pivot_longer(names_to = "maxmin", values_to = "ex_temp", 5:6) %>%
+    ggplot(aes(x = date, y = ex_temp, group = maxmin, colour = maxmin)) +
+    geom_line() +
     labs(x = "Date", y = "Temperature Ranges", title = "Date vs Min and Max Temperatures (colored by min/max)")
 
 # reshaping data
