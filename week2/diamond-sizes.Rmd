@@ -31,9 +31,40 @@ smaller %>%
 TODO
 ---
 
+The most common size of diamond under 2.5 carats is ~.2 
+carats followed by ~1.1 carats.
+
 ---
 27.4.7 Exercise 1
 ---
 ---
 TODO
 ---
+
+```{r include=FALSE} 
+knitr::opts_chunk$set(message = FALSE, echo = FALSE)
+```
+
+Diamond counts by cut
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x=cut)) + 
+  geom_bar()
+```
+
+Diamond counts by color
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x=color)) + 
+  geom_bar()
+```
+
+Diamond counts by clarity
+
+```{r}
+diamonds %>% 
+  ggplot(aes(x=clarity)) + 
+  geom_bar()
+```
