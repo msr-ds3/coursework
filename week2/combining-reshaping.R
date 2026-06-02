@@ -9,9 +9,23 @@ library(tidyverse)
 #   3. Divide cases by population, and multiply by 10000.
 #   4. Store back in the appropriate place.
 
+#Using table 2
+table2_with_rate <- 
+  pivot_wider(table2, names_from = type, values_from = count) %>%
+  mutate(rate = (cases / population) * 10000) 
+
+#Using tables 4a + 4b
+table4a_by_year <- pivot_longer(table4a, names_to = "year", values_to = "cases", -country)
+table4b_by_year <- pivot_longer(table4b, names_to = "year", values_to = "population", -country)
+table4_with_rate <- inner_join(table4a_by_year, table4b_by_year) %>%
+    mutate(rate = (cases / population) * 10000) 
+
 # Which representation is easiest to work with? Which is hardest? Why?
 # Add your answer as a comment.
-
+# Of the two, I found it easier to work with table 2 because the data only needed 
+# to be reorganized once before it could be worked with, as opposed to needing to 
+# needing to reorganize 2 separate tables and then join them. Of the 5, table1 is 
+# the easiest to work with because it is already organized set up to calculate the rate.
 
 ####################################################################################
 # 12.3.3 Exercise 1
@@ -25,10 +39,16 @@ stocks <- tibble(
 stocks %>% 
   pivot_wider(names_from = year, values_from = return) %>% 
   pivot_longer(`2015`:`2016`, names_to = "year", values_to = "return")
+  # pivot_longer(`2015`:`2016`, names_to = "year", values_to = "return", names_transform = list(year = as.double))
+
+# pivot_wider() and pivot_longer() put columns with values that do not pivot before those that do.
+# Therefore, the order of the columns get reorganized as the table changes.
 
 # (Hint: look at the variable types and think about column names.)
 # pivot_longer() has a names_ptypes argument, e.g.  names_ptypes = list(year = double()). 
 # What does it do? Add your answer as a comment.
+# pivot_longer() automatically casts the names column to a characters unless it is specifically instructed 
+# not to with the names_transform argument.
 
 ####################################################################################
 # 12.3.3 Exercise 3
@@ -44,3 +64,12 @@ people <- tribble(
   "Jessica Cordero", "age",       37,
   "Jessica Cordero", "height",   156
 )
+
+widened_ppl <- pivot_wider(people, names_from = names, values_from = values)
+people %>% 
+  group_by(name) %>% 
+  mutate(row_num = row_number()) %>% 
+  pivot_wider(names_from = names, values_from = values)
+# This causes an error and returns a table with 2 values in one of the cells, which violates the tidyverse 
+# philosophy. In order to avoid this issue, add a column with a row number, causing all the values to stay on 
+# separate rows. This is necessary because the extra age data point proves that the ages and heights may not match up.
