@@ -18,6 +18,9 @@ We have data about `r nrow(diamonds)` diamonds. Only
 below:
 
 ```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE
+)
 smaller %>% 
   ggplot(aes(carat)) + 
   geom_freqpoly(binwidth = 0.01)
@@ -27,12 +30,69 @@ smaller %>%
 27.3.1 Exercise 3
 ---
 ---
-TODO
----
 
+- Maximum number of diamonds are roughly around 0.3 carat then around 1 carat.
+- Overall there are more of the smaller carat diamonds then larger ones.
+```{r}
+summary(smaller['carat'])%>%
+knitr::kable(col.names = "KEY STATS", caption="Tab 1")
+```
+
+---
 ---
 27.4.7 Exercise 1
 ---
 ---
-TODO
+
+
+## Distribution by color
+```{r}
+diamonds%>%
+ggplot(aes(x=carat,color = color))+
+geom_freqpoly(binwidth=0.1)+
+facet_wrap(~color, scales = "free_y")
+```
+
+### Summary table
+```{r}
+ select(diamonds,color)%>%
+ group_by(color)%>%
+ summarise(Counts = n())%>%
+ knitr::kable(caption = "Tab 2:color_summary",col.names = c("Colors","Counts"))
+```
+
+## Distribution by cut
+
+```{r}
+diamonds%>%
+ggplot(aes(x = carat, color = cut))+
+geom_freqpoly(binwidth = 0.1)+
+facet_wrap(~cut,scales = "free_y")
+```
+
+### Summary table
+
+```{r}
+ select(diamonds,cut)%>%
+ group_by(cut)%>%
+ summarise(Counts = n())%>%
+ knitr::kable(caption = "Tab 3:cut_summary",col.names = c("Type of Cut", "Counts"))
+```
+## Distribution by clarity
+
+```{r}
+diamonds%>%
+ggplot(aes(x = carat, color = clarity))+
+geom_freqpoly(binwidth = 0.1)+
+facet_wrap(~clarity,scales = "free_y")
+```
+
+### Summary table
+```{r}
+ select(diamonds,clarity)%>%
+ group_by(clarity)%>%
+ summarise(Counts = n())%>%
+ knitr::kable(caption = "Tab 4:clarity_summary",col.names=c("Clarity","Counts"))
+```
 ---
+
