@@ -70,7 +70,7 @@ smaller %>%
 
 ```{r, echo = FALSE}
 smaller %>%
-  ggplot(aes(x = color, y = carat)) +
+  ggplot(aes(x = color, y = carat, fill = color)) +
   geom_boxplot() +
   labs(x = "Color", y = "Carat", title = "Carat Variations By Color")
 ```
@@ -86,7 +86,7 @@ smaller %>%
 
 ```{r, echo = FALSE}
 smaller %>%
-  ggplot(aes(x = clarity, y = carat)) +
+  ggplot(aes(x = clarity, y = carat, fill = clarity)) +
   geom_boxplot() +
   labs(x = "Clarity", y = "Carat", title = "Carat Variations By Clarity")
 ```
