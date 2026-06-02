@@ -18,18 +18,19 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
-trips %>%
+trips %>%filter(tripduration < 1000000)%>%
 ggplot(aes(x=tripduration)) + geom_histogram()+
-scale_x_log10(label = comma )+ xlab('Trip Duration') +ylab('Count')
+ xlab('Trip Duration') +ylab('Count')
 
-ggplot(trips,aes(x=tripduration))+ geom_density(fill = "grey"  )+
-scale_x_log10(label = comma )+ xlab('Trip Duration') +ylab('Count')
+trips%>%filter(tripduration < 1000000)
+ggplot(aes(x=tripduration))+ geom_density(fill = "grey"  )+
+xlab('Trip Duration') +ylab('Count')
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
 ggplot(trips, aes(x = tripduration  , color = usertype, fill =  usertype ))  + geom_histogram() +scale_x_log10(label = comma )+
-xlab('Trip Duration') +ylab('Count of Trips')
+xlab('Trip Duration') +ylab('Count of Trips') + face_wrap(~usertype)
 ggplot(trips, aes(x = tripduration  , color = usertype, fill =  usertype ))  + geom_density() +scale_x_log10(label = comma )+
-xlab('Trip Duration') +ylab('Count of Trips')
+xlab('Trip Duration') +ylab('Count of Trips') + face_wrap(~usertype)
 
 # plot the total number of trips on each day in the dataset
 trips %>%
@@ -68,9 +69,9 @@ ggplot(aes(x = day , y = tmin))+ geom_point()+scale_y_log10(label = comma )+ xla
 # hint: try using the pivot_longer() function for this to reshape things before plotting
 # (you can skip this and come back to it tomorrow if we haven't covered reshaping data yet)
 weather %>%
-select(date,tmin,tmax) %>%
+select(ymd ,tmin,tmax) %>%
 pivot_longer(names_to ="temp", values_to = "temp_values", 2:3 )%>%
-ggplot(aes(x = date, y = date ))+geom_point() +  xlab('Day') +ylab('Minimum And Maximum Temperature')
+ggplot(aes(x =ymd , y = temp_values))+geom_point() +  xlab('Day') +ylab('Minimum And Maximum Temperature')
 
 
 ########################################
@@ -115,7 +116,7 @@ group_by(day,hour) %>%
 summarize (count = n())%>% 
 group_by(hour)%>%
 summarize (mean = mean(count),sd = sd(count))%>%
-ggplot(aes( x= hour))+ geom_ribbon(aes(ymin = mean - sd , ymax  = sd + mean,alpha = 0.25)) + xlab(' Hour') +ylab('SD and Mean of Trips')
+ggplot(aes( x= hour))+ geom_line() +geom_ribbon(aes(ymin = mean - sd , ymax  = sd + mean,alpha = 0.25)) + xlab(' Hour') +ylab('SD and Mean of Trips')
 # repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 trips_with_weather %>% 
@@ -123,6 +124,6 @@ mutate(weekday = wday(starttime,label = TRUE),hour = hour(starttime),day = floor
 group_by(day,hour,weekday)%>%summarize (count= n())%>%
 group_by(hour,weekday)%>%
 summarize (mean = mean(count),sd = sd(count))%>%
-ggplot(aes( x= hour))+ 
+ggplot(aes( x= hour))+ geom_line() +
 geom_ribbon(aes(ymin = mean - sd , ymax  = sd + mean,alpha = 0.25))+facet_wrap(~weekday,scale ="free")
 + xlab(' Hour') +ylab('SD and Mean of Trips')
