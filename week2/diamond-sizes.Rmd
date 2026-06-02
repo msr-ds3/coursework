@@ -7,6 +7,7 @@ output: html_document
 ```{r setup, include = FALSE}
 library(ggplot2)
 library(dplyr)
+# knitr::opts_chunk$set(echo = FALSE)
 
 smaller <- diamonds %>% 
   filter(carat <= 2.5)
@@ -27,12 +28,27 @@ smaller %>%
 27.3.1 Exercise 3
 ---
 ---
-TODO
+In this frequency polygon we can see that a larger number of diamonds are below 1.5carats and a smaller number are above larger than 1.5. Also, noticeabley there is a smaller production of diamond that are 0.5,1,1.5 , 2 and 2.5 carats 
 ---
 
 ---
 27.4.7 Exercise 1
 ---
 ---
-TODO
----
+```{r, echo = FALSE}
+head(diamonds)
+
+diamonds%>% ggplot(aes (x= carat , color = cut) )+
+geom_freqpoly(binwidth = 0.07) + facet_wrap(~cut)
+# or geomhistogram() wiht fill = cut
+diamonds%>%group_by(cut)%>% summarize(count = n())
+
+diamonds %>% ggplot(aes(carat, color = color))+
+geom_freqpoly(binwidth = 0.07) + facet_wrap(~color)
+diamonds%>%group_by(color)%>% summarize(count = n())
+
+diamonds %>% ggplot(aes(carat, color = clarity))+
+geom_freqpoly(binwidth = 0.07)+facet_wrap(~clarity)
+diamonds%>%group_by(clarity)%>% summarize(count = n())
+
+```
