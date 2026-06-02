@@ -12,6 +12,16 @@ library(tidyverse)
 # Which representation is easiest to work with? Which is hardest? Why?
 # Add your answer as a comment.
 
+# table2 %>% pivot_wider( name_from = type, values_from = count )%>%mutate(rate = cases / population * 10000)
+
+# reshape first for table4 
+# table4a %>% pivot_longer( name_from = "year",values_from  = "population",2:3)
+# table4b %>% pivot_longer( name_from = "year",values_from  = "population",2:3)
+# table4<-inner_join((table4a,table4b), by = c('country'='country'))%>% mutate(rate = cases / population * 10000)
+
+# the easiest represenataionto work with was table2 since i didnt have to be too specific figuring out the code. 
+# The years are stored as columns and the cases and popultaion also need to be chnaged in 4a and 4b by using pivot longer and join making 4a nd 4b harder 
+
 
 ####################################################################################
 # 12.3.3 Exercise 1
@@ -29,7 +39,8 @@ stocks %>%
 # (Hint: look at the variable types and think about column names.)
 # pivot_longer() has a names_ptypes argument, e.g.  names_ptypes = list(year = double()). 
 # What does it do? Add your answer as a comment.
-
+# pivot_longer and pivot_wider are not perfectly symmetrical becauseafter it  is called the column names are stored as charcter strings 
+# names_ptypes helps to convert the datat type of the column 
 ####################################################################################
 # 12.3.3 Exercise 3
 # What would happen if you widen this table? Why? 
@@ -43,4 +54,10 @@ people <- tribble(
   "Phillip Woods",   "age",       50,
   "Jessica Cordero", "age",       37,
   "Jessica Cordero", "height",   156
+
 )
+
+
+# people%>%group_by(name,names) %>% mutate(rank = row_number())%>% pivot_wider(names_from = names, values_from = values)
+# Widening the table would cause a warning message because because there are 2 values that represent Phillip Woods
+# To uniqluely identify, i can add a row number as an identifier to uniquley identify the difference between phillip woods 1 and phillip woods 2 
