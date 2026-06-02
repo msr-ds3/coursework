@@ -37,16 +37,15 @@ This week covers:
     * The dplyr [vignette on two-table verbs](https://cran.r-project.org/web/packages/dplyr/vignettes/two-table.html) for joins
     * A [visual guide to joins](http://blog.codinghorror.com/a-visual-explanation-of-sql-joins/)
 
-<!--
 
 # Day 2
 
 ## Sampling distributions and standard errors
-  * See the [Statistical Inference & Hypothesis Testing](intro_to_stats.pptx) slides
+  * See the [Statistical Inference](intro_to_stats.html) slides ([rendered here](https://raw.githack.com/msr-ds3/coursework/master/week2/intro_to_stats.html))
   * Review the "Estimating a proportion" section of the [statistical inference Rmarkdown file](statistical_inference.Rmd) (preview the output [here](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistical_inference.html))
-  * Read Chapter 4 of an [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) IST and do questions 4.1 and 4.2. Feel free to execute code in the book along the way.
-  * Read Chapter 6 of IST on the normal distribution and do question 6.1
-  * [Time permitting:] Read Chapter 7 of IST on sampling distributions and do exercise 7.1
+  * Read Chapter 4 of an [Introduction to Statistical Thinking (With R, Without Calculus)](http://pluto.huji.ac.il/~msby/StatThink/) (IST), [pdf](https://pluto.huji.ac.il/~msby/StatThink/IntroStat.pdf) and [html](https://eleuven.github.io/statthink/) versions available online. Do questions 4.1 and 4.2 in [sampling-distributions.R](sampling-distributions.R). Feel free to execute code in the book along the way.
+  * Read Chapter 6 of IST on the normal distribution and do question 6.1 in [sampling-distributions.R](sampling-distributions.R)
+  * Time permitting, read Chapter 7 of IST on sampling distributions and do exercise 7.1 in [sampling-distributions.R](sampling-distributions.R)
 
 ## References
 * Chapter 1 of the online textbook [Intro to Stat with Randomization and Simulation](https://www.openintro.org/book/isrs/) (ISRS)
@@ -62,6 +61,7 @@ This week covers:
     * [Expected value](https://brilliant.org/wiki/expected-value/), click through on "linearity of expectation" for proof
     * [Variance](https://brilliant.org/wiki/variance-definition/)
 
+<!--
 
 # Day 3
 
