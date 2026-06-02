@@ -214,7 +214,7 @@ for (i in 1:10^5) {
 }
 pop2_bmi_expected <- mean(pop2_bar)
 pop2_bmi_expected
-# OUTPUT: 24.98472
+# OUTPUT (expected value): 24.9850
 
 # Question Four: Compute the standard deviation of the sampling distribution for the sample average
 # of the variable
@@ -222,7 +222,7 @@ pop2_bmi_expected
 
 pop2_bmi_sd <- sd(pop2_bar)
 pop2_bmi_sd
-# OUTPUT: 0.341606
+# OUTPUT (se): 0.3414
 
 # Question Five: Identify, using simulations, the central region that contains 80% of the sampling
 # distribution of the sample average (hint replicate and quantile())
@@ -238,7 +238,7 @@ pop2_wrep_sd
 
 pop2_cent_reg_wrep <- quantile(pop2_wrep_bar, c(.10, .90))
 pop2_cent_reg_wrep
-# OUTPUT: [24,54825, 25.42490]
+# OUTPUT: [24.54825, 25.42490]
 
 # Following textbook version
 pop2_cent_reg_sims <- quantile(pop2_bar, c(.10, .90))
