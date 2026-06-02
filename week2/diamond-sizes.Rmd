@@ -27,12 +27,23 @@ smaller %>%
 27.3.1 Exercise 3
 ---
 ---
-TODO
+We can see that all along the frequency polygon, there are spikes. 
+They show that the carats are over represented in the dataset. We can see that 
+around the diamond sizes such as 0.5, 1, 1.5, 2 ..., the spikes are basically null. 
 ---
 
 ---
 27.4.7 Exercise 1
 ---
 ---
-TODO
+knitr::opts_chunk$set(
+  echo = FALSE
+)
+
+```{r}
+smaller%>%
+  ggplot(aes(x=cut, fill=clarity))+
+  geom_bar()+
+  facet_wrap(~ color)
+  ```
 ---
