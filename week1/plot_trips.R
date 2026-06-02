@@ -43,9 +43,10 @@ trips %>%
     filter(minutes <= 720) %>%
     group_by(usertype, minutes) %>%
     summarize(trip_duration_counts = n()) %>%
-    ggplot(aes(x = minutes, fill = usertype)) +
+    ggplot(aes(x = minutes)) +
     geom_histogram(bins = 30, position = "dodge") +
-    xlab('Trip Duration (minutes)')
+    xlab('Trip Duration (minutes)') +
+    facet_wrap(~ usertype, scale = "free_y")
 
 trips %>%
     mutate(minutes = tripduration/60) %>%
@@ -54,13 +55,16 @@ trips %>%
     summarize(trip_duration_counts = n()) %>%
     ggplot(aes(x = minutes, color = usertype, fill = usertype)) +
     geom_density(alpha = .5) +
-    xlab('Trip Duration (minutes)')
+    xlab('Trip Duration (minutes)') 
+   # facet_wrap(~ usertype)
 
 # 3. plot the total number of trips on each day in the dataset
 trips %>%
     mutate(day = mday(starttime)) %>%
-    ggplot(aes(x = day)) +
-    geom_bar() +
+    group_by(day) %>%
+    summarize(count = n()) %>%
+    ggplot(aes(x = day, y = count)) +
+    geom_line() +
     scale_y_continuous(label = comma) +
     xlab('Trips By Day')
     
@@ -68,8 +72,10 @@ trips %>%
 trips %>%
     mutate(age = year(starttime) - birth_year) %>%
     filter(age <= 90) %>%
-    ggplot(aes(x = age, color = gender, fill = gender)) +
-    geom_histogram(bins = 50, position = "dodge") +
+    group_by(age, gender) %>%
+    summarize(count = n()) %>%
+    ggplot(aes(x = age, y = count, color = gender)) +
+    geom_point() +
     scale_y_continuous(label = comma) +
     xlab('Trips By Age')
 
@@ -166,11 +172,12 @@ trips %>%
 # 13. repeat this, but now split the results by day of the week (Monday, Tuesday, ...) or weekday vs. weekend days
 # hint: use the wday() function from the lubridate package
 trips %>%
-    mutate(hour=hour(starttime), day = wday(ymd)) %>% 
-    group_by(hour, day) %>%
+    mutate(hour=hour(starttime), day = wday(ymd, label = TRUE)) %>% 
+    group_by(hour, day, ymd) %>%
     summarize(count=n()) %>%
     group_by(hour, day) %>%
     summarize(mean_number_trips=mean(count), sd_trips = sd(count)) %>%
-    ggplot(aes(x=hour, y=mean_number_trips)) + 
-    geom_pointrange(aes(ymin=mean_number_trips- sd_trips, ymax = mean_number_trips+sd_trips)) +
-    facet_wrap(~day)
+    ggplot(aes(x=hour, y=mean_number_trips)) +
+    geom_line() +
+    geom_ribbon(aes(ymin=mean_number_trips-sd_trips, ymax = mean_number_trips+sd_trips, alpha = .25)) + 
+    facet_wrap(~day, scale = "free_y")
