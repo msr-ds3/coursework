@@ -5,19 +5,23 @@ library(tidyverse)
 #
 # Table 4.4 presents the probabilities of the random variable Y:
 #
-#   Value | Probability
-#   ------|------------
-#     0   |    1p
-#     1   |    2p
-#     2   |    3p
-#     3   |    4p
-#     4   |    5p
-#     5   |    6p
-#
+value <-tribble(
+   ~Value, ~Probability,
+#  ------|------------
+     0   ,   "1p",
+     1   ,   "2p",
+     2   ,   "3p",
+     3   ,   "4p",
+     4   ,   "5p",
+     5   ,   "6p")
+value<- value%>% mutate(prob_fac = row_number())
 # These probabilities are a function of the number p, the probability of
 # the value "0". Answer the following questions:
 #
 # 1. What is the value of p?
+value
+P <-1/(select(value,prob_fac)%>%summarize(sum(prob_fac)))
+p
 # 2. P(Y < 3) = ?
 # 3. P(Y = odd) = ?
 # 4. P(1 <= Y < 4) = ?
