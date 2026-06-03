@@ -51,7 +51,7 @@ Var^(1/2)
 # 1. What is the probability of winning the game?
 # Prob(Head) = 1/2 so for three consequtive events = P(head)*P(head)*P(head) = 1/8
 # 2. What is the probability of losing the game?
-# 1- 1/8
+# (1- 1/8) = 7/8
 # 3. What is the expected gain for the player that plays this game?
 #    (Notice that the expectation can obtain a negative value.)
 # 8*(1/8)+(-2*(1-1/8)) = 1-7/4 = -3/4
