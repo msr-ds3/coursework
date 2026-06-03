@@ -91,37 +91,44 @@ mu <- 3
 sd <- 2
 n <- 100
 
-run_sample_mean <- function(n, mu, sd) {
+run_sample_mean_normal <- function(n, mu, sd) {
     mean(rnorm(n, mu, sd))
 }
 
-run_sample_median <- function(n, mu, sd) {
+run_sample_median_normal <- function(n, mu, sd) {
     median(rnorm(n, mu, sd))
 }
 
-mean_hat <- replicate(1e5, run_sample_mean(n, mu, sd))
-median_hat <- replicate(1e5, run_sample_median(n, mu, sd))
+mean_hat_normal <- replicate(1e5, run_sample_mean_normal(n, mu, sd))
+median_hat_normal <- replicate(1e5, run_sample_median_normal(n, mu, sd))
 
-expectation_mean <- mean(mean_hat)
-expectation_mean
+expectation_mean_normal <- mean(mean_hat_normal)
+expectation_mean_normal
 # The expectation when using mean as an estimator is 2.999838
 
-variance_mean <- var(mean_hat)
-variance_mean
+variance_mean_normal <- var(mean_hat_normal)
+variance_mean_normal
 # The variance when using mean as an estimator is 0.03971107
 
 # Mean squared error of using mean as an estimator:
-mse_mean <- (expectation_median - mu)^2 + variance_mean
-mse_mean
-# The MSE is 0.0397
+mse_mean_normal <- (expectation_mean_normal - mu)^2 + variance_mean_normal
+mse_mean_normal
+# The MSE is 0.04015111
 
-expectation_median <- mean(median_hat)
-expectation_median
+expectation_median_normal <- mean(median_hat_normal)
+expectation_median_normal
 # The expectation when using median as an estimator is 2.99993 
 
-variance_median <- var(median_hat)
-variance_median
+variance_median_normal <- var(median_hat_normal)
+variance_median_normal
 # The variance when using median as an estimator is 0.06261095
+
+# Mean squared error of using median as an estimator:
+mse_median_normal <- (expectation_median_normal - mu)^2 + variance_median_normal
+mse_median_normal
+# The MSE is 0.06261095
+
+# Therefore, using mean as an estimator for the normal distribution has a slightly smaller MSE, making it only slightly more accurate
 
 #
 # 2. Simulate the sampling distribution of average and the median of a sample
@@ -129,6 +136,49 @@ variance_median
 #    expectation and the variance of the sample average and of the sample
 #    median. Which of the two estimators has a smaller mean square error?
 
+min <- 0.5
+max <- 5.5
+midrange = (min + max) / 2
+n <- 100
+
+run_sample_mean_uniform <- function(n, min, max) {
+    mean(runif(n, min, max))
+}
+
+run_sample_median_uniform <- function(n, min, max) {
+    median(runif(n, min, max))
+}
+
+mean_hat_uniform <- replicate(1e5, run_sample_mean_uniform(n, min, max))
+median_hat_uniform <- replicate(1e5, run_sample_median_uniform(n, min, max))
+
+expectation_mean_uniform <- mean(mean_hat_uniform)
+expectation_mean_uniform
+# The expectation when using mean as an estimator is 2.999126
+
+variance_mean_uniform <- var(mean_hat_uniform)
+variance_mean_uniform
+# The variance when using mean as an estimator is 0.02085949
+
+# Mean squared error of using mean as an estimator:
+mse_mean_uniform <- (expectation_mean_uniform - midrange)^2 + variance_mean_uniform
+mse_mean_uniform
+# The MSE is 0.02086025
+
+expectation_median_uniform <- mean(median_hat_uniform)
+expectation_median_uniform
+# The expectation when using median as an estimator is 3.001189
+
+variance_median_uniform <- var(median_hat_uniform)
+variance_median_uniform
+# The variance when using median as an estimator is 0.0611722
+
+# Mean squared error of using median as an estimator:
+mse_median_uniform <- (expectation_median_uniform - midrange)^2 + variance_median_uniform
+mse_median_uniform
+# The MSE is 0.06111863
+
+# Therefore, mean as an estimator for the uniform distribution also has a lower MSE. 
 
 ####################################################################################
 # IST Chapter 10, Exercise 10.2
@@ -151,15 +201,69 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 
 # 1. Compute the proportion in the sample of those with a high level of blood
 #    pressure.
+total <- nrow(ex2)
+
+high_bp_proportion <- ex2 %>%
+    filter(group == "HIGH") %>%
+    summarize(
+        count = n(),
+        proportion = count/total
+    ) %>%
+    select(proportion) %>%
+    pull()
+high_bp_proportion
+# The proportion is 0.2466667, or ~24.6%
+
 # 2. Compute the proportion in the population of those with a high level of
 #    blood pressure.
+total_pop <- nrow(pop2)
+
+high_bp_proprotion_pop <- pop2 %>%
+    filter(group == "HIGH") %>%
+    summarize(
+        count = n(),
+        proportion = count/total_pop
+    ) %>%
+    select(proportion) %>%
+    pull()
+high_bp_proprotion_pop
+# The proportion is 0.28126, or ~28.1%
+
 # 3. Simulate the sampling distribution of the sample proportion and compute
 #    its expectation.
+
+n <- 150 # suppose we sample 100 people
+# replicate a pipe 1e4 times
+high_bp_proportion_hat <- replicate(1e4, pop2 %>%
+    slice_sample(n=n) %>%
+    filter(group == "HIGH") %>%
+    summarize(
+        count = n(),
+        proportion = count/150
+    ) %>%
+    select(proportion) %>%
+    pull())
+
+expectation_high_bp_proportion <- mean(high_bp_proportion_hat)
+expectation_high_bp_proportion
+# The expectation is 0.281784, or 28.1%
+
 # 4. Compute the variance of the sample proportion.
+variance_high_bp_proportion <- var(high_bp_proportion_hat)
+variance_high_bp_proportion
+# The variance is 0.001336755
+
 # 5. It is proposed in Section 10.5 that the variance of the sample proportion
 #    is Var(P_hat) = p(1 - p)/n, where p is the probability of the event (having
 #    a high blood pressure in our case) and n is the sample size (n = 150 in our
 #    case). Examine this proposal in the current setting.
+
+# The probability of having high blood pressure here would be the expectation we computed, 
+# which is 0.281784. Therefore that will be our p. 
+p <- expectation_high_bp_proportion
+var_p_hat <- p*(1-p)/n
+var_p_hat
+# The var_p_hat here is 0.001349212, which is very close to the variance from the sample distribution.
 
 ####################################################################################
 # ISRS Exercise 2.2 - Heart transplants, Part II
@@ -182,27 +286,83 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 #
 # (a) What proportion of patients in the treatment group and what proportion
 #     of patients in the control group died?
+heart_transplant_table <- tribble(
+    ~Outcome, ~Control, ~Treatment, ~Total,
+    "Alive", 4, 24, 28,
+    "Dead", 30, 45, 75,
+    "Total", 34, 69, 103
+)
+
+treatment_total <- heart_transplant_table %>%
+    filter(Outcome == "Total") %>%
+    select(Treatment) %>%
+    pull()
+treatment_total
+
+treatment_died <- heart_transplant_table %>%
+    filter(Outcome == "Dead") %>%
+    select(Treatment) %>%
+    pull()
+treatment_died
+
+proportion_treatment_died <- treatment_died / treatment_total
+proportion_treatment_died
+# The proportion of patients who died with treatment is 0.6521739, or ~65%
+
+control_total <- heart_transplant_table %>%
+    filter(Outcome == "Total") %>%
+    select(Control) %>%
+    pull()
+control_total
+
+control_died <- heart_transplant_table %>%
+    filter(Outcome == "Dead") %>%
+    select(Control) %>%
+    pull()
+control_died
+
+proportion_control_died <- control_died / control_total
+proportion_control_died
+# The proportion of patients who died in the control group is 0.8823529, or ~88.3%
+
+difference <- proportion_treatment_died - proportion_control_died
+difference
+# The difference is -0.230179 (alternate hypothesis)
+
 # (b) One approach for investigating whether or not the treatment is effective
 #     is to use a randomization technique.
 #     i. What are the claims being tested? Use the same null and alternative
 #          hypothesis notation used in the section.
+
+        # The claim being tested is that if the treatment is given and less patients die, 
+        # this result is from the treatment itself (alternate hypothesis) and not due to randomness
+        # (null hypothesis).  
+
+        # Null hypothesis: delta = 0
+        # Alternate hypothesis: delta < 0 
+
 #     ii. The paragraph below describes the set up for such approach, if we were
 #     to do it without using statistical software. Fill in the blanks with a
 #     number or phrase, whichever is appropriate. 
-#          We write alive on _______ cards representing patients who were
-#          alive at the end of the study, and dead on ______ cards representing
+#          We write alive on [28] cards representing patients who were
+#          alive at the end of the study, and dead on [75] cards representing
 #          patients who were not. Then, we shuffle these cards and split them
-#          into two groups: one group of size _______ representing treatment, and
-#          another group of size _________ representing control. We calculate the
+#          into two groups: one group of size [69] representing treatment, and
+#          another group of size [34] representing control. We calculate the
 #          difference between the proportion of dead cards in the treatment and
 #          control groups (treatment - control) and record this value. We repeat
-#          this many times to build a distribution centered at ________. Lastly, we
+#          this many times to build a distribution centered at [0]. Lastly, we
 #          calculate the fraction of simulations where the simulated differences
-#          in proportions are _________. If this fraction is low, we conclude that it is
+#          in proportions are [-0.230179]. If this fraction is low, we conclude that it is
 #          unlikely to have observed such an outcome by chance and that the null
 #          hypothesis should be rejected in favor of the alternative.
+
 #     iii. What do the simulation results suggest about the effectiveness of
 #          the transplant program? (See textbook for figure.)
+    
+            # In the simulation results, the distribution is centered a little below 0, 
+            # meaning that the alternate hypothesis is true. 
+
 
 ####################################################################################
 # ISRS Exercise 2.6 
@@ -237,10 +397,65 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 # histogram shows the distribution of the simulated differences.
 #
 # (a) What are the hypotheses?
+    # Null hypothesis: Having someone yawn near another person will have no influence 
+    # if the other person would yawn (i.e. the difference in people yawning between the
+    # control and treatment is 0).
+
+    # Alternate hypothesis: Having someone yawn near another person will have an effect
+    # on the other person yawning (i.e. the difference in people yawning between the 
+    # control and treatment is not than 0).
+
 # (b) Calculate the observed difference between the yawning rates under the
 #     two scenarios.
+    yawn_table <- tribble(
+        ~Result, ~Control, ~Treatment, ~Total,
+        "Yawn", 4, 10, 14,
+        "Not yawn", 12, 24, 36,
+        "Total", 16, 34, 50
+    )
+
+    yawn_control_total <- yawn_table %>%
+        filter(Result == "Total") %>%
+        select(Control) %>%
+        pull()
+    yawn_control_total
+
+    yawn_control <- yawn_table %>%
+        filter(Result == "Yawn") %>%
+        select(Control) %>%
+        pull()
+    yawn_control
+
+    proportion_yawned_control <- yawn_control / yawn_control_total
+    proportion_yawned_control
+    # 0.25 of the control group yawned 
+
+    yawn_treatment_total <- yawn_table %>%
+        filter(Result == "Total") %>%
+        select(Treatment) %>%
+        pull()
+    yawn_treatment_total
+
+    yawn_treatment <- yawn_table %>%
+        filter(Result == "Yawn") %>%
+        select(Treatment) %>%
+        pull()
+    yawn_treatment
+
+    proprotion_yawn_treatment <- yawn_treatment / yawn_treatment_total
+    proprotion_yawn_treatment
+    # 0.2941176 of the treatment group yawned
+
+    delta <- proprotion_yawn_treatment - proportion_yawned_control
+    delta
+    # The difference is 0.04411765
+
 # (c) Estimate the p-value using the figure and determine the conclusion of
 #     the hypothesis test.
+
+    # From the null distribution, the p-value of 0.04411765 would be around ~0.25
+    # This is the probability that the difference came from the treatment and not 
+    # by chance. 
 
 ####################################################################################
 # IST Exercise 9.2 
@@ -266,5 +481,31 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 #    measurements is Normal and there are 29 patients in the first group and 21
 #    in the second. Find the interval that contains 95% of the sampling
 #    distribution of the statistic.
+mu <- 3.5
+s1 <- 3
+s2 <- 1.5
+
+run_average <- function(n, mu, s) {
+    mean(rnorm(n, mu, s))
+}
+
+run_samples <- function() {
+    mean_active_sample <- run_average(29, mu, s1)
+    mean_placebo_sample <- run_average(21, mu, s2)
+    test_stat <- (mean_active_sample - mean_placebo_sample) / sqrt((s1^2)/29 + (s2^2)/21)
+}
+
+test_stat_sample <- replicate(1e4, run_samples())
+
+quantile(test_stat_sample, c(0.025, 0.975))
+# 2.5%     97.5% 
+# -1.967156  1.937554
+
 # 2. Does the observed value of T (computed from the "magnets" data) fall
 #    inside or outside the interval computed in 1?
+
+# Use previous measures 
+test_stat_hat <- (avg_change_active - avg_change_placebo) / sqrt((se_change_active^2)/29 + (se_change_placebo^2)/21)
+test_stat_hat
+# This number is 5.985601
+# This falls outside the interval [-1.967156, 1.937554]
