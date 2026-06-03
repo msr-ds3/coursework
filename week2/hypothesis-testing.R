@@ -7,19 +7,73 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # 1. What is the sample average of the change in score between the
 #    patient's rating before the application of the device and the
 #    rating after the application?
+avg_change_sample <- magnets %>%
+    summarize(sample_avg_change=mean(change)) %>%
+    pull()
+avg_change_sample
+
+# The sample average change is 3.5.
+
 # 2. Is the variable "active" a factor or a numeric variable?
+summary(magnets)
+# Since the summary does not discuss the mean, median, or quantiles of "active" it is a factor variable
+
 # 3. Compute the average value of the variable "change" for the patients that
 #    received an active magnet and average value for those that received an
 #    inactive placebo. (Hint: Notice that the first 29 patients received an
 #    active magnet and the last 21 patients received an inactive placebo. The
 #    subsequence of the first 29 values can be obtained via "change[1:29]" and
 #    the last 21 values via "change[30:50]".)
+
+# received an active magnet
+avg_change_active <- magnets %>%
+    filter(grepl('1', active)) %>%
+    summarize(avg_change=mean(change)) %>%
+    pull()
+avg_change_active
+# The average change of those who received the active magnet is 5.241379
+
+# received a placebo
+avg_change_placebo <- magnets %>%
+    filter(grepl('2', active)) %>%
+    summarize(avg_change=mean(change)) %>%
+    pull()
+avg_change_placebo
+# The average change of those who received the placebo is 1.095238
+
 # 4. Compute the sample standard deviation of the variable "change" for the
 #    patients that received an active magnet and the sample standard deviation
 #    for those that received an inactive placebo.
+
+# standard error of those who received active magnet
+se_change_active <- magnets %>%
+    filter(grepl('1', active)) %>%
+    summarize(se_change=sd(change)) %>%
+    pull()
+se_change_active
+# The standard error is 3.236568
+
+# standard error of those who received placebo 
+se_change_placebo <- magnets %>%
+    filter(grepl('2', active)) %>%
+    summarize(se_change=sd(change)) %>%
+    pull()
+se_change_placebo
+# The standard error is 1.578124
+
 # 5. Produce a boxplot of the variable "change" for the patients that received
 #    an active magnet and for patients that received an inactive placebo. What
 #    is the number of outliers in each subsequence?
+magnets %>%
+    ggplot(aes(x=active, y=change)) +
+    geom_boxplot() + 
+    labs(
+        x="Patient Categories",
+        y="Change in Response"
+    )
+# The boxplot for the change in response for patients who received the active magnets has 0 outliers
+# The boxplot for the change in response for patients who received the placebo has 3 outliers
+
 
 ####################################################################################
 # IST Chapter 10, Exercise 10.1
@@ -33,11 +87,48 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 #    of size n = 100 from the Normal(3, 2) distribution. Compute the expectation
 #    and the variance of the sample average and of the sample median. Which of
 #    the two estimators has a smaller mean square error?
+mu <- 3
+sd <- 2
+n <- 100
+
+run_sample_mean <- function(n, mu, sd) {
+    mean(rnorm(n, mu, sd))
+}
+
+run_sample_median <- function(n, mu, sd) {
+    median(rnorm(n, mu, sd))
+}
+
+mean_hat <- replicate(1e5, run_sample_mean(n, mu, sd))
+median_hat <- replicate(1e5, run_sample_median(n, mu, sd))
+
+expectation_mean <- mean(mean_hat)
+expectation_mean
+# The expectation when using mean as an estimator is 2.999838
+
+variance_mean <- var(mean_hat)
+variance_mean
+# The variance when using mean as an estimator is 0.03971107
+
+# Mean squared error of using mean as an estimator:
+mse_mean <- (expectation_median - mu)^2 + variance_mean
+mse_mean
+# The MSE is 0.0397
+
+expectation_median <- mean(median_hat)
+expectation_median
+# The expectation when using median as an estimator is 2.99993 
+
+variance_median <- var(median_hat)
+variance_median
+# The variance when using median as an estimator is 0.06261095
+
 #
 # 2. Simulate the sampling distribution of average and the median of a sample
 #    of size n = 100 from the Uniform(0.5, 5.5) distribution. Compute the
 #    expectation and the variance of the sample average and of the sample
 #    median. Which of the two estimators has a smaller mean square error?
+
 
 ####################################################################################
 # IST Chapter 10, Exercise 10.2
