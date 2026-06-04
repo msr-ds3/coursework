@@ -454,8 +454,7 @@ difference
 #     the hypothesis test.
 
     # From the null distribution, the p-value of 0.04411765 would be around ~0.25
-    # This is the probability that the difference came from the treatment and not 
-    # by chance. 
+    # This is the probability of getting a difference this extreme if the null hypothesis were true.
 
 ####################################################################################
 # IST Exercise 9.2 
