@@ -7,19 +7,53 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # 1. What is the sample average of the change in score between the
 #    patient's rating before the application of the device and the
 #    rating after the application?
+mean(magnets$change)
+# Output: 3.5
 # 2. Is the variable "active" a factor or a numeric variable?
+
+# The variable "active" is a factor because it represents categorical data
+# that's sorted into levels (i.e active status)
+# If needed, we can use magnets$active <- as.factor(magnets$active) to convert
+# the variable from character to factors
+
 # 3. Compute the average value of the variable "change" for the patients that
 #    received an active magnet and average value for those that received an
 #    inactive placebo. (Hint: Notice that the first 29 patients received an
 #    active magnet and the last 21 patients received an inactive placebo. The
 #    subsequence of the first 29 values can be obtained via "change[1:29]" and
 #    the last 21 values via "change[30:50]".)
+
+# Active Placebo
+mean(magnets$change[1:29])
+# Output: 5.241379
+
+# Inactive Placebo
+mean(magnets$change[30:50])
+# Output: 1.095238
+
 # 4. Compute the sample standard deviation of the variable "change" for the
 #    patients that received an active magnet and the sample standard deviation
 #    for those that received an inactive placebo.
+
+# Active Placebo
+sd(magnets$change[1:29])
+# Output: 3.236568
+
+# Inactive Placebo
+sd(magnets$change[30:50])
+# Output: 1.578124
+
 # 5. Produce a boxplot of the variable "change" for the patients that received
 #    an active magnet and for patients that received an inactive placebo. What
 #    is the number of outliers in each subsequence?
+
+# Active Placebo
+boxplot(magnets$change[1:29])
+# Outliers: None
+
+# Inactive Placebo
+boxplot(magnets$change[30:50])
+# Outliers: 3, 4, 5
 
 ####################################################################################
 # IST Chapter 10, Exercise 10.1
@@ -33,11 +67,23 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 #    of size n = 100 from the Normal(3, 2) distribution. Compute the expectation
 #    and the variance of the sample average and of the sample median. Which of
 #    the two estimators has a smaller mean square error?
-#
+
+# Variance of the sample average for Normal Distribution(mu = 3, sigma = 2)
+var(replicate(100, mean(rnorm(n = 100, mean = 3, sd = 2))))
+
+# Variance of the sample median for Normal Distribution(mu = 3, sigma = 2)
+var(replicate(100, median(rnorm(n = 100, mean = 3, sd = 2))))
+
 # 2. Simulate the sampling distribution of average and the median of a sample
 #    of size n = 100 from the Uniform(0.5, 5.5) distribution. Compute the
 #    expectation and the variance of the sample average and of the sample
 #    median. Which of the two estimators has a smaller mean square error?
+
+# Variance of the sample average for Uniform Distribution(min = 0.5, max = 5.5)
+var(replicate(100, mean(runif(n = 100, min = 0.5, max = 5.5))))
+
+# Variance of the sample median for Unform Distribution(min = 0.5, max = 5.5)
+var(replicate(100, median(runif(n = 100, min = 0.5, max = 5.5))))
 
 ####################################################################################
 # IST Chapter 10, Exercise 10.2
@@ -60,16 +106,42 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 
 # 1. Compute the proportion in the sample of those with a high level of blood
 #    pressure.
+
+mean(ex2$group == "HIGH")
+# Output: 0.2466667
+
 # 2. Compute the proportion in the population of those with a high level of
 #    blood pressure.
+
+mean(pop2$group == "HIGH")
+# Output: 0.28126
+
 # 3. Simulate the sampling distribution of the sample proportion and compute
 #    its expectation.
+p_hat <- replicate(150, mean(sample(pop2$group == "HIGH", size = 150)))
+mean(p_hat)
+
+# Output: 0.2809778
+
 # 4. Compute the variance of the sample proportion.
+
+# Solution 1 (Simulation)
+var(p_hat)
+# Output: 0.001633042
+
+# Solution 2 (Formula)
+n = 150
+p <- mean(pop2$group == "HIGH")
+(p * (1 - p))/n
+# Output: 0.001347685
+
 # 5. It is proposed in Section 10.5 that the variance of the sample proportion
 #    is Var(P_hat) = p(1 - p)/n, where p is the probability of the event (having
 #    a high blood pressure in our case) and n is the sample size (n = 150 in our
 #    case). Examine this proposal in the current setting.
 
+# The simulation veriance has 3 decimal places of accuracy when compared to the formulaic 
+# version to compute the variance. We can determine the variance of the point estimator is reliable.
 ####################################################################################
 # ISRS Exercise 2.2 - Heart transplants, Part II
 #
@@ -91,27 +163,37 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 #
 # (a) What proportion of patients in the treatment group and what proportion
 #     of patients in the control group died?
+
+# Treatment Group: 45/69 Died
+# Control Group: 30/34 Died
+
 # (b) One approach for investigating whether or not the treatment is effective
 #     is to use a randomization technique.
 #     i. What are the claims being tested? Use the same null and alternative
 #          hypothesis notation used in the section.
+# delta = (treatment - control)
+# Null Hypothesis (H0): delta = 0
+# Alternative Hypothesis (Ha): delta < 0
+
 #     ii. The paragraph below describes the set up for such approach, if we were
 #     to do it without using statistical software. Fill in the blanks with a
 #     number or phrase, whichever is appropriate. 
-#          We write alive on _______ cards representing patients who were
-#          alive at the end of the study, and dead on ______ cards representing
+#          We write alive on 28 cards representing patients who were
+#          alive at the end of the study, and dead on 75 cards representing
 #          patients who were not. Then, we shuffle these cards and split them
-#          into two groups: one group of size _______ representing treatment, and
-#          another group of size _________ representing control. We calculate the
+#          into two groups: one group of size 69 representing treatment, and
+#          another group of size 34 representing control. We calculate the
 #          difference between the proportion of dead cards in the treatment and
 #          control groups (treatment - control) and record this value. We repeat
-#          this many times to build a distribution centered at ________. Lastly, we
+#          this many times to build a distribution centered at 0. Lastly, we
 #          calculate the fraction of simulations where the simulated differences
-#          in proportions are _________. If this fraction is low, we conclude that it is
+#          in proportions are successes. If this fraction is low, we conclude that it is
 #          unlikely to have observed such an outcome by chance and that the null
 #          hypothesis should be rejected in favor of the alternative.
 #     iii. What do the simulation results suggest about the effectiveness of
 #          the transplant program? (See textbook for figure.)
+# Most of simulatiom data is centered at a value slightly below 0. 
+# We can draw the conclusion the transplant program is effective. 
 
 ####################################################################################
 # ISRS Exercise 2.6 
@@ -146,10 +228,24 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 # histogram shows the distribution of the simulated differences.
 #
 # (a) What are the hypotheses?
+# delta = ˆptrtmt,sim − pˆctrl,sim.
+# Null Hypothesis (H0): delta = 0
+# Alternative Hypothesis (Ha): delta > 0 
+
 # (b) Calculate the observed difference between the yawning rates under the
 #     two scenarios.
+treatment <- 1/4 
+control <- 10/34 
+delta <- treatment - control
+
 # (c) Estimate the p-value using the figure and determine the conclusion of
 #     the hypothesis test.
+
+# The probability of the observed difference (-0.04411765) occuring is approximately 48%.  
+pnorm(delta)
+# Output: 0.4824053
+# We can't reject the null hypothesis
+
 
 ####################################################################################
 # IST Exercise 9.2 
@@ -175,5 +271,59 @@ ex2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/ex2.csv")
 #    measurements is Normal and there are 29 patients in the first group and 21
 #    in the second. Find the interval that contains 95% of the sampling
 #    distribution of the statistic.
+
+
+alpha = 0.05
+ex = 3.5
+
+n_active = 29
+sd_active = 3
+
+n_inactive = 21
+sd_inactive = 1.5
+
+t <- rep(0, 10^5)
+for(i in 1:10^5)
+{
+    active <- rnorm(n_active, ex, sd_active)
+    mu_active <- mean(active)
+    var_active <- var(active)
+
+    inactive <- rnorm(n_inactive, ex, sd_inactive)
+    mu_inactive <- mean(inactive)
+    var_inactive <- var(inactive)
+    
+    # Compute T Distribution
+    t[i] <- (mu_active - mu_inactive) / sqrt(var_active /  n_active + var_inactive / n_inactive)
+}
+
+quantile(t,c(0.025,0.975))
+"""
+Output: 
+2.5%     97.5% 
+-2.011288  2.008259
+"""
+
+"""
+Brainstorming: 
+# Active
+active <- replicate(10^5, rnorm(n_active, ex, sd_active))
+mu_active <- mean(active)
+var_active <- var(active)
+
+# Inactive 
+inactive <- replicate(10^5, rnorm(n_inactive, ex, sd_inactive))
+mu_inactive <- mean(inactive)
+var_inactive <- var(inactive)
+"""
+
 # 2. Does the observed value of T (computed from the "magnets" data) fall
-#    inside or outside the interval computed in 1?
+#    inside or outsde the interval computed in 1?
+
+x1.bar <- mean(magnets$change[1:29])
+x2.bar <- mean(magnets$change[30:50])
+x1.var <- var(magnets$change[1:29])
+x2.var <- var(magnets$change[30:50])
+(x1.bar-x2.bar)/sqrt(x1.var/29 + x2.var/21)
+# Output: t = 5.985601
+# This value falls outside of the interval computed
