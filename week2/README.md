@@ -107,10 +107,7 @@ This week covers:
   * A guide on [effect sizes](https://transparentstats.github.io/guidelines/effectsize.html) and related [blog post](https://transparentstatistics.org/2018/07/05/meanings-effect-size/)
 
 
-<!--
-
-
-# Day 5
+Day 5
 
 ## Regression
 
@@ -128,7 +125,6 @@ This week covers:
   * The [modelr](https://modelr.tidyverse.org) and [tidymodels](https://github.com/tidymodels/tidymodels) packages in R
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
--->
 
 <!--
 
