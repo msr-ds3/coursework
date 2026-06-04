@@ -282,40 +282,19 @@ sd_active = 3
 n_inactive = 21
 sd_inactive = 1.5
 
-t <- rep(0, 10^5)
-for(i in 1:10^5)
-{
-    active <- rnorm(n_active, ex, sd_active)
-    mu_active <- mean(active)
-    var_active <- var(active)
-
-    inactive <- rnorm(n_inactive, ex, sd_inactive)
-    mu_inactive <- mean(inactive)
-    var_inactive <- var(inactive)
-    
-    # Compute T Distribution
-    t[i] <- (mu_active - mu_inactive) / sqrt(var_active /  n_active + var_inactive / n_inactive)
-}
-
-quantile(t,c(0.025,0.975))
-"""
-Output: 
-2.5%     97.5% 
--2.011288  2.008259
-"""
-
-"""
-Brainstorming: 
-# Active
-active <- replicate(10^5, rnorm(n_active, ex, sd_active))
+t_distribution <- replicate(10^5, { 
+active <- rnorm(n_active, ex, sd_active)
 mu_active <- mean(active)
 var_active <- var(active)
 
-# Inactive 
-inactive <- replicate(10^5, rnorm(n_inactive, ex, sd_inactive))
+inactive <- rnorm(n_inactive, ex, sd_inactive)
 mu_inactive <- mean(inactive)
 var_inactive <- var(inactive)
-"""
+
+t <- (mu_active - mu_inactive) / sqrt(var_active /  n_active + var_inactive / n_inactive)
+})
+
+quantile(t_distribution ,c(0.025,0.975))
 
 # 2. Does the observed value of T (computed from the "magnets" data) fall
 #    inside or outsde the interval computed in 1?
