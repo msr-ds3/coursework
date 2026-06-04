@@ -1,0 +1,118 @@
+---
+title: "Statistically significant splits"
+author: "Jake Hofman"
+date: "June 9, 2020"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+# Setup
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidycensus)
+library(tidyverse)
+library(sf)
+library(knitr)
+
+theme_set(theme_void())
+```
+
+# Census API key
+
+Sign up for a Census API key [here](https://api.census.gov/data/key_signup.html). Then follow [these instructions](https://walker-data.com/tidycensus/reference/census_api_key.html) to save your API key to an enviornment variable so that you don't have to hard code it in this script.
+
+```{r census-api-key, message=FALSE, warning=FALSE}
+
+census_api_key(Sys.getenv("CENSUS_API_KEY"))
+
+```
+
+# Get Census data
+
+Pull the total population and number of females by county from the American Community Survey using the variable codes listed [here](https://api.census.gov/data/2016/acs/acs5/profile/variables.html).
+
+```{r get-census-data, results='hide', message=FALSE, warning=FALSE}
+
+all_counties <- get_acs(geography = "county",
+                        variables = c(total_population = "DP05_0001",
+                                      total_females = "DP05_0003"),
+                        #output = "wide",
+                        geometry = T,
+                        year = 2018)
+
+```
+
+
+# Extract the coordinates of each county centroid
+
+Spatial data are a bit of a pain. Use the magic below to [compute the centroid of each county](https://stackoverflow.com/a/56621903), reshape the data, and [extract the centroid latitudes and longitudes](https://github.com/r-spatial/sf/issues/231#issuecomment-282220978) for easy filtering. 
+
+```{r compute-centroids, message=FALSE, warning=FALSE}
+
+# compute the centroid of each county shapefile
+# see https://stackoverflow.com/a/56621903
+county_centroids <- all_counties %>% 
+  #st_transform(2273) %>% # convert to projected coord system for better centroid
+  st_centroid()
+
+# reshape the data to get population and number of females in the same row
+# and compute the fraction of females in each county
+county_centroids_wide <- county_centroids %>%
+  select(-moe) %>%
+  spread(variable, estimate) %>%
+  mutate(frac_female = total_females / total_population)
+
+# pull out lon and lat as columns from each centroid
+# see https://github.com/r-spatial/sf/issues/231#issuecomment-282220978
+# better version here? https://github.com/r-spatial/sf/issues/1148
+county_centroids_wide <- do.call(rbind, st_geometry(county_centroids_wide)) %>%
+  as_tibble() %>%
+  setNames(c("lon", "lat")) %>%
+  bind_cols(county_centroids_wide, .)
+
+```
+
+# Split by longitude
+
+Divide counties along the [100th meridan](https://en.wikipedia.org/wiki/100th_meridian_west), which roughly splits the country in half.
+
+```{r plot-split-by-longitude}
+
+county_centroids_wide %>%
+  ggplot(aes(x = lon, y = lat, color = lon > -100, alpha = frac_female)) +
+  geom_point() +
+  scale_color_manual(values = c("#af8dc3", "#7fbf7b"), guide = F) +
+  scale_alpha(guide = F)
+
+```
+
+Now count the fraction of females on each side of the split.
+
+```{r count-by-split, message=FALSE, warning=FALSE}
+
+counts_by_lon_split <- county_centroids_wide %>%
+  mutate(split = lon > - 100) %>%
+  st_set_geometry(NULL) %>%
+  group_by(split) %>%
+  summarize(total_females = sum(total_females),
+            total_population = sum(total_population),
+            frac_female = total_females / total_population) 
+
+counts_by_lon_split %>%
+  kable()
+
+```
+
+# Run a significance test
+
+Run the significance test. There's a (rather silly) statistically significant difference. This means that it's very unlikely that the counts on each side of the split came from the same true underlying proportion of females. At the same time, it's difficult to argue that this difference really matters, as the practical magnitude of the difference is very small.
+
+With enough data it's easy to find statistically significant but practically meaningless differences.
+
+```{r run-significance-test}
+
+prop.test(x = counts_by_lon_split$total_females, n = counts_by_lon_split$total_population)
+
+```
