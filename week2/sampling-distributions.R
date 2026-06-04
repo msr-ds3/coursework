@@ -23,12 +23,10 @@ library(tidyverse)
 # 4. P(1 <= Y < 4) = ? -> 9/21
 # 5. P(|Y - 3| < 1.5) = ? -> 12/21
 # 6. E(Y) = ? -> 3.33
-#try to make a tribble 
 num <- c(0,1,2,3,4,5)
 denum <- c(1,2,3,4,5,6)/21
 E<- sum(num*denum)
 E
-
 # 7. Var(Y) = ? -> 2.22
 variance <- sum((num-E)^2* denum)
 variance
@@ -133,12 +131,10 @@ quantile(X.bar, c(0.9,0.1))
 # 6. Identify, using the Central Limit Theorem, an approximation of the
 #    central region that contains 80% of the sampling distribution of the
 #    sample average.
-qnorm(c(0.9,0.1),mean(X.bar),sd(X.bar))
 
 pop2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/pop2.csv")
-samp <- sample(pop2$bmi,100)
-samp
-mean(pop2$bmi)
+
+qnorm(c(0.9,0.1),mean(X.bar),sd(X.bar))
 
 # Hint: for (5), use replicate() to draw many samples of size 150,
 # compute the mean of bmi for each, then use quantile().
