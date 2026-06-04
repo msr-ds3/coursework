@@ -19,16 +19,28 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # exercise is to test for the presence of a placebo effect in the case study “Magnets
 # and Pain Relief” of Question 9.1 using the data in the file “magnets.csv”.
 
-
 # 1. Let X be the measurement of change, the difference between the score of
 #   pain before the treatment and the score after the treatment, for patients
 #   that were treated with the inactive placebo. Express, in terms of the
 #   expected value of X, the null hypothesis and the alternative hypothesis
 #   for a statistical test to determine the presence of a placebo effect. The null
-#   hypothesis should reflect the situation that the placebo effect is absent
+#   hypothesis should reflect the situation that the placebo effect is absent.
+#   H_null(E() = 0)
+#   H_alt(E(X) != 0)
+
 # 2. Identify the observations that can be used in order to test the hypotheses.
+#   The changes in the control group
+    inactive_change <- magnets$change[30:50]
+    inactive_change
+
 # 3. Carry out the test and report your conclusion. (Use a significance level of
 #    5%.)
+    change_avg <- mean(magnets$change[30:50])
+    change_avg
+
+    t.test(magnets$change[30:50], mu = 0)
+# p-value = 0.004702 
+# reject null hypothesis
 
 ####################################################################################
 # IST Chapter 13, Exercise 13.1
@@ -50,11 +62,23 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # All tests should conducted at the 5% significance level:
 # 1. Is there a significance difference between the treatment and the control
 #    groups in the expectation of the reported score of pain before the application of the device?
+#    treatment E[X] vs control E[X]
+    t.test(magnets$score1~magnets$active)
+
 # 2. Is there a significance difference between the treatment and the control
 #    groups in the variance of the reported score of pain before the application
 #    of the device?
+    treament var[x] vs control var[x]
+
+
 # 3. Is there a significance difference between the treatment and the control
 #    groups in the expectation of the change in score that resulted from the
 #    application of the device?
+    treatment E[change] vs control E[change]
+
+
 # 4. Is there a significance difference between the treatment and the control
 #    groups in the variance of the change in score that resulted from the application of the device?
+
+
+
