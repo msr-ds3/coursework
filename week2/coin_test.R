@@ -13,7 +13,7 @@ estimate_coin_bias <- function(n, p) {
 # Hypothesis test for a coin by simulation (one-sided, greater than)
 # Tests H0: p = p0 vs. H1: p > p0
 # Mirrors built-in prop.test(x, n, p0, alternative = "greater")
-coin_test <- function(x, n, p0 = 0.5, num_sims = 1e4) {
+coin_test <- function(x, n, p0 = 0.5, alpha = 0.05, num_sims = 1e4) {
   p_hat <- x / n
 
   # simulate the null distribution: flip a fair coin n times, many times
@@ -22,7 +22,7 @@ coin_test <- function(x, n, p0 = 0.5, num_sims = 1e4) {
   # one-sided p-value: how often does the null produce something this large?
   p_value <- mean(null_dist >= p_hat)
 
-  list(p_hat = p_hat, p_value = p_value, reject = p_value < 0.05)
+  list(p_hat = p_hat, p_value = p_value, reject = p_value < alpha)
 }
 
 # Example: flip a coin 100 times and count heads 
@@ -31,7 +31,7 @@ x <- sum(rbinom(n, 1, 0.6))
 cat(sprintf("Observed %d heads out of %d flips\n", x, n))
 
 # Compare observed flips to the simulated null distribution for a fair coin
-coin_test(x, n, p0 = 0.5)
+coin_test(x, n, p0 = 0.5, alpha = 0.05)
 
 # Compare observed flips to the analytical null distribution for a fair coin
 prop.test(x, n, p = 0.5, alternative = "greater")
@@ -50,7 +50,7 @@ num_experiments <- 200
 
 false_positives <- replicate(num_experiments, {
   x <- sum(rbinom(n, 1, p_true))
-  coin_test(x, n, p0)$reject
+  coin_test(x, n, p0, 0.05)$reject
 })
 
 cat(sprintf("False positive rate: %.3f (expect ~0.05)\n", mean(false_positives)))
@@ -62,7 +62,7 @@ cat(sprintf("False positive rate: %.3f (expect ~0.05)\n", mean(false_positives))
 # How often do we correctly reject?
 ######################################################################
 
-p_true <- 0.51
+p_true <- 0.60
 n <- 100
 rejections <- replicate(num_experiments, {
   x <- sum(rbinom(n, 1, p_true))
@@ -72,7 +72,7 @@ rejections <- replicate(num_experiments, {
 cat(sprintf("Power (p=0.6, n=100): %.3f\n", mean(rejections)))
 
 # Compare to built-in power calculation
-pwr.p.test(h = ES.h(0.6, 0.5), power = 0.90, sig.level = 0.05, alternative = "greater")
+pwr.p.test(h = ES.h(0.6, 0.5), n = 100, sig.level = 0.05, alternative = "greater")
 
 
 ######################################################################
@@ -84,7 +84,7 @@ pwr.p.test(h = ES.h(0.6, 0.5), power = 0.90, sig.level = 0.05, alternative = "gr
 compute_power <- function(n, p_true, p0, alpha = 0.05, num_experiments = 200) {
   mean(replicate(num_experiments, {
     x <- sum(rbinom(n, 1, p_true))
-    coin_test(x, n, p0)$reject
+    coin_test(x, n, p0, alpha)$reject
   }))
 }
 
