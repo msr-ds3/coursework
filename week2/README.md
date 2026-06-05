@@ -87,6 +87,7 @@ This week covers:
 
 ## Power, effect sizes, and the replication crisis
   * See this [post](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html) and the related [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) on effect sizes and the replication crisis
+  * See [coin_test.R](coin_test.R) for a simulated hypothesis test, false positive rate, and power
   * See this notebook on [statistical vs. practical significance](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistically_significant_splits.html)
   * There's also an [interactive version](https://jhofman.github.io/statisticallysignificant/), play with it and see if you understand what's going on! 
 
@@ -107,14 +108,15 @@ This week covers:
   * A guide on [effect sizes](https://transparentstats.github.io/guidelines/effectsize.html) and related [blog post](https://transparentstatistics.org/2018/07/05/meanings-effect-size/)
 
 
-Day 5
+# Day 5
 
 ## Regression
 
   * Review the [slides](regression.pdf) we covered in class
   * See this [shiny app on model fitting](https://jmhmsr.shinyapps.io/modelfit/) and this [tool for visualing least squares](https://seeing-theory.brown.edu/regression-analysis/index.html) (Dan's version [here](http://www.dangoldstein.com/dsn/archives/2006/03/every_wonder_ho.html) is similar, but requires Flash)
-  * Read Chapter 5 of [Intro to Stats with Randomization and Simulation](https://drive.google.com/file/d/0B-DHaDEbiOGkRHNndUlBaHVmaGM/edit), do exercises 5.20 and 5.29
-  * Read Section 3.1 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/), do Lab 3.6.2
+  * Read Chapter 5 of [Intro to Stats with Randomization and Simulation](https://drive.google.com/file/d/0B-DHaDEbiOGkRHNndUlBaHVmaGM/edit), do exercises 5.20 and 5.29 in [regression.R](regression.R)
+  * Read Section 3.1 of [Intro to Statistical Learning (R version)](https://www.statlearning.com), do Lab 3.6.2 in
+  [regression.Rmd](regression.Rmd) (You won't need to write any code, but walk through the file!)
   * See the [notebook on linear models](https://github.com/msr-ds3/coursework/blob/master/week2/linear_models.ipynb) with the `modelr` from the tidyverse
 
 ## References
@@ -140,7 +142,7 @@ Day 5
 
 
 ## References
-  * Sections 3.2 and 3.3 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on regression with multiple features
+  * Sections 3.2 and 3.3 of [Intro to Statistical Learning (R version)](https://www.statlearning.com) on regression with multiple features
 
 -->
 
