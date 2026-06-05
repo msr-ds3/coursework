@@ -12,7 +12,7 @@ trips <- read_csv('201402-citibike-tripdata.csv')
 names(trips) <- gsub(' ', '_', names(trips))
 
 # convert dates strings to dates
-#trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
+```{r, echo = FALSE}```{r, echo = FALSE}(binwidth = 0.01)(binwidth = 0.01)(binwidth = 0.01)(binwidth = 0.01) facet_wrap(~cut) facet_wrap(~cut)#trips <- mutate(trips, starttime = mdy_hms(starttime), stoptime = mdy_hms(stoptime))
 # recode gender as a factor 0->"Unknown", 1->"Male", 2->"Female"
 trips <- mutate(trips, gender = factor(gender, levels=c(0,1,2), labels = c("Unknown","Male","Female")))
 

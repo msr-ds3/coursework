@@ -18,19 +18,19 @@ load('trips.RData')
 ########################################
 
 # plot the distribution of trip times across all rides (compare a histogram vs. a density plot)
-trips %>%filter(tripduration < 1000000)%>%
+trips %>%filter(tripduration < 60*60) %>%
 ggplot(aes(x=tripduration)) + geom_histogram()+
  xlab('Trip Duration') +ylab('Count')
 
-trips%>%filter(tripduration < 1000000)
+trips%>%filter(tripduration < 60*60) %>%
 ggplot(aes(x=tripduration))+ geom_density(fill = "grey"  )+
 xlab('Trip Duration') +ylab('Count')
 
 # plot the distribution of trip times by rider type indicated using color and fill (compare a histogram vs. a density plot)
 ggplot(trips, aes(x = tripduration  , color = usertype, fill =  usertype ))  + geom_histogram() +scale_x_log10(label = comma )+
-xlab('Trip Duration') +ylab('Count of Trips') + face_wrap(~usertype)
+xlab('Trip Duration') +ylab('Count of Trips') + facet_wrap(~usertype,scales = "free")
 ggplot(trips, aes(x = tripduration  , color = usertype, fill =  usertype ))  + geom_density() +scale_x_log10(label = comma )+
-xlab('Trip Duration') +ylab('Count of Trips') + face_wrap(~usertype)
+xlab('Trip Duration') +ylab('Count of Trips') + facet_wrap(~usertype,scales = "free")
 
 # plot the total number of trips on each day in the dataset
 trips %>%

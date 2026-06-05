@@ -26,10 +26,17 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 #   expected value of X, the null hypothesis and the alternative hypothesis
 #   for a statistical test to determine the presence of a placebo effect. The null
 #   hypothesis should reflect the situation that the placebo effect is absent
+#   The null hypothesis is when the E[x], the expected change in th pain score is 0 
+#   when the placebo is used and then the alternative hypothesis is when the E[X]  the expected change in th pain score is 0 
 # 2. Identify the observations that can be used in order to test the hypotheses.
+#    The observation used can be the pain score change provided for the placebo group 
 # 3. Carry out the test and report your conclusion. (Use a significance level of
 #    5%.)
-
+placebo <- magnets[30:50, ] %>% select(change)
+placebo
+t.test(placebo,mu=0)
+# the p-value = 0.004702 this is less than 0.05 this means that the null hypothesis is rejected proving that 
+# the expected change in painscore when the placebo is taken is due to chance
 ####################################################################################
 # IST Chapter 13, Exercise 13.1
 
@@ -50,11 +57,19 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # All tests should conducted at the 5% significance level:
 # 1. Is there a significance difference between the treatment and the control
 #    groups in the expectation of the reported score of pain before the application of the device?
+t.test(magnets$score1 ~ magnets$active )
+#  The pvalue is 0.6806 so therefore there is no significance between the treatment and the control 
 # 2. Is there a significance difference between the treatment and the control
 #    groups in the variance of the reported score of pain before the application
 #    of the device?
+var.test(magnets$score1 ~ magnets$active )
+#  The p value is 0.3 which means that there is also no significance between the treatemt and the control 
 # 3. Is there a significance difference between the treatment and the control
 #    groups in the expectation of the change in score that resulted from the
 #    application of the device?
+t.test(magnets$change ~ magnets$active )
+#  The p value is 3.86e-07 (< 0.05) which means that there is a significance between the treatemt and the control 
 # 4. Is there a significance difference between the treatment and the control
 #    groups in the variance of the change in score that resulted from the application of the device?
+var.test(magnets$change ~ magnets$active )
+# The p value is  0.001535 (<0.05) which means that there is a significance between the treatemt and the control  
