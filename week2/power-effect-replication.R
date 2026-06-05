@@ -64,21 +64,32 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 #    groups in the expectation of the reported score of pain before the application of the device?
 #    treatment E[X] vs control E[X]
     t.test(magnets$score1~magnets$active)
+#   p-value is .6809
+#   outside of the confidence interval, above the high threshold of confidence interval 0.5695
+#   do not reject null
 
 # 2. Is there a significance difference between the treatment and the control
 #    groups in the variance of the reported score of pain before the application
 #    of the device?
     treament var[x] vs control var[x]
-
+    var.test(magnets$score1~magnets$active)
+#   p-value is .3687
+#   larger than 0.05
+#   do not reject null
 
 # 3. Is there a significance difference between the treatment and the control
 #    groups in the expectation of the change in score that resulted from the
 #    application of the device?
     treatment E[change] vs control E[change]
+    t.test(magnets$change~magnets$active)
+#   p-value is 3.86e-07
+#   extremely out of the confidence interval
+#   reject the null hypothesis
 
 
 # 4. Is there a significance difference between the treatment and the control
 #    groups in the variance of the change in score that resulted from the application of the device?
-
-
-
+    var.test(magnets$change~magnets$active)
+# p-value = 0.001535
+# much less than 0.5
+# reject the null hypothesis
