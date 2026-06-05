@@ -72,7 +72,7 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # 2. Is there a significance difference between the treatment and the control
 #    groups in the variance of the reported score of pain before the application
 #    of the device?
-    treament var[x] vs control var[x]
+#    treament var[x] vs control var[x]
     var.test(magnets$score1~magnets$active)
 #   p-value is .3687
 #   larger than 0.05
