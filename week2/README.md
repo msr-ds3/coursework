@@ -87,6 +87,7 @@ This week covers:
 
 ## Power, effect sizes, and the replication crisis
   * See this [post](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html) and the related [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) on effect sizes and the replication crisis
+  * See [coin_test.R](coin_test.R) for a simulated hypothesis test, false positive rate, and power
   * See this notebook on [statistical vs. practical significance](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistically_significant_splits.html)
   * There's also an [interactive version](https://jhofman.github.io/statisticallysignificant/), play with it and see if you understand what's going on! 
 
