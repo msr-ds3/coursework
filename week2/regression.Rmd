@@ -1,0 +1,132 @@
+---
+title: "3.6.2 Simple Linear Regression"
+output: html_document
+---
+
+The ISLR2 library contains the Boston data set, which records medv 
+(median house value) for 506 census tracts in Boston. We will seek 
+to predict medv using 12 predictors such as rm (average number of rooms 
+per house), age (proportion of owner-occupied units built prior to 1940) 
+and lstat (percent of households with low socioeconomic status).
+
+```{r}
+library(ISLR2)
+head(Boston)
+```
+
+To find out more about the data set, we can type `?Boston`.
+
+We will start by using the `lm()` function to fit a simple linear 
+regression model, with medv as the response and lstat as the predictor. 
+The basic syntax is `lm(y ~ x, data)`, where y is the response, x is 
+the predictor, and data is the data set in which these two variables are kept.
+
+```{r}
+lm.fit <- lm(medv ~ lstat, data = Boston)
+attach(Boston)
+lm.fit <- lm(medv ~ lstat)
+```
+
+If we type `lm.fit`, some basic information about the model is output. 
+For more detailed information, we use `summary(lm.fit)`. This gives us 
+p-values and standard errors for the coefficients, as well as the R2 
+statistic and F-statistic for the model.
+
+```{r}
+lm.fit
+summary(lm.fit)
+```
+
+We can use the `names()` function in order to find out what other pieces of 
+information are stored in `lm.fit`. Although we can extract these quantities 
+by name---e.g. `lm.fit$coefficients`---it is safer to use the extractor 
+functions like `coef()` to access them.
+
+```{r}
+names(lm.fit)
+coef(lm.fit)
+```
+
+In order to obtain a confidence interval for the coefficient estimates, 
+we can use the `confint()` command.
+
+```{r}
+confint(lm.fit)
+```
+
+The `predict()` function can be used to produce confidence intervals and 
+prediction intervals for the prediction of medv for a given value of lstat.
+
+```{r}
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))),
+        interval = "confidence")
+
+predict(lm.fit, data.frame(lstat = (c(5, 10, 15))),
+        interval = "prediction")
+```
+
+For instance, the 95% confidence interval associated with a lstat value of 10 
+is (24.47, 25.63), and the 95% prediction interval is (12.828, 37.28). As expected, 
+the confidence and prediction intervals are centered around the same point 
+(a predicted value of 25.05 for medv when lstat equals 10), but the latter are substantially wider.
+
+We will now plot medv and lstat along with the least squares regression line 
+using the `plot()` and `abline()` functions.
+
+```{r}
+plot(lstat, medv)
+abline(lm.fit)
+```
+
+There is some evidence for non-linearity in the relationship between lstat and medv. 
+We will explore this issue later in this lab.
+
+The `abline()` function can be used to draw any line, not just the least squares 
+regression line. To draw a line with intercept a and slope b, we type `abline(a, b)`. 
+Below we experiment with some additional settings for plotting lines and points. 
+The `lwd = 3` command causes the width of the regression line to be increased by a 
+factor of 3; this works for the `plot()` and `lines()` functions also. We can also 
+use the `pch` option to create different plotting symbols.
+
+```{r}
+abline(lm.fit, lwd = 3)
+abline(lm.fit, lwd = 3, col = "red")
+plot(lstat, medv, col = "red")
+plot(lstat, medv, pch = 20)
+plot(lstat, medv, pch = "+")
+plot(1:20, 1:20, pch = 1:20)
+```
+
+Next we examine some diagnostic plots, several of which were discussed in Section 3.3.3. 
+Four diagnostic plots are automatically produced by applying the `plot()` function 
+directly to the output from `lm()`. In general, this command will produce one plot 
+at a time, and hitting Enter will generate the next plot. However, it is often convenient 
+to view all four plots together. We can achieve this by using the `par()` and `mfrow()` 
+functions, which tell R to split the display screen into separate panels so that multiple 
+plots can be viewed simultaneously. For example, `par(mfrow = c(2, 2))` divides the plotting 
+region into a 2 x 2 grid of panels.
+
+```{r}
+par(mfrow = c(2, 2))
+plot(lm.fit)
+```
+
+Alternatively, we can compute the residuals from a linear regression fit using the `residuals()` 
+function. The function `rstudent()` will return the studentized residuals, and we can use this 
+function to plot the residuals against the fitted values.
+
+```{r}
+plot(predict(lm.fit), residuals(lm.fit))
+plot(predict(lm.fit), rstudent(lm.fit))
+```
+
+On the basis of the residual plots, there is some evidence of non-linearity. Leverage statistics 
+can be computed for any number of predictors using the `hatvalues()` function.
+
+```{r}
+plot(hatvalues(lm.fit))
+which.max(hatvalues(lm.fit))
+```
+
+The `which.max()` function identifies the index of the largest element of a vector. In this case, 
+it tells us which observation has the largest leverage statistic.
