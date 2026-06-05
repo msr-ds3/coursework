@@ -19,16 +19,25 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # exercise is to test for the presence of a placebo effect in the case study “Magnets
 # and Pain Relief” of Question 9.1 using the data in the file “magnets.csv”.
 
-
 # 1. Let X be the measurement of change, the difference between the score of
 #   pain before the treatment and the score after the treatment, for patients
 #   that were treated with the inactive placebo. Express, in terms of the
 #   expected value of X, the null hypothesis and the alternative hypothesis
 #   for a statistical test to determine the presence of a placebo effect. The null
 #   hypothesis should reflect the situation that the placebo effect is absent
+
+# for Null hypothesis to be true expected value of X(sample mean distribution of magnet$change[30:50]) should be zero
+# similarly, for Alternate hypothesis expect value of X should not be zero
+
 # 2. Identify the observations that can be used in order to test the hypotheses.
+
+# magnets$change[30:50] people treated with placebo
+
 # 3. Carry out the test and report your conclusion. (Use a significance level of
 #    5%.)
+
+t.test(magnets$change[30:50])
+#here p-value = 0.004702 < 0.05 our alpha, so we can reject null hypothesis and conclude that there is placebo effect present
 
 ####################################################################################
 # IST Chapter 13, Exercise 13.1
@@ -49,12 +58,29 @@ magnets <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/magnets.cs
 # In the following questions you are required to carry out tests of hypotheses.
 # All tests should conducted at the 5% significance level:
 # 1. Is there a significance difference between the treatment and the control
-#    groups in the expectation of the reported score of pain before the application of the device?
+#    groups in the expectation of the reported score of pain before the application of the device
+
+head(magnets)
+t.test(magnets$score1~magnets$active)
+# here p-value =0.6806 > 0.05 so we can't reject null hypothesis so there is no significant
+# differece in expectation of reported score of pain before treatment
+
 # 2. Is there a significance difference between the treatment and the control
 #    groups in the variance of the reported score of pain before the application
 #    of the device?
+var.test(magnets$score1~magnets$active)
+# here p-value =0.3687 > 0.05 so we can't reject null hypothesis so there is no significant
+# differece in variance of reported score of pain before treatment
+
 # 3. Is there a significance difference between the treatment and the control
 #    groups in the expectation of the change in score that resulted from the
 #    application of the device?
+t.test(magnets$change~magnets$active)
+# here p-value =3.8 * 10^-7 < 0.05 so we can reject null hypothesis so there is significant
+# differece in expectation of the change in score of pain after treatment
+
 # 4. Is there a significance difference between the treatment and the control
 #    groups in the variance of the change in score that resulted from the application of the device?
+var.test(magnets$change~magnets$active)
+# here p-value =0.0015 < 0.05 so we can reject null hypothesis so there is a significant
+# differece in variance of the change in score of pain after treatment
