@@ -87,6 +87,7 @@ This week covers:
 
 ## Power, effect sizes, and the replication crisis
   * See this [post](http://modelingsocialdata.org/lectures/2019/03/01/lecture-6-reproducibility-2.html) and the related [lecture notes](https://github.com/jhofman/msd2019-notes/blob/master/lecture_6/lecture_6.pdf) on effect sizes and the replication crisis
+  * See [coin_test.R](coin_test.R) for a simulated hypothesis test, false positive rate, and power
   * See this notebook on [statistical vs. practical significance](http://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week2/statistically_significant_splits.html)
   * There's also an [interactive version](https://jhofman.github.io/statisticallysignificant/), play with it and see if you understand what's going on! 
 
@@ -127,23 +128,17 @@ This week covers:
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
 
-<!--
-
-# Day 5
-
 ## Regression (cont'd)
 
   * See this notebook on [model evaluation](model_evaluation.ipynb) 
   * See if you can reproduce the table in ISRS 5.29 using the original dataset in [body.dat.txt](body.dat.txt), taken from [here](http://jse.amstat.org/v11n2/datasets.heinz.html)
-  * Do Labs 3.6.3 through 3.6.6 of [Intro to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) to get practice with linear models in R
+  * Do Labs 3.6.3 through 3.6.6 of [Intro to Statistical Learning](https://www.statlearning.com) to get practice with linear models in R
   * Read Sections 6.1 through 6.3 of ISRS on regression with multiple features
   * Do Exercises 6.1, 6.2, and 6.3, and use the original data set in [babyweights.txt](babyweights.txt), taken from [here](https://web.archive.org/web/20040906234424/http://www.ma.hw.ac.uk/~stan/aod/library/babies.dat.txt), to reproduce the results from the book
 
 
 ## References
   * Sections 3.2 and 3.3 of [Intro to Statistical Learning (R version)](https://www.statlearning.com) on regression with multiple features
-
--->
 
 
 
