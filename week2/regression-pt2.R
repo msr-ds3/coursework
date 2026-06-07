@@ -6,8 +6,7 @@
 # height          1.0176      0.0440    23.13    0.0000
 body <- read.table("body.dat.txt", header = FALSE)
 
-# 506 Observations / Physically Active Individuals
-# Note: The study states there are 507 individuals who participated. One observation is missing.
+# 507 Observations / Physically Active Individuals
 nrow(body)
 
 # Compute summary statistics
