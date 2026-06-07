@@ -85,21 +85,17 @@ prob <- seq(1, 6)/21
 #
 # 1. What is the probability that the total weight of 8 people exceeds 650kg?
 # P(weight > 650kg) = 0.05717406; mu = 560kg, sigma = 57kg
-mu8 <- 560
-sigma8 <- 57
-1 - pnorm(650, mu8, sigma8)
+pnorm(650, mean = 560, sd = 57, lower.tail = FALSE)
 # 2. What is the probability that the total weight of 9 people exceeds 650kg?
 # P(weight > 650) = 0.3715054
-mu9 <- 630
-sigma9 <- 61
-1 - pnorm(650, mu9, sigma9)
+pnorm(650, mean = 630, sd = 61, lower.tail = FALSE)
 # 3. What is the central region that contains 80% of distribution of the
 #    total weight of 8 people?
-c(qnorm(0.1, mu8, sigma8), qnorm(0.9, mu8, sigma8))
+c(qnorm(0.1, mean = 560, sd = 57), qnorm(0.9, mean = 560, sd = 57))
 
 # 4. What is the central region that contains 80% of distribution of the
 #    total weight of 9 people?
-qnorm(c(0.1, 0.9), mu9, sigma9)
+c(qnorm(0.1, mean = 630, sd = 61), qnorm(0.9, mean = 630, sd = 61))
 
 # Hint: use pnorm() and qnorm().
 
@@ -120,33 +116,25 @@ qnorm(c(0.1, 0.9), mu9, sigma9)
 pop2 <- read_csv("http://pluto.huji.ac.il/~msby/StatThink/Datasets/pop2.csv")
 
 # 1. Compute the population average of the variable "bmi".
-mean(pop2$bmi)
+(mean <- mean(pop2$bmi))
 # Output: 24.98446
 
 # 2. Compute the population standard deviation of the variable "bmi".
-sd(pop2$bmi)
+(sd <- sd(pop2$bmi))
 # Output: 4.188511
 
 # 3. Compute the expectation of the sampling distribution for the sample
 #    average of the variable.
 
-# initialize a zero vector 
-sample_means <- rep(0, 10^5)
-
-# Perform the simulation 100,000 times
-for(i in 1:10^5)
-{sample <- sample(pop2$bmi, 150) # n = 150
-sample_means[i] <- mean(sample)} # store means from sample distribution in sample means
-
-mu <- mean(sample_means)
-mu
+sample_means <- replicate(10^5, mean(sample(pop2$bmi, size = 150)))
+mean_sampling_distribution = mean(sample_means)
 
 # 4. Compute the standard deviation of the sampling distribution for the
 #    sample average of the variable.
-sd <- sd(sample_means)
-sd
+n = nrow(pop2)
+(se = sd/sqrt(n))
 
-# Output: 0.4120314
+# Output: 0.01324523
 
 # 5. Identify, using simulations, the central region that contains 80% of
 #    the sampling distribution of the sample average.
@@ -155,7 +143,12 @@ quantile(x = sample_means, probs = c(0.1, 0.9))
 # 6. Identify, using the Central Limit Theorem, an approximation of the
 #    central region that contains 80% of the sampling distribution of the
 #    sample average.
-qnorm(c(0.1, 0.9), mean, sd)
+
+# version 1 
+qnorm(c(0.1, 0.9), mean_sampling_distribution, se)
+
+# version 2
+c(qnorm(0.1, mean_sampling_distribution, se), qnorm(0.9, mean_sampling_distribution, se))
 
 # Hint: for (5), use replicate() to draw many samples of size 150,
 # compute the mean of bmi for each, then use quantile().
