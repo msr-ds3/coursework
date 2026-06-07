@@ -59,7 +59,8 @@ glue::glue("y = {b0} + {b1} * x")
 # b. Interpret the slope in this context, and calculate the predicted birth weight of babies born to
 # smoker and non-smoker mothers.
 
-# b0 (slope) = The weight of the baby changes at a rate of 123.05 ounces
+# b1 (smoke) = For every one ounce increase in birth weight, the predicted probability (or proportion)
+# of being a smoker changes by -8.94
 
 predict(model, newdata = tibble(smoke = c(0,1)))
 
@@ -97,7 +98,8 @@ glue::glue("y = {b0} + {b1} * x")
 # b. Interpret the slope in this context, and calculate the predicted birth weight of first borns and
 #    others.
 
-# B1 = For every one ounce increase in weight, the parity decreases by 1.93.
+# B1 = For every one ounce increase in weight, the predicted probability (or proportion)
+# of parity decreases by 1.93.
 
 predict(mod2, newdata = tibble(parity = c(0,1)))
 
