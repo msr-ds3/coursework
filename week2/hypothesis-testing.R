@@ -68,11 +68,11 @@ boxplot(magnets$change[30:50])
 #    and the variance of the sample average and of the sample median. Which of
 #    the two estimators has a smaller mean square error?
 
-# Variance of the sample average for Normal Distribution(mu = 3, sigma = 2)
-var(replicate(100, mean(rnorm(n = 100, mean = 3, sd = 2))))
+# Variance of the sample average for Normal Distribution(mu = 3, var = 2)
+var(replicate(10^4, mean(rnorm(n = 100, mean = 3, sd = sqrt(2)))))
 
 # Variance of the sample median for Normal Distribution(mu = 3, sigma = 2)
-var(replicate(100, median(rnorm(n = 100, mean = 3, sd = 2))))
+var(replicate(10^4, median(rnorm(n = 100, mean = 3, sd = sqrt(2)))))
 
 # 2. Simulate the sampling distribution of average and the median of a sample
 #    of size n = 100 from the Uniform(0.5, 5.5) distribution. Compute the
@@ -80,10 +80,10 @@ var(replicate(100, median(rnorm(n = 100, mean = 3, sd = 2))))
 #    median. Which of the two estimators has a smaller mean square error?
 
 # Variance of the sample average for Uniform Distribution(min = 0.5, max = 5.5)
-var(replicate(100, mean(runif(n = 100, min = 0.5, max = 5.5))))
+var(replicate(10^4, mean(runif(n = 100, min = 0.5, max = 5.5))))
 
 # Variance of the sample median for Unform Distribution(min = 0.5, max = 5.5)
-var(replicate(100, median(runif(n = 100, min = 0.5, max = 5.5))))
+var(replicate(10^4, median(runif(n = 100, min = 0.5, max = 5.5))))
 
 ####################################################################################
 # IST Chapter 10, Exercise 10.2
@@ -243,7 +243,7 @@ delta <- treatment - control
 
 # The probability of the observed difference (-0.04411765) occuring is approximately 48%.  
 pnorm(delta)
-# Output: 0.4824053
+# Output:0.4824968
 # We can't reject the null hypothesis
 
 
