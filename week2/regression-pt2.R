@@ -111,14 +111,15 @@ summary(lm.fit)
 
 # c. The coefficient for parity is different than in the linear model shown in Exercise 6.2. Why
 #    might there be a difference?
-# 
+#   Parity might be correlated to other predictor values, so doing the multiple regression helps reduce
+#   the underlying bias from when we do regression with only parity.
 
 # d. Calculate the residual for the first observation in the dataset.
 # y = (0.44)(284) + (-3.33)(0) + (-0.01)(27) + (1.15)(62) + (0.05)(100) + (-8.40)(0) - 80.41
 # y = (0.44)(284) + (-0.01)(27) + (1.15)(62) + (0.05)(100) - 80.41
 # y = 120.58
 # Res = -0.58
-# The model overpredicts
+# The model overpredicts.
 
 # e. The variance of the residuals is 249.28, and the variance of the birth weights of all babies
 #    in the data set is 332.57. Calculate the R^2 and the adjusted R^2. Note that there are 1,236
