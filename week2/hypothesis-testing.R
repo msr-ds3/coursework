@@ -41,10 +41,10 @@ magnets %>% ggplot(aes(x = change, y = active)) + geom_boxplot()
 #    of size n = 100 from the Normal(3, 2) distribution. Compute the expectation
 #    and the variance of the sample average and of the sample median. Which of
 #    the two estimators has a smaller mean square error?
-mean(replicate(100000, mean(rnorm(n=100, mean=3, sd=2))))     # 2.999544
-var(replicate(100000, mean(rnorm(n=100, mean=3, sd=2))))      # 0.04030229
-mean(replicate(100000, median(rnorm(n=100, mean=3, sd=2))))   # 2.999957 
-var(replicate(100000, median(rnorm(n=100, mean=3, sd=2))))    # 0.06175777
+mean(replicate(100000, mean(rnorm(n=100, mean=3, sd=sqrt(2)))))     # 3.000211
+var(replicate(100000, mean(rnorm(n=100, mean=3, sd=sqrt(2)))))      # 0.02001856
+mean(replicate(100000, median(rnorm(n=100, mean=3, sd=sqrt(2)))))   # 3.000348
+var(replicate(100000, median(rnorm(n=100, mean=3, sd=sqrt(2)))))    # 0.03096648
 # 2. Simulate the sampling distribution of average and the median of a sample
 #    of size n = 100 from the Uniform(0.5, 5.5) distribution. Compute the
 #    expectation and the variance of the sample average and of the sample
@@ -204,11 +204,13 @@ formula <- (population_proportion * (1- population_proportion)) / 150 # 0.001347
 #    measurements is Normal and there are 29 patients in the first group and 21
 #    in the second. Find the interval that contains 95% of the sampling
 #    distribution of the statistic.
-sampling_dist <- replicate(100000, (mean(rnorm(29, mean = 3.5, sd = 3)) - mean(rnorm(21, mean = 3.5, sd = 1.5))) / 
-                sqrt(((sd(rnorm(29, mean = 3.5, sd = 3))**2)/29) + (sd(rnorm(21, mean = 3.5, sd = 1.5))/21)))
+sampling_dist <- replicate(100000, 
+    {dist1 <- rnorm(29, mean = 3.5, sd = 3)
+     dist2 <- rnorm(21, mean = 3.5, sd = 1.5)
+    (mean(dist1) - mean(dist2))/sqrt(((sd(dist1)**2)/29) + (sd(dist2))/21)})
 quantile(sampling_dist, .025)
 quantile(sampling_dist, .975)
-# Interval [-2.116607, 2.127696]
+# Interval [-2.109882, 2.127727]
 # 2. Does the observed value of T (computed from the "magnets" data) fall
 #    inside or outside the interval computed in 1?
 #  T = (X_bar_1 - X_bar_2) / sqrt(S_1^2/29 + S_2^2/21)

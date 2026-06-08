@@ -26,10 +26,13 @@ body <- read.table("body.dat.txt", header = TRUE)
 babyweights <- read.table("babyweights.txt", header = TRUE)
 
 # a. Write the equation of the regression line.
+y = -8.94x + 123.05 
 # b. Interpret the slope in this context, and calculate the predicted birth weight of babies born to
 # smoker and non-smoker mothers.
+# Smoking lowers average birth weights by 8.94 oz. 
+# Babies of smokers are predicted to be around 114.11 oz, while babies of non-smokers are expected to be 123.05 oz.
 # c. Is there a statistically significant relationship between the average birth weight and smoking?
-
+# Yes. Since the p-value is less than our .05 alpha value, we reject the null that there is no relationship.
 ###################################################################################
 # ISRS Exercise 6.2
 # Exercise 6.1 introduces a data set on birth weight of babies.
@@ -42,10 +45,13 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 # parity          -1.93        1.19    -1.62    0.1052
 #
 # a. Write the equation of the regression line.
+y = -1.93x + 120.07
 # b. Interpret the slope in this context, and calculate the predicted birth weight of first borns and
 #    others.
+# Not being a first born lowers average birth weights by 1.93 oz. 
 # c. Is there a statistically significant relationship between the average birth weight and parity?
-
+# No. Since the p-value is greater than our .05 alpha value, we fail to reject our null hypothesis that
+# parity has no effect on birth weight.
 ###################################################################################
 # ISRS Exercise 6.3
 # We considered the variables smoke and parity, one at a time, in
@@ -72,11 +78,20 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 # weight           0.05        0.03     1.99    0.0471
 # smoke           -8.40        0.95    -8.81    0.0000
 #
-# a. Write the equation of the regression line that includes all variables:
+# a. Write the equation of the regression line that includes all variables: 
+y = -80.41 + .44x1 -3.33x2 - 0.01x3 + 1.15x4 + 0.05x5 - 8.40x6
 # b. Interpret the slopes of gestation and age in this context:
+# For each additional day of gestation, if all else is equal, the weight increases by .44 oz.
+# For each additional inch of mother's height, if all else is equal, the weight increases by 1.15 oz.
 # c. The coefficient for parity is different than in the linear model shown in Exercise 6.2. Why
 #    might there be a difference?
+# In the linear model, not all other variables were considered equal, diluting, and possibly confounding the effect.
 # d. Calculate the residual for the first observation in the dataset.
+line_one <- babyweights[1,]
+line_one$bwt - (-80.41 + (.44*line_one$gestation) -3.33*(line_one$parity) - 0.01*(line_one$age) + 1.15*(line_one$height) + 0.05*(line_one$weight) - 8.40*(line_one$smoke))
+# Answer: -0.58
 # e. The variance of the residuals is 249.28, and the variance of the birth weights of all babies
 #    in the data set is 332.57. Calculate the R^2 and the adjusted R^2. Note that there are 1,236
-#    bservations in the data set.
+#    observations in the data set.
+1 - (249.28/332.57) #R squared = 0.2504435
+1 - ((249.28/332.57) * ((1236-1)/(1236-6-1))) #adjusted R squared = 0.2467842
