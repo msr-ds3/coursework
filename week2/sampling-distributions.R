@@ -18,10 +18,10 @@ library(tidyverse)
 # the value "0". Answer the following questions:
 #
 # 1. What is the value of p? 1/21
-# 2. P(Y < 3) = 1/7
-# 3. P(Y = odd) = 1/7
-# 4. P(1 <= Y < 4) = 1/7
-# 5. P(|Y - 3| < 1.5) = 1/7
+# 2. P(Y < 3) = 6/21
+# 3. P(Y = odd) = 12/21
+# 4. P(1 <= Y < 4) = 9/21
+# 5. P(|Y - 3| < 1.5) = 12/21
 # 6. E(Y) = 10/3
 # 7. Var(Y) = 3.5
 # 8. What is the standard deviation of Y? 1.870829
@@ -42,7 +42,7 @@ variance <- (sd[1,1] ** 2)
 #
 # 1. What is the probability of winning the game? 1/8
 # 2. What is the probability of losing the game? 7/8
-# 3. What is the expected gain for the player that plays this game? $-0.50
+# 3. What is the expected gain for the player that plays this game? $-0.75
 #    (Notice that the expectation can obtain a negative value.)
 
 
@@ -94,6 +94,7 @@ qnorm(.9, mean = 630, sd = 61)
 pop_mean <- mean(pop2$bmi)
 # 2. Compute the population standard deviation of the variable "bmi". 4.19
 pop_sd <- sd(pop2$bmi)
+
 # 3. Compute the expectation of the sampling distribution for the sample
 #    average of the variable. 25
 # 4. Compute the standard deviation of the sampling distribution for the
