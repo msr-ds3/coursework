@@ -26,9 +26,25 @@ body <- read.table("body.dat.txt", header = TRUE)
 babyweights <- read.table("babyweights.txt", header = TRUE)
 
 # a. Write the equation of the regression line.
+ # The equation of the regression line: W_hat = 123.05 - 8.94s
+
 # b. Interpret the slope in this context, and calculate the predicted birth weight of babies born to
 # smoker and non-smoker mothers.
+ # Slope: -8.94
+ # This means that for any additional smoker mom, the predicted birth weight
+ # decreases by 8.94 oz on average.
+ # Predicted birth weight of babies born to smoker mothers:
+ W_hat = 123.05 - 8.94 * 1
+ W_hat # 114.11 oz
+ # Predicted birth weight of babies born to non-smoker mothers:
+  W_hat = 123.05 - 8.94 * 0
+  W_hat # 123.05 oz
+ 
 # c. Is there a statistically significant relationship between the average birth weight and smoking?
+ # Yes, there's a significant relationship between the average birth
+ # weight and smoking. Babies born to smokers tend to weigh less than 
+ # babies born to non smokers moms.
+
 
 ###################################################################################
 # ISRS Exercise 6.2
@@ -42,9 +58,25 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 # parity          -1.93        1.19    -1.62    0.1052
 #
 # a. Write the equation of the regression line.
+ # Equation of the regression line: W = 120.07 - 1.93p
+
 # b. Interpret the slope in this context, and calculate the predicted birth weight of first borns and
 #    others.
+ # Slope: -1.93
+ # This means that for any additional non-first born child, the predicted birth
+ # weight decreases by 1.93 oz
+ # Predicted birth weight of first borns:
+ W = 120.07 - 1.93 *0
+ W # 120.07
+ # Predicted birth weight of others:
+ W = 120.07 - 1.93 *1
+ W # 118.14
+
 # c. Is there a statistically significant relationship between the average birth weight and parity?
+ # There's no significant relationship between the average birth weight
+ # and parity. We can even see that the p-value= 0.1052 >0.05 leading us to 
+ # the fact that we can't reject the null hypothesis. 
+
 
 ###################################################################################
 # ISRS Exercise 6.3
@@ -73,10 +105,36 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 # smoke           -8.40        0.95    -8.81    0.0000
 #
 # a. Write the equation of the regression line that includes all variables:
+ # W_net = -80.41 + 0.44g - 3.33p - 0.01y + 1.15h + 0.05w - 8.40s
+
 # b. Interpret the slopes of gestation and age in this context:
+ # Slope of gestation: 0.44
+ # Holding parity, age, height, weight, and smoke status constant, 
+ # each additional day of gestation increases the baby's birth weight by 0.44 oz 
+ 
+ # Slope of age: -0.01
+ # Holding all the other variables constant, each additional year 
+ # in the mom's age decreases the baby's birth weight by 0.01 oz 
+
 # c. The coefficient for parity is different than in the linear model shown in Exercise 6.2. Why
 #    might there be a difference?
+ # The coefficient for parity differs because this model controls
+ # several additional variables while the one in 6.2 is based on
+ # only the weight and parity
+
 # d. Calculate the residual for the first observation in the dataset.
+y_hat = -80.41 + (0.44*284) - (3.33*0) - (0.01*27) + (1.15*62) + (0.05*100) - (8.40*0)
+y_hat # 120.58
+y = 120
+ R = y - y_hat
+ R # -0.58 --> the residual for the 1st observation
+
 # e. The variance of the residuals is 249.28, and the variance of the birth weights of all babies
 #    in the data set is 332.57. Calculate the R^2 and the adjusted R^2. Note that there are 1,236
 #    bservations in the data set.
+ # R2 = 1 - (var of residual / total var)
+ R2 = 1 - (249.28 / 332.57)
+ R2 # 0.2504435 --> R^2
+ # Adjusted R^2:
+ Adj = 1 - ((249.28 / 332.57) * ((1236 -1)/(1236-6-1)))
+ Adj # 0.2467842 
