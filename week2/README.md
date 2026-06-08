@@ -128,18 +128,5 @@ This week covers:
   * An animation of [gradient descent](http://jakehofman.com/gd/) and a related [blog post](https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/)
 
 
-## Regression (cont'd)
-
-  * See this notebook on [model evaluation](model_evaluation.ipynb) 
-  * See if you can reproduce the table in ISRS 5.29 using the original dataset in [body.dat.txt](body.dat.txt), taken from [here](http://jse.amstat.org/v11n2/datasets.heinz.html)
-  * Do Labs 3.6.3 through 3.6.6 of [Intro to Statistical Learning](https://www.statlearning.com) to get practice with linear models in R
-  * Read Sections 6.1 through 6.3 of ISRS on regression with multiple features
-  * Do Exercises 6.1, 6.2, and 6.3, and use the original data set in [babyweights.txt](babyweights.txt), taken from [here](https://web.archive.org/web/20040906234424/http://www.ma.hw.ac.uk/~stan/aod/library/babies.dat.txt), to reproduce the results from the book
-
-
-## References
-  * Sections 3.2 and 3.3 of [Intro to Statistical Learning (R version)](https://www.statlearning.com) on regression with multiple features
-
-
 
 
