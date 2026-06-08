@@ -10,6 +10,7 @@ per house), age (proportion of owner-occupied units built prior to 1940)
 and lstat (percent of households with low socioeconomic status).
 
 ```{r}
+install.packages("ISLR2")
 library(ISLR2)
 head(Boston)
 ```
