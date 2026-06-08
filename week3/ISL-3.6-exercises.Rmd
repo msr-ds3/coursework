@@ -1,0 +1,186 @@
+---
+title: "ISLR2 Lab 3.6.3–3.6.6: Linear Regression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("car")
+install.packages("ISLR2")
+library(ISLR2)
+library(car)
+```
+
+## 3.6.3 Multiple Linear Regression
+
+In order to fit a multiple linear regression model using least squares, we
+again use the lm() function. The syntax lm(y ∼ x1 + x2 + x3) is used to
+fit a model with three predictors, x1, x2, and x3. The summary() function
+now outputs the regression coefficients for all the predictors.
+
+```{r}
+lm.fit <- lm(medv ~ lstat + age, data = Boston)
+summary(lm.fit)
+```
+
+Use `.` shorthand to rThe Boston data set contains 12 variables, and so it would be cumbersome
+to have to type all of these in order to perform a regression using all of the
+predictors. Instead, we can use the following short-hand:egress `medv` onto all predictors
+ in the dataset.
+
+```{r}
+lm.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+```
+We can access the individual components of a summary object by name
+(type ?summary.lm to see what is available). Hence summary(lm.fit)$r.sq
+gives us the R2, and summary(lm.fit)$sigma gives us the RSE. The vif()
+function, part of the car package, can be used to compute variance inflation
+factors. Most VIF’s are low to moderate for this data. The car package is
+not part of the base R installation so it must be downloaded the first time
+you use it via the install.packages() function in R.
+
+```{r}
+summary(lm.fit)$r.sq
+summary(lm.fit)$sigma
+vif(lm.fit)
+```
+
+What if we would like to perform a regression using all of the variables but
+one? For example, in the above regression output, age has a high p-value.
+So we may wish to run a regression excluding this predictor. The following
+syntax results in a regression using all predictors except age.
+
+```{r}
+lm.fit1 <- lm(medv ~ . - age, data = Boston)
+summary(lm.fit1)
+```
+
+Alternatively, the update() function can be used.
+
+```{r}
+lm.fit1 <- update(lm.fit, ~ . - age)
+```
+
+---
+
+## 3.6.4 Interaction Terms
+
+It is easy to include interaction terms in a linear model using the lm() function. The syntax lstat:age tells R to include an interaction term between
+lstat and age. The syntax lstat * age simultaneously includes lstat, age,
+and the interaction term lstat×age as predictors; it is a shorthand for
+lstat + age + lstat:age
+
+```{r}
+summary(lm(medv ~ lstat * age, data = Boston))
+```
+
+---
+
+## 3.6.5 Non-linear Transformations of the Predictors
+
+The lm() function can also accommodate non-linear transformations of the
+predictors. For instance, given a predictor X, we can create a predictor X2
+using I(X^2). The function I() is needed since the ^ has a special meaning I() in a formula object; wrapping as we do allows the standard usage in R,
+which is to raise X to the power 2. We now perform a regression of medv
+onto lstat and lstat^2.
+
+```{r}
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2))
+summary(lm.fit2)
+```
+
+The near-zero p-value associated with the quadratic term suggests that
+it leads to an improved model. We use the anova() function to further 
+quantify the extent to which the quadratic fit is superior to the linear fit.
+
+```{r}
+lm.fit <- lm(medv ~ lstat)
+anova(lm.fit, lm.fit2)
+```
+
+Here Model 1 represents the linear submodel containing only one predictor,
+lstat, while Model 2 corresponds to the larger quadratic model that has two predictors, lstat and lstat2. The anova() function performs a hypothesis
+test comparing the two models. The null hypothesis is that the two models
+fit the data equally well, and the alternative hypothesis is that the full
+model is superior. Here the F-statistic is 135 and the associated p-value is
+virtually zero. This provides very clear evidence that the model containing
+the predictors lstat and lstat2 is far superior to the model that only
+contains the predictor lstat. This is not surprising, since earlier we saw
+evidence for non-linearity in the relationship between medv and lstat. If we
+type
+```{r}
+par(mfrow = c(2, 2))
+plot(lm.fit2)
+```
+
+then we see that when the lstat2 term is included in the model, there is
+little discernible pattern in the residuals. In order to create a cubic fit, we can include a predictor of the form
+I(X^3). However, this approach can start to get cumbersome for higherorder polynomials. A better approach involves using the poly() function
+to create the polynomial within lm(). For example, the following command
+produces a fifth-order polynomial fit:
+```{r}
+lm.fit5 <- lm(medv ~ poly(lstat, 5))
+summary(lm.fit5)
+```
+
+This suggests that including additional polynomial terms, up to fifth order,
+leads to an improvement in the model fit! However, further investigation
+of the data reveals that no polynomial terms beyond fifth order have significant p-values in a regression fit.
+
+By default, the poly() function orthogonalizes the predictors: this means
+that the features output by this function are not simply a sequence of
+powers of the argument. However, a linear model applied to the output
+of the poly() function will have the same fitted values as a linear model
+applied to the raw polynomials (although the coefficient estimates, standard
+errors, and p-values will differ). In order to obtain the raw polynomials from
+the poly() function, the argument raw = TRUE must be used.
+Of course, we are in no way restricted to using polynomial transformations of the predictors. 
+Here we try a log transformation.
+
+```{r}
+summary(lm(medv ~ log(rm), data = Boston))
+```
+
+---
+
+## 3.6.6 Qualitative Predictors
+
+We will now examine the Carseats data, which is part of the ISLR2 library.
+We will attempt to predict Sales (child car seat sales) in 400 locations
+based on a number of predictors.
+
+```{r}
+head(Carseats)
+```
+
+The Carseats data includes qualitative predictors such as Shelveloc, an
+indicator of the quality of the shelving location—that is, the space within
+a store in which the car seat is displayed—at each location. The predictor Shelveloc takes on three possible values: Bad, Medium, and Good.
+Given a qualitative variable such as Shelveloc, R generates dummy variables
+automatically. Below we fit a multiple regression model that includes some
+interaction terms.
+
+```{r}
+lm.fit <- lm(Sales ~ . + Income:Advertising + Price:Age, data = Carseats)
+summary(lm.fit)
+```
+
+The contrasts() function returns the coding that R uses for the dummy variables
+
+```{r}
+attach(Carseats)
+contrasts(ShelveLoc)
+```
+Use contrasts to learn about other contrasts, and how to set them.
+
+R has created a ShelveLocGood dummy variable that takes on a value of
+1 if the shelving location is good, and 0 otherwise. It has also created a
+ShelveLocMedium dummy variable that equals 1 if the shelving location is
+medium, and 0 otherwise. A bad shelving location corresponds to a zero
+for each of the two dummy variables. The fact that the coefficient for
+ShelveLocGood in the regression output is positive indicates that a good
+shelving location is associated with high sales (relative to a bad location).
+And ShelveLocMedium has a smaller positive coefficient, indicating that a
+medium shelving location is associated with higher sales than a bad shelving location 
+but lower sales than a good shelving location
