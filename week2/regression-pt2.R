@@ -100,15 +100,21 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 #  when we use a combination of variables for prediction , any underlying or uniintentional bias is reduced even though  bias from other variables remain.
 # d. Calculate the residual for the first observation in the dataset.
 # residual = data - fit
-residual <- -1.93 -3.33
+# change answer from feedback
+fit <- -80.41 + 0.44*284 - 3.33*0 - 0.01*27 + 1.15*62 + 0.05*100 - 8.40*0
+fit 
+#120.58
+data.bwt <- 120 
+residual <- data.bwt - fit 
 residual 
-# - 5.26
+# -0.58
 # e. The variance of the residuals is 249.28, and the variance of the birth weights of all babies
 #    in the data set is 332.57. Calculate the R^2 and the adjusted R^2. Note that there are 1,236
 #    bservations in the data set.
 R1 <-  1 - (249.28/332.57)
 R1 
 #  0.2504435
-R2 <- 1 - (249.28/1236-6-1)/(332.57/1236-6-1)
+# change answer based on feedback 
+R2 <- (1 - (249.28/332.57))*((1236-1)/1236-6-1)
 R2
-# -0.0100115
+# -1.502864
