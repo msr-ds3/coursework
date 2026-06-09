@@ -5,9 +5,10 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-install.packages("ISLR2")
+repo = "https://cloud.r-project.org"
+install.packages("ISLR2", repos = repo)
 library(ISLR2)
-install.packages("boot")
+install.packages("boot", repos = repo)
 library(boot)
 ```
 
