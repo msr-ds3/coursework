@@ -5,7 +5,12 @@
 # (Intercept)  -105.0113      7.5394   -13.93    0.0000
 # height          1.0176      0.0440    23.13    0.0000
 body <- read.table("body.dat.txt", header = TRUE)
-
+graph <- lm(body[,23] ~ body[,24])
+summary(graph)
+ggplot(body, aes(x=X174.0, y=X65.6)) +
+    geom_point(color="#9fc7d9") +
+    xlab("Height (in cm)") + 
+    ylab("Weight (in kg)") 
 ###################################################################################
 # ISRS Exercise 6.1
 #  The Child Health and Development Studies investigate a range of
