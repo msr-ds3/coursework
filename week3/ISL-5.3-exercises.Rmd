@@ -158,6 +158,8 @@ for (i in 1:10) {
   cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
 }
 cv.error.10
+power.prop.test(p1=0.400, p2=0.40001, sig.level=0.1, power=0.80, alternative="one.sided")
+
 ```
 
 The cv.glm() function can also be used to implement k-fold CV.Below we
@@ -171,3 +173,11 @@ k-fold CV, then the two numbers associated with delta differ slightly. The
 first is the standard k-fold CV estimate, as in (5.3). The second is a bias
 corrected version. On this data set, the two estimates are very similar to
 each other.
+
+# coffee and cancer answer 
+# 1. power.prop.test(n=100000, p1=0.400, p2=0.401, sig.level=0.01, power=0.80, alternative="one.sided")
+#  -> 21637831282
+# 2. The biggest challenge that i think may occur is that we cannot get a sample size of 21637831282, there arent even 
+# enough people in te world for this to tested on. 
+
+
