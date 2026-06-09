@@ -20,13 +20,9 @@ This week starts with a discussion of regression into machine learning and then 
 ## Overfitting, generalization, and model complexity
 
 * See the [slides](https://speakerdeck.com/jhofman/modeling-social-data-lecture-8-regression-part-2) and [notebook](complexity_control.ipynb) on overfitting and cross-validation
-* Read section 5.1 of [An Introduction to Statistical Learning (R version)](https://www.statlearning.com) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
+* Read section 5.1 of [An Introduction to Statistical Learning (R version)](https://www.statlearning.com) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3 in [ISL-5.3-exercises.Rmd](ISL-5.3-exercises.Rmd)
 
-<!--
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
--->
-
-<!--
 
 # Day 3
 
@@ -35,6 +31,8 @@ This week starts with a discussion of regression into machine learning and then 
 * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2 (you can ignore the null model in Figure 2)
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
+
+<!--
 
 # Day 4
 
