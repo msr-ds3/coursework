@@ -20,7 +20,7 @@ This week starts with a discussion of regression into machine learning and then 
 ## Overfitting, generalization, and model complexity
 
 * See the [slides](https://speakerdeck.com/jhofman/modeling-social-data-lecture-8-regression-part-2) and [notebook](complexity_control.ipynb) on overfitting and cross-validation
-* Read section 5.1 of [An Introduction to Statistical Learning](http://www-bcf.usc.edu/~gareth/ISL/) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
+* Read section 5.1 of [An Introduction to Statistical Learning (R version)](https://www.statlearning.com) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3
 
 <!--
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
