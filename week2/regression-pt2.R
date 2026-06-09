@@ -4,7 +4,18 @@
 #               Estimate  Std. Error  t value  Pr(>|t|)
 # (Intercept)  -105.0113      7.5394   -13.93    0.0000
 # height          1.0176      0.0440    23.13    0.0000
-body <- read.table("body.dat.txt", header = TRUE)
+body <- read.table("body.dat.txt", header = FALSE)
+lm.fit <- lm(V23 ~ V24, data = body)
+attach(body)
+#V23 - WEIGHT IN KG 
+#V24 = HIEGHT IN CM 
+lm.fit <- lm(V23 ~ V24)
+lm.fit
+summary(lm.fit)
+#Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+#(Intercept) -105.01125    7.53941  -13.93   <2e-16 ***
+#V24            1.01762    0.04399   23.14   <2e-16 ***
 
 ###################################################################################
 # ISRS Exercise 6.1
@@ -24,12 +35,14 @@ body <- read.table("body.dat.txt", header = TRUE)
 # symmetric. With these conditions satisfied, it is reasonable to apply the model. (Note that we
 # don’t need to check linearity since the predictor has only two levels.)
 babyweights <- read.table("babyweights.txt", header = TRUE)
-
 # a. Write the equation of the regression line.
+# # babywieght = 123.05 - 8.94(smoke) 
 # b. Interpret the slope in this context, and calculate the predicted birth weight of babies born to
 # smoker and non-smoker mothers.
+# The slope, -8.94 means that every ounce of babyweight descreases by 8.94 on average if the mother smokes compared to when the mother doesnt smoke 
 # c. Is there a statistically significant relationship between the average birth weight and smoking?
-
+# Yes , it sis statistically significant as thep valu e 0.000<0.05 (our threshold) proving that there is enough evidence to reject the null hypothesis and 
+# prove that smoking does affect the baby's weight.
 ###################################################################################
 # ISRS Exercise 6.2
 # Exercise 6.1 introduces a data set on birth weight of babies.
@@ -42,9 +55,13 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 # parity          -1.93        1.19    -1.62    0.1052
 #
 # a. Write the equation of the regression line.
+# babywieght = 120.07 - 1.93(parity)
 # b. Interpret the slope in this context, and calculate the predicted birth weight of first borns and
 #    others.
+# The slope, -1.93 tells us that theis ia net difference of 1.93 between the average baby weight and the if the child is a finest born 
 # c. Is there a statistically significant relationship between the average birth weight and parity?
+# No it is not statistically significant as the pvalue is 0.1 which is greater than 0.05 prove that there is not enough evidence to show that 
+# that the the child's weight is affected if its the first born or not. So we accept the null hypothesis
 
 ###################################################################################
 # ISRS Exercise 6.3
@@ -73,10 +90,25 @@ babyweights <- read.table("babyweights.txt", header = TRUE)
 # smoke           -8.40        0.95    -8.81    0.0000
 #
 # a. Write the equation of the regression line that includes all variables:
+# babyweight = -80.41 + 0.44(x1)(gestation) - 3.33(x2)(parity) - 0.01(x3)(age) + 1.15(x4)(height) + 0.05(x5)(weight) - 8.40(x6)(smoke)
 # b. Interpret the slopes of gestation and age in this context:
+# For the slope of geststaion, 0.44 we can say that for every 0.44 increase in average baby weight depends on a increase in gestation period. the higher the wieght of the baby the longer te gestation period
+# For slope of age, -0.01 we can say that that evry increase in the mother's age can cause a 0.01 decrease in the baby's average weight. the older the mother , the lower the baby's weight 
 # c. The coefficient for parity is different than in the linear model shown in Exercise 6.2. Why
 #    might there be a difference?
+#  There might be a difference because some predictors might be correlated and the addition of other predictors, allows us to control for other variables
+#  when we use a combination of variables for prediction , any underlying or uniintentional bias is reduced even though  bias from other variables remain.
 # d. Calculate the residual for the first observation in the dataset.
+# residual = data - fit
+residual <- -1.93 -3.33
+residual 
+# - 5.26
 # e. The variance of the residuals is 249.28, and the variance of the birth weights of all babies
 #    in the data set is 332.57. Calculate the R^2 and the adjusted R^2. Note that there are 1,236
 #    bservations in the data set.
+R1 <-  1 - (249.28/332.57)
+R1 
+#  0.2504435
+R2 <- 1 - (249.28/1236-6-1)/(332.57/1236-6-1)
+R2
+# -0.0100115
