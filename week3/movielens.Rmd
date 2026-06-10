@@ -53,6 +53,8 @@ ratings_by_movie <- ratings %>%
   group_by(movie_id) %>%
   summarize(count = n(), mean = mean(rating)) %>%
   arrange(desc(count))
+
+head(ratings_by_movie, 10)
 ```
 
 ```{r dist-movie-popularity}
@@ -101,6 +103,8 @@ ggplot(by_popularity, aes(x = rank, y = cdf)) +
 ratings_by_user <- ratings %>% 
   group_by(user_id) %>% 
   summarize(num_of_ratings = n(), mean_rating = mean(rating))
+
+head(ratings_by_user, 10)
 ```
 
 ```{r dist-user-activity}
