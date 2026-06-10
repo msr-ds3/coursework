@@ -135,3 +135,11 @@ summary(lm.fit)
 #   k = 6
 #   Var(estimator) = 249.28
 #   Var(actual) = 332.57
+
+library(pwr)
+sig.level <- 0.10
+pwr <- .80
+d <- 0.025
+
+power.prop.test(p1 = .40, p2 = .40001, sig.level = sig.level, power = pwr, alternative = "one.sided")
+# Sample size required: 21.000.000.000 (21 billion) - too large not possible
