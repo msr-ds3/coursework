@@ -24,8 +24,6 @@ This week starts with a discussion of regression into machine learning and then 
 
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
 
-<!--
-
 # Day 3
 
 ## The long tail
@@ -33,6 +31,8 @@ This week starts with a discussion of regression into machine learning and then 
 * Take a look at [The Anatomy of the Long Tail](https://5harad.com/papers/long_tail.pdf) and think about how to generate Figures 1 and 2 (you can ignore the null model in Figure 2)
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
+
+<!--
 
 # Day 4
 
