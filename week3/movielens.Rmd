@@ -13,6 +13,7 @@ output:
 library(scales)
 library(tidyverse)
 library(knitr)
+library(httpgd)
 
 # set plot theme
 theme_set(theme_bw())
@@ -35,6 +36,12 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings %>%
+  group_by(rating) %>%  
+  ggplot(mapping = aes(x=rating)) +
+  scale_y_continuous(label = comma) +
+  geom_histogram(bins = 10, color = "white", fill = "pink") +
+  labs(x = "Rating", y = "Review Count (Watches)", title = "Distribution of Rating Values")
 ```
 
 ## Per-movie stats
@@ -42,24 +49,48 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings_by_movie <- ratings %>%
+  group_by(movie_id) %>%
+  summarize(count = n(), mean = mean(rating)) %>%
+  arrange(desc(count))
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+ggplot(ratings_by_movie, aes(x = count)) +
+  geom_histogram(color = "white", fill = "pink") +
+  scale_x_log10(label = comma) +
+  labs(x = "Number of Movie Ratings", y = "Number of Movies", title = "Distribution of Movie Popularity")
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+ggplot(ratings_by_movie, aes(x = mean)) +
+  geom_histogram(color = "white", fill = "pink") +
+  labs(x = "Mean Rating by Movie", y = "Density", title = "Distribution of Mean Ratings by Movie")
+
+ggplot(ratings_by_movie, aes(x = mean)) +
+  geom_density(fill = 'pink') +
+  labs(x = "Mean Rating by Movie", y = "Density", title = "Distribution of Mean Ratings by Movie")
 ```
 
 ```{r cdf-movie-pop}
 # rank movies by popularity (number of ratings) and compute the cdf, or fraction of all views covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
-
+by_popularity <- ratings %>%
+  group_by(movie_id) %>%
+  summarize(count = n(), mean = mean(rating)) %>% 
+  arrange(desc(count)) %>% 
+  mutate(rank = rank(row_number()), all_movies = sum(count), cum_movies = cumsum(count), cdf = cum_movies / all_movies)
+by_popularity
 # plot the CDF of movie popularity
+ggplot(by_popularity, aes(x = rank, y = cdf)) +
+  geom_line() +
+  scale_y_continuous(label = percent_format(accuracy = 1)) +
+  labs(x = "Movie Rank", y = "CDF (Percent)", title = "Fraction of all views covered")
 ```
 
 
@@ -67,11 +98,18 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings_by_user <- ratings %>% 
+  group_by(user_id) %>% 
+  summarize(num_of_ratings = n(), mean_rating = mean(rating))
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ggplot(ratings_by_user, aes(x = num_of_ratings)) +
+  scale_x_log10(label = comma) +
+  geom_histogram(color = "white", fill = "pink") +
+  labs(x = "Number of Ratings", y = "Number of Users", title = "User Activity (Num of Users vs Num of Ratings)")
 ```
 
 # Anatomy of the long tail
@@ -91,4 +129,39 @@ head(ratings) %>% kable()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
+
+# inventory size (list of movies in order of rank) 
+# x = rank
+# user satisfaction (point at which least popular movie reviwed is considered)
+
+# for each user, I want to see their most niche movie review
+# by_popularity has each movies rank
+user_satisfaction <- ratings_by_user %>% 
+  filter(num_of_ratings >= 10) %>% 
+  select(user_id, num_of_ratings) %>%
+  mutate(ninety_satisfaction = trunc((num_of_ratings) * .90), full_satisfaction = num_of_ratings)
+
+longtail_data <- by_popularity %>% 
+  select(movie_id, count, rank) %>% # grabbing impt values
+  left_join(ratings, by = "movie_id") %>% # to connect user_id to movie_id (users to movies they reviewed)
+  select(movie_id, count, rank, user_id) %>% # grabbing impt values
+  left_join(user_satisfaction, by = "user_id") %>% # to add each users number of ratings, satisfaction rank
+  select(movie_id, rank, user_id, ninety_satisfaction, full_satisfaction) %>% 
+  ## At this point I have all the values I want in the data frame
+  pivot_longer(`ninety_satisfaction`:`full_satisfaction`, names_to = "satisfaction_level", values_to = "needed_review_rank") %>%
+  ## I do the above to make satisfaction level a column i can group by so i can have two lines
+  group_by(user_id, satisfaction_level) %>% # grouping by user so i can isolate the highest ranked movie to reach the satisfaction level
+  arrange(user_id, rank) %>% # arranging by rank so I can grab by row num (kth )
+  filter(row_number() == needed_review_rank) %>% # for each user and satisfaction level filter out only the row that matches the neededrank
+  group_by(rank, satisfaction_level) %>%
+  summarize(count = n()) %>% # counts the number of users that would be satisfied
+  group_by(satisfaction_level) %>%  
+  arrange(rank) %>%
+  mutate(total_users = sum(count), cum_users = cumsum(count), satisfaction = cum_users/total_users) 
+
+ggplot(longtail_data, aes(x = rank, y = satisfaction, group = satisfaction_level)) +
+  geom_line() +
+  geom_vline(xintercept = 3000, linetype = "dashed") +
+  labs(x = "Inventory Size", y = "Percent of Users Satisfied", title = "90 and 100 Percent Satisfaction Levels")
+ 
 ```
