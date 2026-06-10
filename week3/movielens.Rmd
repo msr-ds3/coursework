@@ -35,6 +35,13 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings %>%
+  group_by(rating) %>%
+  ggplot(aes(x = rating)) +
+  geom_bar() + 
+  xlab("Rating") +
+  ylab("Number of Ratings") +
+  scale_y_continuous(label=comma)
 ```
 
 ## Per-movie stats
@@ -42,24 +49,64 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings_by_movie <- 
+  ratings %>%
+  group_by(movie_id) %>%
+  summarize(mean_rating = mean(rating), num_ratings = n())
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+ratings_by_movie %>%
+  ggplot(aes(x=num_ratings)) +
+  geom_density(fill = "black") + 
+  scale_x_log10() +
+  xlab("Number of Ratings by Movie") +
+  ylab("Density")
+
+ratings_by_movie %>%
+  ggplot(aes(x=num_ratings)) +
+  geom_histogram(bins=30) + 
+  scale_x_log10() +
+  xlab("Number of Ratings") +
+  ylab("Number of Movies")
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+ratings_by_movie %>%
+  ggplot(aes(x=mean_rating)) +
+  geom_density(fill = "black") +
+  xlab("Mean Rating by Movie") +
+  ylab("Density")
+
+ratings_by_movie %>%
+  ggplot(aes(x=mean_rating)) +
+  geom_histogram(bins=10) +
+  xlab("Mean Ratings") +
+  ylab("Number of Movies")
 ```
 
 ```{r cdf-movie-pop}
 # rank movies by popularity (number of ratings) and compute the cdf, or fraction of all views covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
-
+ordered_ratings_by_movie <-
+  ratings_by_movie %>%
+  arrange(desc(num_ratings))
+total_ratings <- sum(ratings_by_movie$num_ratings)
+movies_cdf <- 
+  mutate(ordered_ratings_by_movie, rank = rank(desc(num_ratings), ties.method = "random")) %>%
+  mutate(cdf = cumsum(num_ratings)/total_ratings) %>%
+  arrange(rank)
 # plot the CDF of movie popularity
+ggplot(movies_cdf, aes(x = rank, y = cdf)) +
+  geom_line() +
+  xlab("Movie Rank") +
+  ylab("CDF") +
+  scale_y_continuous(label = percent)
 ```
 
 
@@ -67,11 +114,28 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+ratings_by_user <-
+  ratings %>%
+  group_by(user_id) %>%
+  summarize(mean_rating = mean(rating), num_ratings = n())
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings_by_user %>%
+  ggplot(aes(x=num_ratings)) +
+  geom_density(fill = "black") +
+  scale_x_log10() +
+  xlab("Number of Ratings by User") +
+  ylab("Density")
+
+ratings_by_user %>%
+  ggplot(aes(x=num_ratings)) +
+  geom_histogram(bins = 30) +
+  scale_x_log10() +
+  xlab("Number of Ratings by User") +
+  ylab("Number of Users")
 ```
 
 # Anatomy of the long tail
@@ -81,6 +145,21 @@ head(ratings) %>% kable()
 # note: don't worry about the "null model" lines
 # just do the solid lines and dotted line (optional)
 # https://5harad.com/papers/long_tail.pdf
+
+num_users <- nrow(ratings_by_user)
+
+least_popular_cdf <-
+  inner_join(ratings, movies_cdf) %>% 
+  group_by(user_id) %>%
+  summarize(one_hundred_percent = max(rank), ninety_percent = quantile(rank, .9), num_ratings = n()) %>%
+  pivot_longer(names_to = "percent_satisfied", values_to = "highest_rank", 2:3) %>%
+  group_by(percent_satisfied) %>%
+  mutate(rank = rank(highest_rank, ties.method = "random"))
+
+ggplot(least_popular_cdf, aes(x=highest_rank, y=(rank/num_users), color = percent_satisfied)) +
+  geom_line() +
+  xlab("Inventory Size") +
+  ylab("Percent of Users Satisfied")
 
 # Specifically, for the subset of users who rated at least 10 movies,
 # produce a plot that shows the fraction of users satisfied (vertical
