@@ -36,8 +36,10 @@ head(ratings) %>% kable()
 ```{r dist-ratings}
 ratings%>%
 ggplot(aes(x=rating))+
-geom_histogram(bins = 10)+
-scale_y_continuous(labels = comma)
+geom_histogram(bins = 10,color = 'white')+
+scale_y_continuous(labels = comma)+
+xlab("Ratings")+
+ylab("Number of Ratings")
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
 ```
 
@@ -51,20 +53,22 @@ summarise(count = n(),mean = mean(rating))%>% head(10)%>%kable()
 ```
 
 ```{r dist-movie-popularity}
-ratings%>%group_by(movie_id)%>%
-summarise(count = n())%>%
+select(ratings,movie_id)%>%
 ggplot(aes(x=movie_id))+
 geom_histogram()+
-scale_x_log10(labels = comma)
+scale_x_log10(labels = comma)+
+xlab("Movies id")+
+ylab("Num of Ratings")
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
 ```
 
 ```{r dist-mean-ratings-by-movie}
 ratings%>%group_by(movie_id)%>%
-summarise(count = n(),mean = mean(rating))%>%
+summarise(mean = mean(rating))%>%
 ggplot(aes(x=mean))+
-geom_histogram()
+geom_histogram()+
+x_lab()
 ratings%>%group_by(movie_id)%>%
 summarise(count = n(),mean = mean(rating))%>%
 ggplot(aes(x=mean))+
@@ -128,23 +132,23 @@ scale_y_continuous(labels = comma)
 CFD_table
 c<-select(CFD_table,movie_id,Rank)
 Final_table <- left_join(ratings,c)
-Final_table%>%
-group_by(user_id)%>%
+
+Hundred <- Final_table%>%
+group_by(user_id)%>%#summarise(count= n())%>%filter(count >=10)
 summarise(inv =max(Rank))%>%
 arrange(inv)%>%
 group_by(inv)%>%
 summarise(count = n())%>%
-mutate(per = cumsum(count)/sum(count))%>%
-ggplot(aes(x= inv, y = per))+
-geom_line()
+mutate(per = cumsum(count)/sum(count))
 
 Final_table%>%filter(user_id == 1)%>%tail()
-Final_table%>%group_by(user_id)%>%
+Ninety<-Final_table%>%group_by(user_id)%>%
 summarise(inv =quantile(Rank,probs =0.9))%>%
 arrange(inv)%>%
 group_by(inv)%>%
 summarise(count = n())%>%
-mutate(per = cumsum(count)/sum(count))%>%
-ggplot(aes(x= inv, y = per))+
+mutate(per = cumsum(count)/sum(count))
+bind_rows(list(Hundred,Ninety),.id = "id")%>%
+ggplot(aes(x= inv, y = per, color = id))+
 geom_line()
 ```
