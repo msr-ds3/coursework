@@ -84,12 +84,21 @@ people <- tribble(
   "Jessica Cordero", "height",   156
 )
 
+# Restore the function
+mean <- base::mean
+
 people %>%
 pivot_wider(names_from = names, 
-values_from = values, 
-values_fn = list(values = mean)
+            values_from = values, 
+            values_fn = list(values = mean)
 )
 
+# Revised 
+people %>%
+mutate(ID = row_number()) %>%
+pivot_wider(names_from = names,
+            values_from = values
+)
 """
 If we attempted to widen the table, we'd pivot the names column to have the entries age and height
 as their own columns. It would take the values from the values column. However, following through

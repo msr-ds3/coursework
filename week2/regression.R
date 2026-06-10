@@ -118,5 +118,5 @@ b1 = 1.0176
 r = 0.72
 r_squared = r^2
 r_squared
-# The coefficient of determination is 0.4489. 44.89% of the data can be explained
+# The coefficient of determination is 0.5184. 51.84% of the data can be explained
 # by the relationship between height and weight
