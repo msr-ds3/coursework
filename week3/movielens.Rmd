@@ -205,9 +205,10 @@ df_plot <- rbind(
 ggplot(df_plot, aes(x = inventory_size, y = cdf, color = curve)) +
 geom_line() + 
 labs(
-  color = "Curve"
-  title = "User Satisfication"
-  x = "Inventory Size"
+  color = "Curve",
+  title = "User Satisfication",
+  x = "Inventory Size",
   y = "Percent of Users Satisfied"
 )
+
 
