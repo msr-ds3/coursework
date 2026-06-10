@@ -138,3 +138,21 @@ y = 120
  # Adjusted R^2:
  Adj = 1 - ((249.28 / 332.57) * ((1236 -1)/(1236-6-1)))
  Adj # 0.2467842 
+
+
+             # Coffee and Cancer Exercise
+# Number of participants to reject the null hypothesis:
+ # baseline risk (p1 = 40% --> 0.4)
+ # threshold risk (p2 = p1 + 1/100000)
+ # power --> detect unsafe 4 out of 5 times --> 80%
+ # sig.level = alpha 
+power.prop.test(p1 = 0.1, p2 = 0.4 + 1/100000, power = 0.8,
+  sig.level = 0.1, alternative = "one.sided")
+
+# In each group (coffee drinkers and non-coffee drinkers), there are 
+# 17.87 billion people, bringing the total to 34 billion.
+
+# Challenges we might face in running this experiment:
+# cancer is often measured over decades, then the follow-up mght be extremely long
+# tracking billions of people is quasi infeasible, cause it costs way too much money
+# imagine people we assigned to drink coffee actually stop, and the non drinkers start drinking coffee
