@@ -15,9 +15,11 @@ output:
 library(here)
 library(scales)
 library(tidyverse)
+library(httpgd)
 
 theme_set(theme_bw())
 
+here::i_am("05_final_report.Rmd")
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -52,13 +54,25 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
-
-
+year_counts <- read_tsv(
+  here('year_counts.tsv'), 
+  col_names = c('term', 'year', 'volume', 'book_count'), 
+  col_types = cols(
+    term = col_character()
+  )
+)
+total_counts <- read_csv(
+  here('total_counts.csv'), 
+  col_names = c('year', 'total_volume', 'page_count', 'total_book_count'),
+  col_types = cols(.default = col_double())
+)
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+
+In `total_counts`, there are `r nrow(total_counts)` lines, and in `year_counts`, there are `r nrow(year_counts)` lines.
 
 # Part B
 
@@ -69,8 +83,8 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
-
+year_total_joined <- inner_join(year_counts, total_counts, by = "year") %>%
+  mutate(prop_mentions = volume / total_volume)
 ```
 
 ## Plot the main figure 3a
@@ -78,12 +92,36 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
+custom_colors <- c("1883" = "blue", "1910" = "green", "1950" = "red")
+big_plot <- filter(year_total_joined, term == '1883' | term == '1910' | term == '1950') %>%
+  filter(year >= 1850 & year <= 2012) %>%
+  ggplot(aes(x = year, y = prop_mentions)) +
+  geom_line(mapping = aes(group = term, color = term)) +
+  scale_color_manual(values = custom_colors) +
+  scale_y_continuous(label = scales::percent) +
+  theme(
+    legend.position = c(0.85, 0.8),  # x, y coordinates inside plot
+    legend.background = element_rect(fill = alpha("white", 0.6), color = NA), # semi-transparent background
+    legend.title = element_blank(),
+    legend.text = element_text(size = 9)
+  ) +
+  labs(x = "Year", y = "Frequency")
 
+  big_plot
+
+peak_matches_df <- group_by(year_total_joined, term) %>%
+  summarize(peak_matches = max(volume), half_peak = trunc(peak_matches / 2)) %>%
+  left_join(year_total_joined, by = "term") %>%
+  select(term, peak_matches, half_peak, year, volume) %>% 
+  group_by(term) %>% 
+  filter(peak_matches == volume)
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+
+Yes, the plots are very similar.
 
 # Part C
 
@@ -97,6 +135,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
+> ![](google_ngram_fig_partc.png)
 
 # Part D
 
@@ -107,7 +146,13 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
-
+filter(year_total_joined, term == '1883' | term == '1910' | term == '1950') %>%
+  filter(year >= 1850 & year <= 2012) %>%
+  ggplot(aes(x = year, y = volume)) +
+  scale_y_continuous(label = comma) +
+  geom_line(mapping = aes(group = term, color = term)) +
+  scale_color_manual(values = custom_colors) +
+  labs(x = "Year", y = "Raw Mentions")
 ```
 
 # Part E
@@ -121,12 +166,17 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+ggplot(total_counts, aes(x = year, y = total_volume)) +
+  scale_y_continuous(label = comma) +
+  geom_line() +
+  labs(x = "Year", y = "Total Counts", title = "Total counts for each year")
 ```
 
 ## Your written answer
 
 Write up your answer to Part E here.
+
+Is strange
 
 # Part F
 
