@@ -28,14 +28,13 @@ ratings <- read_csv('ratings.csv',
 
 Loaded `r format(object.size(ratings), units="Mb")` of ratings data, containing `r format(nrow(ratings), big.mark = ",")` ratings. Here's a preview:
 ```{r preview-data}
-head(ratings) %>% kable()
+
+(ratings) %>% kable()
 ```
 
 # Summary statistics
 
 ```{r dist-ratings}
-
-library(ggplot2)
 library(dplyr)
 
 ratings %>% 
@@ -44,9 +43,12 @@ summarize(count = n())
 
 ratings %>%
 ggplot(mapping = aes(x = rating)) +
-geom_bar(fill = 'red', color = 'darkred') +
+geom_bar(fill = 'magenta', color = 'purple') +
 scale_y_continuous(labels = scales::label_comma()) +
-labs(y = "Number of ratings")
+labs(
+  title = "Distribution of Ratings",
+  y = "Number of ratings"
+)
 
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
 ```
@@ -123,7 +125,7 @@ ggplot(map
 ```
 cdf_df %>%
 ggplot(mapping = aes(x = rank, y = cdf * 100)) +
-geom_point() +
+geom_line() +
 scale_y_continuous(labels = \(x) paste(x, '%')) +
 labs(
   title = 'What Fractions of Ratings are Given to the Most Popular Movies?',
