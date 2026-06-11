@@ -201,8 +201,6 @@ half_lives <- proportion_peaks %>%
   slice_min(order_by=year, n=1) %>%  # first year
   summarize(half_life=year-peak_year)
 
-half_lives_1883_1910_1950 <- half_lives %>% 
-  filter(term %in% c(1883, 1910, 1950))
 ```
 
 ## Plot the inset of figure 3a
