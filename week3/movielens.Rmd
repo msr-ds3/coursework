@@ -35,6 +35,12 @@ head(ratings) %>% kable()
 
 ```{r dist-ratings}
 # plot the distribution of rating values https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=26
+ratings%>%
+ggplot(aes(x= rating))+geom_histogram(bins=10)+
+scale_y_continuous(labels = comma)+ 
+xlab("Rating")+
+ylab("Number Of Ratings")
+
 ```
 
 ## Per-movie stats
@@ -42,23 +48,44 @@ head(ratings) %>% kable()
 ```{r aggregate-by-movie}
 # aggregate ratings by movie, computing mean rating and number of ratings
 # hint: use the n() function for easy counting within a group
+ratings%>%group_by(movie_id)%>% summarize(mean_rating = mean(rating), num_ratings = n())
 ```
 
 ```{r dist-movie-popularity}
 # plot distribution of movie popularity (= number of ratings the movie received)
 # hint: try scale_x_log10() for a logarithmic x axis
+#label axes
+ratings%>%group_by(movie_id)%>% summarize(mean_rating = mean(rating), num_ratings = n())%>%
+ggplot (aes(x = num_ratings))+geom_histogram() + scale_x_log10()+
+ylab("Number of Movies")+
+xlab("Number Of Ratings")
 ```
 
 ```{r dist-mean-ratings-by-movie}
 # plot distribution of mean ratings by movie https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=28
 # hint: try geom_histogram and geom_density
+ratings%>% group_by(movie_id)%>% summarize(mean_ratings = mean(rating))%>%
+ggplot(aes(x= mean_ratings))+geom_histogram()+
+ylab("Number of Movies")+
+xlab("Mean Of Ratings")
+
+
+ratings%>% group_by(movie_id)%>% summarize(mean_ratings = mean(rating))%>%
+ggplot(aes(x= mean_ratings))+geom_density(fill="grey")+
+geom_vline(aes(xintercept = median(count)), linetype = "dashed") +
+ylab("Number of Movies")+
+xlab("Mean Of Ratings")
+
 ```
 
 ```{r cdf-movie-pop}
 # rank movies by popularity (number of ratings) and compute the cdf, or fraction of all views covered by the top-k movies https://speakerdeck.com/jhofman/modeling-social-data-lecture-2-introduction-to-counting?slide=30
 # hint: use dplyr's rank and arrange functions, and the base R sum and cumsum functions
+movie_rating <- ratings%>% group_by(movie_id)%>%summarize(mean_ratings = mean(rating), count = n())%>%arrange(desc(count))
+movie_rating %>% ungroup() %>% mutate(rank = rank(desc(count)), fraction_rating = cumsum(count)/sum(count))%>% 
+ggplot(aes(x = rank, y = fraction_rating)) +geom_line() + 
+xlab('Movie rank') + ylab('Cumulative percent of ratings')
 # store the result in a new data frame so you can use it in creating figure 2 from the paper below
-
 # plot the CDF of movie popularity
 ```
 
@@ -67,11 +94,15 @@ head(ratings) %>% kable()
 
 ```{r aggregate-by-user}
 # aggregate ratings by user, computing mean and number of ratings
+#count or movie_id
+ratings %>% group_by(user_id) %>% summarize( count = n(), mean_rating = mean(rating))%>% arrange(desc(count))
 ```
 
 ```{r dist-user-activity}
 # plot distribution of user activity (= number of ratings the user made)
 # hint: try a log scale here
+ratings %>% group_by(user_id) %>% summarize( count = n(), mean_rating = mean(rating))%>% arrange(desc(count))%>% ggplot(aes(x = mean_rating)) + geom_histogram()
+
 ```
 
 # Anatomy of the long tail
@@ -79,15 +110,26 @@ head(ratings) %>% kable()
 ```{r long-tail}
 # generate the equivalent of figure 2a of this paper:
 # note: don't worry about the "null model" lines
-# just do the solid lines and dotted line (optional)
+# just do the solid lines and dotted line (optional
 # https://5harad.com/papers/long_tail.pdf
 
 # Specifically, for the subset of users who rated at least 10 movies,
+cum_dist <- movie_rating %>% ungroup() %>% mutate(rank = rank(desc(count)), fraction_rating = cumsum(count)/sum(count))
+
+
+table1 <- cum_dist %>% inner_join(ratings) %>% group_by (user_id) %>% 
+summarize(user_count = n(), inventory  = max(rank))%>% filter(user_count >=10) %>% ungroup() %>%
+arrange(inventory)%>% mutate(satisfied = row_number()/ n(), type = "100")
+table2 <-cum_dist %>% inner_join(ratings) %>%  group_by (user_id) %>% 
+summarize(user_count = n(), inventory = quantile(rank,0.9))%>%filter (user_count >= 10)%>%  ungroup() %>%
+arrange(inventory)%>% mutate(satisfied = row_number()/ n(), type = "90")
+table2
+long_tail <- bind_rows(table1,table2) 
+ggplot(long_tail, aes(x = inventory, y = satisfied, color = type)) + geom_line()+geom_vline(xintercept = 3000, linetype = "dashed")
 # produce a plot that shows the fraction of users satisfied (vertical
 # axis) as a function of inventory size (horizontal axis). We will
 # define "satisfied" as follows: an individual user is satisfied p% of
 # the time at inventory of size k if at least p% of the movies they
-# rated are contained in the top k most popular movies. As in the
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
