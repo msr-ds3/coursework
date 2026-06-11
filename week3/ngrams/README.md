@@ -14,7 +14,7 @@ The full paper can be found [here](https://aidenlab.org/papers/Science.Culturomi
 
 ![](michel_fig_3a.png)
 
-a) Get the raw data from the [Google Books NGram Viewer website](http://storage.googleapis.com/books/ngrams/books/datasetsv2.html). In particular, you should use version 2 of the English language corpus, which was released on July 1, 2012. Uncompressed, this file is 1.4GB.
+a) Get the raw data from the [Google Books NGram Viewer website](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html). In particular, you should use version 2 of the English language corpus, which was released on July 1, 2012. Uncompressed, this file is 1.4GB.
 
 b) Recreate the main part of figure 3a of Michel et al. (2011). To recreate this figure, you will need two files: the one you downloaded in part (a) and the “total counts” file, which you can use to convert the raw counts into proportions. Note that the total counts file has a structure that may make it a bit hard to read in. Does version 2 of the NGram data produce similar results to those presented in Michel et al. (2011), which are based on version 1 data?
 
