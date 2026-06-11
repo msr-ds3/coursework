@@ -1,6 +1,6 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Your Name (your uni)"
+author: "Addina Rahaman (City College of New York)"
 date: '`r Sys.time()`'
 output:
   html_document:
@@ -52,13 +52,15 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
-
-
+year_counts <- read_tsv(here("week3", "ngrams", "year_counts.tsv"), col_names=c('term', 'year', 'volume', 'book_count'))
+total_counts <- read_csv(here("week3", "ngrams", "total_counts.csv"), col_names=c('year', 'total_volume', 'page_count', 'book_count'))
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
+`r paste("\nyear_counts rows: ", nrow(year_counts))`
+`r paste("\ntotal_counts rows", nrow(total_counts))`
 
 # Part B
 
@@ -69,8 +71,9 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
-
+term_counts <- left_join(year_counts, total_counts, by="year") %>% 
+  rename(term_book_count=book_count.x, total_book_count=book_count.y) %>% 
+  mutate(proportion=volume/total_volume)
 ```
 
 ## Plot the main figure 3a
@@ -78,12 +81,23 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
-
+term_counts %>% 
+  arrange(year) %>%
+  filter(year >= 1850 & year <= 2012) %>%
+  filter(term == 1883 | term == 1910 | term == 1950) %>% 
+  ggplot(aes(x=year, y=proportion, color=factor(term))) + 
+  geom_line() + 
+  labs(
+    x='Year', 
+    y='Frequency',
+    color='ngram'
+  )
 ```
 
 ## Your written answer
 
-Write up your answer to Part B here.
+The data in Version 2 has similar general shapes and trends for the ngrams 1883, 1910, and 1950, however the frequencies are scaled down by a factor of 1e^-4.
+If the scale of the y axis were the same, the peaks for each ngram would generally have a similar year and frequency.
 
 # Part C
 
@@ -96,7 +110,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 ## Your written answer
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-
+![](ngram-viewer-ss.png)
 
 # Part D
 
@@ -107,14 +121,24 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
-
+term_counts %>% 
+  arrange(year) %>%
+  filter(year >= 1850 & year <= 2012) %>%
+  filter(term == 1883 | term == 1910 | term == 1950) %>% 
+  ggplot(aes(x=year, y=volume, color=factor(term))) + 
+  geom_line() + 
+  scale_y_continuous(label=comma) +
+  labs(
+    x='Year', 
+    y='Raw Mention Count',
+    color='ngram'
+  )
 ```
 
 # Part E
 
 > Does the difference between (b) and (d) lead you to reevaluate any of the results of Michel et al. (2011). Why or why not?
 
-As part of answering this question, make an additional plot.
 
 ## Plot the totals
 
@@ -122,11 +146,22 @@ Plot the total counts for each year over time, from 1850 to 2012. Use the `comma
 
 ```{r plot-totals}
 
+total_counts %>% 
+  filter(year >= 1850 & year <= 2012) %>% 
+  ggplot(aes(x=year, y=total_volume)) + 
+  geom_line() + 
+  labs(
+    x='Year',
+    y='Total Counts'
+  )
 ```
 
 ## Your written answer
 
-Write up your answer to Part E here.
+It does, because (d) clearly shows an increase of the ngrams 1883, 1910, and 1950 mentioned over the years. In fact, in the year 2012, 1883 and 1910 both have reached past their first peak. 
+The metric used in (b) are proportions relative to the year on the x-axis; the graph may make it appear as if the proportion of mentions for each year are all relative to a constant total volume across all years;
+however, this would not be the case since there are more books are being published as the years progress, therefore there would be more total word counts every year.
+
 
 # Part F
 
@@ -137,6 +172,18 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+term_counts_1875_1975 <- term_counts %>% 
+  filter(term >= 1875 & term <= 1975) %>% 
+  filter(year >= 1850 & year <= 2012)
+
+proportion_peaks <- term_counts_1875_1975 %>% 
+  group_by(term) %>% 
+  filter(proportion == max(proportion)) %>% 
+  select(term, year, proportion) %>% 
+  arrange(term) %>% 
+  rename(peak=proportion, peak_year=year)
+
+proportion_peaks
 
 ```
 
@@ -145,7 +192,17 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+half_lives <- proportion_peaks %>% 
+  mutate(half_peak=peak/2) %>% 
+  left_join(term_counts_1875_1975, by='term') %>% 
+  group_by(term) %>%
+  filter(year >= peak_year) %>% # years after peak year
+  filter(proportion <= half_peak) %>% # on or below half the peak
+  slice_min(order_by=year, n=1) %>%  # first year
+  summarize(half_life=year-peak_year)
 
+half_lives_1883_1910_1950 <- half_lives %>% 
+  filter(term %in% c(1883, 1910, 1950))
 ```
 
 ## Plot the inset of figure 3a
@@ -155,11 +212,20 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 ```{r plot-half-lifes}
 
+half_lives %>% 
+  ggplot(aes(x=term, y=half_life)) +
+  geom_point(alpha=0.5) + 
+  geom_smooth() +
+  labs(
+    x='Year',
+    y='Half Life (Years)'
+  ) 
+
 ```
 
 ## Your written answer
 
-Write up your answer to Part F here.
+The graph looks very different this time. Version 1 had a downward trend, but Version 2 increases until the middle of 1900-1910 then stabilizes after (with another local minimum close to 1930).
 
 # Part G
 
@@ -168,6 +234,23 @@ Write up your answer to Part F here.
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+There are a cluster of years between 1900-1925 which have long half-lives (perhaps because of WWI).
+
+```{r longest-short-half-lives}
+longest_half_lives <- half_lives %>% 
+  slice_max(order_by=half_life, n=10) %>% 
+  arrange(term)
+longest_half_lives 
+
+shortest_half_lives <- half_lives %>% 
+  slice_min(order_by=half_life, n=10) %>% 
+  arrange(term)
+shortest_half_lives
+
+```
+
+After looking at the particular years, it does seem like the late 1800s and early 1900s (mainly until 1910s) have the longest half life. Meanwhile the lowest half lives are concentrated in the 1870s-1880s. 
 
 # Makefile
 
