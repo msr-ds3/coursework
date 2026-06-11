@@ -5,10 +5,10 @@ This week starts with a discussion of regression into machine learning and then 
 ## Regression (cont'd)
 
   * See this notebook on [model evaluation](model_evaluation.ipynb) 
-  * See if you can reproduce the table in ISRS 5.29 using the original dataset in [body.dat.txt](body.dat.txt), taken from [here](http://jse.amstat.org/v11n2/datasets.heinz.html)
+  * See if you can reproduce the table in ISRS 5.29 using the original dataset in [body.dat.txt](body.dat.txt), taken from [here](http://jse.amstat.org/v11n2/datasets.heinz.html), in [regression-pt2.R](../week2/regression-pt2.R)
   * Do Labs 3.6.3 through 3.6.6 of [Intro to Statistical Learning](https://www.statlearning.com) to get practice with linear models in R in [ISL-3.6-exercises.Rmd](ISL-3.6-exercises.Rmd)
   * Read Sections 6.1 through 6.3 of ISRS on regression with multiple features
-  * Do Exercises 6.1, 6.2, and 6.3, and use the original data set in [babyweights.txt](babyweights.txt), taken from [here](https://web.archive.org/web/20040906234424/http://www.ma.hw.ac.uk/~stan/aod/library/babies.dat.txt), to reproduce the results from the book
+  * Do Exercises 6.1, 6.2, and 6.3, and use the original data set in [babyweights.txt](babyweights.txt), taken from [here](https://web.archive.org/web/20040906234424/http://www.ma.hw.ac.uk/~stan/aod/library/babies.dat.txt), to reproduce the results from the book in [regression-pt2.R](../week2/regression-pt2.R)
 
 
 ## References
@@ -21,6 +21,7 @@ This week starts with a discussion of regression into machine learning and then 
 
 * See the [slides](https://speakerdeck.com/jhofman/modeling-social-data-lecture-8-regression-part-2) and [notebook](complexity_control.ipynb) on overfitting and cross-validation
 * Read section 5.1 of [An Introduction to Statistical Learning (R version)](https://www.statlearning.com) on cross-validation and do labs 5.3.1, 5.3.2, and 5.3.3 in [ISL-5.3-exercises.Rmd](ISL-5.3-exercises.Rmd)
+* See this notebook on [confounding_and_collinearity.Rmd](confounds_and_collinearity.Rmd) (rendered [here](https://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week3/confounds_and_collinearity.html))
 
 * [Investigating link between coffee and cancer](https://github.com/jhofman/msd2019/tree/master/homework/homework_2/problem_1)
 
@@ -32,17 +33,8 @@ This week starts with a discussion of regression into machine learning and then 
 * Use the [download_movielens.sh](download_movielens.sh) script to download the [MovieLens data](http://grouplens.org/datasets/movielens/)
 * Fill in code in the [movielens.Rmd](movielens.Rmd) file to reproduce plots from lecture slides and Figures 1 and 2 from the paper
 
-<!--
 
 # Day 4
-
-## The long tail (cont'd)
-
-* See this notebook on [confounding_and_collinearity.Rmd](confounds_and_collinearity.Rmd) (rendered [here](https://htmlpreview.github.io/?https://github.com/msr-ds3/coursework/blob/master/week3/confounds_and_collinearity.html))
-* Continue working on the previous regression and generalization assignments
-* Then move on to reproducing results from "The Anatomy of the Long Tail"
-
-# Day 5
 
 ## N-gram data and "Culturonomics"
 
