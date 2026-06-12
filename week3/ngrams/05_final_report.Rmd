@@ -106,15 +106,7 @@ big_plot <- filter(year_total_joined, term == '1883' | term == '1910' | term == 
     legend.text = element_text(size = 9)
   ) +
   labs(x = "Year", y = "Frequency")
-
-  big_plot
-
-peak_matches_df <- group_by(year_total_joined, term) %>%
-  summarize(peak_matches = max(volume), half_peak = trunc(peak_matches / 2)) %>%
-  left_join(year_total_joined, by = "term") %>%
-  select(term, peak_matches, half_peak, year, volume) %>% 
-  group_by(term) %>% 
-  filter(peak_matches == volume)
+big_plot
 ```
 
 ## Your written answer
@@ -135,7 +127,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
-> ![](google_ngram_fig_partc.png)
+> ![](google_ngrams_fig_partc.png)
 
 # Part D
 
@@ -187,7 +179,16 @@ Is strange
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+year_of_peak_prop <- year_total_joined %>% 
+  filter(year <= 1975 & year >= 1875) %>%
+  select(term, year, prop_mentions) %>%
+  group_by(term) %>% 
+  filter(prop_mentions == max(prop_mentions)) %>%
+  mutate(peak_year = year, peak_prop_mentions = prop_mentions) %>% 
+  select(term, peak_year, peak_prop_mentions) %>%
+  arrange(term)
 
+year_of_peak_prop
 ```
 
 ## Compute half-lifes
@@ -195,6 +196,18 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
+half_life_years <- year_of_peak_prop %>% 
+  mutate(half_life_prop = peak_prop_mentions / 2) %>%
+  inner_join(year_total_joined, by = "term") %>% 
+  select(term, peak_year, peak_prop_mentions, half_life_prop, year, prop_mentions) %>%
+  filter(year > peak_year) %>%
+  filter(prop_mentions <= half_life_prop) %>% 
+  filter(year == min(year)) %>% 
+  mutate(difference = year - peak_year) %>% 
+  filter(as.integer(term) >= 1875 & as.integer(term) <= 1975) %>% 
+  select(term, peak_year, year, difference)
+
+  half_life_years
 
 ```
 
@@ -202,9 +215,15 @@ Now, for each year term, find the minimum number of years it takes for the propo
 
 Plot the half-life of each term over time from 1850 to 2012. Each point should represent one year term, and add a line to show the trend using `geom_smooth()`.
 
-
 ```{r plot-half-lifes}
-
+half_life_years %>% 
+  filter(as.integer(term) >= 1875 & as.integer(term) < 1975) %>% 
+  mutate(term_as_int = as.integer(term)) %>%
+  select(term, difference, term_as_int) %>%
+  ggplot(aes(x = term_as_int, y = difference)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Year", y = "Half-life (yrs)")
 ```
 
 ## Your written answer
