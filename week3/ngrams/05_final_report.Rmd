@@ -1,6 +1,6 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Your Name (your uni)"
+author: "Nabin Oli (Caldwell University)"
 date: '`r Sys.time()`'
 output:
   html_document:
@@ -15,7 +15,8 @@ output:
 library(here)
 library(scales)
 library(tidyverse)
-
+library(httpgd)
+library(knitr)
 theme_set(theme_bw())
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -52,14 +53,18 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+year_table <- read_tsv(here('week3/ngrams','years_counts.tsv'),
+                      col_names = c('term', 'year', 'volume', 'book_count'))
 
+total_counts_table <- read_csv(here('week3/ngrams','total_counts.csv'),
+                                col_names = c('year','total_volume','page_count','book_count'))
 
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
-
+There are total of `r nrow(year_table)` in year.csv and there are `r nrow(total_counts_table)` rows in total.tsv
 # Part B
 
 > Recreate the main part of figure 3a of Michel et al. (2011). To recreate this figure, you will need two files: the one you downloaded in part (a) and the “total counts” file, which you can use to convert the raw counts into proportions. Note that the total counts file has a structure that may make it a bit hard to read in. Does version 2 of the NGram data produce similar results to those presented in Michel et al. (2011), which are based on version 1 data?
@@ -69,7 +74,8 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
+Prop_table <-full_join(year_table,total_counts_table,by = "year")%>%
+mutate(prop = volume/total_volume)
 
 ```
 
@@ -78,12 +84,22 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
-
+Prop_table%>%
+filter(year<=2012 & year >= 1850)%>%
+filter(term %in% c("1883","1910","1950"))%>%
+select(term,year,prop)%>%
+ggplot(aes(x = year, y=prop, color = as.factor(term)))+
+geom_line()+
+scale_y_continuous(labels = percent)+
+xlab("Years")+
+ylab("Percentage")+
+labs(color = "Years ngrams")
 ```
 
 ## Your written answer
 
 Write up your answer to Part B here.
+Yes the graph looks similar to that on figure 3a of Michel et al.(2011)
 
 # Part C
 
@@ -96,7 +112,9 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 ## Your written answer
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
-
+![](year_ngram.png)
+- Overall shape of plot look similar, but there is mismatch in value of proportion probably because google Ngram viewer is based in updated data.
+- Even peak year match in these graphs.
 
 # Part D
 
@@ -107,7 +125,17 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-raw-mentions-over-time}
-
+str(Prop_table['year'])
+Prop_table%>%
+filter(year<=2012 & year >= 1850)%>%
+filter(term %in% c("1883","1910","1950"))%>%
+select(term,year,volume)%>%
+ggplot(aes(x = year, y=volume, color = as.factor(term)))+
+geom_line()+
+scale_y_continuous(labels = comma)+
+labs(x ="Years",
+      y="Counts",
+      color = "Years ngram")
 ```
 
 # Part E
@@ -121,7 +149,13 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+select(total_counts_table,year,total_volume)%>%
+filter(year<=2012 & year>=1850)%>%
+ggplot(aes(x=year,y=total_volume))+
+geom_line()+
+scale_y_continuous(labels = comma)+
+labs(x="Years",
+    y = "Total counts")
 ```
 
 ## Your written answer
@@ -137,7 +171,13 @@ Write up your answer to Part E here.
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
+max_peaks<-Prop_table%>%
+filter(year %in% c(1850:2012)& term %in% c(1875:1975))%>%
+group_by(term)%>%
+summarize(max_prop = max(prop))
 
+max_peaks<-left_join(max_peaks,Prop_table,by = "term")%>%filter(year %in% c(1850:2012))%>%
+filter(max_prop==prop)%>%select(term,year,max_prop)
 ```
 
 ## Compute half-lifes
@@ -145,7 +185,12 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
-
+max_peaks<-rename(max_peaks,max_year=year)
+Half_life<-full_join(Prop_table,max_peaks,by = "term")%>%
+filter((max_prop/prop)>=2 & year>max_year)%>%
+mutate(half_year = year - max_year)%>%
+group_by(term) %>% 
+summarize(half_life = min(half_year))
 ```
 
 ## Plot the inset of figure 3a
@@ -154,13 +199,18 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-
+Half_life%>%
+ggplot(aes(x=term,y=half_life))+
+geom_point()+
+geom_smooth()+
+labs(x="Term(year_ngrams)",
+    y= "Half life in years")
 ```
 
 ## Your written answer
 
 Write up your answer to Part F here.
-
+It doesn’t have a same shape as in paper. There is no clear trend with increase in years. There are few outlier years that push and pull the line of fit.
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
@@ -168,6 +218,22 @@ Write up your answer to Part F here.
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+```{r}
+Half_life%>%
+arrange(desc(half_life))%>%
+head()%>%kable()
+```
+These are top 6 most slowly forgotten years.
+- 1900 is the top one because it is a start of new centuary.
+- 1905 is the publication of special theory of relativity and it is widely mentioned in scientific literature.
+- 1893 was chicago world fair and this year is generally mentioned when discussing about Tesla VS Edision Rivalry.
+```{r}
+Half_life%>%
+arrange(half_life)%>%
+head()%>%kable()
+```
+These are top 6 quickly forgotten years.
+- 1917 , 1918  and 1942 all fall between world wars. 1919 was when world war I ended and also 1939 was the year world war II started.
 
 # Makefile
 
