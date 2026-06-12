@@ -1,6 +1,6 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Your Name (your uni)"
+author: "Jacqueline L (Stony Brook University)"
 date: '`r Sys.time()`'
 output:
   html_document:
@@ -15,7 +15,6 @@ output:
 library(here)
 library(scales)
 library(tidyverse)
-library(httpgd)
 
 theme_set(theme_bw())
 
@@ -54,15 +53,16 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+here()
 year_counts <- read_tsv(
-  here('year_counts.tsv'), 
+  'year_counts.tsv', 
   col_names = c('term', 'year', 'volume', 'book_count'), 
   col_types = cols(
     term = col_character()
   )
 )
 total_counts <- read_csv(
-  here('total_counts.csv'), 
+  'total_counts.csv', 
   col_names = c('year', 'total_volume', 'page_count', 'total_book_count'),
   col_types = cols(.default = col_double())
 )
@@ -98,7 +98,7 @@ big_plot <- filter(year_total_joined, term == '1883' | term == '1910' | term == 
   ggplot(aes(x = year, y = prop_mentions)) +
   geom_line(mapping = aes(group = term, color = term)) +
   scale_color_manual(values = custom_colors) +
-  scale_y_continuous(label = scales::percent) +
+  scale_y_continuous(label = percent) +
   theme(
     legend.position = c(0.85, 0.8),  # x, y coordinates inside plot
     legend.background = element_rect(fill = alpha("white", 0.6), color = NA), # semi-transparent background
@@ -128,6 +128,9 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
 > ![](google_ngrams_fig_partc.png)
+
+The plots are pretty similar. The google one is smoother and the peaks are more appararent, but
+overall the major qualities of the graphs align. 
 
 # Part D
 
@@ -159,7 +162,7 @@ Plot the total counts for each year over time, from 1850 to 2012. Use the `comma
 
 ```{r plot-totals}
 ggplot(total_counts, aes(x = year, y = total_volume)) +
-  scale_y_continuous(label = comma) +
+  scale_y_continuous(label = scales::comma) +
   geom_line() +
   labs(x = "Year", y = "Total Counts", title = "Total counts for each year")
 ```
@@ -168,7 +171,10 @@ ggplot(total_counts, aes(x = year, y = total_volume)) +
 
 Write up your answer to Part E here.
 
-Is strange
+Yes it does. I think the study fails to acknowledge (or did not choose to address) the fact that
+the amount of counts of words increased exponentially starting around the 1900s. If you account for it,
+it makes sense why the proportion decreases. The argument that the paper made is not as strong as 
+the plot makes it seem. 
 
 # Part F
 
@@ -230,6 +236,12 @@ half_life_years %>%
 
 Write up your answer to Part F here.
 
+Version 2 of the NGram data doesn't produce similar results to thoes presented in the study.
+For version 1, the half-lifes have a downward trend and present as "forgetting"
+faster and faster. For version 2, the plot indicates a peak around the 1900s and finishes
+with an slight upward trend. It does not follow from the version two graph that forgetting 
+is quicker, especially given that the half life starts out much lower than it ends. 
+
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
@@ -237,6 +249,32 @@ Write up your answer to Part F here.
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+Finding the outliers using head/tail on a sorted table by half life: 
+
+```{r}
+sorted_hlf_life <- half_life_years %>% 
+  filter(as.integer(term) >= 1875 & as.integer(term) < 1975) %>% 
+  mutate(term_as_int = as.integer(term)) %>%
+  select(term, term_as_int, difference) %>%
+  arrange(difference)
+
+head(sorted_hlf_life, 3)
+tail(sorted_hlf_life, 3)
+
+```
+
+The years with the longest half-lifes were: 1900, 1910, 1893
+
+A possible reason for 1900 is because it was the start of the century. For 1910, there are a variety of major
+events that occured: several revolutions, the beginning of George V's reign, and the Great Fire in the 
+northwestern United States. For 1893, there was a major financial crash on the New York Stock Exchange 
+and Thomas Edison and Nikola Tesla's feud (The War of Currents) reached a peak when competing for who would light the Chicago World's Fair. 
+
+The years with the shortest half-lifes were: 1877, 1878, 1942
+
+A possible reason for 1877 and 1878 is because they're grouped into the Gilded Age. Similarly, 1942 could
+have been forgotten more quickly because it's grouped into WWII which started in 1939.
 
 # Makefile
 

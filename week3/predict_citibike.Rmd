@@ -1,6 +1,6 @@
 ---
 title: "Predicting Daily Citibike Trips"
-author: "Your Name"
+author: "Jacqueline Louie (Stony Brook University)"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -13,7 +13,7 @@ library(modelr)
 ## Load data
 
 ```{r}
-
+read_tsv('trips_per_day.tsv')
 ```
 
 ## Train/test split
