@@ -1,6 +1,6 @@
 ---
 title: "MSD Homework 2, Problem 3"
-author: "Jacqueline L (Stony Brook University)"
+author: "Jacqueline Louie (Stony Brook University)"
 date: '`r Sys.time()`'
 output:
   html_document:
