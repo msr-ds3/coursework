@@ -1,0 +1,76 @@
+---
+title: "Predicting Daily Citibike Trips"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(modelr)
+```
+
+## Load data
+
+```{r}
+
+```
+
+## Train/test split
+
+Hold out 10% of the data as a final test set. Use the remaining 90% for
+training and validation.
+
+```{r}
+
+```
+
+## Baseline model: temperature only
+
+Start with the polynomial model from the complexity control notebook.
+
+```{r}
+# TODO: fit a linear model using poly(tmin, degree) on training data
+# TODO: try different polynomial degrees and evaluate RMSE on validation data
+```
+
+## Feature engineering
+
+Add features that might help: day of week, month, precipitation, etc.
+Remember: only use information available *before* the day in question.
+
+```{r}
+
+```
+
+## Model comparison
+
+Try different models and compare their validation performance.
+
+```{r}
+
+```
+
+## Final model
+
+Pick your best model and plot the results.
+
+```{r}
+
+```
+
+## Save model
+
+```{r}
+
+```
+
+## Test set evaluation
+
+**Do this only once, at the very end!**
+
+```{r}
+# TODO: load your saved model and predict on trips_test
+# TODO: compute RMSE on test set
+# TODO: how do you think this model will perform on future data?
+```
