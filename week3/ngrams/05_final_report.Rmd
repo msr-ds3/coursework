@@ -15,6 +15,7 @@ output:
 library(here)
 library(scales)
 library(tidyverse)
+library(httpgd)
 
 theme_set(theme_bw())
 
@@ -52,7 +53,13 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
 ```{r load-counts}
+library(readr)  
+library(here) 
+year <- read_tsv((here('week3', 'year_counts.tsv')),
+                    col_names = c('term', 'year', 'volume',  'book_count'))
 
+counts <- read_csv((here('week3','total_counts.csv')),
+                     col_names = c('year', 'total_volume', 'page_count',  'book_count'))
 
 ```
 
@@ -60,16 +67,30 @@ Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` fun
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
 
+```{r Total-number-of-lines}
+
+nrow(year)
+# 53393
+nrow(counts)
+# 426
+```
+
 # Part B
 
-> Recreate the main part of figure 3a of Michel et al. (2011). To recreate this figure, you will need two files: the one you downloaded in part (a) and the “total counts” file, which you can use to convert the raw counts into proportions. Note that the total counts file has a structure that may make it a bit hard to read in. Does version 2 of the NGram data produce similar results to those presented in Michel et al. (2011), which are based on version 1 data?
+> Recreate the main part of figure 3a of Michel et al. (2011). To recreate this figure, you will need two files: the one you downloaded in part (a) and the “total counts” file, 
+which you can use to convert the raw counts into proportions. Note that the total counts file has a structure that may make it a bit hard to read in.
+ Does version 2 of the NGram data produce similar results to those presented in Michel et al. (2011), which are based on version 1 data?
 
 ## Join ngram year counts and totals
 
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
 ```{r join-years-and-totals}
-
+join <- year %>% inner_join(counts, by = "year" )
+join
+join %>% group_by(year,term) %>% 
+summarize(term_count = sum(book_count.x) , total_count = sum(book_count.y))%>% 
+mutate( proportion = term_count/total_count)
 
 ```
 
@@ -78,12 +99,16 @@ Join the raw year term counts with the total counts and divide to get a proporti
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
 ```{r plot-proportion-over-time}
-
+library(scales)
+join %>% group_by(year,term) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume))%>% 
+mutate( proportion = term_count/total_count) %>% filter((term == 1883 | term == 1910 | term == 1950) & (year >= 1850 & year <= 2012))%>% 
+ggplot(aes(x = year, y = proportion, color = factor(term)))+ geom_line() + scale_y_continuous(label = percent)+
+xlab('Years') +ylab('Frequency')
 ```
 
 ## Your written answer
 
-Write up your answer to Part B here.
+There is no differnece between the graphs for version 2 and version 1 for the proportion of mentions for each term normalized by the total counts for each year 
 
 # Part C
 
@@ -97,6 +122,10 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
+> ![](figure_1.png)
+
+There is a difference between the graphs of Version 2 and the NGram viewer for the proportions of mentions for each term as the all three terms each have higher proportions for each year
+
 
 # Part D
 
@@ -106,7 +135,13 @@ Add your screenshot for Part C below this line using the `![](figure_filename.pn
 
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
-```{r plot-raw-mentions-over-time}
+``` {r plot-raw-mentions-over-time}
+library(scales)
+
+join %>% group_by(term,year) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>% 
+filter((term == 1883 | term == 1910 | term == 1950) & (year >= 1850 & year <= 2012))%>% 
+ggplot(aes(x = year, y = term_count, color = factor(term)))+ geom_line() +scale_y_continuous(label = comma)+
+xlab('Years') +ylab('Mentions')
 
 ```
 
@@ -121,23 +156,34 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-
+join %>% group_by(term,year) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>% f
+ilter((term == 1883 | term == 1910 | term == 1950) & (year >= 1850 & year <= 2012))%>% 
+ggplot(aes(x = year, y = total_count ))+ geom_line() +scale_y_continuous(label = comma)+
+xlab('Year') +ylab('Total Counts')
 ```
 
-## Your written answer
 
 Write up your answer to Part E here.
 
+They dont lead me to reevaluate the results of Michel et al. (2011) because these are just summs of the the counts but the what Michel et al. (2011) are showing is the 
+proportion bascially the relativity to the total in each group so it may look different. Also i think that the total count is going to keeep that kind of trend upward because 
+more books are being released so its just a summation but it does eventually start to decrease so i dont think there is a difference 
 # Part F
 
-> Now, using the proportion of mentions, replicate the inset of figure 3a. That is, for each year between 1875 and 1975, calculate the half-life of that year. The half-life is defined to be the number of years that pass before the proportion of mentions reaches half its peak value. Note that Michel et al. (2011) do something more complicated to estimate the half-life—see section III.6 of the Supporting Online Information—but they claim that both approaches produce similar results. Does version 2 of the NGram data produce similar results to those presented in Michel et al. (2011), which are based on version 1 data? (Hint: Don’t be surprised if it doesn’t.)
+> Now, using the proportion of mentions, replicate the inset of figure 3a. That is, for each year between 1875 and 1975, calculate the half-life of that year. The half-life is defined to be the number of years 
+that pass before the proportion of mentions reaches half its peak value. Note that Michel et al.
+(2011) do something more complicated to estimate the half-life—see section III.6 of the Supporting Online Information—
+but they claim that both approaches produce similar results. Does version 2 of the NGram data produce similar results to those presented in Michel et al. (2011),
+which are based on version 1 data? (Hint: Don’t be surprised if it doesn’t.)
 
 ## Compute peak mentions
 
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
-
+peak <- join %>%  group_by(year,term) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>% 
+mutate( proportion = term_count/total_count) %>% group_by( term)%>% summarize (peak = max(proportion))
+peak
 ```
 
 ## Compute half-lifes
@@ -145,29 +191,45 @@ For each year term, find the year where its proportion of mentions peaks (hits i
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
-
+min <- join %>%  group_by(term,year) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>%
+mutate( proportion = term_count/total_count) 
+min
+peak_year <- min %>% left_join(peak) %>%  filter(year>= 1875 , year <= 1975) %>% filter(proportion == peak) %>% summarize(peakyear= year ,term,peak)
+peak_year 
+min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate(half_life = year - peakyear) %>%
+group_by(term) %>% summarize(half_life = min(half_life))
 ```
-
 ## Plot the inset of figure 3a
 
 Plot the half-life of each term over time from 1850 to 2012. Each point should represent one year term, and add a line to show the trend using `geom_smooth()`.
 
 
 ```{r plot-half-lifes}
+min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate( half_life = year - peakyear) %>%
+group_by(term) %>% summarize(half_life = min(half_life)) %>% filter(term>=1850 & term<=2012) %>%
+ggplot(aes(x = term, y = half_life))+geom_point()+geom_smooth()+
+xlab('Term') +ylab('Half-Life')
 
 ```
-
-## Your written answer
-
 Write up your answer to Part F here.
+
+ Version 2 does not provide a similar results to those of Michel et al. (2011). Version 2 seems to trend a little more regularly than 
+ Michel et al. (2011) whisch looks like its tredning more downward. 
 
 # Part G
 
 > Were there any years that were outliers such as years that were forgotten particularly quickly or particularly slowly? Briefly speculate about possible reasons for that pattern and explain how you identified the outliers.
 
-## Your written answer
-
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
+
+Yes there are years that are fogotten too quickly like and as you can see in the code the outliers here are 1900 being forgotten too slowly and 1942 being forgotten too quickly 
+this is because in 1900 it was the beginning of the century so it was very popular and then for 1942, i think it was forgotten too quickly because it was a time during world war 2 
+where there wenta any significant policies or moves that were pivotal 
+
+``` {r min-max-halflife }
+min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear+1)& (proportion <= peak/2 )) %>% mutate( half_life = year - peakyear) %>%
+group_by(term) %>% summarize(half_life = min(half_life)) %>% filter(term>=1850, term<=2012) %>% filter(half_life == min(half_life) | half_life == max(half_life)) 
+```
 
 # Makefile
 
