@@ -13,5 +13,5 @@ googlebooks-eng-all-totalcounts-20120701.txt: # add filenames for data and/or co
 total_counts.csv:googlebooks-eng-all-totalcounts-20120701.txt # add filenames for data and/or code this output depends on here
 	# add code to run script to reformat the total counts data here
 	bash 04_reformat_totals.sh
-05_final_report.html	05_final_report.pdf:05_final_report.Rmd # add filenames for data and/or code this output depends on here
+05_final_report.html	05_final_report.pdf:05_final_report.Rmd	year_counts.tsv	total_counts.csv # add filenames for data and/or code this output depends on here
 	Rscript -e "rmarkdown::render('05_final_report.Rmd',output_format = 'all')"
