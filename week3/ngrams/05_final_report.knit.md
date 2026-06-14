@@ -1,7 +1,7 @@
 ---
 title: "MSD Homework 2, Problem 3"
 author: "Mane Diouf (Hunter College)"
-date: '`r Sys.time()`'
+date: '2026-06-14 02:37:42.851762'
 output:
   html_document:
     toc: yes
@@ -11,15 +11,7 @@ output:
     toc_depth: 3
 ---
 
-```{r setup, include=FALSE}
-library(here)
-library(scales)
-library(tidyverse)
 
-theme_set(theme_bw())
-
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 # Description
 
@@ -51,27 +43,49 @@ Then edit the `03_download_totals.sh` file to down the `googlebooks-eng-all-tota
 
 Load in the `year_counts.tsv` and `total_counts.csv` files. Use the `here()` function around the filename to keep things portable.Give the columns of `year_counts.tsv` the names `term`, `year`, `volume`, and `book_count`. Give the columns of `total_counts.csv` the names `year`, `total_volume`, `page_count`, and `book_count`. Note that column order in these files may not match the examples in the documentation.
 
-```{r load-counts}
+
+``` r
 # Define file paths and Create columns names for year_counts.tsv
 year_counts <- read_tsv(
   here('week3','ngrams',"year_counts.tsv"),
   col_names = c("term", "year", "volume", "book_count")
 )
+```
+
+```
+## Rows: 53393 Columns: 4
+## -- Column specification ---------------------------------------------------------------------
+## Delimiter: "\t"
+## dbl (4): term, year, volume, book_count
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+``` r
 # Define file paths and Create columns names for total_counts.csv
 total_counts <- read_csv(
   here('week3','ngrams',"total_counts.csv"),
   col_names = c("year", "total_volume", "page_count", "book_count")
 )
+```
 
-
+```
+## Rows: 425 Columns: 4
+## -- Column specification ---------------------------------------------------------------------
+## Delimiter: ","
+## dbl (4): year, total_volume, page_count, book_count
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 ## Your written answer
 
 Add a line below using Rmarkdown's inline syntax to print the total number of lines in each dataframe you've created.
  
-The `year_counts` dataframe has `r nrow(year_counts)` rows.  
-The `total_counts` dataframe has `r nrow(total_counts)` rows.
+The `year_counts` dataframe has 53393 rows.  
+The `total_counts` dataframe has 425 rows.
 
 # Part B
 
@@ -81,19 +95,18 @@ The `total_counts` dataframe has `r nrow(total_counts)` rows.
 
 Join the raw year term counts with the total counts and divide to get a proportion of mentions for each term normalized by the total counts for each year.
 
-```{r join-years-and-totals}
+
+``` r
 ensemble <- full_join(year_counts, total_counts, by = "year")%>%
   mutate(proportion = volume / total_volume)
-
-
 ```
 
 ## Plot the main figure 3a
 
 Plot the proportion of mentions for the terms "1883", "1910", and "1950" over time from 1850 to 2012, as in the main figure 3a of the original paper. Use the `percent` function from the `scales` package for a readable y axis. Each term should have a different color, it's nice if these match the original paper but not strictly necessary.
 
-```{r plot-proportion-over-time}
 
+``` r
 filtered_year <- ensemble %>%
   filter(term %in% c("1883", "1910", "1950") & (year <= 2012 & year >= 1850))%>%
   filter(!is.na(proportion)) %>%
@@ -104,9 +117,9 @@ filtered_year <- ensemble %>%
     scale_y_continuous(labels = scales::percent)+
     labs(x="Year", y="Frequency", color="Term Years")+
     geom_line()
-
-
 ```
+
+![](05_final_report_files/figure-latex/plot-proportion-over-time-1.pdf)<!-- --> 
 
 ## Your written answer
 
@@ -146,8 +159,8 @@ Adding to that, that the decay speed looks faster on the ngram viewer than the v
 
 Plot the raw counts for the terms "1883", "1910", and "1950" over time from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. The colors for each term should match your last plot, and it's nice if these match the original paper but not strictly necessary.
 
-```{r plot-raw-mentions-over-time}
 
+``` r
 filtered_year <- ensemble %>%
   filter(term %in% c("1883", "1910", "1950") & (year <= 2012 & year >= 1850))%>%
   mutate(term = factor(trimws(as.character(term)),
@@ -157,8 +170,9 @@ filtered_year <- ensemble %>%
     scale_y_continuous(labels = scales::comma)+
     labs(x="Year", y="Raw counts for the different term years", color="Term Years")+
     geom_line()
-
 ```
+
+![](05_final_report_files/figure-latex/plot-raw-mentions-over-time-1.pdf)<!-- --> 
 
 # Part E
 
@@ -170,16 +184,17 @@ As part of answering this question, make an additional plot.
 
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
-```{r plot-totals}
 
+``` r
 total_counts %>%
   filter(year <= 2012 & year >= 1850)%>%
   ggplot(aes(x=year, y=total_volume))+
     scale_y_continuous(labels = scales::comma)+
     labs(x = "Year", y = "Total counts for each year")+
     geom_line()
-
 ```
+
+![](05_final_report_files/figure-latex/plot-totals-1.pdf)<!-- --> 
 
 ## Your written answer
 
@@ -199,7 +214,8 @@ stronger memory. Therefore, I wouldn't substantially reevaluate Michel et al.'s 
 
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
-```{r compute-peaks}
+
+``` r
 peak <- ensemble%>%
     filter(!is.na(proportion)) %>%
     filter((term <= 1975 & term >= 1875) & (year <=2012 & year >= 1850))%>%
@@ -207,22 +223,20 @@ peak <- ensemble%>%
     filter(proportion == max(proportion))%>%
     select(term, year, proportion)%>%
     arrange(term)
-
 ```
 
 ## Compute half-lifes
 
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
-```{r compute-half-lifes}
 
+``` r
 half_life <- left_join(peak, ensemble, by = "term") %>%
   filter(((proportion.x / proportion.y) >= 2) & (year.x < year.y)) %>%
   filter(year.y <=2012 & year.y >= 1850) %>%
   mutate(dif = year.y - year.x)%>%
   group_by(term)%>%
   summarise(min_year = min(dif))
-
 ```
 
 ## Plot the inset of figure 3a
@@ -230,13 +244,19 @@ half_life <- left_join(peak, ensemble, by = "term") %>%
 Plot the half-life of each term over time from 1850 to 2012. Each point should represent one year term, and add a line to show the trend using `geom_smooth()`.
 
 
-```{r plot-half-lifes}
+
+``` r
 ggplot(half_life, aes(x=term, y=min_year))+
   geom_smooth()+
   geom_point()+
   labs(x= "Term Year", y = "Minimum amount of years for the peak")
+```
 
 ```
+## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+```
+
+![](05_final_report_files/figure-latex/plot-half-lifes-1.pdf)<!-- --> 
 
 ## Your written answer
 
@@ -256,14 +276,41 @@ A reason might be the differences in the corpus construction and the simpler hal
 ## Your written answer
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
-```{r}
+
+``` r
 half_life%>%
   arrange(desc(min_year))%>%
   head()
+```
 
+```
+## # A tibble: 6 x 2
+##    term min_year
+##   <dbl>    <dbl>
+## 1  1900       19
+## 2  1910       18
+## 3  1893       17
+## 4  1896       16
+## 5  1905       16
+## 6  1906       16
+```
+
+``` r
 half_life%>%
   arrange(min_year)%>%
   slice_head(n=6)
+```
+
+```
+## # A tibble: 6 x 2
+##    term min_year
+##   <dbl>    <dbl>
+## 1  1877        4
+## 2  1878        4
+## 3  1942        4
+## 4  1881        5
+## 5  1917        5
+## 6  1918        5
 ```
 
 1900, 1910, and 1893 are one of the years with the largest half-life 
