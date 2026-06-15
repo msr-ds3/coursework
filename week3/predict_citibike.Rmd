@@ -1,6 +1,6 @@
 ---
 title: "Predicting Daily Citibike Trips"
-author: "Your Name"
+author: "Addina Rahaman"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -8,11 +8,20 @@ output: html_document
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(modelr)
+library(here)
 ```
 
 ## Load data
 
 ```{r}
+trips <- read_tsv(here('week3', 'trips_per_day.tsv'), col_names=TRUE)
+
+# check which cols are NA
+for (col in names(trips)) {
+    cat(col, '\n')
+    print(sum(is.na(trips[[col]])))
+}
+# No cols are NA
 
 ```
 
@@ -22,6 +31,15 @@ Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
 
 ```{r}
+set.seed(42)
+
+# test split
+num_days <- nrow(trips)
+frac_test <- 0.1
+num_test <- floor(num_days * frac_test)
+
+test <- trips[test_indices,] # 36 rows
+remaining <- trips[-test_indices,] # 329 rows
 
 ```
 
@@ -31,7 +49,91 @@ Start with the polynomial model from the complexity control notebook.
 
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
+
+rmse <- function(y, y_hat) {
+    sqrt(mean((y_hat - y)^2))
+}
+
+num_folds <- 5
+train_val <- remaining %>% 
+    mutate(fold = (row_number() %% num_folds) + 1)
+
+# cross fold validation loop
+val_err = c()
+for (f in 1:num_folds) {
+    # split train and validation
+    train <- filter(train_val, fold != f)
+    val <- filter(train_val, fold == f)
+
+    # create linear model
+    linear_model = lm(num_trips ~ poly(tmin, 1, raw=T), data=train)
+
+    # get validation error
+    val_err[f] = rmse(val$num_trips, predict(linear_model, val))
+}
+# print avg RMSE
+avg_rmse_tmin_deg1 <- mean(val_err)
+cat('Average RMSE when using poly(tmin, 1): ', avg_rmse_tmin_deg1) # got 5847.476
+se_rmse_tmin_deg1 <- sd(val_err) / sqrt(num_folds)
+cat('Standard error when using poly(tmin, 1): ', se_rmse_tmin_deg1) # got 232.2059
+
+# compare this with trips$num_trips
+summary(trips$num_trips)
+#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#     876   13119   23908   22138   31204   38619 
+# The average RMSE makes sense when looking at the summary statistics of num_trips. It could be improved, however. 
+
+# -------------------------------------
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
+
+# Try degrees 2-10
+K <- 2:10
+avg_val_error <- c(avg_rmse_tmin_deg1) # Initialize with deg 1
+se_val_error <- c(se_rmse_tmin_deg1)
+
+for (k in K) {
+
+    val_err = c()
+    for (f in 1:num_folds) {
+        # split train and validation
+        train <- filter(train_val, fold != f)
+        val <- filter(train_val, fold == f)
+
+        # create linear model
+        model = lm(num_trips ~ poly(tmin, k, raw=T), data=train)
+
+        # get validation error
+        val_err[f] = rmse(val$num_trips, predict(model, val))
+    }
+
+    avg_val_error[k] <- mean(val_err)
+    se_val_error[k] <- sd(val_err) / sqrt(num_folds)
+
+}
+
+degrees <- 1:10
+# turn this into a dataframe to plot
+rmse_df <- data.frame(degrees, avg_val_error, se_val_error)
+
+# use pointrange
+rmse_df %>% 
+    ggplot(aes(x=degrees, y=avg_val_error)) +
+    geom_pointrange(
+        aes(
+            ymin = avg_val_error - se_val_error,
+            ymax = avg_val_error + se_val_error,
+            color = avg_val_error == min(avg_val_error)
+        )
+    ) + 
+    geom_line(color='lightgreen') + 
+    scale_x_continuous(breaks=1:10) +
+    labs(
+        x='Degree',
+        y='Validation RMSE',
+    ) +
+    theme(legend.position = 'none') # remove legend
+
+# The model with the lowest error is the one with degree 6
 ```
 
 ## Feature engineering
@@ -41,6 +143,106 @@ Remember: only use information available *before* the day in question.
 
 ```{r}
 
+# using prcp, snwd, snow, tmax, and tmin (all weather data)
+
+# also using weekday(1-7), if it is a holiday, and average daily wind speed 
+
+# (1) clean holiday data for only 2014 data and only pull out the dates 
+holidays <- read_csv(here('week3', 'holidays.csv'), col_names=c('index', 'date', 'holiday'))
+holidays <- holidays %>% 
+    filter(grepl('^2014-', date)) %>% 
+    pull(date)
+
+# (2) clean wind data by averaging the data between stations
+winds_raw <- read_csv(here('week3', 'winds.csv'))
+winds <- winds_raw %>% 
+    group_by(DATE) %>% 
+    summarize(
+        average_winds=mean(AWND)
+    ) %>% 
+    rename(date=DATE)
+
+
+# (3) for training and validation data, add holiday data and wind data
+train_val_aug <- train_val %>% 
+    mutate(date=ymd(date)) %>% 
+    mutate(day_of_week=weekdays(date)) %>% 
+    mutate(is_holiday=(date %in% holidays)) %>%
+    left_join(winds, by='date')
+
+# this tells us which date average_winds is NA (a problem i found later)
+train_val_aug %>% 
+    filter(is.na(average_winds)) %>% 
+    select(date)
+
+# fill NA with average of nearby days
+library(zoo)
+train_val_aug$average_winds <- na.approx(train_val_aug$average_winds, na.rm = FALSE)
+
+# (4) Do same for testing data
+test <- test %>% 
+    mutate(date=ymd(date)) %>% 
+    mutate(day_of_week=weekdays(date)) %>% 
+    mutate(is_holiday=(date %in% holidays)) %>%
+    left_join(winds, by='date')
+
+# plot every predictor against num_trips to see how they are correlated
+
+train_val_aug %>% 
+    pivot_longer(
+        cols=c(prcp, snwd, snow, tmax, tmin, average_winds),
+        names_to='predictor',
+        values_to='stat'
+    ) %>% 
+    ggplot(aes(x=stat, y=num_trips)) +
+    geom_point() +
+    geom_smooth() +
+    scale_y_log10(label=comma) +
+    labs(
+        x = "Stat",
+        y = "Number of Trips"
+    ) +
+    facet_wrap(~ predictor, scales="free_x")
+
+# average_winds appears to be negative (maybe quadratic)
+# for prcp, snow, and snwd, it seems more people are likely to ride a bike if it is 0
+# tmax and tmin are quadratic and positive - but highly correlated so maybe only add one of them
+
+train_val_aug %>% 
+    ggplot(aes(x=is_holiday)) +
+    geom_bar() +
+    scale_y_log10(label=comma) +
+    labs(
+        x = "Is Holiday",
+        y = "Number of Trips"
+    ) 
+
+train_val_aug %>% 
+    ggplot(aes(x=day_of_week)) +
+    geom_bar() +
+    scale_y_log10(label=comma) +
+    labs(
+        x = "Day of Week",
+        y = "Number of Trips"
+    ) 
+
+# Holiday and Day of Week are not dependent on each other
+
+# create a second train dataset
+train_val_aug2 <- train_val_aug %>% 
+    mutate(
+        did_snow=(snow != 0),
+        sig_snwd=(snwd != 0),
+        did_rain=(prcp != 0)
+    )
+
+test2 <- test %>% 
+    mutate(
+        did_snow=(snow != 0),
+        sig_snwd=(snwd != 0),
+        did_rain=(prcp != 0)
+    )
+
 ```
 
 ## Model comparison
@@ -48,6 +250,176 @@ Remember: only use information available *before* the day in question.
 Try different models and compare their validation performance.
 
 ```{r}
+# Here I test different types of models
+avg_r2 <- c()
+se_r2 <- c()
+avg_rmse <- c()
+se_rmse <- c()
+
+mse <- function(y, y_hat) {
+    (rmse(y, y_hat))^2
+}
+
+r.squared <- function(y, y_hat) {
+    y.bar = mean(y)
+    1 - (mse(y, y_hat)/mse(y, y.bar))
+}
+
+# Model (1): adding all features -> this assumes that each feature is independent and that the effect of one feature on ridership is not affected by other features
+
+r2_1 <- c()
+rmse_1 <- c()
+for (f in 1:num_folds) {
+    train <- filter(train_val_aug, fold != f)
+    val <- filter(train_val_aug, fold == f)
+
+    model = lm(num_trips ~ prcp + snwd + snow + tmax + tmin + day_of_week + is_holiday + average_winds, data=train)
+
+    r2_1[f] <- r.squared(val$num_trips, predict(model, val))
+    rmse_1[f] <- rmse(val$num_trips, predict(model, val))
+}
+
+avg_r2[1] <- mean(r2_1)
+se_r2[1] <- sd(r2_1) / sqrt(num_folds)
+avg_rmse[1] <- mean(rmse_1)
+se_rmse[1] <- sd(rmse_1) / sqrt(num_folds)
+
+# Model (2): only have particular related features interact (i.e. snwd & snow, tmin & tmax etc)
+
+r2_2 <- c()
+rmse_2 <- c()
+for (f in 1:num_folds) {
+    train <- filter(train_val_aug, fold != f)
+    val <- filter(train_val_aug, fold == f)
+
+    model = lm(num_trips ~ prcp + (snwd * snow) + (tmax * tmin) + average_winds + day_of_week + is_holiday, data=train)
+
+    r2_2[f] <- r.squared(val$num_trips, predict(model, val))
+    rmse_2[f] <- rmse(val$num_trips, predict(model, val))
+}
+
+avg_r2[2] <- mean(r2_2)
+se_r2[2] <- sd(r2_2) / sqrt(num_folds)
+avg_rmse[2] <- mean(rmse_2)
+se_rmse[2] <- sd(rmse_2) / sqrt(num_folds)
+
+# Model (3): 
+
+r2_3 <- c()
+rmse_3 <- c()
+for (f in 1:num_folds) {
+    train <- filter(train_val_aug, fold != f)
+    val <- filter(train_val_aug, fold == f)
+
+    model = lm(num_trips ~ prcp + average_winds + (snwd * snow) + (tmax * tmin) + (day_of_week * is_holiday), data=train)
+
+    r2_3[f] <- r.squared(val$num_trips, predict(model, val))
+    rmse_3[f] <- rmse(val$num_trips, predict(model, val))
+}
+
+avg_r2[3] <- mean(r2_3)
+se_r2[3] <- sd(r2_3) / sqrt(num_folds)
+avg_rmse[3] <- mean(rmse_3)
+se_rmse[3] <- sd(rmse_3) / sqrt(num_folds)
+
+# Model (4): applying nonlinear relationships as observed before
+
+r2_4 <- c()
+rmse_4 <- c()
+for (f in 1:num_folds) {
+    train <- filter(train_val_aug, fold != f)
+    val <- filter(train_val_aug, fold == f)
+
+    model = lm(num_trips ~ poly(tmax, 2) + prcp + snwd + snow + day_of_week + is_holiday + average_winds, data=train)
+
+    r2_4[f] <- r.squared(val$num_trips, predict(model, val))
+    rmse_4[f] <- rmse(val$num_trips, predict(model, val))
+}
+
+avg_r2[4] <- mean(r2_4)
+se_r2[4] <- sd(r2_4) / sqrt(num_folds)
+avg_rmse[4] <- mean(rmse_4)
+se_rmse[4] <- sd(rmse_4) / sqrt(num_folds)
+
+# Model 5: applying the nonlinear relationships and the new binary data
+
+r2_5 <- c()
+rmse_5 <- c()
+for (f in 1:num_folds) {
+    train <- filter(train_val_aug2, fold != f)
+    val <- filter(train_val_aug2, fold == f)
+
+    model = lm(num_trips ~ poly(tmax, 2) + did_rain + did_snow + sig_snwd + day_of_week + is_holiday + average_winds, data=train)
+        
+    r2_5[f] <- r.squared(val$num_trips, predict(model, val))
+    rmse_5[f] <- rmse(val$num_trips, predict(model, val))
+}
+
+avg_r2[5] <- mean(r2_5)
+se_r2[5] <- sd(r2_5) / sqrt(num_folds)
+avg_rmse[5] <- mean(rmse_5)
+se_rmse[5] <- sd(rmse_5) / sqrt(num_folds)
+
+# Model 6: include both binary data and continuous data
+
+r2_6 <- c()
+rmse_6 <- c()
+for (f in 1:num_folds) {
+    train <- filter(train_val_aug2, fold != f)
+    val <- filter(train_val_aug2, fold == f)
+
+    model = lm(num_trips ~ poly(tmax, 2) + did_rain + did_snow + sig_snwd + day_of_week + is_holiday + average_winds + prcp + snwd + snow, data=train)
+        
+    r2_6[f] <- r.squared(val$num_trips, predict(model, val))
+    rmse_6[f] <- rmse(val$num_trips, predict(model, val))
+}
+
+avg_r2[6] <- mean(r2_6)
+se_r2[6] <- sd(r2_6) / sqrt(num_folds)
+avg_rmse[6] <- mean(rmse_6)
+se_rmse[6] <- sd(rmse_6) / sqrt(num_folds)
+
+# Plot the R2
+versions <- 1:6 
+avg_r2_df <- data.frame(versions, avg_r2, se_r2)
+avg_r2_df %>% 
+    ggplot(aes(x=versions, y=avg_r2)) +
+    geom_pointrange(
+        aes(
+            ymin = avg_r2 - se_r2,
+            ymax = avg_r2 + se_r2,
+            color = avg_r2 == max(avg_r2)
+        )
+    ) + 
+    geom_line(color='lightgreen') + 
+    scale_x_continuous(breaks=1:6) +
+    labs(
+        x='Model Version',
+        y='Validation R-squared',
+    ) +
+    theme(legend.position = 'none')
+
+# Model 6 is the best with 0.88 R-squared
+
+# Plot the RMSE
+avg_rmse_df <- data.frame(versions, avg_rmse, se_rmse)
+avg_rmse_df %>% 
+    ggplot(aes(x=versions, y=avg_rmse)) +
+    geom_pointrange(
+        aes(
+            ymin = avg_rmse - se_rmse,
+            ymax = avg_rmse + se_rmse,
+            color = avg_rmse == min(avg_rmse)
+        )
+    ) + 
+    geom_line(color='lightgreen') + 
+    scale_x_continuous(breaks=1:16) +
+    labs(
+        x='Model Version',
+        y='Validation RMSE',
+    ) +
+    theme(legend.position = 'none')
+# Model 6 also has a significantly lower RMSE
 
 ```
 
@@ -56,12 +428,38 @@ Try different models and compare their validation performance.
 Pick your best model and plot the results.
 
 ```{r}
+final_model =  lm(num_trips ~ poly(tmax, 2) + did_rain + did_snow + sig_snwd + day_of_week + is_holiday + average_winds + prcp + snwd + snow, data=train_val_aug2)
+
+plot_data <- train_val_aug2 %>% 
+    add_predictions(final_model)
+
+# Plot 1
+plot_data %>% 
+    ggplot(aes(x=date)) +
+    geom_point(aes(y=num_trips)) +
+    geom_smooth(aes(y=pred)) + 
+    labs(
+        x='Date',
+        y='Number of Trips'
+    )
+
+# Plot 2
+plot_data %>% 
+    ggplot(aes(x=pred, y=num_trips)) +
+    geom_point() + 
+    geom_abline(linetype='dashed') + 
+    labs(
+        x='Predicted',
+        y='Actual',
+    )
 
 ```
 
 ## Save model
 
 ```{r}
+
+save(final_model, file='citibike_model.RData')
 
 ```
 

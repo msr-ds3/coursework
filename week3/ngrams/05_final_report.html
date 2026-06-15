@@ -351,7 +351,7 @@ display: none;
 
 <h1 class="title toc-ignore">MSD Homework 2, Problem 3</h1>
 <h4 class="author">Addina Rahaman (City College of New York)</h4>
-<h4 class="date">2026-06-11 14:25:34.079835</h4>
+<h4 class="date">2026-06-12 13:17:25.914107</h4>
 
 </div>
 
@@ -697,10 +697,7 @@ its peak value. Store this in an intermediate data frame.</p>
   filter(year &gt;= peak_year) %&gt;% # years after peak year
   filter(proportion &lt;= half_peak) %&gt;% # on or below half the peak
   slice_min(order_by=year, n=1) %&gt;%  # first year
-  summarize(half_life=year-peak_year)
-
-half_lives_1883_1910_1950 &lt;- half_lives %&gt;% 
-  filter(term %in% c(1883, 1910, 1950))</code></pre>
+  summarize(half_life=year-peak_year)</code></pre>
 </div>
 <div id="plot-the-inset-of-figure-3a" class="section level2">
 <h2>Plot the inset of figure 3a</h2>
