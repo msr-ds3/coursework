@@ -355,4 +355,13 @@ save(mod5, file = "Citibike_Prediction_Model.RData")
 # TODO: load your saved model and predict on trips_test
 # TODO: compute RMSE on test set
 # TODO: how do you think this model will perform on future data?
+
+predictions <- predict(mod5, newdata = test_data)
+actual_values <- test_data$num_trips
+rmse <- RMSE(predictions, actual_values)
+rmse
+
+r_squared <- R2(predictions, actual_values)
+r_squared
+
 ```

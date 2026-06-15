@@ -11,10 +11,10 @@ weather_2015 <- weather_2015 %>%
 rename(ymd = DATE) %>%
 mutate(ymd = ymd(ymd))
 
-trips <- trips_per_day %>%
+trips_2015 <- trips_per_day %>%
     left_join(weather_2015, by = 'ymd')
 
-trips <- trips %>%
+trips_2015 <- trips_2015 %>%
     rename_with(tolower)
 
 # (1) clean holiday data for only 2014 data and only pull out the dates 
@@ -32,32 +32,51 @@ winds <- winds_raw %>%
     ) %>% 
     rename(ymd=DATE)
 
-trips <- trips %>% 
+trips_2015 <- trips_2015 %>% 
     mutate(day_of_week = weekdays(ymd)) %>%
     mutate(is_holiday = (ymd %in% holidays)) %>%
     left_join(winds, by = 'ymd')
 
-trips %>% 
+trips_2015 %>% 
     filter(is.na(average_winds)) %>% 
     select(ymd)
 
-trips$average_winds <- na.approx(trips$average_winds, na.rm = FALSE)
+trips_2015$average_winds <- na.approx(trips_2015$average_winds, na.rm = FALSE)
 
-trips <- trips %>% 
+trips_2015 <- trips_2015 %>% 
     filter(grepl('^2015-', ymd)) %>% 
     mutate(
-        did_snow=(snow != 0),
-        sig_snwd=(snwd != 0),
-        did_rain=(prcp != 0)
+        did_snow = (snow != 0),
+        did_rain = (prcp != 0),
+        sig_snwd = (snwd != 0)
+    ) %>% 
+    mutate(
+        tmax = tmax * 0.1
     )
 ```
 
 ```{r}
-load('citibike_model.Rdata')
+load('citibike_model_5.Rdata')
+
+predictions <- predict(model6, newdata = trips_2015)
+actual <- trips_2015$num_trips
+rmse <- rmse(predictions, actual)
+rmse
 
 rmse <- function(y, y_hat) {
     sqrt(mean((y_hat - y)^2))
 }
 
-rmse(trips$num_trips, predict(final_model, trips))
+mse <- function(y, y_hat) {
+    (rmse(y, y_hat))^2
+}
+
+r.squared <- function(y, y_hat) {
+    y.bar = mean(y)
+    1 - (mse(y, y_hat)/mse(y, y.bar))
+}
+
+rmse(trips_2015$num_trips, predict(model6, trips_2015))
+r.squared(trips_2015$num_trips, predict(model6, trips_2015))
+
 ```
