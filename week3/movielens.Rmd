@@ -72,7 +72,7 @@ xlab("Mean Of Ratings")
 
 ratings%>% group_by(movie_id)%>% summarize(mean_ratings = mean(rating))%>%
 ggplot(aes(x= mean_ratings))+geom_density(fill="grey")+
-geom_vline(aes(xintercept = median(count)), linetype = "dashed") +
+geom_vline(aes(xintercept = median(mean_ratings)), linetype = "dashed") +
 ylab("Number of Movies")+
 xlab("Mean Of Ratings")
 
@@ -133,4 +133,4 @@ ggplot(long_tail, aes(x = inventory, y = satisfied, color = type)) + geom_line()
 # paper, produce one curve for the 100% user satisfaction level and
 # another for 90%---do not, however, bother implementing the null
 # model (shown in the dashed lines).
-```
+```z
