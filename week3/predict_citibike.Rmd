@@ -232,15 +232,15 @@ train_val_aug %>%
 train_val_aug2 <- train_val_aug %>% 
     mutate(
         did_snow=(snow != 0),
-        sig_snwd=(snwd != 0),
-        did_rain=(prcp != 0)
+        did_rain=(prcp != 0),
+        sig_snwd=(snwd != 0)
     )
 
 test2 <- test %>% 
     mutate(
         did_snow=(snow != 0),
-        sig_snwd=(snwd != 0),
-        did_rain=(prcp != 0)
+        did_rain=(prcp != 0),
+        sig_snwd=(snwd != 0)
     )
 
 ```
@@ -273,10 +273,10 @@ for (f in 1:num_folds) {
     train <- filter(train_val_aug, fold != f)
     val <- filter(train_val_aug, fold == f)
 
-    model = lm(num_trips ~ prcp + snwd + snow + tmax + tmin + day_of_week + is_holiday + average_winds, data=train)
+    model1 = lm(num_trips ~ prcp + snwd + snow + tmax + tmin + day_of_week + is_holiday + average_winds, data=train)
 
-    r2_1[f] <- r.squared(val$num_trips, predict(model, val))
-    rmse_1[f] <- rmse(val$num_trips, predict(model, val))
+    r2_1[f] <- r.squared(val$num_trips, predict(model1, val))
+    rmse_1[f] <- rmse(val$num_trips, predict(model1, val))
 }
 
 avg_r2[1] <- mean(r2_1)
@@ -292,10 +292,10 @@ for (f in 1:num_folds) {
     train <- filter(train_val_aug, fold != f)
     val <- filter(train_val_aug, fold == f)
 
-    model = lm(num_trips ~ prcp + (snwd * snow) + (tmax * tmin) + average_winds + day_of_week + is_holiday, data=train)
+    model2 = lm(num_trips ~ prcp + (snwd * snow) + (tmax * tmin) + average_winds + day_of_week + is_holiday, data=train)
 
-    r2_2[f] <- r.squared(val$num_trips, predict(model, val))
-    rmse_2[f] <- rmse(val$num_trips, predict(model, val))
+    r2_2[f] <- r.squared(val$num_trips, predict(model2, val))
+    rmse_2[f] <- rmse(val$num_trips, predict(model2, val))
 }
 
 avg_r2[2] <- mean(r2_2)
@@ -311,10 +311,10 @@ for (f in 1:num_folds) {
     train <- filter(train_val_aug, fold != f)
     val <- filter(train_val_aug, fold == f)
 
-    model = lm(num_trips ~ prcp + average_winds + (snwd * snow) + (tmax * tmin) + (day_of_week * is_holiday), data=train)
+    model3 = lm(num_trips ~ prcp + average_winds + (snwd * snow) + (tmax * tmin) + (day_of_week * is_holiday), data=train)
 
-    r2_3[f] <- r.squared(val$num_trips, predict(model, val))
-    rmse_3[f] <- rmse(val$num_trips, predict(model, val))
+    r2_3[f] <- r.squared(val$num_trips, predict(model3, val))
+    rmse_3[f] <- rmse(val$num_trips, predict(model3, val))
 }
 
 avg_r2[3] <- mean(r2_3)
@@ -330,10 +330,10 @@ for (f in 1:num_folds) {
     train <- filter(train_val_aug, fold != f)
     val <- filter(train_val_aug, fold == f)
 
-    model = lm(num_trips ~ poly(tmax, 2) + prcp + snwd + snow + day_of_week + is_holiday + average_winds, data=train)
+    model4 = lm(num_trips ~ poly(tmax, 2) + prcp + snwd + snow + day_of_week + is_holiday + average_winds, data=train)
 
-    r2_4[f] <- r.squared(val$num_trips, predict(model, val))
-    rmse_4[f] <- rmse(val$num_trips, predict(model, val))
+    r2_4[f] <- r.squared(val$num_trips, predict(model4, val))
+    rmse_4[f] <- rmse(val$num_trips, predict(model4, val))
 }
 
 avg_r2[4] <- mean(r2_4)
@@ -349,10 +349,10 @@ for (f in 1:num_folds) {
     train <- filter(train_val_aug2, fold != f)
     val <- filter(train_val_aug2, fold == f)
 
-    model = lm(num_trips ~ poly(tmax, 2) + did_rain + did_snow + sig_snwd + day_of_week + is_holiday + average_winds, data=train)
+    model5 = lm(num_trips ~ poly(tmax, 2) + day_of_week + is_holiday + average_winds, data=train)
         
-    r2_5[f] <- r.squared(val$num_trips, predict(model, val))
-    rmse_5[f] <- rmse(val$num_trips, predict(model, val))
+    r2_5[f] <- r.squared(val$num_trips, predict(model5, val))
+    rmse_5[f] <- rmse(val$num_trips, predict(model5, val))
 }
 
 avg_r2[5] <- mean(r2_5)
@@ -368,10 +368,10 @@ for (f in 1:num_folds) {
     train <- filter(train_val_aug2, fold != f)
     val <- filter(train_val_aug2, fold == f)
 
-    model = lm(num_trips ~ poly(tmax, 2) + day_of_week + is_holiday + average_winds + prcp + snwd + snow, data=train)
+    model6 = lm(num_trips ~ poly(tmax, 5) + day_of_week + is_holiday + prcp + did_rain + snow + did_snow + snwd + sig_snwd + average_winds, data=train)
         
-    r2_6[f] <- r.squared(val$num_trips, predict(model, val))
-    rmse_6[f] <- rmse(val$num_trips, predict(model, val))
+    r2_6[f] <- r.squared(val$num_trips, predict(model6, val))
+    rmse_6[f] <- rmse(val$num_trips, predict(model6, val))
 }
 
 avg_r2[6] <- mean(r2_6)
@@ -428,10 +428,10 @@ avg_rmse_df %>%
 Pick your best model and plot the results.
 
 ```{r}
-final_model =  lm(num_trips ~ poly(tmax, 2) + day_of_week + is_holiday + average_winds + prcp + snwd + snow, data=train_val_aug2)
+# final_model =  lm(num_trips ~ poly(tmax, 2) + (day_of_week : is_holiday) + (prcp : did_rain) + (snow : did_snow), data=train_val_aug2)
 
 plot_data <- train_val_aug2 %>% 
-    add_predictions(final_model)
+    add_predictions(model6)
 
 # Plot 1
 plot_data %>% 
@@ -459,7 +459,7 @@ plot_data %>%
 
 ```{r}
 
-save(final_model, file='citibike_model.RData')
+save(model6, file='citibike_model.RData')
 
 ```
 
@@ -472,6 +472,7 @@ save(final_model, file='citibike_model.RData')
 # TODO: compute RMSE on test set
 # TODO: how do you think this model will perform on future data?
 
-rmse(test2$num_trips, predict(final_model, test2))
+rmse(test2$num_trips, predict(model6, test2))
+r.squared(test2$num_trips, predict(model6, test2))
 
 ```

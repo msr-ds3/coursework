@@ -22,6 +22,7 @@ trips <- trips_per_day %>%
 us_holidays <- as.Date(holidayNYSE(year= 2014:2026))
 
 trips <- trips %>% 
+    mutate(tmax = tmax * 0.1) %>% 
     mutate(
         tavg = (tmin + tmax) / 2,
         heavy_rain = prcp > 0.9, 
@@ -30,7 +31,8 @@ trips <- trips %>%
         day_of_week = wday(ymd, label = TRUE),
         is_weekend = wday(ymd) %in% c(1,7), 
         is_holiday = ymd %in% us_holidays
-    )
+    ) %>% 
+    filter(grepl('^2015-', ymd))
 
 ```
 
@@ -42,10 +44,17 @@ actual_values <- trips$num_trips
 rmse <- RMSE(predictions, actual_values)
 rmse
 
-#rmse <- function(y, y_hat) {
-#    sqrt(mean(y_hat - y)^2)
-#}
+r_squared <- R2(predictions, actual_values)
+r_squared
 
-#rmse(trips$num_trips, predict(mod5, newdata=trips))
+mse <- function(y, y_hat) {
+    RMSE(y_hat, y)^2
+}
 
+r.squared <- function(y, y_hat) {
+    y.bar = mean(y)
+    1 - (mse(y, y_hat)/(mean((y.bar - y)^2)))
+}
+
+r.squared(actual_values, predictions)
 ```
