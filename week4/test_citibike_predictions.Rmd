@@ -1,0 +1,39 @@
+---
+title: "Predicting Daily Citibike Trips"
+author: "Mane Diouf"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(modelr)
+library(lubridate)
+library(here)
+```
+
+## Load data
+
+```{r}
+daily_trips <- read_tsv('trips_per_day_2015.tsv')
+
+og_weather <- read_csv('weather_2015.csv') %>%
+    mutate(TMAX=TMAX/10, TMIN=TMIN/10) %>%
+    rename(ymd= DATE, prcp=PRCP, snwd=SNWD, snow=SNOW, tmax=TMAX, tmin=TMIN) %>%
+    select(-STATION, -NAME, -TAVG)
+
+# Join the two datasets above
+final_data <- inner_join(daily_trips, og_weather, by = "ymd")
+
+final_data <- final_data %>% 
+    mutate(day = wday(ymd),date= as.numeric(format(ymd, "%Y%m%d"))) 
+
+load(here("week3", "model.Rdata"))
+summary(model3)
+```
+
+## Compute the RMSE between the actual and predicted trips for 2015
+```{r}
+rmse(model3, final_data) # 40758.8
+rsquare(model3, final_data) # 68.53%
+```
