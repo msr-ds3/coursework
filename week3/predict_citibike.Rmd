@@ -155,7 +155,21 @@ Pick your best model and plot the results.
 ```{r}
 final_model <- lm(num_trips ~ poly(tmin, degree = 4) + snow + prcp + weekend + tmax + month, data=trips_per_day_train)
 
+rmse(final_model, trips_per_day_validate)
+
 results <- ggplot(trips_per_day_validate, aes(x = num_trips, y = predict(final_model, trips_per_day_validate))) +
+    geom_point() +
+    geom_abline(na.rm =TRUE) +
+    xlab("Number of Trips (actual value)") +
+    ylab("Predicted Number of Trips")
+
+ggplot(trips_per_day_validate, aes(x = ymd)) +
+    geom_point(aes(y=num_trips)) +
+    geom_line(aes(y=predict(final_model, trips_per_day_validate))) +
+    xlab("Date") +
+    ylab("Predicted and Actual Number of Trips")
+
+ggplot(trips_per_day_validate, aes(x = num_trips, y = predict(final_model, trips_per_day_validate))) +
     geom_point() +
     geom_abline(na.rm =TRUE) +
     xlab("Number of Trips (actual value)") +
@@ -165,11 +179,11 @@ results <- ggplot(trips_per_day_validate, aes(x = num_trips, y = predict(final_m
 ## Save model
 
 ```{r}
-save(final_model, file = ".RData")
+save(final_model, file = "final_model.RData")
 ggsave("C:\\Users\\chana\\Documents\\coursework\\week3\\predict_citibike_results.png", results)
 ```
 
-## Test set evaluatest_citibike_predictions.Rmdtion
+## Test set evaluation
 
 **Do this only once, at the very end!**
 

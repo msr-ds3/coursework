@@ -37,6 +37,12 @@ ggplot(trips_with_weather, aes(x = num_trips, y = predict(final_model, trips_wit
     geom_abline(na.rm =TRUE) +
     xlab("Number of Trips (actual value)") +
     ylab("Predicted Number of Trips")
+
+ggplot(trips_with_weather, aes(x = ymd)) +
+    geom_point(aes(y=num_trips)) +
+    geom_line(aes(y=predict(final_model, trips_with_weather))) +
+    xlab("Date") +
+    ylab("Predicted and Actual Number of Trips")
 ```
 
 ## Results
