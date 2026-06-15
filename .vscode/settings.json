@@ -7,5 +7,6 @@
         "shellscript": false
     },
     "chat.agent.enabled": false,
-    "github.copilot.nextEditSuggestions.enabled": false
+    "github.copilot.nextEditSuggestions.enabled": false,
+    "r.lsp.diagnostics":false
 }

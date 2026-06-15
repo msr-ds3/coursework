@@ -72,4 +72,4 @@ t.test(magnets$change ~ magnets$active )
 # 4. Is there a significance difference between the treatment and the control
 #    groups in the variance of the change in score that resulted from the application of the device?
 var.test(magnets$change ~ magnets$active )
-# The p value is  0.001535 (<0.05) which means that there is a significance between the treatemt and the control  9
+# The p value is  0.001535 (<0.05) which means that there is a significance between the treatemt and the control  

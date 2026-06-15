@@ -40,16 +40,19 @@ Also, noticeabley there is a smaller production of diamond that are 0.5,1,1.5 , 
 head(diamonds)
 
 diamonds%>% ggplot(aes (x= carat , color = cut) )+
-geom_freqpoly(binwidth = 0.07) + facet_wrap(~cut)+ xlab('Carat')
+geom_freqpoly(binwidth = 0.07) + facet_wrap(~cut)+ 
+xlab('Carat')
 # or geomhistogram() wiht fill = cut
 diamonds%>%group_by(cut)%>% summarize(count = n())
 
 diamonds %>% ggplot(aes(carat, color = color))+
-geom_freqpoly(binwidth = 0.07) + facet_wrap(~color)+ xlab('Carat')
+geom_freqpoly(binwidth = 0.07) + facet_wrap(~color)+
+ xlab('Carat')
 diamonds%>%group_by(color)%>% summarize(count = n())
 
 diamonds %>% ggplot(aes(carat, color = clarity))+
-geom_freqpoly(binwidth = 0.07)+facet_wrap(~clarity)+ xlab('Carat')
+geom_freqpoly(binwidth = 0.07)+facet_wrap(~clarity)+ 
+xlab('Carat')
 diamonds%>%group_by(clarity)%>% summarize(count = n())
 
 ```

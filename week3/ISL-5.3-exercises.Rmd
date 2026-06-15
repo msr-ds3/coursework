@@ -40,7 +40,7 @@ the observations corresponding to the training set.
 
 ```{r}
 lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
-```
+ ```
 
 We now use the predict() function to estimate the response for all 392
 observations, and we use the mean() function to calculate the MSE of the
@@ -158,7 +158,7 @@ for (i in 1:10) {
   cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
 }
 cv.error.10
-power.prop.test(p1=0.400, p2=0.40001, sig.level=0.1, power=0.80, alternative="one.sided")
+
 
 ```
 
@@ -179,5 +179,3 @@ each other.
 #  -> 21637831282
 # 2. The biggest challenge that i think may occur is that we cannot get a sample size of 21637831282, there arent even 
 # enough people in te world for this to tested on. 
-
-
