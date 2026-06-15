@@ -1,0 +1,47 @@
+---
+title: "Testing Citibike Daily Trip Predictions"
+author: "Chana Rapp"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(modelr)
+library(lubridate)
+```
+
+## Load data
+
+```{r}
+trips_per_day <-
+    read_tsv("trips_per_day_2015.tsv")
+
+weather <-
+    read_csv("weather_2015.csv") %>%
+    mutate(ymd = DATE, snow = SNOW, snwd = SNWD, tmin = TMIN*.1, tmax = TMAX*.1, prcp = PRCP, month = mday(ymd), weekend = (wday(ymd, week_start = 7) == 1 | wday(ymd) == 6 | wday(ymd) == 7)) %>%
+    select(ymd, tmin, tmax, snow, prcp, snwd, month, weekend)
+
+trips_with_weather <-
+    inner_join(trips_per_day, weather, by = "ymd")
+
+load("C:/Users/chana/Documents/coursework/week3/final_model.RData")
+
+rmse(final_model, trips_with_weather)
+rsquare(final_model, trips_with_weather)
+RMSE <- sqrt(mean((predict(final_model, trips_with_weather) - trips_with_weather$num_trips)^2))
+RMSE
+
+ggplot(trips_with_weather, aes(x = num_trips, y = predict(final_model, trips_with_weather))) +
+    geom_point() +
+    geom_abline(na.rm =TRUE) +
+    xlab("Number of Trips (actual value)") +
+    ylab("Predicted Number of Trips")
+```
+
+## Results
+
+My RMSE in my cross validation was 4608.399, while it was 8578.844 on the 2015 data.
+I think that my model could have fit better than it did, but considering the risks of 
+overfitting because people's behavior can never be fully predicted, I think this model 
+did pretty well, with an rsquared value of 0.6841944.
