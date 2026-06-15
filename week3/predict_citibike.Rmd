@@ -8,12 +8,20 @@ output: html_document
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(modelr)
+library(tidyverse)
+library(scales)
+options(na.action = na.warn)
+
+library(broom)
+
+theme_set(theme_bw())
 ```
 
 ## Load data
 
 ```{r}
-
+trips <- read_tsv(here('week3','trips_per_day.tsv'))
+head(trips)
 ```
 
 ## Train/test split
@@ -22,6 +30,15 @@ Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
 
 ```{r}
+set.seed(42)
+total_trips <- nrow(trips)
+ninety <- 0.9*total_trips
+ninety
+sample <-  sample(1:total_trips ,ninety, replace = F)
+num_fold <- 10
+trips <- trips [sample, ]  %>% mutate(fold = (row_number() %% num_fold)+1 )
+head(trips)
+
 
 ```
 
@@ -32,6 +49,37 @@ Start with the polynomial model from the complexity control notebook.
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
+K <- 1:7
+average_validate_err <- c()
+
+se_validate_err <- c()
+for (k in K) {
+    validate_err <- c()
+    for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ poly(tmin,k,raw = T), data=trips_train )
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+    }
+    average_validate_err[k] <- mean(validate_err)
+    
+    se_validate_err[k] <- sd(validate_err)/sqrt(num_fold)
+}
+min(average_validate_err)
+# 5735.943
+
+plot_data <- data.frame(K, average_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=average_validate_err)) +
+  geom_pointrange(aes(ymin=average_validate_err - se_validate_err,
+                      ymax=average_validate_err + se_validate_err,
+                      color=average_validate_err == min(average_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
 ```
 
 ## Feature engineering
@@ -40,7 +88,67 @@ Add features that might help: day of week, month, precipitation, etc.
 Remember: only use information available *before* the day in question.
 
 ```{r}
+trips <-trips %>% mutate(month = format(ymd, "%b"))
+ validate_err <- c()
+for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ tmin + month , data=trips_train )
 
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+}
+ average_validate_err <- mean(validate_err)
+ average_validate_err
+#5436.708
+
+```
+```{r add-tmax}
+validate_err <- c()
+for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ tmin + prcp + month , data=trips_train )
+#tmin * prcp + month
+# tmin:prcp + month
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+}
+average_validate_err <- mean(validate_err)
+average_validate_err
+# 4555.602
+
+```
+```{r add-prcp-feature}
+validate_err <- c()
+for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ tmin + prcp , data=trips_train )
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+}
+average_validate_err <- mean(validate_err)
+average_validate_err
+# 5006.405
+
+```
+
+``` {r add-snow-feature}
+validate_err <- c()
+for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ tmin:snow + month , data=trips_train )
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+}
+average_validate_err <- mean(validate_err)
+average_validate_err
+#  5835.191
 ```
 
 ## Model comparison
@@ -48,7 +156,89 @@ Remember: only use information available *before* the day in question.
 Try different models and compare their validation performance.
 
 ```{r}
+#Cross- Validation 
+K <- 1:7
+average_validate_err <- c()
 
+se_validate_err <- c()
+for (k in K) {
+    validate_err <- c()
+    for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ poly(prcp,k,raw = T), data=trips_train )
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+    }
+    average_validate_err[k] <- mean(validate_err)
+    
+    se_validate_err[k] <- sd(validate_err)/sqrt(num_fold)
+}
+min(average_validate_err)
+#9881.623
+
+plot_data <- data.frame(K, average_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=average_validate_err)) +
+  geom_pointrange(aes(ymin=average_validate_err - se_validate_err,
+                      ymax=average_validate_err + se_validate_err,
+                      color=average_validate_err == min(average_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
+```
+
+```{r month-model}
+trips <-trips %>% mutate(month = format(ymd, "%b"))
+ validate_err <- c()
+for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~  month , data=trips_train )
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+}
+ average_validate_err <- mean(validate_err)
+ average_validate_err
+
+ # 5556.315
+```
+
+```{r tmax model  }
+K <- 1:7
+average_validate_err <- c()
+
+se_validate_err <- c()
+for (k in K) {
+    validate_err <- c()
+    for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ poly(snow,k,raw = T), data=trips_train )
+
+        trips_validate <- filter(trips,  fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+    }
+    average_validate_err[k] <- mean(validate_err)
+    
+    se_validate_err[k] <- sd(validate_err)/sqrt(num_fold)
+}
+min(average_validate_err)
+#5300
+
+plot_data <- data.frame(K, average_validate_err, se_validate_err)
+ggplot(plot_data, aes(x=K, y=average_validate_err)) +
+  geom_pointrange(aes(ymin=average_validate_err - se_validate_err,
+                      ymax=average_validate_err + se_validate_err,
+                      color=average_validate_err == min(average_validate_err))) +
+  geom_line(color = "red") +
+  scale_x_continuous(breaks=1:12) +
+  theme(legend.position="none") +
+  xlab('Polynomial Degree') +
+  ylab('RMSE on validation data')
 ```
 
 ## Final model
@@ -56,6 +246,36 @@ Try different models and compare their validation performance.
 Pick your best model and plot the results.
 
 ```{r}
+validate_err <- c()
+prediction <- c()
+actual <- c()
+for (f in 1:num_fold) {
+        trips_train <-   filter(trips,   fold != f)
+        model <- lm(num_trips ~ tmin + prcp + month , data=trips_train )
+
+         
+
+        trips_validate <- filter(trips,  fold == f)
+        predicted <- predict(model, trips_validate)
+
+        prediction <- c(prediction,predicted )
+        actual <- c(actual,trips_validate$num_trips)
+
+        validate_err[f] <- sqrt(mean((predict(model, trips_validate) - trips_validate$num_trips)^2))
+    
+}
+average_validate_err <- mean(validate_err)
+average_validate_err
+
+plot_data <- data.frame(predicted_value = prediction, actual_value = actual)
+
+options(repr.plot.width=4, repr.plot.height=3)
+
+ggplot(plot_data, aes(x = predicted_value, y = actual_value)) +
+  geom_point() +
+  geom_abline(linetype = "dashed") +
+  xlab('Predicted') +
+  ylab('Actual')
 
 ```
 

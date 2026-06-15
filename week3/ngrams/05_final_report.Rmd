@@ -70,9 +70,9 @@ Add a line below using Rmarkdown's inline syntax to print the total number of li
 ```{r Total-number-of-lines}
 
 nrow(year)
-# 53393
+
 nrow(counts)
-# 426
+
 ```
 
 # Part B
@@ -122,7 +122,7 @@ Go to the ngram viewer, enter the terms "1883", "1910", and "1950" and take a sc
 
 Add your screenshot for Part C below this line using the `![](figure_filename.png)` syntax and comment on similarities / differences.
 
-> ![](figure_1.png)
+ ![](figure_1.png)
 
 There is a difference between the graphs of Version 2 and the NGram viewer for the proportions of mentions for each term as the all three terms each have higher proportions for each year
 
@@ -156,8 +156,8 @@ As part of answering this question, make an additional plot.
 Plot the total counts for each year over time, from 1850 to 2012. Use the `comma` function from the `scales` package for a readable y axis. There should be only one line on this plot (not three).
 
 ```{r plot-totals}
-join %>% group_by(term,year) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>% f
-ilter((term == 1883 | term == 1910 | term == 1950) & (year >= 1850 & year <= 2012))%>% 
+join %>% group_by(term,year) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>% 
+filter((term == 1883 | term == 1910 | term == 1950) & (year >= 1850 & year <= 2012))%>% 
 ggplot(aes(x = year, y = total_count ))+ geom_line() +scale_y_continuous(label = comma)+
 xlab('Year') +ylab('Total Counts')
 ```
@@ -167,7 +167,8 @@ Write up your answer to Part E here.
 
 They dont lead me to reevaluate the results of Michel et al. (2011) because these are just summs of the the counts but the what Michel et al. (2011) are showing is the 
 proportion bascially the relativity to the total in each group so it may look different. Also i think that the total count is going to keeep that kind of trend upward because 
-more books are being released so its just a summation but it does eventually start to decrease so i dont think there is a difference 
+more books are being released so its just a summation but it does eventually start to decrease so i dont think there is a difference
+
 # Part F
 
 > Now, using the proportion of mentions, replicate the inset of figure 3a. That is, for each year between 1875 and 1975, calculate the half-life of that year. The half-life is defined to be the number of years 
@@ -181,22 +182,23 @@ which are based on version 1 data? (Hint: Don’t be surprised if it doesn’t.)
 For each year term, find the year where its proportion of mentions peaks (hits its highest value). Store this in an intermediate dataframe.
 
 ```{r compute-peaks}
-peak <- join %>%  group_by(year,term) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>% 
+peak <- join %>%  group_by(year,term) %>%  filter(term>= 1875 & term <= 1975)  %>%  filter(year >= 1850 & year <= 2012) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>%
 mutate( proportion = term_count/total_count) %>% group_by( term)%>% summarize (peak = max(proportion))
 peak
+
 ```
 
 ## Compute half-lifes
 
+
 Now, for each year term, find the minimum number of years it takes for the proportion of mentions to decline from its peak value to half its peak value. Store this in an intermediate data frame.
 
 ```{r compute-half-lifes}
-min <- join %>%  group_by(term,year) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume)) %>%
+min <- join %>%  group_by(year,term) %>%  filter(year >= 1850 & year <= 2012) %>% summarize(term_count = sum(volume) , total_count = sum(total_volume))  %>%  filter(term>= 1875 & term <= 1975) %>%
 mutate( proportion = term_count/total_count) 
 min
-peak_year <- min %>% left_join(peak) %>%  filter(year>= 1875 , year <= 1975) %>% filter(proportion == peak) %>% summarize(peakyear= year ,term,peak)
-peak_year 
-min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate(half_life = year - peakyear) %>%
+peak_year <- min %>% left_join(peak, by= "term") %>%  group_by(term) %>% filter(proportion == peak) %>% summarize(peakyear = max(year) ) %>%left_join(peak, by = "term")
+min %>%  left_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate(half_life = year - peakyear) %>%
 group_by(term) %>% summarize(half_life = min(half_life))
 ```
 ## Plot the inset of figure 3a
@@ -205,8 +207,8 @@ Plot the half-life of each term over time from 1850 to 2012. Each point should r
 
 
 ```{r plot-half-lifes}
-min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate( half_life = year - peakyear) %>%
-group_by(term) %>% summarize(half_life = min(half_life)) %>% filter(term>=1850 & term<=2012) %>%
+min %>%  left_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate(half_life = year - peakyear) %>%
+group_by(term) %>% summarize(half_life = min(half_life))%>%
 ggplot(aes(x = term, y = half_life))+geom_point()+geom_smooth()+
 xlab('Term') +ylab('Half-Life')
 
@@ -222,15 +224,18 @@ Write up your answer to Part F here.
 
 Write up your answer to Part G here. Include code that shows the years with the smallest and largest half-lifes.
 
-Yes there are years that are fogotten too quickly like and as you can see in the code the outliers here are 1900 being forgotten too slowly and 1942 being forgotten too quickly 
+Yes there are years that are fogotten too quickly like and as you can see in the code the most extreme outliers here are 1900 being forgotten too slowly and 1942 being forgotten too quickly 
 this is because in 1900 it was the beginning of the century so it was very popular and then for 1942, i think it was forgotten too quickly because it was a time during world war 2 
-where there wenta any significant policies or moves that were pivotal 
+where there wenta any significant policies or moves that were pivotal. Other years that were in the bottom like 1877 and 1878 there was nothing exciting just economic policies that did not benefit the people at that time 
 
 ``` {r min-max-halflife }
-min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear+1)& (proportion <= peak/2 )) %>% mutate( half_life = year - peakyear) %>%
-group_by(term) %>% summarize(half_life = min(half_life)) %>% filter(term>=1850, term<=2012) %>% filter(half_life == min(half_life) | half_life == max(half_life)) 
-```
-
+#Top  
+min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate( half_life = year - peakyear) %>%
+group_by(term) %>% summarize(half_life = min(half_life)) %>% filter(term>=1850 & term<=2012) %>% arrange(desc(half_life))
+#Bottom
+min %>%  inner_join(peak_year, by = "term")  %>% filter((year > peakyear)& (proportion <= peak/2 )) %>% mutate( half_life = year - peakyear) %>%
+group_by(term) %>% summarize(half_life = min(half_life)) %>% filter(term>=1850 & term<=2012) %>% arrange(half_life)
+``` 
 # Makefile
 
 Edit the `Makefile` in this directory to execute the full set of scripts that download the data, clean it, and produce this report. This must be turned in with your assignment such that running `make` on the command line produces the final report as a pdf file.
