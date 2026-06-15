@@ -1,6 +1,6 @@
 ---
 title: "Predicting Daily Citibike Trips"
-author: "Your Name"
+author: "Chana Rapp"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -86,11 +86,11 @@ validate_err_4 <- sqrt(mean((predict(model4, trips_per_day_validate) - trips_per
 # Taking the effects of snow depth, precipitation, and whether it's a weekend into account
 trips_per_day_train <- 
     trips_per_day_train %>%
-    mutate(weekend = (wday(ymd) == 1 | wday(ymd) == 6 | wday(ymd) == 7))
+    mutate(weekend = (wday(ymd, week_start = 7) == 1 | wday(ymd) == 6 | wday(ymd) == 7))
 
 trips_per_day_validate <- 
     trips_per_day_validate %>%
-    mutate(weekend = (wday(ymd) == 5 | wday(ymd) == 6 | wday(ymd) == 7))
+    mutate(weekend = (wday(ymd, week_start = 7) == 1 | wday(ymd) == 6 | wday(ymd) == 7))
 
 model5 <- lm(num_trips ~ poly(tmin, degree = 1) + snow + prcp + weekend, data=trips_per_day_train)
 validate_err_5 <- sqrt(mean((predict(model5, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
@@ -165,10 +165,11 @@ results <- ggplot(trips_per_day_validate, aes(x = num_trips, y = predict(final_m
 ## Save model
 
 ```{r}
+save(final_model, file = ".RData")
 ggsave("C:\\Users\\chana\\Documents\\coursework\\week3\\predict_citibike_results.png", results)
 ```
 
-## Test set evaluation
+## Test set evaluatest_citibike_predictions.Rmdtion
 
 **Do this only once, at the very end!**
 
