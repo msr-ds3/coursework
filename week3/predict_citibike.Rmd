@@ -13,7 +13,8 @@ library(modelr)
 ## Load data
 
 ```{r}
-read_tsv('trips_per_day.tsv')
+trips_per_day <- read_tsv('trips_per_day.tsv')
+head(trips_per_day)
 ```
 
 ## Train/test split
@@ -22,7 +23,29 @@ Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
 
 ```{r}
+set.seed(42)
+num_days <- nrow(trips_per_day)
+num_folds <- 5
 
+# Holding out 10% of data for final test set
+frac_test <- 0.1
+num_test <- floor(num_days * frac_test)
+
+# Randomly sampling rows for the test set
+ndx <- sample(1:num_days, num_test, replace=F)
+
+# DO NOT TOUCH THIS
+trips_per_day_test <- trips_per_day[ndx, ]
+
+# using k-fold validation
+trips_per_day_kfold <- trips_per_day[-ndx, ] %>%
+    mutate(fold = (row_number() %% num_folds) + 1)
+
+head(trips_per_day_kfold) # confirming that it looks right
+
+## Test set size: 36
+## Train/Validate set size: 329
+mean(trips_per_day_kfold$num_trips)
 ```
 
 ## Baseline model: temperature only
@@ -32,6 +55,31 @@ Start with the polynomial model from the complexity control notebook.
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
+K <- 1:8
+avg_validate_err <- c()
+se_validate_err <- c()
+test_avg_val <- c()
+for (k in K) {
+    # doing 5 fold cross-validation within each value of k
+    validate_err <- c()
+    for (f in 1:num_folds) {
+        # fitting on training data
+        trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+        model <- lm(num_trips ~ poly(tmin, k, raw = T), data = trips_per_day_train)
+
+        # evaluate on the validation data
+        trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+        validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    }
+
+    # average validation error/standard error 
+    avg_validate_err[k] <- mean(validate_err)
+    se_validate_err[k] <- sd(validate_err) / sqrt(num_folds)
+    test_avg_val[k] <- avg_validate_err[k] / mean(trips_per_day_kfold$num_trips)
+}
+avg_validate_err
+se_validate_err
+test_avg_val
 ```
 
 ## Feature engineering
@@ -40,6 +88,29 @@ Add features that might help: day of week, month, precipitation, etc.
 Remember: only use information available *before* the day in question.
 
 ```{r}
+# Possible model features to include
+# Current features: ymd, num_trips, date, precipitation, snow depth, snow, max temp, min temp
+# Possibly interesting features that contribute to trips
+# tmin (colder temps)
+# tmax (hotter temps)
+# day of the week (weekends vs weekdays) and month of the year
+trips_per_day_kfold <- mutate(trips_per_day_kfold, day_of_week = wday(ymd), month = month(ymd))
+# snow depth (substantial snow depth i decided over 5) and precipitation (substantial precipitation decided for over 0.5)
+trips_per_day_kfold <- mutate(trips_per_day_kfold, snow_sub = (snwd > 5), prcp_sub = (prcp > 0.5))
+
+## Which models will i try (if the previous works)
+# Model One: min temp and max temp (tried it and it made a little difference)
+# Model Two: min/max temp and day of the week (tried it and it was better!)
+# Model Three: min/max temp, day of week, and month (tried it and it was better)
+# Model Four: min/max temp, day of week, month, snowd significance (got worse)
+# Model Fourb: Four but not significance the snowd value (got slightly better but not that significant)
+# Model Five: min/max temp, day of week, month, precipitation significance (got much better! RMSE dropped around .03)
+# Model Fiveb: Five but the prcp value (doing precipitation as its own value is better)
+# Model Fivec(best model before trying interactions): Five but the prcp value transformed with log (doing precipitation as 
+# its value but logged did better than non logged)
+# Model Six: min/max temp, dayofweek, month, precipitation, prcp interacted with time of year/day of week (was not any better)
+
+# Stopped at Model FiveC
 
 ```
 
@@ -48,7 +119,234 @@ Remember: only use information available *before* the day in question.
 Try different models and compare their validation performance.
 
 ```{r}
+m1_validate_err <- c()
+m1_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
 
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m1_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m1_test_val[f] <- m1_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m1_avg_validate <- mean(m1_validate_err)
+m1_test_avg_val <- mean(m1_test_val)
+
+m1_validate_err
+m1_test_val
+m1_avg_validate
+m1_test_avg_val
+```
+
+```{r}
+m2_validate_err <- c()
+m2_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ factor(day_of_week) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m2_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m2_test_val[f] <- m2_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m2_avg_validate <- mean(m2_validate_err)
+m2_test_avg_val <- mean(m2_test_val)
+
+m2_validate_err
+m2_test_val
+m2_avg_validate
+m2_test_avg_val
+```
+
+```{r}
+m3_validate_err <- c()
+m3_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m3_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m3_test_val[f] <- m3_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m3_avg_validate <- mean(m3_validate_err)
+m3_test_avg_val <- mean(m3_test_val)
+
+m3_validate_err
+m3_test_val
+m3_avg_validate
+m3_test_avg_val
+```
+
+```{r}
+m4_validate_err <- c()
+m4_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ snow_sub + factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m4_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m4_test_val[f] <- m4_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m4_avg_validate <- mean(m4_validate_err)
+m4_test_avg_val <- mean(m4_test_val)
+
+m4_validate_err
+m4_test_val
+m4_avg_validate
+m4_test_avg_val
+
+# model actually got worse
+```
+
+```{r}
+# model with snow got worse so im trying snow depth value itself
+m4b_validate_err <- c()
+m4b_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ snwd + factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m4b_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m4b_test_val[f] <- m4b_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m4b_avg_validate <- mean(m4b_validate_err)
+m4b_test_avg_val <- mean(m4b_test_val)
+
+m4b_validate_err
+m4b_test_val
+m4b_avg_validate
+m4b_test_avg_val
+
+# adding snow depth doesn't contribute that much
+```
+
+```{r}
+m5_validate_err <- c()
+m5_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ prcp_sub + factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m5_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m5_test_val[f] <- m5_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m5_avg_validate <- mean(m5_validate_err)
+m5_test_avg_val <- mean(m5_test_val)
+
+m5_validate_err
+m5_test_val
+m5_avg_validate
+m5_test_avg_val
+
+# model got better by alot!
+```
+
+```{r}
+m5b_validate_err <- c()
+m5b_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ prcp + factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m5b_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m5b_test_val[f] <- m5b_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+# avg_validate_err
+# se_validate_err
+# test_avg_val
+m5b_avg_validate <- mean(m5b_validate_err)
+m5b_test_avg_val <- mean(m5b_test_val)
+
+m5b_validate_err
+m5b_test_val
+m5b_avg_validate
+m5b_test_avg_val
+```
+
+```{r}
+m5c_validate_err <- c()
+m5c_test_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ log(prcp + 1) + factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m5c_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m5c_test_val[f] <- m5c_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+}
+m5c_avg_validate <- mean(m5c_validate_err)
+m5c_test_avg_val <- mean(m5c_test_val)
+
+m5c_validate_err
+m5c_test_val
+m5c_avg_validate
+m5c_test_avg_val
+```
+
+```{r}
+m6_validate_err <- c()
+m6_test_val <- c()
+m6_rel_val <- c()
+for (f in 1:num_folds) {
+    # doing 5 fold cross-validation within each value of k
+    trips_per_day_train <- filter(trips_per_day_kfold, fold != f) 
+    model <- lm(num_trips ~ log(prcp + 1) + factor(day_of_week) + factor(month) + poly(tmin, 4, raw = T) + poly(tmax, 4, raw = T), data = trips_per_day_train)
+
+    # evaluate on the validation data
+    trips_per_day_validate <- filter(trips_per_day_kfold, fold == f)
+    m6_validate_err[f] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    m6_test_val[f] <- m6_validate_err[f] / mean(trips_per_day_kfold$num_trips)
+    m6_rel_val[f] <- m6_validate_err[f] / (max(trips_per_day_kfold$num_trips) - min(trips_per_day_kfold$num_trips))
+}
+m6_avg_validate <- mean(m6_validate_err)
+m6_test_avg_val <- mean(m6_test_val)
+m6_rel_avg_val <- mean(m6_rel_val)
+
+m6_validate_err
+m6_test_val
+m6_avg_validate
+m6_test_avg_val
+m6_rel_val
+m6_rel_avg_val
 ```
 
 ## Final model
