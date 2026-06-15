@@ -173,6 +173,7 @@ save(final_model,file = "C:/Users/nabin/DS3/coursework/week3/model.Rdata")
 # Since I ma opting for simple model with basic feature extration I believe it will perform with rmse around 3500- 4000
 model = load(here("week3","model.Rdata"))
 summary(final_model)
+# feature extration for model 
 trips_per_day_test<-trips_per_day_test%>%
 mutate(day = wday(ymd,week_start = 1))%>%
 mutate(day_type = ifelse(day %in% c(6,7),"weekend","weekdays" ))%>%
@@ -181,6 +182,7 @@ mutate(avgtemp =log((tmax+tmin)/2))%>%
 mutate(month = month(ymd))%>%
 mutate(seasonality = ifelse(month %in%c(1,2,3,11,12),"winter","summer"))%>%
 mutate(fold = 1)
+# final rmse score
 rmse = rmse(final_model,trips_per_day_test)
 rmse
 ```
