@@ -8,20 +8,182 @@ output: html_document
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(modelr)
+library(jsonlite)
+library(lubridate)
+library(timeDate)
 ```
 
 ## Load data
 
 ```{r}
+# Load Citibike Data
+trips_per_day <- read_tsv('trips_per_day.tsv')
 
+# Load MTA Turnstile Data; Feb - Dec 2014
+mta <- fromJSON("mta_turnstile_2014.json")
+
+write.csv(mta, "mta_turnstile_2014.csv", row.names = FALSE)
+```
+
+## Feature engineering
+
+Add features that might help: day of week, month, precipitation, etc.
+Remember: only use information available *before* the day in question.
+
+```{r}
+cor_matrix <- cor(trips_per_day[sapply(trips_per_day, is.numeric)])
+
+# input parameters: rows, columns
+# check which features are highly correlated with the label
+cor_matrix[, "num_trips"]
+
+# Trips are mostly driven by temperature, reduced by snow/precipitation, with mild seasonal trends.
+
+us_holidays <- as.Date(holidayNYSE(year = 2014:2026))
+
+trips_per_day <- trips_per_day %>%
+  mutate(
+
+    # Temperature Feature
+    tavg = (tmin + tmax) / 2,
+    
+    # Rain Features
+    heavy_rain = prcp > 0.9,
+    
+    # Snow Features
+    deep_snow = snwd > 4,
+    snow_event = snow > 0,
+    
+    # Calendar Features
+    day_of_week = wday(ymd, label = TRUE),
+
+    is_weekend = wday(ymd) %in% c(1, 7),
+    is_monday = wday(ymd) == 2,
+    is_friday = wday(ymd) == 6,
+
+    season = case_when(
+      month(ymd) %in% c(12, 1, 2) ~ "winter",
+      month(ymd) %in% c(3, 4, 5)  ~ "spring",
+      month(ymd) %in% c(6, 7, 8)  ~ "summer",
+      month(ymd) %in% c(9, 10, 11) ~ "fall"
+    ),
+    
+    is_holiday = ymd %in% us_holidays
+  )
+
+# Hot-Encode Calendar Features
+trips_per_day$day_of_week <- factor(trips_per_day$day_of_week)
+trips_per_day$season <- factor(trips_per_day$season)
+
+# Create a new column that has both the date and time saved
+mta <- mta %>%
+  mutate(
+    datetime = ymd_hms(paste(substr(date, 1, 10), time)) # substr(x, start, stop)
+  ) %>%
+  arrange(c_a, unit, scp, station, datetime)
+
+# Convert str to numeric
+mta <- mta %>%
+  mutate(
+    entries = as.numeric(entries),
+    exits = as.numeric(exits)
+  )
+
+mta <- mta %>%
+  mutate(
+    entry_diff = entries - lag(entries), # how many people entered during a time window
+    exit_diff = exits - lag(exits) # how many people exited during a time window
+  )
+
+# Turnstile counters sometimes reset
+# This creates negative jumps
+# Let's replace them with 0 to avoid corrupting trip counts
+mta <- mta %>%
+  mutate(
+    entry_diff = pmax(entry_diff, 0, na.rm = TRUE),
+    exit_diff = pmax(exit_diff, 0, na.rm = TRUE)
+  )
+
+# Get the total MTA ridership by date
+mta_daily <- mta %>%
+  mutate(date_only = as.Date(datetime)) %>%
+  group_by(date_only) %>%
+  summarize(mta_ridership = sum(entry_diff + exit_diff, na.rm = TRUE))
+
+# Replace extreme outlier days with the median daily ridership
+mta_daily <- mta_daily %>%
+  mutate(
+    mta_ridership = if_else(
+      mta_ridership > 2e7, # 20 million
+      median(mta_ridership, na.rm = TRUE),
+      mta_ridership
+    )
+  )
+
+trips_per_day <- trips_per_day %>%
+  left_join(mta_daily, by = c('ymd' = 'date_only'))
+
+
+# Replace missing MTA ridership in January with the median values
+trips_per_day <- trips_per_day %>%
+  mutate(
+    mta_ridership = ifelse(
+      is.na(mta_ridership),
+      median(mta_ridership, na.rm = TRUE),
+      mta_ridership
+    )
+  )
 ```
 
 ## Train/test split
 
 Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
-
 ```{r}
+# Set seed for reproducibility
+set.seed(42)
+
+# Create unique IDs for each trip
+trips_per_day <- trips_per_day %>%
+mutate("id" = row_number())
+
+# Number of Rows to Sample From
+n_rows_total <- nrow(trips_per_day)
+
+train_fraction <- 0.8 # 80% Training Data + 10% Validation Data
+test_fraction <- 0.1 # 10% Test Data
+
+# Compute 80% of the Total Rows
+n_train_rows <- floor(n_rows_total * train_fraction)
+
+# Compute 10% of the Total Rows
+n_test_rows <- floor(n_rows_total * test_fraction)
+
+# Randomly Sample Rows for the Test Set
+test_idx <- sample(1:n_rows_total, n_test_rows, replace=F)
+
+# Used to Test Model
+test_data <- trips_per_day[test_idx, ]
+
+# Exclude Test Data from Training and Validation Sets
+train_valid_pool <- trips_per_day[-test_idx, ]
+
+# Number of Rows from the Pooled Data to Sample From
+n_pool_rows <- train_valid_pool %>% nrow()
+
+# Randomly Sample Rows for the Training Set 
+train_idx <- sample(1:n_pool_rows, n_train_rows, replace=F)
+
+# Used to Fit the Model
+train_data <- train_valid_pool[train_idx, ]
+
+# Used to Evaluate the Fit
+valid_data <- train_valid_pool[-train_idx, ]
+
+# Ensure Testing Set is Not Leaked into Training and Validation Data
+# Return should be 0
+intersect(train_data$id, test_data$id)
+intersect(valid_data$id, test_data$id)
 
 ```
 
@@ -32,15 +194,60 @@ Start with the polynomial model from the complexity control notebook.
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
-```
 
-## Feature engineering
+library(caret)
 
-Add features that might help: day of week, month, precipitation, etc.
-Remember: only use information available *before* the day in question.
+# Fix random seed so that fold creation is identical every run
+set.seed(42)
 
-```{r}
+# Create 5 cross-validation folds (data splits)
+folds <- createFolds(train_valid_pool$num_trips, k = 5)
 
+
+ctrl <- trainControl(
+  method = "cv", # k-fold cross validation method
+  index = folds # use the manually created splits above
+)
+
+# storage for CV results across polynomial degrees
+rmse <- numeric(8)
+se <- numeric(8)
+
+# loop over polynomial degrees (model complexity)
+for (k in 1:8) {
+
+  # Build regression formula dynamically for current degree k
+  formula <- as.formula(
+    paste0("num_trips ~ poly(tmin, ", k, ", raw = TRUE)")
+  )
+
+  # fit linear model with polynomial term using 5-fold CV
+  fit <- train(
+    formula,
+    data = train_valid_pool,
+    method = "lm",
+    trControl = ctrl
+  )
+
+  # Extract average cross-validated RMSE for this degree
+  rmse[k] <- fit$results$RMSE
+
+  # The standard error on this estimate
+  se[k] <- fit$results$RMSESD
+}
+
+# combine results into a table for comparison across degrees
+results <- data.frame(
+  degree = 1:8,
+  RMSE = rmse,
+  SE = se
+)
+
+results
+
+# select polynomial degree with lowest cross-validated RMSE
+k <- results$degree[which.min(results$RMSE)]
+k 
 ```
 
 ## Model comparison
@@ -48,6 +255,60 @@ Remember: only use information available *before* the day in question.
 Try different models and compare their validation performance.
 
 ```{r}
+fml1 <- as.formula(paste0("num_trips ~ poly(tmin, ", k, ", raw = TRUE) + deep_snow + heavy_rain "))
+
+mod1 <- train(
+  fml1,
+  data = train_valid_pool,
+  method = "lm",
+  trControl = ctrl
+)
+
+mod1$results # R-Squared = 0.72; RMSE = 5469.749
+
+fml2 <- as.formula(paste0("num_trips ~ poly(tmax, ", k, ", raw = TRUE) + is_weekend + season "))
+
+mod2 <- train(
+  fml2,
+  data = train_valid_pool,
+  method = "lm",
+  trControl = ctrl
+)
+
+mod2$results # R-Squared = 0.78658; RMSE = 4816.351
+
+fml3 <- as.formula(paste0("num_trips ~ poly(tmax, ", k, ", raw = TRUE) + deep_snow + prcp + is_weekend"))
+
+mod3 <- train(
+  fml3,
+  data = train_valid_pool,
+  method = "lm",
+  trControl = ctrl
+)
+
+mod3$results # R-Squared = 0.8397; RMSE = 4216.982
+
+fml4 <- as.formula(paste0("num_trips ~ poly(tmax, ", k, ", raw = TRUE) + snow_event + prcp + is_weekend:is_holiday"))
+
+mod4 <- train(
+  fml4,
+  data = train_valid_pool,
+  method = "lm",
+  trControl = ctrl
+)
+
+mod4$results # R-Squared = 0.8579; RMSE = 3979.996
+
+fml5 <- as.formula(paste0("num_trips ~ poly(tmax, ", k, ", raw = TRUE) + snow_event + prcp:heavy_rain + is_weekend:is_holiday"))
+
+mod5 <- train(
+  fml5,
+  data = train_valid_pool,
+  method = "lm",
+  trControl = ctrl
+)
+
+mod5$results # R-Squared = 0.8806; RMSE 3790.417
 
 ```
 
@@ -56,13 +317,34 @@ Try different models and compare their validation performance.
 Pick your best model and plot the results.
 
 ```{r}
+train_data <- train_data %>%
+  add_predictions(mod5) %>%
+  mutate(split = "train")
 
+valid_data <- valid_data %>%
+  add_predictions(mod5) %>%
+  mutate(split = "validate")
+
+plot_data <- bind_rows(train_data, valid_data)
+
+plot_data %>%
+ggplot(mapping = aes(x = ymd, y = num_trips)) +
+geom_point(aes(color = split)) +
+  xlab('Date') +
+  ylab('Daily trips')
+
+plot_data %>%
+ggplot(mapping = aes(x = pred, y = num_trips)) +
+geom_point() + 
+geom_abline(intercept = 0, slope = 1, size = 1, color = 'darkblue')
+  xlab('Predicted Values') +
+  ylab('Actual Values')
 ```
 
 ## Save model
 
 ```{r}
-
+save(mod5, file = "Citibike_Prediction_Model.RData")
 ```
 
 ## Test set evaluation
