@@ -336,9 +336,9 @@ geom_point(aes(color = split)) +
 plot_data %>%
 ggplot(mapping = aes(x = pred, y = num_trips)) +
 geom_point() + 
-geom_abline(intercept = 0, slope = 1, size = 1, color = 'darkblue')
-  xlab('Predicted Values') +
-  ylab('Actual Values')
+geom_abline(intercept = 0, slope = 1, size = 1, color = 'darkblue') + 
+  xlab('Predicted') +
+  ylab('Actual')
 ```
 
 ## Save model

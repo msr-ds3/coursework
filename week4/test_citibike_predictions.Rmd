@@ -1,0 +1,63 @@
+```{r}
+library(here) 
+library(tidyverse)
+library(modelr)
+library(zoo)
+
+trips_per_day <- read_tsv('trips_per_day_2015.tsv')
+weather_2015 <- read_csv('weather_2015.csv')
+
+weather_2015 <- weather_2015 %>%
+rename(ymd = DATE) %>%
+mutate(ymd = ymd(ymd))
+
+trips <- trips_per_day %>%
+    left_join(weather_2015, by = 'ymd')
+
+trips <- trips %>%
+    rename_with(tolower)
+
+# (1) clean holiday data for only 2014 data and only pull out the dates 
+holidays <- read_csv(here('week4', 'holidays.csv'), col_names=c('index', 'date', 'holiday'))
+holidays <- holidays %>% 
+    filter(grepl('^2015-', date)) %>% 
+    pull(date)
+
+# (2) clean wind data by averaging the data between stations
+winds_raw <- read_csv(here('week4', 'winds.csv'))
+winds <- winds_raw %>% 
+    group_by(DATE) %>% 
+    summarize(
+        average_winds=mean(AWND)
+    ) %>% 
+    rename(ymd=DATE)
+
+trips <- trips %>% 
+    mutate(day_of_week = weekdays(ymd)) %>%
+    mutate(is_holiday = (ymd %in% holidays)) %>%
+    left_join(winds, by = 'ymd')
+
+trips %>% 
+    filter(is.na(average_winds)) %>% 
+    select(ymd)
+
+trips$average_winds <- na.approx(trips$average_winds, na.rm = FALSE)
+
+trips <- trips %>% 
+    filter(grepl('^2015-', ymd)) %>% 
+    mutate(
+        did_snow=(snow != 0),
+        sig_snwd=(snwd != 0),
+        did_rain=(prcp != 0)
+    )
+```
+
+```{r}
+load('citibike_model.Rdata')
+
+rmse <- function(y, y_hat) {
+    sqrt(mean((y_hat - y)^2))
+}
+
+rmse(trips$num_trips, predict(final_model, trips))
+```
