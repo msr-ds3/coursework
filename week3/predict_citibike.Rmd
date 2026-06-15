@@ -8,12 +8,15 @@ output: html_document
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(modelr)
+library(here)
+library(lubridate)
+library(modelr)
 ```
 
 ## Load data
 
-```{r}
-
+```{r data-loading}
+Trip_per_day <- read_tsv(here('week3','trips_per_day.tsv'))
 ```
 
 ## Train/test split
@@ -21,8 +24,22 @@ library(modelr)
 Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
 
-```{r}
+```{r Test, Train, Validation set}
+set.seed(42)
+frac_test<-0.1
+frac_train<-0.8
 
+Days <- nrow(Trip_per_day)
+num_test <- floor(Days * frac_test)
+num_train <- floor((Days - num_test) * frac_train)
+
+ndx = sample(1:Days,num_test,replace = FALSE)
+trips_per_day_test <- Trip_per_day[ndx,]
+train_val <- Trip_per_day[-ndx,]
+
+tdx <- sample(1:(Days-num_test),num_train,replace = FALSE)
+trips_per_day_train <- train_val[tdx,]
+trips_per_day_val <- train_val[-tdx,]
 ```
 
 ## Baseline model: temperature only
@@ -32,6 +49,33 @@ Start with the polynomial model from the complexity control notebook.
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
+num_folds = 5
+train_val_fold <- train_val%>%
+mutate(fold = (row_number()%%num_folds)+1)
+K <- 1:8
+avg_val_err <- c()
+se_val_err <- c()
+for (k in K) {
+
+    val_err <-c()
+    for (f in 1:num_folds){
+        trips_per_day_fold_train <- filter(train_val_fold,fold != f)
+        model <- lm(num_trips ~ poly(tmin,k,raw = TRUE),data = trips_per_day_fold_train)
+
+        trips_per_day_fold_val <- filter(train_val_fold, fold == f)
+        val_err[f]<- sqrt(mean((predict(model,trips_per_day_fold_val) - trips_per_day_fold_val$num_trips)^2))
+    }
+    avg_val_err[k] <- mean(val_err)
+    se_val_err[k] <- sd(val_err)/sqrt(num_folds)
+}
+data.frame(K,avg_val_err,se_val_err)%>%
+ggplot(aes(x=K,y=avg_val_err))+
+geom_pointrange(aes(ymin = avg_val_err - se_val_err,
+                    ymax = avg_val_err + se_val_err,
+                    color = avg_val_err == min(avg_val_err)))+
+geom_line(color = "red")+
+scale_x_continuous(breaks= 1:12)+
+theme(legend.position = "none")
 ```
 
 ## Feature engineering
@@ -40,6 +84,16 @@ Add features that might help: day of week, month, precipitation, etc.
 Remember: only use information available *before* the day in question.
 
 ```{r}
+train_val<-train_val%>%
+mutate(day = wday(ymd,week_start = 1))%>%
+mutate(day_type = ifelse(day %in% c(6,7),"weekend","weekdays" ))%>%
+mutate(sigprcp = (prcp>=0.10))%>%
+mutate(avgtemp =log((tmax+tmin)/2))%>%
+mutate(month = month(ymd))%>%
+mutate(seasonality = ifelse(month %in%c(1,2,3,11,12),"winter","summer"))
+
+train_val%>%ggplot(aes(x=ymd,y=avgtemp,color = day))+geom_point()
+train_val%>%print(n=10,Inf)
 
 ```
 
@@ -49,6 +103,44 @@ Try different models and compare their validation performance.
 
 ```{r}
 
+num_folds = 5
+train_val_fold <- train_val%>%
+mutate(fold = (row_number()%%num_folds)+1)
+avg_val_err <- c()
+se_val_err <- c()
+val_err <-matrix(NA,7,num_folds)
+rsquared <-matrix(NA,7,num_folds)
+for (f in 1:num_folds){
+    trips_per_day_fold_train <- filter(train_val_fold,fold != f)
+    baseline_model <- lm(num_trips ~ poly(tmin,5,raw = TRUE),data = trips_per_day_fold_train)
+    model_1 <-lm(num_trips ~ .-ymd -date-fold , data = trips_per_day_fold_train)
+    model_2 <-lm(num_trips~.+month*avgtemp-avgtemp-day-tmin-fold-date-ymd-prcp-snow,data = trips_per_day_fold_train)
+    model_3 <-lm(num_trips~.+seasonality*avgtemp-avgtemp-day-tmin-fold-date-ymd-prcp-snow,data = trips_per_day_fold_train)
+    model_4 <-lm(num_trips~.+poly(month*avgtemp,3)+seasonality*avgtemp+poly(tmin,4,raw =T)-avgtemp-day-tmin-date-ymd-prcp-snow-fold,data = trips_per_day_fold_train)
+    model_5 <-lm(num_trips~.+seasonality*poly(tmin,3,raw=T)+poly(avgtemp,2,raw = T)-day-ymd-fold-date-prcp-month-tmin-seasonality,data = trips_per_day_fold_train)
+    model_6 <-lm(num_trips ~ .-day-date-month-avgtemp-tmin-ymd-snow-fold,data=trips_per_day_fold_train)# I will go for simplicity this appears to be more robust than others
+    model_7 <-lm(num_trips~.+seasonality*poly(tmin,2,raw=T)+exp(prcp)-avgtemp-day-ymd-date-month-seasonality-fold,data = trips_per_day_fold_train)
+    trips_per_day_fold_val <- filter(train_val_fold, fold == f)
+    val_err[1,f]<-rmse(baseline_model, trips_per_day_fold_val)
+    val_err[2,f]<-rmse(model_1, trips_per_day_fold_val)
+    val_err[3,f]<-rmse(model_2, trips_per_day_fold_val)
+    val_err[4,f]<-rmse(model_3, trips_per_day_fold_val)
+    val_err[5,f]<-rmse(model_4, trips_per_day_fold_val)
+    val_err[6,f]<-rmse(model_5, trips_per_day_fold_val)
+    val_err[7,f]<-rmse(model_6, trips_per_day_fold_val)
+    rsquared[1,f]<-rsquare(baseline_model, trips_per_day_fold_val)
+    rsquared[2,f]<-rsquare(model_1, trips_per_day_fold_val)
+    rsquared[3,f]<-rsquare(model_2, trips_per_day_fold_val)
+    rsquared[4,f]<-rsquare(model_3, trips_per_day_fold_val)
+    rsquared[5,f]<-rsquare(model_4, trips_per_day_fold_val)
+    rsquared[6,f]<-rsquare(model_5, trips_per_day_fold_val)
+    rsquared[7,f]<-rsquare(model_6, trips_per_day_fold_val)
+}
+
+rowMeans(val_err)
+val_err%>%apply(1,sd)/sqrt(num_folds)
+rsquared
+
 ```
 
 ## Final model
@@ -56,13 +148,18 @@ Try different models and compare their validation performance.
 Pick your best model and plot the results.
 
 ```{r}
-
+add_predictions(trips_per_day_fold_val,model_6)%>%
+ggplot(aes(x=ymd,y=pred,color ='red'))+
+geom_line()+
+geom_point(aes(x=ymd,num_trips,color='blue'))
 ```
 
 ## Save model
 
 ```{r}
-
+final_model <- model_6
+summary(final_model)
+save(final_model,file = "C:/Users/nabin/DS3/coursework/week3/model.Rdata")
 ```
 
 ## Test set evaluation
@@ -73,4 +170,17 @@ Pick your best model and plot the results.
 # TODO: load your saved model and predict on trips_test
 # TODO: compute RMSE on test set
 # TODO: how do you think this model will perform on future data?
+# Since I ma opting for simple model with basic feature extration I believe it will perform with rmse around 3500- 4000
+model = load(here("week3","model.Rdata"))
+summary(final_model)
+trips_per_day_test<-trips_per_day_test%>%
+mutate(day = wday(ymd,week_start = 1))%>%
+mutate(day_type = ifelse(day %in% c(6,7),"weekend","weekdays" ))%>%
+mutate(sigprcp = (prcp>=0.10))%>%
+mutate(avgtemp =log((tmax+tmin)/2))%>%
+mutate(month = month(ymd))%>%
+mutate(seasonality = ifelse(month %in%c(1,2,3,11,12),"winter","summer"))%>%
+mutate(fold = 1)
+rmse = rmse(final_model,trips_per_day_test)
+rmse
 ```
