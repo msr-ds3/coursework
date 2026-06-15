@@ -1,6 +1,6 @@
 ---
 title: "Predicting Daily Citibike Trips"
-author: "Your Name"
+author: "Mane Diouf"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -8,11 +8,13 @@ output: html_document
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(modelr)
+library(lubridate)
 ```
 
 ## Load data
 
 ```{r}
+trips_per_day <- read_tsv('trips_per_day.tsv') 
 
 ```
 
@@ -22,6 +24,29 @@ Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
 
 ```{r}
+# Reproducibility --> getting the same result no matter whoever runs the code
+# or whenever you run it again
+set.seed(123)
+
+# Number of observation
+obs <- nrow(trips_per_day)
+
+# Create the 10% final test set
+ndx <- sample(
+    1:obs,
+    size = floor(0.10 * obs) # floor - round it down instead of up
+)
+test_data <- trips_per_day[ndx, ]
+train_valid_data <- trips_per_day[-ndx, ]
+
+#Create validation set from the remaining 90%
+train_fract <- nrow(train_valid_data)
+validation_ndx <- sample(
+    1:train_fract,
+    size = floor(0.20 * train_fract)
+)
+valid_data <- train_valid_data[validation_ndx, ]
+train_data <- train_valid_data[-validation_ndx, ]
 
 ```
 
@@ -32,6 +57,26 @@ Start with the polynomial model from the complexity control notebook.
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
+
+# fit a model for each polynomial degree
+K <- 1:6
+train_err <- c()
+validate_err <- c()
+for (k in K) {
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = TRUE),
+    data=train_data
+    )
+    # evaluate on the training data
+    train_err[k] <- sqrt(
+        mean((predict(model, train_data) - train_data$num_trips)^2)
+    )
+    # evaluate on the validate data --> RMSE
+    validate_err[k] <- sqrt(
+        mean((predict(model, valid_data) - valid_data$num_trips)^2)
+    )
+}
+
 ```
 
 ## Feature engineering
@@ -40,6 +85,8 @@ Add features that might help: day of week, month, precipitation, etc.
 Remember: only use information available *before* the day in question.
 
 ```{r}
+train_data = train_data %>% mutate(day = wday(ymd))
+valid_data = valid_data %>% mutate(day = wday(ymd))
 
 ```
 
@@ -48,6 +95,25 @@ Remember: only use information available *before* the day in question.
 Try different models and compare their validation performance.
 
 ```{r}
+model1 <- lm(num_trips ~ ., data=train_data)
+summary(model1)
+rmse(model1, valid_data)
+
+model2 <- lm(num_trips ~ tmin, data=train_data)
+summary(model2)
+rmse(model2, valid_data)
+
+model3 <- lm(num_trips ~.+day+ poly(tmax, 3, raw = TRUE), data=train_data)
+summary(model3)
+rmse(model3, valid_data)
+
+model4 <- lm(num_trips ~. -prcp, data=train_data)
+summary(model4)
+rmse(model4, valid_data)
+
+model5 <- lm(num_trips ~.+day+ poly(tmin, 5, raw = TRUE), data=train_data)
+summary(model5)
+rmse(model5, valid_data)
 
 ```
 
@@ -56,13 +122,19 @@ Try different models and compare their validation performance.
 Pick your best model and plot the results.
 
 ```{r}
+add_predictions(valid_data, model3)%>%
+ggplot(aes(x = ymd, y = pred)) +
+  geom_line()+
+  geom_point(aes(x = ymd, y=num_trips, color= "pink")) +
+  xlab('Date') +
+  ylab('Number of trips')
 
 ```
 
 ## Save model
 
 ```{r}
-
+save(model3, file = 'C:/Users/mane/Desktop/coursework/week3/model.Rdata')
 ```
 
 ## Test set evaluation
@@ -73,4 +145,11 @@ Pick your best model and plot the results.
 # TODO: load your saved model and predict on trips_test
 # TODO: compute RMSE on test set
 # TODO: how do you think this model will perform on future data?
+load("model.Rdata")
+pred <- predict(model3, test_data)
+test_data <- test_data %>% mutate(day = wday(ymd))
+rmse(model3, test_data)
+
+# I think this model will perform good in the future based on the 
+# pretty acceptable rmse but we never know how the future can change the model.
 ```
