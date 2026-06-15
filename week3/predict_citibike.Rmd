@@ -8,12 +8,14 @@ output: html_document
 ```{r setup, message=FALSE}
 library(tidyverse)
 library(modelr)
+library(lubridate)
 ```
 
 ## Load data
 
 ```{r}
-
+trips_per_day <-
+    read_tsv("trips_per_day.tsv")
 ```
 
 ## Train/test split
@@ -22,7 +24,20 @@ Hold out 10% of the data as a final test set. Use the remaining 90% for
 training and validation.
 
 ```{r}
+set.seed(42)
 
+num_days <- nrow(trips_per_day)
+frac_train <- 0.9
+num_train <- floor(num_days * frac_train)
+
+# randomly sample rows for the training set 
+ndx <- sample(1:num_days, num_train, replace=F)
+
+# used to fit the model
+trips_per_day_train <- trips_per_day[ndx, ]
+
+# used to evaluate the fit
+trips_per_day_validate <- trips_per_day[-ndx, ]
 ```
 
 ## Baseline model: temperature only
@@ -32,6 +47,22 @@ Start with the polynomial model from the complexity control notebook.
 ```{r}
 # TODO: fit a linear model using poly(tmin, degree) on training data
 # TODO: try different polynomial degrees and evaluate RMSE on validation data
+K <- 1:8
+train_err_1 <- c()
+validate_err_1 <- c()
+model1 <- lm(num_trips ~ poly(tmin, degree = 1), data=trips_per_day_train)
+
+for (k in K) {
+  
+    # fit on the training data
+    model <- lm(num_trips ~ poly(tmin, k, raw = T), data=trips_per_day_train)
+    
+    # evaluate on the training data
+    train_err_1[k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+    # evaluate on the validate data
+    validate_err_1[k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+}
 ```
 
 ## Feature engineering
@@ -40,6 +71,47 @@ Add features that might help: day of week, month, precipitation, etc.
 Remember: only use information available *before* the day in question.
 
 ```{r}
+# Taking the effects of snow into account
+model2 <- lm(num_trips ~ poly(tmin, degree = 1) + snow, data=trips_per_day_train)
+validate_err_2 <- sqrt(mean((predict(model2, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# Taking the effects of snow and precipitation into account
+model3 <- lm(num_trips ~ poly(tmin, degree = 1) + snow + prcp, data=trips_per_day_train)
+validate_err_3 <- sqrt(mean((predict(model3, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# Taking the effects of snow, snow depth, and precipitation into account
+model4 <- lm(num_trips ~ poly(tmin, degree = 1) + snow + snwd + prcp, data=trips_per_day_train)
+validate_err_4 <- sqrt(mean((predict(model4, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# Taking the effects of snow depth, precipitation, and whether it's a weekend into account
+trips_per_day_train <- 
+    trips_per_day_train %>%
+    mutate(weekend = (wday(ymd) == 1 | wday(ymd) == 6 | wday(ymd) == 7))
+
+trips_per_day_validate <- 
+    trips_per_day_validate %>%
+    mutate(weekend = (wday(ymd) == 5 | wday(ymd) == 6 | wday(ymd) == 7))
+
+model5 <- lm(num_trips ~ poly(tmin, degree = 1) + snow + prcp + weekend, data=trips_per_day_train)
+validate_err_5 <- sqrt(mean((predict(model5, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+# Taking the effects of snow depth, precipitation, temp min and max, and whether it's a weekend into account
+model6 <- lm(num_trips ~ poly(tmin, degree = 1) + snow + prcp + weekend + tmax, data=trips_per_day_train)
+validate_err_6 <- sqrt(mean((predict(model6, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+model7 <- lm(num_trips ~ poly(tmin, degree = 1) + (snow * prcp) + weekend + tmax, data=trips_per_day_train)
+validate_err_7 <- sqrt(mean((predict(model7, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+
+trips_per_day_train <- 
+    trips_per_day_train %>%
+    mutate(month = mday(ymd))
+
+trips_per_day_validate <- 
+    trips_per_day_validate %>%
+    mutate(month = mday(ymd))
+
+model8 <- lm(num_trips ~ poly(tmin, degree = 1) + snow + prcp + weekend + tmax + month, data=trips_per_day_train)
+validate_err_8 <- sqrt(mean((predict(model8, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
 
 ```
 
@@ -48,7 +120,32 @@ Remember: only use information available *before* the day in question.
 Try different models and compare their validation performance.
 
 ```{r}
+K <- 1:8
+models <- c("num_trips ~ poly(tmin, degree = ",
+    "num_trips ~ snow + poly(tmin, degree = ",
+    "num_trips ~ snow + prcp + poly(tmin, degree = ",
+    "num_trips ~ snow + snwd + prcp + poly(tmin, degree = ",
+    "num_trips ~ snow + prcp + weekend + poly(tmin, degree = ",
+    "num_trips ~ snow + prcp + weekend + tmax + poly(tmin, degree = ",
+    "num_trips ~ (snow * prcp) + weekend + tmax + poly(tmin, degree = ",
+    "num_trips ~ snow + prcp + month + weekend + tmax + poly(tmin, degree = ")
 
+train_err <- matrix(nrow = 8, ncol = 8)
+validate_err <- matrix(nrow = 8, ncol = 8)
+
+for (m in 1:8) {
+    for (k in K) {
+    
+        # fit on the training data
+        model <- lm(as.formula(paste(models[m], k, ")")), trips_per_day_train)
+        
+        # evaluate on the training data
+        train_err[m, k] <- sqrt(mean((predict(model, trips_per_day_train) - trips_per_day_train$num_trips)^2))
+
+        # evaluate on the validate data
+        validate_err[m, k] <- sqrt(mean((predict(model, trips_per_day_validate) - trips_per_day_validate$num_trips)^2))
+    }
+}
 ```
 
 ## Final model
@@ -56,13 +153,19 @@ Try different models and compare their validation performance.
 Pick your best model and plot the results.
 
 ```{r}
+final_model <- lm(num_trips ~ poly(tmin, degree = 4) + snow + prcp + weekend + tmax + month, data=trips_per_day_train)
 
+results <- ggplot(trips_per_day_validate, aes(x = num_trips, y = predict(final_model, trips_per_day_validate))) +
+    geom_point() +
+    geom_abline(na.rm =TRUE) +
+    xlab("Number of Trips (actual value)") +
+    ylab("Predicted Number of Trips")
 ```
 
 ## Save model
 
 ```{r}
-
+ggsave("C:\\Users\\chana\\Documents\\coursework\\week3\\predict_citibike_results.png", results)
 ```
 
 ## Test set evaluation

@@ -4,7 +4,8 @@
         "plaintext": false,
         "markdown": false,
         "scminput": false,
-        "shellscript": false
+        "shellscript": false,
+        "r.plot.useHttpdg": true
     },
     "chat.agent.enabled": false,
     "github.copilot.nextEditSuggestions.enabled": false
