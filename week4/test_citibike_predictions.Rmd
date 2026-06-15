@@ -1,0 +1,51 @@
+```{r}
+library(tidyverse)
+library(modelr)
+library(here)
+library(lubridate)
+library(timeDate)
+library(caret)
+```
+
+```{r}
+trips_per_day = read_tsv('trips_per_day_2015.tsv')
+weather_2015 <- read_csv('weather_2015.csv')
+
+weather_2015 <- weather_2015 %>% 
+    rename(ymd = DATE) %>% 
+    mutate(ymd = ymd(ymd))
+
+trips <- trips_per_day %>% 
+    left_join(weather_2015, by='ymd') %>% 
+    rename_with(tolower)
+
+us_holidays <- as.Date(holidayNYSE(year= 2014:2026))
+
+trips <- trips %>% 
+    mutate(
+        tavg = (tmin + tmax) / 2,
+        heavy_rain = prcp > 0.9, 
+        deep_snow = snwd > 4,
+        snow_event = snow > 0,
+        day_of_week = wday(ymd, label = TRUE),
+        is_weekend = wday(ymd) %in% c(1,7), 
+        is_holiday = ymd %in% us_holidays
+    )
+
+```
+
+```{r}
+load('Citibike_Prediction_Model.RData')
+
+predictions <- predict(mod5, newdata = trips)
+actual_values <- trips$num_trips
+rmse <- RMSE(predictions, actual_values)
+rmse
+
+#rmse <- function(y, y_hat) {
+#    sqrt(mean(y_hat - y)^2)
+#}
+
+#rmse(trips$num_trips, predict(mod5, newdata=trips))
+
+```
