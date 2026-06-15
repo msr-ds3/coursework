@@ -1,0 +1,47 @@
+---
+title: "Testing Daily Citibike Trips for 2015 with LM trained on 2014"
+author: "Jacqueline Louie (Stony Brook University)"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(modelr)
+```
+
+```{r}
+trips_per_day_2015 <- read_tsv('../week4/trips_per_day_2015.tsv')
+weather_2015 <- read_csv('../week4/weather_2015.csv')
+
+head(trips_per_day_2015)
+head(weather_2015)
+```
+
+Write a new file called test_citibike_predictions.Rmd that loads in the new trips_per_day_2015.csv 
+and weather_2015.csv files along with your saved model (from yesterday's .Rdata file), and predicts 
+the number of trips for each day. If you used any other data for your model, make sure to include code
+ that downloads and incorporates that data as well.
+
+Compute the RMSE between the actual and predicted trips for 2015 and compare the results to what you 
+found with cross-validation on the 2014 data.
+
+```{r}
+weather_2015_adj <- mutate(weather_2015, ymd = DATE, prcp = PRCP, tmin = TMIN, tmax = TMAX, snwd = SNWD, snow = SNOW) %>%
+    select(ymd, prcp, snwd, snow, tmin, tmax) %>% 
+    mutate(tmin = tmin * 0.10, tmax = tmax * 0.10) # mutating tmin and tmax to match the scale for 2014 tmin tmax
+
+# joining on DATE
+test_set <- inner_join(trips_per_day_2015, weather_2015_adj, by = "ymd") %>% 
+    mutate(day_of_week = wday(ymd), month = month(ymd))
+
+head(test_set)
+```
+
+```{r}
+load("final_model.RData")
+final_model
+
+rmse(final_model, test_set)
+rsquare(final_model, test_set)
+```

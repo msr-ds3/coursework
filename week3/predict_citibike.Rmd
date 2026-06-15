@@ -449,6 +449,7 @@ trips_per_day_test <- mutate(trips_per_day_kfold, day_of_week = wday(ymd), month
 
 load('final_model.RData')
 rmse(final_model, trips_per_day_test)
+rsquare(final_model, trips_per_day_test)
 # My RMSE for the test set was 3208.211
 # I think the model will perform okay? I'm a little concerned about if I overfit the training/validation data
 ```
