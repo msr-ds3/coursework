@@ -1,0 +1,48 @@
+---
+title: "Predicting Daily Citibike Trips"
+author: "Farida Balogun"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Citibike Prediction Testing 
+```{r setup, message=FALSE}
+library(tidyverse)
+library(modelr)
+library(tidyverse)
+library(scales)
+library(here)
+options(na.action = na.warn)
+library(broom)
+
+theme_set(theme_bw())
+```
+
+
+
+``` {r load-trips}
+
+trips_2015 <- read_tsv(here('week4','trips_per_day_2015.tsv'))
+trips_2015 <- trips_2015 %>% mutate(month = format(ymd, "%b"))
+head(trips_2015)
+
+weather_2015 <- read_csv(here('week4','weather_2015.csv'))
+weather <- rename(weather_2015, station=STATION, name=NAME, ymd=DATE , prcp=PRCP, snow=SNOW, snwd=SNWD, tavg=TAVG, tmax=TMAX, tmin=TMIN)
+head(weather)
+
+
+
+trips_weather <- trips_2015 %>% inner_join(weather)
+trips_weather <- trips_weather %>% mutate(tmin = tmin*0.1,tmax = tmax *0.1)
+head(trips_weather)
+
+load('C:/Users/farida/coursework/week3/predict_citibike.RData')
+
+```
+
+```{r model-predictions}
+summary(model)
+rmse(model, trips_weather)
+rsquare(model, trips_weather)
+
+```
