@@ -1,6 +1,6 @@
 ---
 title: "Predicting Daily Citibike Trips"
-author: "Your Name"
+author: "Nabin Oli"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -92,8 +92,9 @@ mutate(avgtemp =log((tmax+tmin)/2))%>%
 mutate(month = month(ymd))%>%
 mutate(seasonality = ifelse(month %in%c(1,2,3,11,12),"winter","summer"))
 
-train_val%>%ggplot(aes(x=ymd,y=avgtemp,color = day))+geom_point()
-train_val%>%print(n=10,Inf)
+train_val%>%
+ggplot(aes(x=ymd,y=avgtemp,color = day))+
+geom_point()
 
 ```
 
@@ -106,8 +107,6 @@ Try different models and compare their validation performance.
 num_folds = 5
 train_val_fold <- train_val%>%
 mutate(fold = (row_number()%%num_folds)+1)
-avg_val_err <- c()
-se_val_err <- c()
 val_err <-matrix(NA,7,num_folds)
 rsquared <-matrix(NA,7,num_folds)
 for (f in 1:num_folds){
@@ -139,7 +138,7 @@ for (f in 1:num_folds){
 
 rowMeans(val_err)
 val_err%>%apply(1,sd)/sqrt(num_folds)
-rsquared
+
 
 ```
 
@@ -152,6 +151,7 @@ add_predictions(trips_per_day_fold_val,model_6)%>%
 ggplot(aes(x=ymd,y=pred,color ='red'))+
 geom_line()+
 geom_point(aes(x=ymd,num_trips,color='blue'))
+
 ```
 
 ## Save model
@@ -170,9 +170,7 @@ save(final_model,file = "C:/Users/nabin/DS3/coursework/week3/model.Rdata")
 # TODO: load your saved model and predict on trips_test
 # TODO: compute RMSE on test set
 # TODO: how do you think this model will perform on future data?
-# Since I ma opting for simple model with basic feature extration I believe it will perform with rmse around 3500- 4000
 model = load(here("week3","model.Rdata"))
-summary(final_model)
 # feature extration for model 
 trips_per_day_test<-trips_per_day_test%>%
 mutate(day = wday(ymd,week_start = 1))%>%
@@ -182,7 +180,17 @@ mutate(avgtemp =log((tmax+tmin)/2))%>%
 mutate(month = month(ymd))%>%
 mutate(seasonality = ifelse(month %in%c(1,2,3,11,12),"winter","summer"))%>%
 mutate(fold = 1)
+
+add_predictions(trips_per_day_test,final_model)%>%
+ggplot(aes(x=ymd,y=pred,color = 'Predicted'))+
+geom_line()+
+geom_point(aes(x=ymd,y=num_trips,color = 'Actual'))+
+labs(
+    color = "Label",
+    x= "Days",
+    y="Number of rides"
+)
 # final rmse score
 rmse = rmse(final_model,trips_per_day_test)
-rmse
 ```
+RMSE score : `r rmse`, Since I am opting for simple model with basic feature extration I believe it will perform with rmse around 3500- 4000 on actual test set.
