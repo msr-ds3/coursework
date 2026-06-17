@@ -1,0 +1,78 @@
+---
+title: "Testing model"
+author: "Nabin Oli"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(modelr)
+library(here)
+library(lubridate)
+library(modelr)
+```
+
+## Load Data
+
+```{r, data loading and transformation}
+trips = read_tsv(here("week4","trips_per_day_2015.tsv"))
+weather = read_csv(here("week4","weather_2015.csv"))
+weather <- weather%>%mutate(TMAX=TMAX/10,TMIN = TMIN/10)
+weather <- rename(weather,ymd=DATE,tmax = TMAX, tmin = TMIN, snow = SNOW, snwd = SNWD, prcp = PRCP)
+test_data <- inner_join(trips, weather, by="ymd")
+```
+
+## Feature extraction
+```{r, feature extraction from test data}
+test_data<-test_data%>%
+select(num_trips,ymd,tmax,tmin,snow,snwd,prcp)%>%
+mutate(day = wday(ymd,week_start = 1))%>%
+mutate(day_type = ifelse(day %in% c(6,7),"weekend","weekdays" ))%>%
+mutate(sigprcp = (prcp>=0.10))%>%
+mutate(avgtemp =log((tmax+tmin)/2))%>%
+mutate(month = month(ymd))%>%
+mutate(seasonality = ifelse(month %in%c(1,2,3,11,12),"winter","summer"))%>%
+mutate(fold = 1)%>%
+mutate(date =1 )
+```
+
+## Loading model and testing
+```{r, test stats}
+model = load(here("week3","model.Rdata"))
+summary(final_model)
+rmse<- rmse(final_model,test_data)
+Rsquared <-rsquare(final_model,test_data)
+test_changed <- test_data%>%filter(month != 10 & month != 11 & month != 9)
+rmse_exlcude <- rmse(final_model,test_changed)
+rsquared_exclude <- rsquare(final_model,test_changed)
+```
+
+## Ploting agianst test data points
+```{r, ploting}
+add_predictions(test_data,final_model)%>%
+ggplot(aes(x=ymd,y=pred,color = 'Predicted'))+
+geom_line()+
+geom_point(aes(x=ymd,y=num_trips,color = 'Actual'))+
+labs(
+    color = "Label",
+    x= "Days",
+    y="Number of rides"
+)
+
+add_predictions(test_changed,final_model)%>%
+ggplot(aes(x=ymd,y=pred,color = 'Predicted'))+
+geom_point()+
+geom_point(aes(x=ymd,y=num_trips,color = 'Actual'))+
+labs(
+    color = "Label",
+    x= "Days",
+    y="Number of rides"
+)
+```
+
+## Conclusion
+`r rmse` This was my final RMSE score which is far from my initial guess of 3500-4000.
+R^2^ value is `r Rsquared`. Looking at predicted value and actual value graph, there are a lot of outliers in September, October and November. 
+Just to see how well model fits if I exclude data from these months I my new RMSE is `r rmse_exlcude` and R^2^ is `r rsquared_exclude`, which is good but still worse than 
+train-test split scroes. 
